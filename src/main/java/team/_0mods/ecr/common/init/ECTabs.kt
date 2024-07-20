@@ -7,6 +7,6 @@ import team._0mods.ecr.common.items.ECBook
 
 object ECTabs {
     val tabItems = object : CreativeModeTab("$ModId.items") {
-        override fun makeIcon(): ItemStack = ItemStack(ECBook.bookList[3])
+        override fun makeIcon(): ItemStack = ItemStack(ECRRegistry.elementalGem.get())
     }
 }
