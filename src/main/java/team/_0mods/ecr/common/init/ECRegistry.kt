@@ -10,7 +10,7 @@ import net.minecraftforge.registries.RegistryObject
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECGem
 
-object ECRRegistry {
+object ECRegistry {
     val items = DeferredRegister.create(ForgeRegistries.ITEMS, ModId)
 
     val flameGem = items.register("flame_gem", ECGem.flame)
