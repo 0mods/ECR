@@ -1,0 +1,20 @@
+{
+  "itemGroup.ecremained.items": "Essential Craft Remained: Items",
+
+  "item.ecremained.book": "Research Book",
+  "item.ecremained.elemental_gem": "Elemental Gem",
+
+  "tooltip.ecremained.book.knowledge_contains": "Contains Knowledge",
+  "tooltip.ecremained.book.basic": "Basics",
+  "tooltip.ecremained.book.mru": "MRU Knowledge",
+  "tooltip.ecremained.book.engineer": "Engineer's",
+  "tooltip.ecremained.book.hoana": "Hoana",
+  "tooltip.ecremained.book.shade": "Shade",
+  "tooltip.ecremained.gem": "Current gem",
+  "tooltip.ecremained.gem.elemental": "Elemental Gem",
+  "tooltip.ecremained.gem.flame": "Flame Gem",
+  "tooltip.ecremained.gem.water": "Water Gem",
+  "tooltip.ecremained.gem.earth": "Earth Gem",
+  "tooltip.ecremained.gem.air": "Air Gem",
+  "tooltip.ecremained.gem.unknown": "Unknown"
+}

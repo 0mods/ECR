@@ -1,0 +1,22 @@
+modLoader="javafml"
+loaderVersion="${loaderVersionRange}"
+license="${modLicense}"
+[[mods]]
+    modId="${modId}"
+    version="${modVersion}"
+    displayName="${modName}"
+    credits="${modCredits}"
+    authors="${modAuthors}"
+    description='''${modDesc}'''
+[[dependencies.${modId}]]
+    modId="forge"
+    mandatory=true
+    versionRange="${forgeVersionRange}"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.${modId}]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="${minecraftVersionRange}"
+    ordering="NONE"
+    side="BOTH"

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " a ",
+    "aaa",
+    " b "
+  ],
+  "key": {
+    "a": {
+      "type": "forge:nbt",
+      "item": "minecraft:cobblestone",
+      "nbt": "{display:{Name:'[\"\",{\"text\":\"asdasdasdadsdadsadadsasdad\",\"italic\":false}]'}}"
+    },
+    "b": {
+      "item": "minecraft:stick"
+    }
+  },
+  "result": {
+    "item": "minecraft:tipped_arrow",
+    "count": 4,
+    "nbt": "{display:{Name:'[\"\",{\"text\":\"Lorem Ipsum\",\"italic\":false}]'}}"
+  }
+}

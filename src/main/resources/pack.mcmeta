@@ -1,0 +1,8 @@
+{
+  "pack": {
+    "pack_format": 8,
+    "description": "ECR RP",
+    "forge:resource_pack_format": 9,
+    "forge:data_pack_format": 10
+  }
+}
