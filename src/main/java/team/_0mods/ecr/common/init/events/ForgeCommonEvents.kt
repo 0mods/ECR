@@ -29,7 +29,7 @@ class ForgeCommonEvents {
                 if (player.isCreative && player.isShiftKeyDown) {
                     when(type) {
                         ECBook.Type.BASIC -> ECBook.setBookType(stack, ECBook.Type.MRU)
-                        ECBook.Type.MRU -> ECBook.setBookType(stack, ECBook.Type.ENGINEER)
+                        ECBook.Type.MRU -> ECBook.setBookType(stack, ECBook.Type.ENGINEER)  
                         ECBook.Type.ENGINEER -> ECBook.setBookType(stack, ECBook.Type.HOANA)
                         ECBook.Type.HOANA -> ECBook.setBookType(stack, ECBook.Type.SHADE)
                         ECBook.Type.SHADE -> ECBook.setBookType(stack, ECBook.Type.BASIC)
