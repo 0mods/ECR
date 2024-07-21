@@ -8,7 +8,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import team._0mods.ecr.ModId
-import team._0mods.ecr.common.init.ECTabs
+import team._0mods.ecr.common.init.registry.ECTabs
 import java.awt.Color
 
 class ECGem private constructor(private val type: Type): Item(Properties().tab(ECTabs.tabItems)) {

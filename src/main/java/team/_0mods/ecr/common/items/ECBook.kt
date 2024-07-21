@@ -1,36 +1,59 @@
 package team._0mods.ecr.common.items
 
 import net.minecraft.ChatFormatting
+import net.minecraft.client.renderer.item.ItemProperties
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
+import net.minecraft.world.item.trading.MerchantOffer
 import net.minecraft.world.level.Level
+import net.minecraftforge.client.extensions.common.IClientItemExtensions
+import net.minecraftforge.fml.loading.FMLEnvironment
 import team._0mods.ecr.ModId
-import team._0mods.ecr.common.init.ECTabs
+import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECTabs
+import java.util.function.Consumer
 
-class ECBook(val bookType: Type): Item(Properties().tab(ECTabs.tabItems)) {
+class ECBook: Item(Properties().tab(ECTabs.tabItems)) {
     companion object {
-        val basicBook = { ECBook(Type.BASIC) }
-        val mruBook = { ECBook(Type.MRU) }
-        val engineerBook = { ECBook(Type.ENGINEER) }
-        val hoanaBook = { ECBook(Type.HOANA) }
-        val shadeBook = { ECBook(Type.SHADE) }
+        @JvmStatic
+        fun getBookType(stack: ItemStack): Type {
+            if (stack.item !is ECBook) throw IllegalStateException("Failed to get book type to none-book item")
+            val tag = stack.orCreateTag
 
+            if (!tag.contains("ECBookType")) {
+                tag.putString("ECBookType", Type.BASIC.name)
+            }
+
+            return Type.valueOf(tag.getString("ECBookType"))
+        }
+
+        @JvmStatic
+        fun setBookType(stack: ItemStack, type: Type) {
+            if (stack.item !is ECBook) throw IllegalStateException("Failed to get book type to none-book item")
+            val tag = stack.orCreateTag
+
+            tag.putString("ECBookType", type.name)
+        }
     }
 
-    /*var bookType: Type
-        get() {
-            return if (tag.contains("ECBookType")) return Type.valueOf(tag.getString("ECBookType"))
-            else {
-                tag.putString("ECBookType", Type.BASIC.name)
-                Type.valueOf(tag.getString("ECBookType"))
+    init {
+        if (FMLEnvironment.dist.isClient) {
+            ItemProperties.register(this, ResourceLocation(ModId, "type")) { s, _, _, _ ->
+                val type = getBookType(s)
+                return@register when(type) {
+                    Type.BASIC -> 0.0f
+                    Type.MRU -> 0.1f
+                    Type.ENGINEER -> 0.2f
+                    Type.HOANA -> 0.3f
+                    Type.SHADE -> 0.4f
+                }
             }
         }
-        private set(value) {
-            tag.putString("ECBookType", value.name)
-        }
-    */
+    }
+
     override fun getDescriptionId(): String = "item.${ModId}.book"
 
     override fun appendHoverText(
@@ -39,6 +62,8 @@ class ECBook(val bookType: Type): Item(Properties().tab(ECTabs.tabItems)) {
         tooltipComponents: MutableList<Component>,
         isAdvanced: TooltipFlag
     ) {
+        val bookType = getBookType(stack)
+
         tooltipComponents += Component.translatable("tooltip.$ModId.book.knowledge_contains").withStyle(ChatFormatting.GOLD).append(":")
 
         when (bookType) {

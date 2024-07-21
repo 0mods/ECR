@@ -1,4 +1,4 @@
-package team._0mods.ecr.common.init
+package team._0mods.ecr.common.init.registry
 
 import team._0mods.ecr.ModId
 import net.minecraft.world.item.Item
@@ -19,11 +19,7 @@ object ECRegistry {
     val airGem = items.register("air_gem", ECGem.air)
     val elementalGem = items.register("elemental_gem", ECGem.elemental)
 
-    val basicBook = items.register("basic_book", ECBook.basicBook)
-    val mruBook = items.register("mru_book", ECBook.mruBook)
-    val engineerBook = items.register("engineer_book", ECBook.engineerBook)
-    val hoanaBook = items.register("hoana_book", ECBook.hoanaBook)
-    val shadeBook = items.register("shade_book", ECBook.shadeBook)
+    val basicBook = items.register("research_book", ::ECBook)
 
     @JvmStatic
     fun init(bus: IEventBus) {
