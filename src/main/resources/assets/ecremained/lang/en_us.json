@@ -4,6 +4,8 @@
   "item.ecremained.book": "Research Book",
   "item.ecremained.elemental_gem": "Elemental Gem",
 
+  "info.ecremained.soul_stone.bounded": "The soul stone is bounded to %s",
+
   "tooltip.ecremained.rmc": "RMC",
   "tooltip.ecremained.book.upgrade": "Hold %s to upgrade the book",
   "tooltip.ecremained.book.knowledge_contains": "Contains Knowledge",
