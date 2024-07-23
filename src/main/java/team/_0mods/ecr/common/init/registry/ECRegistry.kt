@@ -19,7 +19,7 @@ object ECRegistry {
     val airGem = items.register("air_gem", ECGem.air)
     val elementalGem = items.register("elemental_gem", ECGem.elemental)
 
-    val basicBook = items.register("research_book", ::ECBook)
+    val researchBook = items.register("research_book", ::ECBook)
 
     @JvmStatic
     fun init(bus: IEventBus) {

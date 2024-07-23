@@ -5,7 +5,12 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.Level
 import java.util.function.BiFunction
 
-interface IMutliblock {
+interface IMultiblock {
+    companion object {
+        @JvmField
+        val MULTIBLOCKS: Map<ResourceLocation, IMultiblock> = hashMapOf()
+    }
+
     fun isComplete(level: Level, center: BlockPos): Boolean
 
     fun forEach(center: BlockPos, c: Char, function: BiFunction<BlockPos, Matcher, Boolean>): Boolean

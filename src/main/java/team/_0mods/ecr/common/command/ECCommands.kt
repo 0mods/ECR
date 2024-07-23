@@ -18,7 +18,7 @@ object ECCommands {
                 it {
                     "book"(arg("type", StringArgumentType.greedyString(), books)) {
                         val type = StringArgumentType.getString(this, "type").uppercase()
-                        val item = ECRegistry.basicBook.get()
+                        val item = ECRegistry.researchBook.get()
                         val player = this.source.playerOrException
                         val level = player.level
 

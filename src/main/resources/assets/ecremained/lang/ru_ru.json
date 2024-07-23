@@ -8,6 +8,7 @@
 
   "tooltip.ecremained.rmc": "ПКМ",
   "tooltip.ecremained.book.upgrade": "Зажмите %s чтобы улучшить книгу",
+  "tooltip.ecremained.book.downgrade": "Зажмите %s чтобы сбросить все знания в книге",
   "tooltip.ecremained.book.knowledge_contains": "Содержит знания",
   "tooltip.ecremained.book.basic": "Основы",
   "tooltip.ecremained.book.mru": "Знания об MRU",

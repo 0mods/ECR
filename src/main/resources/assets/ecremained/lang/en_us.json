@@ -8,6 +8,7 @@
 
   "tooltip.ecremained.rmc": "RMC",
   "tooltip.ecremained.book.upgrade": "Hold %s to upgrade the book",
+  "tooltip.ecremained.book.downgrade": "Hold %s to reset all knowledge in the book",
   "tooltip.ecremained.book.knowledge_contains": "Contains Knowledge",
   "tooltip.ecremained.book.basic": "Basics",
   "tooltip.ecremained.book.mru": "MRU Knowledge",

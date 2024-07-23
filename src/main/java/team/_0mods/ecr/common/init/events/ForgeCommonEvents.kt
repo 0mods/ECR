@@ -9,6 +9,7 @@ import team._0mods.ecr.ModId
 import team._0mods.ecr.client.ECBookScreen
 import team._0mods.ecr.common.command.ECCommands
 import team._0mods.ecr.common.items.ECBook
+import team._0mods.ecr.common.items.ECBook.Companion.bookType
 
 @Mod.EventBusSubscriber(modid = ModId, bus = Mod.EventBusSubscriber.Bus.FORGE)
 class ForgeCommonEvents {
@@ -21,18 +22,18 @@ class ForgeCommonEvents {
         val item = stack.item
 
         if (item is ECBook) {
-            val type = ECBook.getBookType(stack)
+            val type = stack.bookType
             if (level.isClientSide) {
                 if (player.isCreative && player.isShiftKeyDown) return
                 Minecraft.getInstance().setScreen(ECBookScreen(type))
             } else {
                 if (player.isCreative && player.isShiftKeyDown) {
                     when(type) {
-                        ECBook.Type.BASIC -> ECBook.setBookType(stack, ECBook.Type.MRU)
-                        ECBook.Type.MRU -> ECBook.setBookType(stack, ECBook.Type.ENGINEER)  
-                        ECBook.Type.ENGINEER -> ECBook.setBookType(stack, ECBook.Type.HOANA)
-                        ECBook.Type.HOANA -> ECBook.setBookType(stack, ECBook.Type.SHADE)
-                        ECBook.Type.SHADE -> ECBook.setBookType(stack, ECBook.Type.BASIC)
+                        ECBook.Type.BASIC -> stack.bookType = ECBook.Type.MRU
+                        ECBook.Type.MRU -> stack.bookType = ECBook.Type.ENGINEER
+                        ECBook.Type.ENGINEER -> stack.bookType = ECBook.Type.HOANA
+                        ECBook.Type.HOANA -> stack.bookType = ECBook.Type.SHADE
+                        ECBook.Type.SHADE -> stack.bookType = ECBook.Type.BASIC
                     }
                 }
             }
