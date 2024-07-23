@@ -11,6 +11,7 @@ import net.minecraft.world.item.trading.MerchantOffer
 import net.minecraft.world.level.Level
 import net.minecraftforge.client.extensions.common.IClientItemExtensions
 import net.minecraftforge.fml.loading.FMLEnvironment
+import team._0mods.ecr.LOGGER
 import team._0mods.ecr.ModId
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.init.registry.ECTabs
@@ -27,7 +28,13 @@ class ECBook: Item(Properties().tab(ECTabs.tabItems)) {
                 tag.putString("ECBookType", Type.BASIC.name)
             }
 
-            return Type.valueOf(tag.getString("ECBookType"))
+            return try {
+                Type.valueOf(tag.getString("ECBookType"))
+            } catch (e: NullPointerException) {
+                LOGGER.error("Taken item with unsupported book type. Sets default value", e)
+                tag.putString("ECBookType", Type.BASIC.name)
+                return Type.BASIC
+            }
         }
 
         @JvmStatic

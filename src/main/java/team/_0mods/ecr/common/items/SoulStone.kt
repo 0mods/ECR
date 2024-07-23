@@ -14,8 +14,6 @@ import java.util.UUID
 
 class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
     companion object {
-
-
         @JvmStatic
         fun isBounded(stack: ItemStack): Boolean {
             if (stack.item !is SoulStone) throw UnsupportedOperationException()
@@ -52,6 +50,13 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
             }
 
             return tag.getInt("SoulStoneCapacity")
+        }
+
+        @JvmStatic
+        fun setCapacity(stack: ItemStack, count: Int) {
+            if (stack.item !is SoulStone) throw UnsupportedOperationException()
+
+
         }
     }
 

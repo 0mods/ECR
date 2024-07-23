@@ -57,6 +57,10 @@ dependencies {
     shadow("thedarkcolour:kotlinforforge:3.12.0")
 
     implementation(kotlin("stdlib", "2.0.0"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:+")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:+")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:+")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:+")
 }
 
 tasks {
