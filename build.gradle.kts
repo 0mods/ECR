@@ -40,6 +40,7 @@ repositories {
     maven("https://thedarkcolour.github.io/KotlinForForge/")
     maven("https://maven.blamejared.com/")
     maven("https://modmaven.dev")
+    maven("https://maven.tterrag.com/")
 }
 
 dependencies {
@@ -65,7 +66,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:+")
 
     modApi("mezz.jei:jei-${minecraftVersion}-forge:${project.properties["jei_version"].toString()}")
-
+    modApi("com.tterrag.registrate:Registrate:MC1.19-1.1.5") { include(this) }
 }
 
 tasks {

@@ -1,5 +1,7 @@
 package team._0mods.ecr
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
@@ -13,6 +15,8 @@ import team._0mods.ecr.common.init.registry.ECRegistry
 
 val LOGGER = LoggerFactory.getLogger("ECR")
 const val ModId = "ecremained"
+
+val ECCoroutine = CoroutineScope(Dispatchers.Default)
 
 @Mod(ModId)
 class ECRemained {
