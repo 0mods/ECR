@@ -3,6 +3,10 @@
 
   "item.ecremained.book": "Research Book",
   "item.ecremained.elemental_gem": "Elemental Gem",
+  "item.ecremained.flame_gem": "Flame Gem",
+  "item.ecremained.water_gem": "Water Gem",
+  "item.ecremained.earth_gem": "Earth Gem",
+  "item.ecremained.air_gem": "Air Gem",
 
   "info.ecremained.soul_stone.bounded": "The soul stone is bounded to %s",
 
@@ -15,11 +19,5 @@
   "tooltip.ecremained.book.engineer": "Engineer's",
   "tooltip.ecremained.book.hoana": "Hoana",
   "tooltip.ecremained.book.shade": "Shade",
-  "tooltip.ecremained.gem": "Current gem",
-  "tooltip.ecremained.gem.elemental": "Elemental Gem",
-  "tooltip.ecremained.gem.flame": "Flame Gem",
-  "tooltip.ecremained.gem.water": "Water Gem",
-  "tooltip.ecremained.gem.earth": "Earth Gem",
-  "tooltip.ecremained.gem.air": "Air Gem",
   "tooltip.ecremained.gem.unknown": "Unknown"
 }

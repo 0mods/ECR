@@ -3,6 +3,10 @@
 
   "item.ecremained.book": "Книга исследований",
   "item.ecremained.elemental_gem": "Элементальный кристалл",
+  "item.ecremained.flame_gem": "Пылающий кристалл",
+  "item.ecremained.water_gem": "Водный кристалл",
+  "item.ecremained.earth_gem": "Земляной кристалл",
+  "item.ecremained.air_gem": "Воздушный кристалл",
 
   "info.ecremained.soul_stone.bounded": "Камень души привязан к %s",
 
@@ -15,11 +19,5 @@
   "tooltip.ecremained.book.engineer": "Инженерию",
   "tooltip.ecremained.book.hoana": "Хоаны",
   "tooltip.ecremained.book.shade": "Тени",
-  "tooltip.ecremained.gem": "Текущий кристалл",
-  "tooltip.ecremained.gem.elemental": "Элементальный",
-  "tooltip.ecremained.gem.flame": "Пылающий",
-  "tooltip.ecremained.gem.water": "Водный",
-  "tooltip.ecremained.gem.earth": "Земляной",
-  "tooltip.ecremained.gem.air": "Воздушный",
   "tooltip.ecremained.gem.unknown": "Неизвестный"
 }

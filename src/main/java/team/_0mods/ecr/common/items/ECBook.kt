@@ -28,7 +28,7 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
                 return try {
                     Type.valueOf(tag.getString("ECBookType"))
                 } catch (e: NullPointerException) {
-                   LOGGER.error("Taken item with unsupported book type. Sets default value", e)
+                    LOGGER.error("Taken item with unsupported book type. Sets default value", e)
                     tag.putString("ECBookType", Type.BASIC.name)
                     return Type.BASIC
                 }

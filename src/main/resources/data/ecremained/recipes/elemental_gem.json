@@ -1,0 +1,28 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " a ",
+    "bcd",
+    " e "
+  ],
+  "key": {
+    "a": {
+      "item": "ecremained:flame_gem"
+    },
+    "b": {
+      "item": "ecremained:water_gem"
+    },
+    "c": {
+      "item": "minecraft:diamond"
+    },
+    "d": {
+      "item": "ecremained:earth_gem"
+    },
+    "e": {
+      "item": "ecremained:air_gem"
+    }
+  },
+  "result": {
+    "item": "ecremained:elemental_gem"
+  }
+}

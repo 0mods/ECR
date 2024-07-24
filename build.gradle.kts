@@ -38,6 +38,8 @@ repositories {
     maven("https://maven.fabricmc.net/")
     maven("https://maven.parchmentmc.org")
     maven("https://thedarkcolour.github.io/KotlinForForge/")
+    maven("https://maven.blamejared.com/")
+    maven("https://modmaven.dev")
 }
 
 dependencies {
@@ -61,6 +63,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:+")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:+")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:+")
+
+    modApi("mezz.jei:jei-${minecraftVersion}-forge:${project.properties["jei_version"].toString()}")
+
 }
 
 tasks {

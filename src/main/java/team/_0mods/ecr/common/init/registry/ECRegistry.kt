@@ -21,13 +21,15 @@ object ECRegistry {
 
     val researchBook = items.register("research_book", ::ECBook)
 
+    val elementalCore = basicItem("elemental_core")
+
     @JvmStatic
     fun init(bus: IEventBus) {
         items.register(bus)
     }
 
-    fun basicItem(id: String, properties: Properties.() -> Unit = {}): RegistryObject<Item> {
-        val props = Properties().apply(properties).tab(ECTabs.tabItems)
+    fun basicItem(id: String, properties: Properties.() -> Unit = { tab(ECTabs.tabItems) }): RegistryObject<Item> {
+        val props = Properties().apply(properties)
         return items.register(id) { Item(props) }
     }
 }
