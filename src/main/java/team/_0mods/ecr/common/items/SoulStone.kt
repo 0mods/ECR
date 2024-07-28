@@ -1,19 +1,24 @@
 package team._0mods.ecr.common.items
 
-import net.minecraft.client.multiplayer.PlayerInfo
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
+import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
+import net.minecraftforge.event.entity.living.LivingDeathEvent
 import team._0mods.ecr.ModId
 import team._0mods.ecr.common.init.registry.ECTabs
 import java.util.UUID
 
 class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
     companion object {
+        @get:JvmStatic
+        val entityCapacityAdd = mutableMapOf<EntityType<*>, IntRange>()
+        val defaultCapacityAdd = 40..100
+
         @JvmStatic
         fun isBounded(stack: ItemStack): Boolean {
             if (stack.item !is SoulStone) throw UnsupportedOperationException()
@@ -55,8 +60,9 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
         @JvmStatic
         fun setCapacity(stack: ItemStack, count: Int) {
             if (stack.item !is SoulStone) throw UnsupportedOperationException()
+            val tag = stack.orCreateTag
 
-
+            tag.putInt("SoulStoneCapacity", count)
         }
     }
 
@@ -72,5 +78,11 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
         }
 
         return super.use(level, player, usedHand)
+    }
+
+    private fun onEntityKill(e: LivingDeathEvent) {
+        val source = e.source.entity ?: return
+        if (source !is Player) return
+
     }
 }

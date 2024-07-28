@@ -1,6 +1,7 @@
 package team._0mods.ecr.common
 
 import net.minecraft.core.BlockPos
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
@@ -14,6 +15,9 @@ import net.minecraftforge.registries.RegistryObject
 import team._0mods.ecr.common.init.registry.ECTabs
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
+
+val String.rl: ResourceLocation
+    get() = ResourceLocation(this)
 
 fun makeBERegistry(modId: String): Pair<Pair<DeferredRegister<Block>, DeferredRegister<Item>>, DeferredRegister<BlockEntityType<*>>> {
     val b = DeferredRegister.create(ForgeRegistries.BLOCKS, modId)

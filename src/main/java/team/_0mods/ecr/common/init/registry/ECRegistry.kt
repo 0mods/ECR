@@ -1,6 +1,8 @@
 package team._0mods.ecr.common.init.registry
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
+import net.minecraft.world.entity.animal.horse.Horse
 import net.minecraft.world.item.BlockItem
 import team._0mods.ecr.ModId
 import net.minecraft.world.item.Item
