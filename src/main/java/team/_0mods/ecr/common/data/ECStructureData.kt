@@ -1,5 +1,6 @@
 package team._0mods.ecr.common.data
 
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -11,7 +12,8 @@ data class ECStructureData(
     data class SymbolMatcher(
         val symbol: Char,
         val tag: TagMatcher? = null,
-        val block: String? = null
+        val block: String? = null,
+        @SerialName("center") val isCenter: Boolean = false
     )
 
     @Serializable

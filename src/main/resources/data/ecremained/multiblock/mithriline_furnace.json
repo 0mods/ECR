@@ -1,8 +1,26 @@
 {
   "pattern": [
-    ["a   a", "     ", "     ", "     ", "a   a"],
-    ["a a a", "     ", "a b a", "     ", "a a a"],
-    ["a a a", " aaa ", "a   a", " aaa ", "a a a"]
+    [
+      "a   a",
+      "     ",
+      "     ",
+      "     ",
+      "a   a"
+    ],
+    [
+      "a a a",
+      "     ",
+      "a b a",
+      "     ",
+      "a a a"
+    ],
+    [
+      "a a a",
+      " aaa ",
+      "a   a",
+      " aaa ",
+      "a a a"
+    ]
   ],
   "symbols": [
     {
@@ -11,7 +29,8 @@
     },
     {
       "symbol": "b",
-      "block": "ecremained:mithriline_furnace"
+      "block": "ecremained:mithriline_furnace",
+      "center": true
     }
   ]
 }

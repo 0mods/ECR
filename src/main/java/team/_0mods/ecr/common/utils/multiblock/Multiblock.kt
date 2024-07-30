@@ -7,7 +7,7 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import java.util.function.BiFunction
 
-class Multiblock(private val name: ResourceLocation, pattern: Array<Array<String>>, vararg rawMatchers: Any): IMultiblock {
+class Multiblock(private val name: ResourceLocation, pattern: Array<Array<String>>, private val startChar: Char, vararg rawMatchers: Any): IMultiblock {
     private val match: MutableMap<BlockPos, Matcher> = HashMap()
     private val w: Int
     private val h: Int
@@ -42,7 +42,7 @@ class Multiblock(private val name: ResourceLocation, pattern: Array<Array<String
                     val c = column[k]
                     raw[k][h - 1 - i][j] = c
 
-                    if (c == '0') {
+                    if (c == startChar) {
                         xOff = k
                         yOff = this.h - 1 - i
                         zOff = j
@@ -95,7 +95,7 @@ class Multiblock(private val name: ResourceLocation, pattern: Array<Array<String
 
     override fun isComplete(level: Level, center: BlockPos): Boolean {
         val start = this.getStart(center)
-        return this.forEach(center, 0.toChar()) { pos: BlockPos, matcher: Matcher ->
+        return this.forEach(center, startChar) { pos, matcher ->
             val offset = pos.subtract(start)
             matcher.check!!.matches(level, start, offset, pos, level.getBlockState(pos), this.getChar(offset))
         }
@@ -104,7 +104,7 @@ class Multiblock(private val name: ResourceLocation, pattern: Array<Array<String
     override fun forEach(center: BlockPos, c: Char, function: BiFunction<BlockPos, Matcher, Boolean>): Boolean {
         val start = this.getStart(center)
         for ((offset, value) in this.match) {
-            if (c.code == 0 || this.getChar(offset) == c) if (!function.apply(start.offset(offset), value)) return false
+            if (c.code == 0 || c == startChar || this.getChar(offset) == c) if (!function.apply(start.offset(offset), value)) return false
         }
         return true
     }

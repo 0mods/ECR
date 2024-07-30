@@ -13,8 +13,6 @@ open class MRUContainerImpl(
     private var maxReceive: Int,
     private var maxExtract: Int
 ): MRUContainer, INBTSerializable<Tag> {
-
-
     init {
         mru = max(0, min(capacity, mru))
     }

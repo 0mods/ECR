@@ -1,22 +1,16 @@
 package team._0mods.ecr.common.init.registry
 
-import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
-import net.minecraft.world.entity.animal.horse.Horse
 import net.minecraft.world.item.BlockItem
-import team._0mods.ecr.ModId
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Item.Properties
 import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockBehaviour
-import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.material.Material
 import net.minecraftforge.eventbus.api.IEventBus
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
+import team._0mods.ecr.ModId
 import team._0mods.ecr.common.blocks.MithrilineFurnace
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.items.BoundGem
@@ -46,7 +40,7 @@ object ECRegistry {
     val elementalCore = basicItem("elemental_core")
 
     // blocks
-    val mithrilinePlating = blocks.register("mithriline_plating") {
+    val mithrilinePlating = block("mithriline_plating") {
         Block(BlockBehaviour.Properties.of(Material.METAL))
     }
 
@@ -66,5 +60,11 @@ object ECRegistry {
     private fun basicItem(id: String, properties: Properties.() -> Unit = { tab(ECTabs.tabItems) }): RegistryObject<Item> {
         val props = Properties().apply(properties)
         return items.register(id) { Item(props) }
+    }
+
+    private fun <T: Block> block(id: String, b: () -> T): RegistryObject<T> {
+        val block = this.blocks.register(id, b)
+        items.register(id) { BlockItem(block.get(), Item.Properties().tab(ECTabs.tabBlocks)) }
+        return block
     }
 }

@@ -20,6 +20,8 @@ import team._0mods.ecr.common.items.ECBook.Companion.bookType
 private val json = Json {
     ignoreUnknownKeys = true
     encodeDefaults = true
+    prettyPrint = true
+    prettyPrintIndent = "  "
 }
 
 @SubscribeEvent
