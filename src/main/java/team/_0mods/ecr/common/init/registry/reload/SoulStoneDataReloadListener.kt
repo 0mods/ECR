@@ -1,5 +1,7 @@
 package team._0mods.ecr.common.init.registry.reload
 
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
@@ -8,6 +10,7 @@ import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraftforge.fml.ModList
 import net.minecraftforge.registries.ForgeRegistries
+import team._0mods.ecr.ECCoroutine
 import team._0mods.ecr.LOGGER
 import team._0mods.ecr.common.data.SoulStoneData
 import team._0mods.ecr.common.items.SoulStone
@@ -25,7 +28,7 @@ class SoulStoneDataReloadListener(private val json: Json): PreparableReloadListe
         backgroundExecutor: Executor,
         gameExecutor: Executor
     ): CompletableFuture<Void> {
-        val future = CompletableFuture.runAsync {
+        ECCoroutine.launch {
             val resources = resourceManager.listResources("soul_stone") { it.path.endsWith(".json") }
 
             if (resources.isNotEmpty()) {
@@ -49,11 +52,14 @@ class SoulStoneDataReloadListener(private val json: Json): PreparableReloadListe
                     }
 
                     SoulStone.entityCapacityAdd += entity to range
+                    return@forEach
                 }
             }
+            LOGGER.info("Stopping coroutine.")
+            this.coroutineContext.cancel()
         }
 
-        future.complete(null)
+        val future = CompletableFuture<Void>()
         return future
     }
 }
