@@ -1,13 +1,18 @@
 package team._0mods.ecr.common.items
 
+import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.MutableComponent
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.entity.EntityType
+import net.minecraft.world.entity.monster.Enemy
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
+import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.entity.living.LivingDeathEvent
 import team._0mods.ecr.ModId
 import team._0mods.ecr.common.init.registry.ECTabs
@@ -17,72 +22,126 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
     companion object {
         @get:JvmStatic
         val entityCapacityAdd = mutableMapOf<EntityType<*>, IntRange>()
-        val defaultCapacityAdd = 40..100
+        lateinit var defaultCapacityAdd: IntRange
+        lateinit var defaultEnemyAdd: IntRange
 
+        @Deprecated("Deprecated")
         @JvmStatic
-        fun isBounded(stack: ItemStack): Boolean {
-            if (stack.item !is SoulStone) throw UnsupportedOperationException()
-            val tag = stack.orCreateTag
+        val ItemStack.isBounded: Boolean get() {
+            if (this.item !is SoulStone) throw UnsupportedOperationException()
+            val tag = this.orCreateTag
             return tag.contains("SoulStoneOwner")
         }
 
         @JvmStatic
-        fun getBoundedTo(stack: ItemStack): UUID? {
-            if (stack.item !is SoulStone) throw UnsupportedOperationException()
-            val tag = stack.orCreateTag
-            return if (isBounded(stack)) tag.getUUID("SoulStoneOwner") else null
+        var ItemStack.boundedTo: UUID? get() {
+            if (this.item !is SoulStone) throw UnsupportedOperationException()
+            val tag = this.orCreateTag
+            return if (isBounded) tag.getUUID("SoulStoneOwner") else null
         }
+            set(value) {
+                if (this.item !is SoulStone) throw UnsupportedOperationException()
+                val tag = this.orCreateTag
 
-        @JvmStatic
-        fun setBoundedTo(stack: ItemStack, player: Player) {
-            if (stack.item !is SoulStone) throw UnsupportedOperationException()
-            val tag = stack.orCreateTag
-            if (!isBounded(stack)) {
-                tag.putUUID("SoulStoneOwner", player.uuid)
-            }
-        }
-
-        @JvmStatic
-        fun getCapacity(stack: ItemStack): Int {
-            if (stack.item !is SoulStone) throw UnsupportedOperationException()
-            val tag = stack.orCreateTag
-            if (!tag.contains("SoulStoneCapacity")) {
-                tag.putInt("SoulStoneCapacity", 0)
+                if (!isBounded) {
+                    tag.putUUID("SoulStoneOwner", value!!)
+                } else {
+                    tag.remove("SoulStoneOwner")
+                    tag.remove("SoulStoneCapacity")
+                }
             }
 
-            if (!isBounded(stack)) {
-                tag.putInt("SoulStoneCapacity", 0)
+        @JvmStatic
+        var ItemStack.capacity: Int
+            get() {
+                if (this.item !is SoulStone) throw UnsupportedOperationException()
+                val tag = this.orCreateTag
+                if (!isBounded) {
+                    tag.putInt("SoulStoneCapacity", 0)
+                }
+
+                return tag.getInt("SoulStoneCapacity")
+            }
+            set(value) {
+                if (this.item !is SoulStone) throw UnsupportedOperationException()
+                val tag = this.orCreateTag
+
+                tag.putInt("SoulStoneCapacity", value)
             }
 
-            return tag.getInt("SoulStoneCapacity")
+        fun ItemStack.add(count: Int) {
+            if (this.boundedTo != null) {
+                val cap = this.capacity
+                this.capacity = cap + count
+            }
         }
+    }
 
-        @JvmStatic
-        fun setCapacity(stack: ItemStack, count: Int) {
-            if (stack.item !is SoulStone) throw UnsupportedOperationException()
-            val tag = stack.orCreateTag
-
-            tag.putInt("SoulStoneCapacity", count)
-        }
+    init {
+        MinecraftForge.EVENT_BUS.addListener(this::onEntityKill)
     }
 
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         val stack = player.getItemInHand(usedHand)
 
         if (!player.isShiftKeyDown) {
-            if (!isBounded(stack)) {
-                setBoundedTo(stack, player)
+            if (!stack.isBounded) {
+                stack.boundedTo = player.uuid
                 player.displayClientMessage(Component.translatable("info.$ModId.soul_stone.bounded", player.name), true)
                 return InteractionResultHolder.success(stack)
+            }
+        } else {
+            if (stack.isBounded) {
+                 if (stack.boundedTo != player.uuid) {
+                     player.displayClientMessage(Component.translatable("info.$ModId.soul_stone.can_not_unbound"), true)
+                     return InteractionResultHolder.fail(stack)
+                 } else {
+                     stack.boundedTo = null
+                     player.displayClientMessage(Component.translatable("info.$ModId.soul_stone.unbounded"), true)
+                     return InteractionResultHolder.fail(stack)
+                 }
             }
         }
 
         return super.use(level, player, usedHand)
     }
 
+    override fun appendHoverText(
+        stack: ItemStack,
+        level: Level?,
+        tooltipComponents: MutableList<Component>,
+        isAdvanced: TooltipFlag
+    ) {
+        level ?: return
+
+        if (stack.isBounded) {
+            val player = level.getPlayerByUUID(stack.boundedTo!!)
+
+            tooltipComponents += Component.translatable(
+                "tooltip.$ModId.soul_stone.tracking",
+                (player?.name as? MutableComponent)?.withStyle(ChatFormatting.GOLD) ?:
+                Component.literal("Not Loaded").withStyle(ChatFormatting.GOLD)
+            ).withStyle(ChatFormatting.DARK_GRAY)
+
+            tooltipComponents += Component.translatable(
+                "tooltip.$ModId.soul_stone.detected_ubmru",
+                Component.literal(stack.capacity.toString()).withStyle(ChatFormatting.GREEN)
+            ).withStyle(ChatFormatting.DARK_GRAY)
+        }
+    }
+
     private fun onEntityKill(e: LivingDeathEvent) {
         val source = e.source.entity ?: return
+        val ent = e.entity
         if (source !is Player) return
 
+        val item = source.inventory.items.filter { it.item is SoulStone && it.boundedTo == source.uuid }[0]
+
+        if (ent.isBaby) return
+        if (entityCapacityAdd.contains(ent.type)) item.add(entityCapacityAdd[ent.type]!!.random())
+        else {
+            if (ent is Enemy) item.add(defaultEnemyAdd.random())
+            else item.add(defaultCapacityAdd.random())
+        }
     }
 }

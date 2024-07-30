@@ -21,6 +21,7 @@ import team._0mods.ecr.common.blocks.MithrilineFurnace
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECGem
+import team._0mods.ecr.common.items.SoulStone
 import team._0mods.ecr.common.makeBERegistry
 import team._0mods.ecr.common.register
 
@@ -37,6 +38,7 @@ object ECRegistry {
     val elementalGem = items.register("elemental_gem", ECGem.elemental)
 
     val researchBook = items.register("research_book", ::ECBook)
+    val soulStone = items.register("soul_stone", ::SoulStone)
 
     val elementalCore = basicItem("elemental_core")
 

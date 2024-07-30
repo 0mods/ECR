@@ -11,6 +11,6 @@ object ECTabs {
     }
 
     val tabBlocks = object : CreativeModeTab("$ModId.blocks") {
-        override fun makeIcon(): ItemStack = ItemStack(ECRegistry.elementalGem.get())
+        override fun makeIcon(): ItemStack = ItemStack(ECRegistry.mithrilineFurnace.first)
     }
 }

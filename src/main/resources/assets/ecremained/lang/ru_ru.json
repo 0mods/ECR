@@ -7,8 +7,11 @@
   "item.ecremained.water_gem": "Водный кристалл",
   "item.ecremained.earth_gem": "Земляной кристалл",
   "item.ecremained.air_gem": "Воздушный кристалл",
+  "item.ecremained.soul_stone": "Камень души",
 
   "info.ecremained.soul_stone.bounded": "Камень души привязан к %s",
+  "info.ecremained.soul_stone.can_not_unbound": "Вы не можете отвязать этот камень души",
+  "info.ecremained.soul_stone.unbounded": "Камень души отвязан",
 
   "tooltip.ecremained.rmc": "ПКМ",
   "tooltip.ecremained.book.upgrade": "Зажмите %s чтобы улучшить книгу",
@@ -19,5 +22,7 @@
   "tooltip.ecremained.book.engineer": "Инженерию",
   "tooltip.ecremained.book.hoana": "Хоаны",
   "tooltip.ecremained.book.shade": "Тени",
-  "tooltip.ecremained.gem.unknown": "Неизвестный"
+  "tooltip.ecremained.gem.unknown": "Неизвестный",
+  "tooltip.ecremained.soul_stone.tracking": "Отслеживается MRU матрица %s",
+  "tooltip.ecremained.soul_stone.detected_ubmru": "Обнаружено %s UBMRU энергии"
 }
