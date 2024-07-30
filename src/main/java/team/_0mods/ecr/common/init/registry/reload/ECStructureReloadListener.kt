@@ -81,7 +81,7 @@ class ECStructureReloadListener(private val json: Json): SimplePreparableReloadL
 
                     if (block != null) {
                         symbols.addAll(arrayOf(c, block))
-                        if (m.isCenter) {
+                        if (m.isCenter && startChar == '0') {
                             startChar = c
                         }
                     } else {
