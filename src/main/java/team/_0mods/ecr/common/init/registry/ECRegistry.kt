@@ -39,6 +39,9 @@ object ECRegistry {
 
     val elementalCore = basicItem("elemental_core")
 
+    // Elemental
+    // Weakened
+
     // blocks
     val mithrilinePlating = block("mithriline_plating") {
         Block(BlockBehaviour.Properties.of(Material.METAL))
