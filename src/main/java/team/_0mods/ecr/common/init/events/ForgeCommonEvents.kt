@@ -63,7 +63,6 @@ fun onCommandRegister(e: RegisterCommandsEvent) {
     ECCommands.register(e.dispatcher)
 }
 
-@OptIn(ExperimentalSerializationApi::class)
 @SubscribeEvent
 fun onRegisterReloadListener(e: AddReloadListenerEvent) {
     LOGGER.info("Registering Reload Listener")
