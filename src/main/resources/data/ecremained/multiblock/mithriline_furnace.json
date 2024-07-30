@@ -1,0 +1,17 @@
+{
+  "pattern": [
+    ["a   a", "     ", "     ", "     ", "a   a"],
+    ["a a a", "     ", "a b a", "     ", "a a a"],
+    ["a a a", " aaa ", "a   a", " aaa ", "a a a"]
+  ],
+  "symbols": [
+    {
+      "symbol": "a",
+      "block": "ecremained:mithriline_plating"
+    },
+    {
+      "symbol": "b",
+      "block": "ecremained:mithriline_furnace"
+    }
+  ]
+}

@@ -1,11 +1,10 @@
-package team._0mods.ecr.common.command
+package team._0mods.ecr.common.init.registry
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.item.ItemStack
-import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.utils.*
 
@@ -37,7 +36,7 @@ object ECCommands {
         }
     }
 
-    val books: Collection<String> get() {
+    private val books: Collection<String> get() {
         val ids = mutableListOf<String>()
         ECBook.Type.entries.forEach {
             ids += it.name.lowercase()

@@ -32,15 +32,10 @@ class SoulStoneDataReloadListener(private val json: Json): SimplePreparableReloa
             if (it.key.path.contains("default")) {
                 if (it.key.path.contains("enemy")) {
                     if (it.key.namespace == ModId) SoulStone.defaultEnemyAdd = range
-                    else {
-                        if (data.entity.isEmpty()) throw IllegalStateException("Failed to set default soul stone value to null entity.")
-                    }
-                }
-                else {
+                    else if (data.entity.isEmpty()) throw IllegalStateException("Failed to set default soul stone value to null entity.")
+                } else {
                     if (it.key.namespace == ModId) SoulStone.defaultCapacityAdd = range
-                    else {
-                        if (data.entity.isEmpty()) throw IllegalStateException("Failed to set default soul stone value to null entity.")
-                    }
+                    else if (data.entity.isEmpty()) throw IllegalStateException("Failed to set default soul stone value to null entity.")
                 }
                 return@forEach
             }

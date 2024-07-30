@@ -11,7 +11,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import team._0mods.ecr.ModId
 import team._0mods.ecr.client.ECBookScreen
-import team._0mods.ecr.common.command.ECCommands
+import team._0mods.ecr.common.init.registry.ECCommands
+import team._0mods.ecr.common.init.registry.reload.ECStructureReloadListener
 import team._0mods.ecr.common.init.registry.reload.SoulStoneDataReloadListener
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECBook.Companion.bookType
@@ -56,4 +57,5 @@ fun onCommandRegister(e: RegisterCommandsEvent) {
 @SubscribeEvent
 fun onRegisterReloadListener(e: AddReloadListenerEvent) {
     e.addListener(SoulStoneDataReloadListener(json))
+    e.addListener(ECStructureReloadListener(json))
 }

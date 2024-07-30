@@ -19,6 +19,7 @@ import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 import team._0mods.ecr.common.blocks.MithrilineFurnace
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
+import team._0mods.ecr.common.items.BoundGem
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECGem
 import team._0mods.ecr.common.items.SoulStone
@@ -38,11 +39,17 @@ object ECRegistry {
     val elementalGem = items.register("elemental_gem", ECGem.elemental)
 
     val researchBook = items.register("research_book", ::ECBook)
+
     val soulStone = items.register("soul_stone", ::SoulStone)
+    val boundGem = items.register("bound_gem", ::BoundGem)
 
     val elementalCore = basicItem("elemental_core")
 
     // blocks
+    val mithrilinePlating = blocks.register("mithriline_plating") {
+        Block(BlockBehaviour.Properties.of(Material.METAL))
+    }
+
     val mithrilineFurnace by blocksWE.register(
         "mithriline_furnace",
         { MithrilineFurnace(BlockBehaviour.Properties.of(Material.METAL)) },
@@ -52,6 +59,7 @@ object ECRegistry {
     @JvmStatic
     fun init(bus: IEventBus) {
         items.register(bus)
+        blocks.register(bus)
         blocksWE.register(bus)
     }
 
