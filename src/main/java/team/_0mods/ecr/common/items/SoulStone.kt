@@ -151,7 +151,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
         }
     }
 
-    fun onEntityKill(e: LivingDeathEvent) {
+    private fun onEntityKill(e: LivingDeathEvent) {
         val source = e.source.entity ?: return
         val ent = e.entity
         if (source !is Player) return
