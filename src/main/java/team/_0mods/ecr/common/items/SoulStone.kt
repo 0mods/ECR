@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.monster.Enemy
@@ -16,8 +17,10 @@ import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.entity.living.LivingDeathEvent
+import team._0mods.ecr.LOGGER
 import team._0mods.ecr.ModId
 import team._0mods.ecr.common.init.registry.ECTabs
+import team._0mods.ecr.common.items.SoulStone.Companion.boundedTo
 import team._0mods.ecr.common.utils.MRUWeapon
 import java.util.UUID
 
@@ -28,25 +31,18 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
         lateinit var defaultCapacityAdd: IntRange
         lateinit var defaultEnemyAdd: IntRange
 
-        @Deprecated("Deprecated")
         @JvmStatic
-        val ItemStack.isBounded: Boolean get() {
-            if (this.item !is SoulStone) throw UnsupportedOperationException()
-            val tag = this.orCreateTag
-            return tag.contains("SoulStoneOwner")
-        }
-
-        @JvmStatic
-        var ItemStack.boundedTo: UUID? get() {
-            if (this.item !is SoulStone) throw UnsupportedOperationException()
-            val tag = this.orCreateTag
-            return if (isBounded) tag.getUUID("SoulStoneOwner") else null
-        }
+        var ItemStack.boundedTo: UUID?
+            get() {
+                if (this.item !is SoulStone) throw UnsupportedOperationException()
+                val tag = this.orCreateTag
+                return if (tag.contains("SoulStoneOwner")) tag.getUUID("SoulStoneOwner") else null
+            }
             set(value) {
                 if (this.item !is SoulStone) throw UnsupportedOperationException()
                 val tag = this.orCreateTag
 
-                if (!isBounded) {
+                if (!tag.contains("SoulStoneOwner")) {
                     tag.putUUID("SoulStoneOwner", value!!)
                 } else {
                     tag.remove("SoulStoneOwner")
@@ -59,7 +55,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
             get() {
                 if (this.item !is SoulStone) throw UnsupportedOperationException()
                 val tag = this.orCreateTag
-                if (!isBounded) {
+                if (boundedTo == null) {
                     tag.putInt("SoulStoneCapacity", 0)
                 }
 
@@ -72,10 +68,11 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
                 tag.putInt("SoulStoneCapacity", value)
             }
 
-        fun ItemStack.add(count: Int) {
+        fun ItemStack.add(count: Float) {
+            val conv = count.toInt()
             if (this.boundedTo != null) {
                 val cap = this.capacity
-                this.capacity = cap + count
+                this.capacity = cap + conv
             }
         }
     }
@@ -88,7 +85,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
         val stack = player.getItemInHand(usedHand)
 
         if (!player.isShiftKeyDown) {
-            if (!stack.isBounded) {
+            if (stack.boundedTo == null) {
                 if (stack.count > 1) {
                     val copiedStack = stack.copy().apply {
                         count = 1
@@ -109,7 +106,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
                 return InteractionResultHolder.success(stack)
             }
         } else {
-            if (stack.isBounded) {
+            if (stack.boundedTo != null) {
                  if (stack.boundedTo != player.uuid) {
                      player.displayClientMessage(Component.translatable("info.$ModId.soul_stone.can_not_unbound"), true)
                      return InteractionResultHolder.fail(stack)
@@ -138,7 +135,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
     ) {
         level ?: return
 
-        if (stack.isBounded) {
+        if (stack.boundedTo != null) {
             val player = level.getPlayerByUUID(stack.boundedTo!!)
 
             tooltipComponents += Component.translatable(
@@ -154,22 +151,37 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
         }
     }
 
-    private fun onEntityKill(e: LivingDeathEvent) {
+    fun onEntityKill(e: LivingDeathEvent) {
         val source = e.source.entity ?: return
         val ent = e.entity
         if (source !is Player) return
 
-        val weapon = source.getItemInHand(InteractionHand.MAIN_HAND).item
-        val multiplier = if (weapon is MRUWeapon && weapon is SwordItem) weapon.multiplier else 1
+        val items = source.inventory.items.filter { it.item is SoulStone }
 
-        val item = source.inventory.items.filter { it.item is SoulStone && it.boundedTo == source.uuid }[0]
+        if (items.isEmpty()) return
 
+        val item = items.random()
+
+        if (item.boundedTo == null) return
         if (ent.isBaby && ent !is Enemy) return
 
-        if (entityCapacityAdd.contains(ent.type)) item.add(entityCapacityAdd[ent.type]!!.random() * multiplier)
-        else {
-            if (ent is Enemy) item.add(defaultEnemyAdd.random() * multiplier)
-            else item.add(defaultCapacityAdd.random() * multiplier)
+        val weapon = source.getItemInHand(InteractionHand.MAIN_HAND).item
+        val multiplier = if (weapon is MRUWeapon && weapon is SwordItem) weapon.multiplier else 1f
+
+        if (entityCapacityAdd.contains(ent.type)) {
+            val a = entityCapacityAdd[ent.type]!!.random() * multiplier
+            LOGGER.info("Entity ${ent.name} is dead. Added $a to capacity")
+            item.add(a)
+        } else {
+            if (ent is Enemy) {
+                val a = defaultEnemyAdd.random() * multiplier
+                LOGGER.info("Entity ${ent.name} is dead. Added $a to capacity")
+                item.add(a)
+            } else {
+                val a = defaultCapacityAdd.random() * multiplier
+                LOGGER.info("Entity ${ent.name} is dead. Added $a to capacity")
+                item.add(a)
+            }
         }
     }
 }

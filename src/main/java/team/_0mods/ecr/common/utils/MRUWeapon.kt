@@ -1,5 +1,5 @@
 package team._0mods.ecr.common.utils
 
 interface MRUWeapon {
-    val multiplier: Int
+    val multiplier: Float
 }

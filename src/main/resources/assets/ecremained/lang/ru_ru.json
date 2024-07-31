@@ -8,11 +8,17 @@
   "item.ecremained.earth_gem": "Земляной кристалл",
   "item.ecremained.air_gem": "Воздушный кристалл",
   "item.ecremained.soul_stone": "Камень души",
+  "item.ecremained.weakness_elemental_axe": "Ослабленный элементальный топор",
+  "item.ecremained.weakness_elemental_hoe": "Ослабленная элементальная мотыга",
+  "item.ecremained.weakness_elemental_pickaxe": "Ослабленная элементальная кирка",
+  "item.ecremained.weakness_elemental_shovel": "Ослабленная элементальная лопата",
+  "item.ecremained.weakness_elemental_sword": "Ослабленный элементальный меч",
 
   "info.ecremained.soul_stone.bounded": "Камень души привязан к %s",
   "info.ecremained.soul_stone.can_not_unbound": "Вы не можете отвязать этот камень души",
   "info.ecremained.soul_stone.unbounded": "Камень души отвязан",
 
+  "tooltip.ecremained.sword_multiplier": "Бонус получения MRU",
   "tooltip.ecremained.rmc": "ПКМ",
   "tooltip.ecremained.book.upgrade": "Зажмите %s чтобы улучшить книгу",
   "tooltip.ecremained.book.downgrade": "Зажмите %s чтобы сбросить все знания в книге",
@@ -22,7 +28,6 @@
   "tooltip.ecremained.book.engineer": "Инженерию",
   "tooltip.ecremained.book.hoana": "Хоаны",
   "tooltip.ecremained.book.shade": "Тени",
-  "tooltip.ecremained.gem.unknown": "Неизвестный",
   "tooltip.ecremained.soul_stone.tracking": "Отслеживается MRU матрица %s",
   "tooltip.ecremained.soul_stone.detected_ubmru": "Обнаружено %s UBMRU энергии"
 }

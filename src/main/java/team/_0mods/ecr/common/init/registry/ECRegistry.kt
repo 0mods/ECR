@@ -17,30 +17,34 @@ import team._0mods.ecr.common.items.BoundGem
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECGem
 import team._0mods.ecr.common.items.SoulStone
+import team._0mods.ecr.common.items.tools.*
 import team._0mods.ecr.common.makeBERegistry
 import team._0mods.ecr.common.register
 
 object ECRegistry {
-    val items = DeferredRegister.create(ForgeRegistries.ITEMS, ModId)
-    val blocksWE = makeBERegistry(ModId)
-    val blocks = DeferredRegister.create(ForgeRegistries.BLOCKS, ModId)
+    private val items: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, ModId)
+    private val blocksWE = makeBERegistry(ModId)
+    private val blocks: DeferredRegister<Block> = DeferredRegister.create(ForgeRegistries.BLOCKS, ModId)
 
     // items
-    val flameGem = items.register("flame_gem", ECGem.flame)
-    val waterGem = items.register("water_gem", ECGem.water)
-    val earthGem = items.register("earth_gem", ECGem.earth)
-    val airGem = items.register("air_gem", ECGem.air)
-    val elementalGem = items.register("elemental_gem", ECGem.elemental)
+    val flameGem: RegistryObject<ECGem> = items.register("flame_gem", ECGem.flame)
+    val waterGem: RegistryObject<ECGem> = items.register("water_gem", ECGem.water)
+    val earthGem: RegistryObject<ECGem> = items.register("earth_gem", ECGem.earth)
+    val airGem: RegistryObject<ECGem> = items.register("air_gem", ECGem.air)
+    val elementalGem: RegistryObject<ECGem> = items.register("elemental_gem", ECGem.elemental)
 
-    val researchBook = items.register("research_book", ::ECBook)
+    val researchBook: RegistryObject<ECBook> = items.register("research_book", ::ECBook)
 
-    val soulStone = items.register("soul_stone", ::SoulStone)
-    val boundGem = items.register("bound_gem", ::BoundGem)
+    val soulStone: RegistryObject<SoulStone> = items.register("soul_stone", ::SoulStone)
+    val boundGem: RegistryObject<BoundGem> = items.register("bound_gem", ::BoundGem)
 
     val elementalCore = basicItem("elemental_core")
 
-    // Elemental
-    // Weakened
+    val weakAxe: RegistryObject<WeakAxe> = items.register("weakness_elemental_axe", ::WeakAxe)
+    val weakHoe: RegistryObject<WeakHoe> = items.register("weakness_elemental_hoe", ::WeakHoe)
+    val weakPickaxe: RegistryObject<WeakPickaxe> = items.register("weakness_elemental_pickaxe", ::WeakPickaxe)
+    val weakShovel: RegistryObject<WeakShovel> = items.register("weakness_elemental_shovel", ::WeakShovel)
+    val weakSword: RegistryObject<WeakSword> = items.register("weakness_elemental_sword", ::WeakSword)
 
     // blocks
     val mithrilinePlating = block("mithriline_plating") {
