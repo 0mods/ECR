@@ -17,6 +17,11 @@ interface IMultiblock {
             val mb = MULTIBLOCKS[id] ?: throw NullPointerException("Failed to get multiblock from json with id $id")
             return mb
         }
+
+        fun createMultiBlock(id: ResourceLocation, pattern: Array<Array<String>>, vararg rawMatchers: Any) =
+            this.createMultiBlock(id, pattern, '0', *rawMatchers)
+
+        fun createMultiBlock(id: ResourceLocation, pattern: Array<Array<String>>, startChar: Char, vararg rawMatchers: Any) = Multiblock(id, pattern, startChar, *rawMatchers)
     }
 
     fun isComplete(level: Level, center: BlockPos): Boolean

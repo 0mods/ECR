@@ -12,6 +12,7 @@ import net.minecraftforge.registries.ForgeRegistries
 import team._0mods.ecr.LOGGER
 import team._0mods.ecr.common.data.ECStructureData
 import team._0mods.ecr.common.rl
+import team._0mods.ecr.common.utils.multiblock.IMultiblock
 import team._0mods.ecr.common.utils.multiblock.Matcher
 import team._0mods.ecr.common.utils.multiblock.Multiblock
 
@@ -96,7 +97,7 @@ class ECStructureReloadListener(private val json: Json): SimplePreparableReloadL
                 return@forEach
             }
 
-            Multiblock(
+            IMultiblock.createMultiBlock(
                 id,
                 data.pattern,
                 startChar,

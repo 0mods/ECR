@@ -7,7 +7,12 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import java.util.function.BiFunction
 
-class Multiblock(private val name: ResourceLocation, pattern: Array<Array<String>>, private val startChar: Char, vararg rawMatchers: Any): IMultiblock {
+class Multiblock internal constructor(
+    private val name: ResourceLocation,
+    pattern: Array<Array<String>>,
+    private val startChar: Char,
+    vararg rawMatchers: Any
+): IMultiblock {
     private val match: MutableMap<BlockPos, Matcher> = HashMap()
     private val w: Int
     private val h: Int
