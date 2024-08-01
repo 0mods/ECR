@@ -4,31 +4,18 @@ package team._0mods.ecr.common.init.events
 
 import kotlinx.serialization.json.Json
 import net.minecraft.client.Minecraft
-import net.minecraft.world.InteractionHand
-import net.minecraft.world.entity.monster.Enemy
-import net.minecraft.world.entity.player.Player
-import net.minecraft.world.item.SwordItem
 import net.minecraftforge.event.AddReloadListenerEvent
 import net.minecraftforge.event.RegisterCommandsEvent
-import net.minecraftforge.event.entity.living.LivingDeathEvent
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
-import team._0mods.ecr.LOGGER
 import team._0mods.ecr.ModId
-import team._0mods.ecr.client.ECBookScreen
+import team._0mods.ecr.client.screen.ECBookScreen
 import team._0mods.ecr.common.init.registry.ECCommands
 import team._0mods.ecr.common.init.registry.reload.ECStructureReloadListener
 import team._0mods.ecr.common.init.registry.reload.SoulStoneDataReloadListener
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECBook.Companion.bookType
-import team._0mods.ecr.common.items.SoulStone
-import team._0mods.ecr.common.items.SoulStone.Companion.add
-import team._0mods.ecr.common.items.SoulStone.Companion.boundedTo
-import team._0mods.ecr.common.items.SoulStone.Companion.defaultCapacityAdd
-import team._0mods.ecr.common.items.SoulStone.Companion.defaultEnemyAdd
-import team._0mods.ecr.common.items.SoulStone.Companion.entityCapacityAdd
-import team._0mods.ecr.common.utils.MRUWeapon
 
 private val json = Json {
     ignoreUnknownKeys = true

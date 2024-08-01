@@ -1,4 +1,4 @@
-package team._0mods.ecr.client
+package team._0mods.ecr.client.renderer
 
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
@@ -80,9 +80,11 @@ class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): Block
 
             pushPose()
             translate(0.5, -0.5, 0.5)
+
             body.yRot = Math.toRadians(interpol.toDouble()).toFloat()
             val consumer = MF_RESOURCE_LOCATION.buffer(bufferSource, RenderType::entitySolid)
             body.render(poseStack, consumer, packedLight, packedOverlay)
+
             popPose()
         }
     }

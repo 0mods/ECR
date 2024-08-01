@@ -21,7 +21,9 @@ import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.init.registry.ECMultiblocks
 
 
-class MithrilineFurnace(properties: Properties) : BaseEntityBlock(properties) {
+class MithrilineFurnace(properties: Properties) : BaseEntityBlock(
+    properties.noOcclusion()
+) {
     override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = MithrilineFurnaceEntity(pos, state)
 
     override fun <T : BlockEntity> getTicker(
@@ -48,43 +50,30 @@ class MithrilineFurnace(properties: Properties) : BaseEntityBlock(properties) {
         return super.use(state, level, pos, player, hand, hit)
     }
 
-    /*override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape {
+    override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape = makeShape()
+
+    private fun makeShape(): VoxelShape {
         var shape = Shapes.empty()
-        shape = Shapes.join(shape, Shapes.box(0.875, 0.125, 0.0, 1.0, 0.875, 0.125), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.0, 0.125, 0.125, 1.0), BooleanOp.OR)
         shape = Shapes.join(shape, Shapes.box(0.875, 0.0, 0.0, 1.0, 0.125, 1.0), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.125, 0.0, 0.0, 0.875, 0.125, 0.125), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.125, 0.0, 0.875, 0.875, 0.125, 1.0), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.0, 0.875, 0.0, 0.125, 1.0, 1.0), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.875, 0.875, 0.0, 1.0, 1.0, 1.0), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.125, 0.875, 0.0, 0.875, 1.0, 0.125), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.125, 0.875, 0.875, 0.875, 1.0, 1.0), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.0, 0.125, 0.0, 0.125, 0.875, 0.125), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.0, 0.125, 0.875, 0.125, 0.875, 1.0), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.875, 0.125, 0.875, 1.0, 0.875, 1.0), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.125, 0.375, 0.0, 0.875, 0.625, 0.125), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.125, 0.375, 0.875, 0.875, 0.625, 1.0), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.875, 0.375, 0.125, 1.0, 0.625, 0.875), BooleanOp.OR)
         shape = Shapes.join(shape, Shapes.box(0.0, 0.375, 0.125, 0.125, 0.625, 0.875), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.3125, 0.8125, 0.3125, 0.6875, 0.8125, 0.6875), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.125, 0.875, 0.125, 0.1875, 0.9375, 0.875), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.8125, 0.875, 0.125, 0.875, 0.9375, 0.875), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.1875, 0.875, 0.8125, 0.8125, 0.9375, 0.875), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.1875, 0.875, 0.125, 0.8125, 0.9375, 0.1875), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.6875, 0.8125, 0.3125, 0.8125, 0.875, 0.6875), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.1875, 0.8125, 0.1875, 0.8125, 0.875, 0.3125), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.1875, 0.8125, 0.6875, 0.8125, 0.875, 0.8125), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.1875, 0.8125, 0.3125, 0.3125, 0.875, 0.6875), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.1875, 0.125, 0.6875, 0.8125, 0.1875, 0.8125), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.6875, 0.125, 0.3125, 0.8125, 0.1875, 0.6875), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.1875, 0.125, 0.1875, 0.8125, 0.1875, 0.3125), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.1875, 0.125, 0.3125, 0.3125, 0.1875, 0.6875), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.3125, 0.1875, 0.3125, 0.6875, 0.1875, 0.6875), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.1875, 0.0625, 0.125, 0.8125, 0.125, 0.1875), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.1875, 0.0625, 0.8125, 0.8125, 0.125, 0.875), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.0, 0.875, 0.0, 0.125, 1.0, 1.0), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.0, 0.125, 0.125, 1.0), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.125, 0.875, 0.875, 0.875, 1.0, 1.0), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.0, 0.125, 0.875, 0.125, 0.875, 1.0), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.125, 0.0, 0.875, 0.875, 0.125, 1.0), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.125, 0.375, 0.875, 0.875, 0.625, 1.0), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.875, 0.875, 0.0, 1.0, 1.0, 1.0), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.875, 0.375, 0.125, 1.0, 0.625, 0.875), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.875, 0.125, 0.875, 1.0, 0.875, 1.0), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.0, 0.125, 0.0, 0.125, 0.875, 0.125), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.125, 0.375, 0.0, 0.875, 0.625, 0.125), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.125, 0.875, 0.0, 0.875, 1.0, 0.125), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.875, 0.125, 0.0, 1.0, 0.875, 0.125), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.125, 0.0, 0.0, 0.875, 0.125, 0.125), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.125, 0.875, 0.125, 0.875, 0.9375, 0.875), BooleanOp.OR)
         shape = Shapes.join(shape, Shapes.box(0.125, 0.0625, 0.125, 0.1875, 0.125, 0.875), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.8125, 0.0625, 0.125, 0.875, 0.125, 0.875), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.125, 0.0625, 0.125, 0.875, 0.125, 0.875), BooleanOp.OR)
 
         return shape
-    }*/
+    }
 }

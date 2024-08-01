@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import team._0mods.ecr.LOGGER
 import team._0mods.ecr.ModId
-import team._0mods.ecr.client.MithrilineFurnaceRenderer
+import team._0mods.ecr.client.renderer.MithrilineFurnaceRenderer
 import team._0mods.ecr.common.init.registry.ECRegistry
 
 @SubscribeEvent
