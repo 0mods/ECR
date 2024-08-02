@@ -15,6 +15,7 @@ import net.minecraft.world.inventory.InventoryMenu
 import team._0mods.ecr.ModId
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.rl
+import kotlin.math.floor
 
 class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): BlockEntityRenderer<MithrilineFurnaceEntity> {
     companion object {
@@ -49,12 +50,10 @@ class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): Block
     private var previousRot = 0f
     private var rotAngle = 0f
     private val body: ModelPart
-    private val mc: Minecraft
 
     init {
         val part = ctx.bakeLayer(MF_LAYER)
         body = part.getChild("core")
-        mc = Minecraft.getInstance()
     }
 
     override fun render(
@@ -69,10 +68,10 @@ class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): Block
 
         if (blockEntity.successfulStructure) {
             rotAngle += 45f * (1f / 20f)
-        } else if (rotAngle > 0) {
+        } else if (rotAngle % 360 != 0f) {
             rotAngle += 45f * (1f / 20f) / 2
 
-            if (rotAngle % 360 == 0f) rotAngle = 0f
+            if (rotAngle % 360 == 0f) rotAngle = 360f * floor(rotAngle / 360)
         }
 
         poseStack.apply {

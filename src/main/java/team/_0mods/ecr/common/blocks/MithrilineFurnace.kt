@@ -45,9 +45,11 @@ class MithrilineFurnace(properties: Properties) : BaseEntityBlock(
     ): InteractionResult {
         if (ECMultiblocks.mithrilineFurnace.isComplete(level, pos)) {
             player.displayClientMessage(Component.literal("MB is complete"), false)
-        } else player.displayClientMessage(Component.literal("MultiBlock is not complete"), false)
-
-        return super.use(state, level, pos, player, hand, hit)
+            return InteractionResult.SUCCESS
+        } else {
+            player.displayClientMessage(Component.literal("MultiBlock is not complete"), false)
+            return InteractionResult.FAIL
+        }
     }
 
     override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape = makeShape()
