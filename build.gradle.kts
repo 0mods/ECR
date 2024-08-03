@@ -86,6 +86,11 @@ tasks {
         }
     }
 
+    compileKotlin {
+        useDaemonFallbackStrategy = false
+        compilerOptions.freeCompilerArgs.add("-Xjvm-default=all")
+    }
+
     processResources {
         from(project.sourceSets.main.get().resources)
 

@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.Mod
 import team._0mods.ecr.ModId
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECBook.Companion.bookType
-import team._0mods.ecr.common.utils.MRUWeapon
+import team._0mods.ecr.common.utils.mru.MRUWeapon
 
 @SubscribeEvent
 fun onBookGMToolTip(e: ItemTooltipEvent) {

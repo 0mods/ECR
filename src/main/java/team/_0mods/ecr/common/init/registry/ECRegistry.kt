@@ -3,6 +3,7 @@ package team._0mods.ecr.common.init.registry
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Item.Properties
+import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.Material
@@ -19,12 +20,14 @@ import team._0mods.ecr.common.items.ECGem
 import team._0mods.ecr.common.items.SoulStone
 import team._0mods.ecr.common.items.tools.*
 import team._0mods.ecr.common.makeBERegistry
+import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
 import team._0mods.ecr.common.register
 
 object ECRegistry {
     private val items: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, ModId)
     private val blocksWE = makeBERegistry(ModId)
     private val blocks: DeferredRegister<Block> = DeferredRegister.create(ForgeRegistries.BLOCKS, ModId)
+    private val recipes: DeferredRegister<RecipeSerializer<*>> = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, ModId)
 
     // items
     val flameGem: RegistryObject<ECGem> = items.register("flame_gem", ECGem.flame)
@@ -56,6 +59,11 @@ object ECRegistry {
         { MithrilineFurnace(BlockBehaviour.Properties.of(Material.METAL)) },
         ::MithrilineFurnaceEntity
     )
+
+    // recipes
+    val mithrilineFurnaceRecipe: RegistryObject<MithrilineFurnaceRecipe.Serializer> = recipes.register("mithriline_furnace") {
+        MithrilineFurnaceRecipe.Serializer(::MithrilineFurnaceRecipe)
+    }
 
     @JvmStatic
     fun init(bus: IEventBus) {

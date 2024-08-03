@@ -19,6 +19,8 @@ import kotlin.reflect.KProperty
 val String.rl: ResourceLocation
     get() = ResourceLocation(this)
 
+val staticFrameUpdateTime = 1 / 20
+
 fun makeBERegistry(modId: String): Pair<Pair<DeferredRegister<Block>, DeferredRegister<Item>>, DeferredRegister<BlockEntityType<*>>> {
     val b = DeferredRegister.create(ForgeRegistries.BLOCKS, modId)
     val be = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, modId)

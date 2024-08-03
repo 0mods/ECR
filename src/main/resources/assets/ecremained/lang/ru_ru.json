@@ -14,6 +14,9 @@
   "item.ecremained.weakness_elemental_shovel": "Ослабленная элементальная лопата",
   "item.ecremained.weakness_elemental_sword": "Ослабленный элементальный меч",
 
+  "block.ecremained.mithriline_furnace": "Мифрилиновая печь",
+  "block.ecremained.mithriline_plating": "Мифрилиновое покрытие",
+
   "info.ecremained.soul_stone.bounded": "Камень души привязан к %s",
   "info.ecremained.soul_stone.can_not_unbound": "Вы не можете отвязать этот камень души",
   "info.ecremained.soul_stone.unbounded": "Камень души отвязан",

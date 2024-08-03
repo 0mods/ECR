@@ -13,7 +13,7 @@ import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 import net.minecraftforge.fml.loading.FMLEnvironment
-import team._0mods.ecr.common.utils.MRUGenerator
+import team._0mods.ecr.common.utils.mru.MRUGenerator
 import team._0mods.ecr.common.init.registry.ECTabs
 
 class BoundGem : Item(Properties().tab(ECTabs.tabItems)) {

@@ -14,6 +14,9 @@
   "item.ecremained.weakness_elemental_shovel": "Weakness Elemental Shovel",
   "item.ecremained.weakness_elemental_sword": "Weakness Elemental Sword",
 
+  "block.ecremained.mithriline_furnace": "Mithriline Furnace",
+  "block.ecremained.mithriline_plating": "Mithriline Plating",
+
   "info.ecremained.soul_stone.bounded": "The soul stone is bounded to %s",
   "info.ecremained.soul_stone.can_not_unbound": "You can't unbound this soul stone",
   "info.ecremained.soul_stone.unbounded": "The soul stone is unbounded",
@@ -29,5 +32,6 @@
   "tooltip.ecremained.book.hoana": "Hoana",
   "tooltip.ecremained.book.shade": "Shade",
   "tooltip.ecremained.soul_stone.tracking": "Tracking MRU Matrix of %s",
-  "tooltip.ecremained.soul_stone.detected_ubmru": "Detected %s UBMRU Energy"
+  "tooltip.ecremained.soul_stone.detected_ubmru": "Detected %s UBMRU Energy",
+  "tooltip.ecremained.soul_stone.matrix": "this tooltip is not writed"
 }

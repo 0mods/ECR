@@ -8,21 +8,16 @@ import net.minecraft.world.level.block.state.BlockState
 import team._0mods.ecr.common.init.registry.ECMultiblocks
 import team._0mods.ecr.common.init.registry.ECRegistry
 
-class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
-    BlockEntity(ECRegistry.mithrilineFurnace.second, pos, blockState) {
+class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) : BlockEntity(ECRegistry.mithrilineFurnace.second, pos, blockState) {
     companion object {
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MithrilineFurnaceEntity) {
             be.successfulStructure = ECMultiblocks.mithrilineFurnace.isComplete(level, pos)
-
-            if (be.successfulStructure) {
-                be.ticks++
-            } else be.ticks = 0
+            val complete = be.successfulStructure
         }
     }
 
     var successfulStructure = false
-    var ticks: Int = 0
 
     override fun saveAdditional(tag: CompoundTag) {
         super.saveAdditional(tag)
@@ -31,7 +26,6 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
     override fun load(tag: CompoundTag) {
         super.load(tag)
-
         successfulStructure = tag.getBoolean("Working")
     }
 }

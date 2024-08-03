@@ -5,7 +5,6 @@ import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
-import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.monster.Enemy
@@ -20,8 +19,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent
 import team._0mods.ecr.LOGGER
 import team._0mods.ecr.ModId
 import team._0mods.ecr.common.init.registry.ECTabs
-import team._0mods.ecr.common.items.SoulStone.Companion.boundedTo
-import team._0mods.ecr.common.utils.MRUWeapon
+import team._0mods.ecr.common.utils.mru.MRUWeapon
 import java.util.UUID
 
 class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
