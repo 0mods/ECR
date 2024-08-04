@@ -1,7 +1,6 @@
 package team._0mods.ecr.client.renderer
 
 import com.mojang.blaze3d.vertex.PoseStack
-import net.minecraft.client.Minecraft
 import net.minecraft.client.model.geom.ModelLayerLocation
 import net.minecraft.client.model.geom.ModelPart
 import net.minecraft.client.model.geom.PartPose
@@ -69,9 +68,9 @@ class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): Block
         if (blockEntity.successfulStructure) {
             rotAngle += 45f * (1f / 20f)
         } else if (rotAngle % 360 != 0f) {
-            rotAngle += 45f * (1f / 20f) / 2
+            rotAngle += 45f * (1f / 20f) / 4
 
-            if (rotAngle % 360 == 0f) rotAngle = 360f * floor(rotAngle / 360)
+            if (rotAngle % 90 == 0f) rotAngle = 90f * floor(rotAngle / 90)
         }
 
         poseStack.apply {
@@ -82,7 +81,7 @@ class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): Block
 
             body.yRot = Math.toRadians(interpol.toDouble()).toFloat()
             val consumer = MF_RESOURCE_LOCATION.buffer(bufferSource, RenderType::entitySolid)
-            body.render(poseStack, consumer, packedLight, packedOverlay)
+            body.render(this, consumer, packedLight, packedOverlay)
 
             popPose()
         }

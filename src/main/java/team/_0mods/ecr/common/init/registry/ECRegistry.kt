@@ -13,6 +13,7 @@ import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 import team._0mods.ecr.ModId
 import team._0mods.ecr.common.blocks.MithrilineFurnace
+import team._0mods.ecr.common.blocks.base.ConnectedTextureBlock
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.items.BoundGem
 import team._0mods.ecr.common.items.ECBook
@@ -51,7 +52,7 @@ object ECRegistry {
 
     // blocks
     val mithrilinePlating = block("mithriline_plating") {
-        Block(BlockBehaviour.Properties.of(Material.METAL))
+        ConnectedTextureBlock(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f))
     }
 
     val mithrilineFurnace by blocksWE.register(

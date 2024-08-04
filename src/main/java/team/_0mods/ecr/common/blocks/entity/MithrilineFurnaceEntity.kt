@@ -14,9 +14,12 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) : BlockEnti
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MithrilineFurnaceEntity) {
             be.successfulStructure = ECMultiblocks.mithrilineFurnace.isComplete(level, pos)
             val complete = be.successfulStructure
+            if (complete) be.tickCount++
+            else be.tickCount = 0
         }
     }
 
+    var tickCount = 0
     var successfulStructure = false
 
     override fun saveAdditional(tag: CompoundTag) {
