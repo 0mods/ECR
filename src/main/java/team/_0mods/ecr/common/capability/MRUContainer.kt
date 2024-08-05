@@ -8,9 +8,9 @@ interface MRUContainer {
 
     val maxMRUStorage: Int
 
-    fun extractMru(max: Int): Int
+    fun extractMru(max: Int, simulate: Boolean = false): Int
 
-    fun receiveMru(max: Int): Int
+    fun receiveMru(max: Int, simulate: Boolean = false): Int
 
     val mruType: MRUType
 

@@ -15,6 +15,8 @@ class ConnectedTextureBlock(properties: Properties) : Block(properties) {
         @JvmField val CONNECTED_SOUTH: BooleanProperty = BooleanProperty.create("south_connect")
         @JvmField val CONNECTED_EAST: BooleanProperty = BooleanProperty.create("east_connect")
         @JvmField val CONNECTED_WEST: BooleanProperty = BooleanProperty.create("west_connect")
+        @JvmField val CONNECTED_UP: BooleanProperty = BooleanProperty.create("up_connect")
+        @JvmField val CONNECTED_DOWN: BooleanProperty = BooleanProperty.create("down_connect")
     }
 
     init {
@@ -24,11 +26,13 @@ class ConnectedTextureBlock(properties: Properties) : Block(properties) {
                 .setValue(CONNECTED_SOUTH, false)
                 .setValue(CONNECTED_EAST, false)
                 .setValue(CONNECTED_WEST, false)
+                .setValue(CONNECTED_UP, false)
+                .setValue(CONNECTED_DOWN, false)
         )
     }
 
     override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
-        builder.add(CONNECTED_NORTH, CONNECTED_SOUTH, CONNECTED_EAST, CONNECTED_WEST)
+        builder.add(CONNECTED_NORTH, CONNECTED_SOUTH, CONNECTED_EAST, CONNECTED_WEST, CONNECTED_UP, CONNECTED_DOWN)
     }
 
     override fun getStateForPlacement(context: BlockPlaceContext): BlockState? {
@@ -38,7 +42,8 @@ class ConnectedTextureBlock(properties: Properties) : Block(properties) {
             .setValue(CONNECTED_SOUTH, this.shouldConnectTo(level, pos.south()))
             .setValue(CONNECTED_EAST, this.shouldConnectTo(level, pos.east()))
             .setValue(CONNECTED_WEST, this.shouldConnectTo(level, pos.west()))
-
+            .setValue(CONNECTED_UP, this.shouldConnectTo(level, pos.above()))
+            .setValue(CONNECTED_DOWN, this.shouldConnectTo(level, pos.below()))
     }
 
     override fun updateShape(
@@ -53,6 +58,8 @@ class ConnectedTextureBlock(properties: Properties) : Block(properties) {
             .setValue(CONNECTED_SOUTH, this.shouldConnectTo(level, currentPos.south()))
             .setValue(CONNECTED_EAST, this.shouldConnectTo(level, currentPos.east()))
             .setValue(CONNECTED_WEST, this.shouldConnectTo(level, currentPos.west()))
+            .setValue(CONNECTED_UP, this.shouldConnectTo(level, currentPos.above()))
+            .setValue(CONNECTED_DOWN, this.shouldConnectTo(level, currentPos.below()))
     }
 
     private fun shouldConnectTo(accessor: LevelAccessor, pos: BlockPos): Boolean {

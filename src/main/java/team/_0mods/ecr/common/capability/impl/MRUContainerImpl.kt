@@ -26,12 +26,21 @@ open class MRUContainerImpl(
     override val maxMRUStorage: Int
         get() = capacity
 
-    override fun extractMru(max: Int): Int {
-        return min(mru, min(maxExtract, max))
+    override fun extractMru(max: Int, simulate: Boolean): Int {
+        val extracted = min(mru, min(maxExtract, max))
+
+        if (!simulate) mru -= extracted
+
+        return extracted
     }
 
-    override fun receiveMru(max: Int): Int {
-        return min(capacity - mru, min(maxReceive, max))
+    override fun receiveMru(max: Int, simulate: Boolean): Int {
+        val received = min(capacity - mru, min(maxReceive, max))
+
+        if (!simulate)
+            mru += received
+
+        return received
     }
 
     override fun serializeNBT(): CompoundTag = CompoundTag().apply {

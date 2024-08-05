@@ -1,9 +1,11 @@
 package team._0mods.ecr.common.container
 
+import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
 import team._0mods.ecr.common.init.registry.ECRegistry
@@ -14,10 +16,11 @@ class MithrilineFurnaceContainer(
     containerId: Int,
     inv: Inventory,
     container: IItemHandler,
+    val blockEntity: BlockEntity?,
     access: ContainerLevelAccess
 ) : AbstractContainer(ECRegistry.mithrilineFurnaceContainer.get(), containerId, access) {
-    constructor(containerId: Int, inv: Inventory):
-            this(containerId, inv, ItemStackHandler(2), ContainerLevelAccess.NULL)
+    constructor(containerId: Int, inv: Inventory, buf: FriendlyByteBuf):
+            this(containerId, inv, ItemStackHandler(2), inv.player.commandSenderWorld.getBlockEntity(buf.readBlockPos()), ContainerLevelAccess.NULL)
 
     init {
         addSlot(SpecialSlot(container, 0, 80, 60))

@@ -1,11 +1,13 @@
 package team._0mods.ecr.client.renderer
 
 import com.mojang.blaze3d.vertex.PoseStack
-import mezz.jei.library.gui.ScreenHelper
 import net.minecraft.client.model.geom.ModelLayerLocation
 import net.minecraft.client.model.geom.ModelPart
 import net.minecraft.client.model.geom.PartPose
-import net.minecraft.client.model.geom.builders.*
+import net.minecraft.client.model.geom.builders.CubeDeformation
+import net.minecraft.client.model.geom.builders.CubeListBuilder
+import net.minecraft.client.model.geom.builders.LayerDefinition
+import net.minecraft.client.model.geom.builders.MeshDefinition
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
@@ -27,6 +29,7 @@ class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): Block
             val meshDefinition = MeshDefinition().apply {
                 root.addOrReplaceChild(
                     "core",
+                    /*
                     CubeListBuilder.create().texOffs(0, 4).addBox(2.0f, 2.0f, -2.0f, 2.0f, 2.0f, 4.0f, CubeDeformation(0.0f))
                         .texOffs(0, 4).addBox(-4.0f, 2.0f, -2.0f, 2.0f, 2.0f, 4.0f, CubeDeformation(0.0f))
                         .texOffs(0, 2).addBox(-2.0f, 2.0f, 2.0f, 4.0f, 2.0f, 2.0f, CubeDeformation(0.0f))
@@ -38,12 +41,27 @@ class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): Block
                         .texOffs(0, 2).addBox(-4.0f, -3.0f, -4.0f, 2.0f, 6.0f, 2.0f, CubeDeformation(0.0f))
                         .texOffs(0, 2).addBox(-4.0f, -3.0f, 2.0f, 2.0f, 6.0f, 2.0f, CubeDeformation(0.0f))
                         .texOffs(0, 2).addBox(2.0f, -3.0f, -4.0f, 2.0f, 6.0f, 2.0f, CubeDeformation(0.0f))
-                        .texOffs(0, 2).addBox(2.0f, -3.0f, 2.0f, 2.0f, 6.0f, 2.0f, CubeDeformation(0.0f)),
+                        .texOffs(0, 2).addBox(2.0f, -3.0f, 2.0f, 2.0f, 6.0f, 2.0f, CubeDeformation(0.0f))
+                    */
+                    CubeListBuilder.create().texOffs(8, 8)
+                        .addBox(2.0f, 2.0f, -2.0f, 2.0f, 2.0f, 4.0f, CubeDeformation(0.0f))
+                        .texOffs(8, 2).addBox(-4.0f, 2.0f, -2.0f, 2.0f, 2.0f, 4.0f, CubeDeformation(0.0f))
+                        .texOffs(16, 8).addBox(-2.0f, 2.0f, 2.0f, 4.0f, 2.0f, 2.0f, CubeDeformation(0.0f))
+                        .texOffs(0, 6).addBox(2.0f, -4.0f, -2.0f, 2.0f, 2.0f, 4.0f, CubeDeformation(0.0f))
+                        .texOffs(0, 0).addBox(-4.0f, -4.0f, -2.0f, 2.0f, 2.0f, 4.0f, CubeDeformation(0.0f))
+                        .texOffs(16, 0).addBox(-2.0f, -4.0f, 2.0f, 4.0f, 2.0f, 2.0f, CubeDeformation(0.0f))
+                        .texOffs(12, 14).addBox(-2.0f, 2.0f, -4.0f, 4.0f, 2.0f, 2.0f, CubeDeformation(0.0f))
+                        .texOffs(0, 14).addBox(-2.0f, -4.0f, -4.0f, 4.0f, 2.0f, 2.0f, CubeDeformation(0.0f))
+                        .texOffs(22, 22).addBox(-4.0f, -2.0f, -4.0f, 2.0f, 4.0f, 2.0f, CubeDeformation(0.0f))
+                        .texOffs(16, 18).addBox(-4.0f, -2.0f, 2.0f, 2.0f, 4.0f, 2.0f, CubeDeformation(0.0f))
+                        .texOffs(0, 18).addBox(2.0f, -2.0f, -4.0f, 2.0f, 4.0f, 2.0f, CubeDeformation(0.0f))
+                        .texOffs(8, 18).addBox(2.0f, -2.0f, 2.0f, 2.0f, 4.0f, 2.0f, CubeDeformation(0.0f)),
                     PartPose.offset(0.0f, 16.0f, 0.0f)
                 )
             }
 
-            return LayerDefinition.create(meshDefinition, 16, 16)
+            //return LayerDefinition.create(meshDefinition, 16, 16)
+            return LayerDefinition.create(meshDefinition, 32, 32)
         }
     }
 
@@ -83,6 +101,8 @@ class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): Block
             body.yRot = Math.toRadians(interpol.toDouble()).toFloat()
             val consumer = MF_RESOURCE_LOCATION.buffer(bufferSource, RenderType::entitySolid)
             body.render(this, consumer, packedLight, packedOverlay)
+
+            body.translateAndRotate(this)
 
             popPose()
         }

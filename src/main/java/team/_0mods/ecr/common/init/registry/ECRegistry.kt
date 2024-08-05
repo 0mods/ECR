@@ -66,7 +66,7 @@ object ECRegistry {
 
     // containers
     val mithrilineFurnaceContainer: RegistryObject<MenuType<MithrilineFurnaceContainer>> = containers.register("mithriline_furnace") {
-        MenuType(IContainerFactory { id, inv, _ -> MithrilineFurnaceContainer(id, inv) })
+        MenuType(IContainerFactory { id, inv, buf -> MithrilineFurnaceContainer(id, inv, buf) })
     }
 
     // recipes

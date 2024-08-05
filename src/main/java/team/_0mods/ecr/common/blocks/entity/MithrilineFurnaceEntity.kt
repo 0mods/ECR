@@ -29,14 +29,17 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     companion object {
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MithrilineFurnaceEntity) {
-            be.successfulStructure = ECMultiblocks.mithrilineFurnace.isComplete(level, pos)
             val complete = be.successfulStructure
 
-            if (complete) {
-                be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent {
-                    it.receiveMru(1)
-
-                    LOGGER.info("Storaging ${it.mruStorage} ${it.mruType.name}")
+            if (!level.isClientSide) {
+                be.successfulStructure = ECMultiblocks.mithrilineFurnace.isComplete(level, pos)
+                if (complete) {
+                    if (be.tickCount++ % 160 == 0) {
+                        be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent {
+                            it.receiveMru(1, false)
+                            LOGGER.info("Cap: ${it.mruStorage}/${it.maxMRUStorage} ${it.mruType.name}")
+                        }
+                    }
                 }
             }
         }
@@ -49,6 +52,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     private val mruStorageLazy = LazyOptional.of(::mruStorage)
 
     var successfulStructure = false
+    var tickCount = 0
 
     override fun setRemoved() {
         super.setRemoved()
@@ -71,7 +75,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     }
 
     override fun createMenu(id: Int, inv: Inventory, player: Player): AbstractContainerMenu? {
-        return MithrilineFurnaceContainer(id, inv, itemHandler, ContainerLevelAccess.create(this.level ?: return null, this.blockPos))
+        return MithrilineFurnaceContainer(id, inv, itemHandler, this, ContainerLevelAccess.create(this.level ?: return null, this.blockPos))
     }
 
     override fun getDisplayName(): Component = Component.translatable("container.$ModId.mithriline_furnace")
