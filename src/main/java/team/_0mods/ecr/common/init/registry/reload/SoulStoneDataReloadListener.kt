@@ -1,5 +1,6 @@
 package team._0mods.ecr.common.init.registry.reload
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import net.minecraft.server.packs.resources.ResourceManager
@@ -16,6 +17,7 @@ import team._0mods.ecr.common.rl
 class SoulStoneDataReloadListener(private val json: Json): SimplePreparableReloadListener<Unit>() {
     override fun prepare(resourceManager: ResourceManager, profiler: ProfilerFiller) {}
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun apply(`object`: Unit, resourceManager: ResourceManager, profiler: ProfilerFiller) {
         resourceManager.listResources("soul_stone") { it.path.endsWith(".json") }.forEach {
             val data = json.decodeFromStream(SoulStoneData.serializer(), it.value.open())

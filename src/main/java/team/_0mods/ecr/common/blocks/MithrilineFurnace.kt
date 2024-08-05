@@ -2,6 +2,7 @@ package team._0mods.ecr.common.blocks
 
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
@@ -17,6 +18,7 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
+import net.minecraftforge.network.NetworkHooks
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.init.registry.ECMultiblocks
 
@@ -34,7 +36,7 @@ class MithrilineFurnace(properties: Properties) : BaseEntityBlock(
         return BlockEntityTicker<T> { l, bp, s, e -> MithrilineFurnaceEntity.onTick(l, bp, s, e as MithrilineFurnaceEntity) }
     }
 
-    @Suppress("override_deprecation", "DEPRECATION")
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun use(
         state: BlockState,
         level: Level,
@@ -44,12 +46,15 @@ class MithrilineFurnace(properties: Properties) : BaseEntityBlock(
         hit: BlockHitResult
     ): InteractionResult {
         if (ECMultiblocks.mithrilineFurnace.isComplete(level, pos)) {
-            player.displayClientMessage(Component.literal("MB is complete"), false)
+            if (!level.isClientSide) {
+                val blockEntity = level.getBlockEntity(pos)
+                if (blockEntity is MithrilineFurnaceEntity) {
+                    NetworkHooks.openScreen(player as ServerPlayer, blockEntity, blockEntity.blockPos)
+                } else throw IllegalStateException("Can not open any block entity that is not instanceof MithrilineFurnaceEntity")
+            }
+
             return InteractionResult.SUCCESS
-        } else {
-            player.displayClientMessage(Component.literal("MultiBlock is not complete"), false)
-            return InteractionResult.FAIL
-        }
+        } else return InteractionResult.FAIL
     }
 
     override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape = makeShape()

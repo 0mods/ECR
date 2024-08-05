@@ -11,9 +11,9 @@ interface IMultiblock {
         @JvmField
         val MULTIBLOCKS: Map<ResourceLocation, IMultiblock> = hashMapOf()
 
-        fun getByJson(id: String) = this.getByJson(id.rl)
+        fun getFromJson(id: String) = this.getFromJson(id.rl)
 
-        fun getByJson(id: ResourceLocation): IMultiblock {
+        fun getFromJson(id: ResourceLocation): IMultiblock {
             val mb = MULTIBLOCKS[id] ?: throw NullPointerException("Failed to get multiblock from json with id $id")
             return mb
         }
@@ -21,7 +21,8 @@ interface IMultiblock {
         fun createMultiBlock(id: ResourceLocation, pattern: Array<Array<String>>, vararg rawMatchers: Any) =
             this.createMultiBlock(id, pattern, '0', *rawMatchers)
 
-        fun createMultiBlock(id: ResourceLocation, pattern: Array<Array<String>>, startChar: Char, vararg rawMatchers: Any) = Multiblock(id, pattern, startChar, *rawMatchers)
+        fun createMultiBlock(id: ResourceLocation, pattern: Array<Array<String>>, startChar: Char, vararg rawMatchers: Any) =
+            Multiblock(id, pattern, startChar, *rawMatchers)
     }
 
     fun isComplete(level: Level, center: BlockPos): Boolean

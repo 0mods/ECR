@@ -4,5 +4,6 @@ import team._0mods.ecr.ModId
 import team._0mods.ecr.common.utils.multiblock.IMultiblock
 
 object ECMultiblocks {
-    val mithrilineFurnace: IMultiblock = IMultiblock.getByJson("$ModId:mithriline_furnace")
+    val mithrilineFurnace: IMultiblock = IMultiblock.getFromJson("$ModId:mithriline_furnace")
+    val soulStone: IMultiblock = IMultiblock.getFromJson("$ModId:soul_stone")
 }

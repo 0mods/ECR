@@ -2,19 +2,26 @@
 
 package team._0mods.ecr.common.init.events.client
 
+import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.EntityRenderersEvent
+import net.minecraftforge.client.event.ScreenEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import team._0mods.ecr.LOGGER
 import team._0mods.ecr.ModId
 import team._0mods.ecr.client.renderer.MithrilineFurnaceRenderer
+import team._0mods.ecr.client.screen.container.MithrilineFurnaceScreen
 import team._0mods.ecr.common.init.registry.ECRegistry
 
 @SubscribeEvent
 fun onClientStartup(e: FMLClientSetupEvent) {
     LOGGER.info("Initializing client")
+    e.enqueueWork {
+        LOGGER.info("Registering screens")
+        MenuScreens.register(ECRegistry.mithrilineFurnaceContainer.get(), ::MithrilineFurnaceScreen)
+    }
 }
 
 @SubscribeEvent

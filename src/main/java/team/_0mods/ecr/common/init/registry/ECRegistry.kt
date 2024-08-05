@@ -1,5 +1,6 @@
 package team._0mods.ecr.common.init.registry
 
+import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.Item.Properties
@@ -8,6 +9,7 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.Material
 import net.minecraftforge.eventbus.api.IEventBus
+import net.minecraftforge.network.IContainerFactory
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
@@ -15,6 +17,7 @@ import team._0mods.ecr.ModId
 import team._0mods.ecr.common.blocks.MithrilineFurnace
 import team._0mods.ecr.common.blocks.base.ConnectedTextureBlock
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
+import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 import team._0mods.ecr.common.items.BoundGem
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECGem
@@ -28,6 +31,7 @@ object ECRegistry {
     private val items: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, ModId)
     private val blocksWE = makeBERegistry(ModId)
     private val blocks: DeferredRegister<Block> = DeferredRegister.create(ForgeRegistries.BLOCKS, ModId)
+    private val containers: DeferredRegister<MenuType<*>> = DeferredRegister.create(ForgeRegistries.MENU_TYPES, ModId)
     private val recipes: DeferredRegister<RecipeSerializer<*>> = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, ModId)
 
     // items
@@ -61,6 +65,11 @@ object ECRegistry {
         ::MithrilineFurnaceEntity
     )
 
+    // containers
+    val mithrilineFurnaceContainer: RegistryObject<MenuType<MithrilineFurnaceContainer>> = containers.register("mithriline_furnace") {
+        MenuType(IContainerFactory { id, inv, buf -> MithrilineFurnaceContainer(id, inv, buf) })
+    }
+
     // recipes
     val mithrilineFurnaceRecipe: RegistryObject<MithrilineFurnaceRecipe.Serializer> = recipes.register("mithriline_furnace") {
         MithrilineFurnaceRecipe.Serializer(::MithrilineFurnaceRecipe)
@@ -71,6 +80,8 @@ object ECRegistry {
         items.register(bus)
         blocks.register(bus)
         blocksWE.register(bus)
+        containers.register(bus)
+        recipes.register(bus)
     }
 
     private fun basicItem(id: String, properties: Properties.() -> Unit = { tab(ECTabs.tabItems) }): RegistryObject<Item> {

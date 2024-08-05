@@ -15,4 +15,10 @@ interface MRUContainer {
     val canReceive: Boolean
 
     val canExtract: Boolean
+
+    val type: MRUType
+
+    enum class MRUType {
+        MRUSU, RADIATION_UNIT, UBMRU
+    }
 }

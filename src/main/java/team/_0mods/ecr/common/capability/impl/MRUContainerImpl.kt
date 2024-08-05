@@ -8,6 +8,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 open class MRUContainerImpl(
+    override val type: MRUContainer.MRUType,
     private var capacity: Int,
     private var mru: Int,
     private var maxReceive: Int,
@@ -42,7 +43,7 @@ open class MRUContainerImpl(
     override fun serializeNBT(): Tag = IntTag.valueOf(mruStorage)
 
     override fun deserializeNBT(arg: Tag?) {
-        if (arg !is IntTag) throw IllegalArgumentException()
+        if (arg !is IntTag) throw IllegalArgumentException("Can not deserialize to an instance that isn't the default implementation")
         this.mru = arg.asInt
     }
 }

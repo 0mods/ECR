@@ -1,0 +1,23 @@
+{
+  "pattern": [
+    [
+      " a ",
+      "aba",
+      " a "
+    ]
+  ],
+  "symbols": [
+    {
+      "symbol": "a",
+      "tag": {
+        "value": "soul_sand",
+        "tag": "soul_speed_blocks"
+      }
+    },
+    {
+      "symbol": "b",
+      "block": "emerald_block",
+      "center": true
+    }
+  ]
+}
