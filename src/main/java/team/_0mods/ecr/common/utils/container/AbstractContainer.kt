@@ -1,22 +1,14 @@
 package team._0mods.ecr.common.utils.container
 
-import net.minecraft.core.BlockPos
 import net.minecraft.world.Container
-import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.Slot
-import net.minecraft.world.level.Level
-import net.minecraftforge.items.IItemHandler
 
 abstract class AbstractContainer(
     menuType: MenuType<*>?,
     containerId: Int,
-    inv: Inventory,
-    pos: BlockPos,
-    level: Level,
-    val container: IItemHandler,
     val access: ContainerLevelAccess
 ) : AbstractContainerMenu(menuType, containerId) {
     private fun addSlotRange(playerInventory: Container, index: Int, x: Int, y: Int, amount: Int, dx: Int): Int {

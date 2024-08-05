@@ -1,11 +1,14 @@
 package team._0mods.ecr.common.blocks
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.NonNullList
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.Containers
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BaseEntityBlock
@@ -13,11 +16,13 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.level.storage.loot.LootContext
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
+import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.network.NetworkHooks
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.init.registry.ECMultiblocks
@@ -57,6 +62,26 @@ class MithrilineFurnace(properties: Properties) : BaseEntityBlock(
         } else return InteractionResult.FAIL
     }
 
+    @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
+    override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
+        if (state.block != newState.block) {
+            val be = level.getBlockEntity(pos)
+            if (be is MithrilineFurnaceEntity) {
+                be.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent {
+                    val nnl = NonNullList.withSize(it.slots, ItemStack.EMPTY)
+                    for (i in 0 ..< it.slots) {
+                        nnl[i] = it.getStackInSlot(i)
+                    }
+
+                    Containers.dropContents(level, pos, nnl)
+                }
+            }
+        }
+
+        super.onRemove(state, level, pos, newState, isMoving)
+    }
+
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape = makeShape()
 
     private fun makeShape(): VoxelShape {

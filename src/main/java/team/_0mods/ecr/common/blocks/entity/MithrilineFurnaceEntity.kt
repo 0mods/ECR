@@ -15,6 +15,7 @@ import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.ItemStackHandler
+import team._0mods.ecr.LOGGER
 import team._0mods.ecr.ModId
 import team._0mods.ecr.common.capability.MRUContainer
 import team._0mods.ecr.common.capability.impl.MRUContainerImpl
@@ -32,6 +33,11 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
             val complete = be.successfulStructure
 
             if (complete) {
+                be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent {
+                    it.receiveMru(1)
+
+                    LOGGER.info("Storaging ${it.mruStorage} ${it.mruType.name}")
+                }
             }
         }
     }
@@ -44,6 +50,12 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
     var successfulStructure = false
 
+    override fun setRemoved() {
+        super.setRemoved()
+        itemHandlerLazy.invalidate()
+        mruStorageLazy.invalidate()
+    }
+
     override fun saveAdditional(tag: CompoundTag) {
         super.saveAdditional(tag)
         tag.put("ItemStorage", itemHandler.serializeNBT())
@@ -55,11 +67,11 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         super.load(tag)
         itemHandler.deserializeNBT(tag.getCompound("ItemStorage"))
         mruStorage.deserializeNBT(tag.getCompound("MRUSUStorage"))
-        successfulStructure = tag.getBoolean("Working")
+        successfulStructure = tag.getBoolean("FullStructure")
     }
 
     override fun createMenu(id: Int, inv: Inventory, player: Player): AbstractContainerMenu? {
-        return MithrilineFurnaceContainer(id, inv, this.blockPos, itemHandler, ContainerLevelAccess.create(this.level ?: return null, this.blockPos))
+        return MithrilineFurnaceContainer(id, inv, itemHandler, ContainerLevelAccess.create(this.level ?: return null, this.blockPos))
     }
 
     override fun getDisplayName(): Component = Component.translatable("container.$ModId.mithriline_furnace")
@@ -81,5 +93,5 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         }
     }
 
-    private fun createMruStorage() = MRUContainerImpl(MRUContainer.MRUType.MRUSU, 10000, 0, 0, 0)
+    private fun createMruStorage() = MRUContainerImpl(MRUContainer.MRUType.MRUSU, 10000, 0, 10, 0)
 }
