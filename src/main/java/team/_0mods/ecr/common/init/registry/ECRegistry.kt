@@ -3,7 +3,6 @@ package team._0mods.ecr.common.init.registry
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
-import net.minecraft.world.item.Item.Properties
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockBehaviour
@@ -84,8 +83,8 @@ object ECRegistry {
         recipes.register(bus)
     }
 
-    private fun basicItem(id: String, properties: Properties.() -> Unit = { tab(ECTabs.tabItems) }): RegistryObject<Item> {
-        val props = Properties().apply(properties)
+    private fun basicItem(id: String, properties: Item.Properties.() -> Unit = { tab(ECTabs.tabItems) }): RegistryObject<Item> {
+        val props = Item.Properties().apply(properties)
         return items.register(id) { Item(props) }
     }
 
