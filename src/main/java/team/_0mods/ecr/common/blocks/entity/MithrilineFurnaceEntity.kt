@@ -30,8 +30,9 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MithrilineFurnaceEntity) {
             be.successfulStructure = ECMultiblocks.mithrilineFurnace.isComplete(level, pos)
             val complete = be.successfulStructure
-            if (complete) be.tickCount++
-            else be.tickCount = 0
+
+            if (complete) {
+            }
         }
     }
 
@@ -41,7 +42,6 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     private val itemHandlerLazy = LazyOptional.of(::itemHandler)
     private val mruStorageLazy = LazyOptional.of(::mruStorage)
 
-    var tickCount = 0
     var successfulStructure = false
 
     override fun saveAdditional(tag: CompoundTag) {
@@ -69,7 +69,6 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
             return itemHandlerLazy.cast()
 
         if (cap == ECCapabilities.MRU_CONTAINER) {
-            team._0mods.ecr.LOGGER.info("capability initialized")
             return mruStorageLazy.cast()
         }
 

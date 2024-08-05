@@ -1,5 +1,6 @@
 package team._0mods.ecr.common.capability.impl
 
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.IntTag
 import net.minecraft.nbt.Tag
 import net.minecraftforge.common.util.INBTSerializable
@@ -13,7 +14,7 @@ open class MRUContainerImpl(
     private var mru: Int,
     private var maxReceive: Int,
     private var maxExtract: Int
-): MRUContainer, INBTSerializable<Tag> {
+): MRUContainer, INBTSerializable<CompoundTag> {
     init {
         mru = max(0, min(capacity, mru))
     }
@@ -40,10 +41,13 @@ open class MRUContainerImpl(
     override val canExtract: Boolean
         get() = maxExtract > 0
 
-    override fun serializeNBT(): Tag = IntTag.valueOf(mruStorage)
+    override fun serializeNBT(): CompoundTag = CompoundTag().apply {
+        this.put("Storages", IntTag.valueOf(mruStorage))
+    }
 
-    override fun deserializeNBT(arg: Tag?) {
-        if (arg !is IntTag) throw IllegalArgumentException("Can not deserialize to an instance that isn't the default implementation")
-        this.mru = arg.asInt
+    override fun deserializeNBT(tag: CompoundTag?) {
+        if (tag == null) throw NullPointerException("Failed to load nbt, because it is null")
+
+        mru = tag.getInt("Storages")
     }
 }
