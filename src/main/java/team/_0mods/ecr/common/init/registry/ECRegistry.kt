@@ -1,5 +1,6 @@
 package team._0mods.ecr.common.init.registry
 
+import net.minecraft.core.particles.ParticleType
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
@@ -23,6 +24,7 @@ import team._0mods.ecr.common.items.ECGem
 import team._0mods.ecr.common.items.SoulStone
 import team._0mods.ecr.common.items.tools.*
 import team._0mods.ecr.common.makeBERegistry
+import team._0mods.ecr.common.particle.ECParticleType
 import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
 import team._0mods.ecr.common.register
 
@@ -32,6 +34,7 @@ object ECRegistry {
     private val blocks: DeferredRegister<Block> = DeferredRegister.create(ForgeRegistries.BLOCKS, ModId)
     private val containers: DeferredRegister<MenuType<*>> = DeferredRegister.create(ForgeRegistries.MENU_TYPES, ModId)
     private val recipes: DeferredRegister<RecipeSerializer<*>> = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, ModId)
+    private val particles: DeferredRegister<ParticleType<*>> = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, ModId)
 
     // items
     val flameGem: RegistryObject<ECGem> = items.register("flame_gem", ECGem.flame)
@@ -73,6 +76,9 @@ object ECRegistry {
     val mithrilineFurnaceRecipe: RegistryObject<MithrilineFurnaceRecipe.Serializer> = recipes.register("mithriline_furnace") {
         MithrilineFurnaceRecipe.Serializer(::MithrilineFurnaceRecipe)
     }
+
+    // particle
+    val ecParticle = particles.register("ec_part", ::ECParticleType)
 
     @JvmStatic
     fun init(bus: IEventBus) {

@@ -43,6 +43,13 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
                 }
             }
         }
+
+        fun onClientTick(level: Level, pos: BlockPos, state: BlockState, be: MithrilineFurnaceEntity) {
+            val complete = be.successfulStructure
+
+            if (complete)
+                be.tickCount++
+        }
     }
 
     private val itemHandler = createStackHandler()

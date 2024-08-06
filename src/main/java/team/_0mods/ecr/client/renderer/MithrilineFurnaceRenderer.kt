@@ -1,6 +1,7 @@
 package team._0mods.ecr.client.renderer
 
 import com.mojang.blaze3d.vertex.PoseStack
+import com.mojang.math.Vector3f
 import net.minecraft.client.model.geom.ModelLayerLocation
 import net.minecraft.client.model.geom.ModelPart
 import net.minecraft.client.model.geom.PartPose
@@ -12,17 +13,19 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
+import net.minecraft.client.renderer.blockentity.ConduitRenderer
 import net.minecraft.client.resources.model.Material
 import net.minecraft.world.inventory.InventoryMenu
 import team._0mods.ecr.ModId
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.rl
 import kotlin.math.floor
+import kotlin.math.roundToInt
 
 class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): BlockEntityRenderer<MithrilineFurnaceEntity> {
     companion object {
         @JvmField val MF_LAYER = ModelLayerLocation("$ModId:mithriline_furnace".rl, "main")
-        @JvmField val MF_RESOURCE_LOCATION = Material(InventoryMenu.BLOCK_ATLAS, "$ModId:block/entity/mithriline_furnace_core".rl)
+        @JvmField val MF_RESOURCE_LOCATION = Material(InventoryMenu.BLOCK_ATLAS, "$ModId:entity/mithriline_furnace/core".rl)
 
         @JvmStatic
         fun createBodyLayer(): LayerDefinition {
@@ -65,8 +68,6 @@ class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): Block
         }
     }
 
-    private var previousRot = 0f
-    private var rotAngle = 0f
     private val body: ModelPart
 
     init {
@@ -82,29 +83,25 @@ class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): Block
         packedLight: Int,
         packedOverlay: Int
     ) {
-        previousRot = rotAngle
+        val rotationSpeedCoefficient = 45f
 
-        if (blockEntity.successfulStructure) {
-            rotAngle += 45f * (1f / 20f)
-        } else if (rotAngle % 360 != 0f) {
-            rotAngle += 45f * (1f / 20f) / 4
+        val totalTicks = blockEntity.tickCount + partialTick
+        var rotAngle = totalTicks * rotationSpeedCoefficient / 20f
 
-            if (rotAngle % 90 == 0f) rotAngle = 90f * floor(rotAngle / 90)
+        if (!blockEntity.successfulStructure) {
+            rotAngle /= 4
+
+            rotAngle = (rotAngle / 90).roundToInt() * 90f
         }
 
-        poseStack.apply {
-            val interpol = previousRot + (rotAngle - previousRot) * partialTick
+        poseStack.pushPose()
+        poseStack.translate(0.5, -0.5, 0.5)
+        poseStack.mulPose(Vector3f.YP.rotationDegrees(rotAngle))
 
-            pushPose()
-            translate(0.5, -0.5, 0.5)
+        body.yRot = 0f
+        val consumer = MF_RESOURCE_LOCATION.buffer(bufferSource, RenderType::entityCutoutNoCull)
+        body.render(poseStack, consumer, packedLight, packedOverlay)
 
-            body.yRot = Math.toRadians(interpol.toDouble()).toFloat()
-            val consumer = MF_RESOURCE_LOCATION.buffer(bufferSource, RenderType::entitySolid)
-            body.render(this, consumer, packedLight, packedOverlay)
-
-            body.translateAndRotate(this)
-
-            popPose()
-        }
+        poseStack.popPose()
     }
 }

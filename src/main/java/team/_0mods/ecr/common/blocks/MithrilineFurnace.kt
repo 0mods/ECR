@@ -38,7 +38,11 @@ class MithrilineFurnace(properties: Properties) : BaseEntityBlock(
         state: BlockState,
         blockEntityType: BlockEntityType<T>
     ): BlockEntityTicker<T> {
-        return BlockEntityTicker<T> { l, bp, s, e -> MithrilineFurnaceEntity.onTick(l, bp, s, e as MithrilineFurnaceEntity) }
+        return BlockEntityTicker<T> { l, bp, s, e ->
+            if (!l.isClientSide)
+                MithrilineFurnaceEntity.onTick(l, bp, s, e as MithrilineFurnaceEntity)
+            else MithrilineFurnaceEntity.onClientTick(l, bp, s, e as MithrilineFurnaceEntity)
+        }
     }
 
     @Suppress("OVERRIDE_DEPRECATION")
