@@ -1,4 +1,4 @@
-package team._0mods.ecr.common.utils.recipe
+package team._0mods.ecr.api.recipe
 
 import net.minecraft.core.NonNullList
 import net.minecraft.world.Container

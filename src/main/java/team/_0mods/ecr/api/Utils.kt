@@ -1,4 +1,4 @@
-package team._0mods.ecr.common
+package team._0mods.ecr.api
 
 import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceLocation
@@ -18,8 +18,6 @@ import kotlin.reflect.KProperty
 
 val String.rl: ResourceLocation
     get() = ResourceLocation(this)
-
-val staticFrameUpdateTime = 1 / 20
 
 fun makeBERegistry(modId: String): Pair<Pair<DeferredRegister<Block>, DeferredRegister<Item>>, DeferredRegister<BlockEntityType<*>>> {
     val b = DeferredRegister.create(ForgeRegistries.BLOCKS, modId)

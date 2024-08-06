@@ -1,9 +1,9 @@
-package team._0mods.ecr.common.utils.multiblock
+package team._0mods.ecr.api.multiblock
 
 import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.Level
-import team._0mods.ecr.common.rl
+import team._0mods.ecr.api.rl
 import java.util.function.BiFunction
 
 interface IMultiblock {
@@ -11,7 +11,7 @@ interface IMultiblock {
         @JvmField
         val MULTIBLOCKS: Map<ResourceLocation, IMultiblock> = hashMapOf()
 
-        fun getFromJson(id: String) = this.getFromJson(id.rl)
+        fun getFromJson(id: String) = getFromJson(id.rl)
 
         fun getFromJson(id: ResourceLocation): IMultiblock {
             val mb = MULTIBLOCKS[id] ?: throw NullPointerException("Failed to get multiblock from json with id $id")
@@ -19,7 +19,7 @@ interface IMultiblock {
         }
 
         fun createMultiBlock(id: ResourceLocation, pattern: Array<Array<String>>, vararg rawMatchers: Any) =
-            this.createMultiBlock(id, pattern, '0', *rawMatchers)
+            createMultiBlock(id, pattern, '0', *rawMatchers)
 
         fun createMultiBlock(id: ResourceLocation, pattern: Array<Array<String>>, startChar: Char, vararg rawMatchers: Any) =
             Multiblock(id, pattern, startChar, *rawMatchers)

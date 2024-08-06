@@ -15,7 +15,6 @@ import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 import team._0mods.ecr.ModId
 import team._0mods.ecr.common.blocks.MithrilineFurnace
-import team._0mods.ecr.common.blocks.base.ConnectedTextureBlock
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 import team._0mods.ecr.common.items.BoundGem
@@ -23,10 +22,10 @@ import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECGem
 import team._0mods.ecr.common.items.SoulStone
 import team._0mods.ecr.common.items.tools.*
-import team._0mods.ecr.common.makeBERegistry
+import team._0mods.ecr.api.makeBERegistry
 import team._0mods.ecr.common.particle.ECParticleType
 import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
-import team._0mods.ecr.common.register
+import team._0mods.ecr.api.register
 
 object ECRegistry {
     private val items: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, ModId)
@@ -58,7 +57,7 @@ object ECRegistry {
 
     // blocks
     val mithrilinePlating = block("mithriline_plating") {
-        ConnectedTextureBlock(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f))
+        Block(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f))
     }
 
     val mithrilineFurnace by blocksWE.register(
@@ -78,7 +77,7 @@ object ECRegistry {
     }
 
     // particle
-    val ecParticle = particles.register("ec_part", ::ECParticleType)
+    val ecParticle: RegistryObject<ECParticleType> = particles.register("ec_part", ::ECParticleType)
 
     @JvmStatic
     fun init(bus: IEventBus) {
@@ -87,6 +86,7 @@ object ECRegistry {
         blocksWE.register(bus)
         containers.register(bus)
         recipes.register(bus)
+        particles.register(bus)
     }
 
     private fun basicItem(id: String, properties: Item.Properties.() -> Unit = { tab(ECTabs.tabItems) }): RegistryObject<Item> {

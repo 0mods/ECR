@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "ecremained:block/mithril_furnace"
+      "model": "ecremained:block/mithriline_furnace"
     }
   }
 }

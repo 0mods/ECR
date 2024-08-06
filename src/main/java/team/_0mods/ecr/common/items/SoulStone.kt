@@ -19,7 +19,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent
 import team._0mods.ecr.LOGGER
 import team._0mods.ecr.ModId
 import team._0mods.ecr.common.init.registry.ECTabs
-import team._0mods.ecr.common.utils.mru.MRUWeapon
+import team._0mods.ecr.api.mru.MRUWeapon
 import java.util.UUID
 
 class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {

@@ -13,18 +13,16 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
-import net.minecraft.client.renderer.blockentity.ConduitRenderer
 import net.minecraft.client.resources.model.Material
 import net.minecraft.world.inventory.InventoryMenu
 import team._0mods.ecr.ModId
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
-import team._0mods.ecr.common.rl
-import kotlin.math.floor
+import team._0mods.ecr.api.rl
 import kotlin.math.roundToInt
 
 class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): BlockEntityRenderer<MithrilineFurnaceEntity> {
     companion object {
-        @JvmField val MF_LAYER = ModelLayerLocation("$ModId:mithriline_furnace".rl, "main")
+        @JvmField val MF_LAYER = ModelLayerLocation("$ModId:block/mithriline_furnace".rl, "main")
         @JvmField val MF_RESOURCE_LOCATION = Material(InventoryMenu.BLOCK_ATLAS, "$ModId:entity/mithriline_furnace/core".rl)
 
         @JvmStatic

@@ -1,4 +1,4 @@
-package team._0mods.ecr.common.utils.container.slot
+package team._0mods.ecr.api.container.slot
 
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack

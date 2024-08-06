@@ -1,4 +1,4 @@
-package team._0mods.ecr.common.utils.container
+package team._0mods.ecr.api.container
 
 import net.minecraft.world.Container
 import net.minecraft.world.inventory.AbstractContainerMenu

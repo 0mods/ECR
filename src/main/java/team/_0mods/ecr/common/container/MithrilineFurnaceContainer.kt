@@ -9,8 +9,8 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
 import team._0mods.ecr.common.init.registry.ECRegistry
-import team._0mods.ecr.common.utils.container.AbstractContainer
-import team._0mods.ecr.common.utils.container.slot.SpecialSlot
+import team._0mods.ecr.api.container.AbstractContainer
+import team._0mods.ecr.api.container.slot.SpecialSlot
 
 class MithrilineFurnaceContainer(
     containerId: Int,

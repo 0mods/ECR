@@ -5,7 +5,7 @@ import net.minecraftforge.network.NetworkRegistry
 import net.minecraftforge.network.PacketDistributor
 import net.minecraftforge.network.simple.SimpleChannel
 import team._0mods.ecr.ModId
-import team._0mods.ecr.common.rl
+import team._0mods.ecr.api.rl
 
 object ECNetworkManager {
     private const val NETWORK_VER = "1"

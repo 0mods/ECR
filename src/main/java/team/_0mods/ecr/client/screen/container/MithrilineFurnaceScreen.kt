@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Inventory
 import team._0mods.ecr.ModId
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 import team._0mods.ecr.common.init.registry.ECCapabilities
-import team._0mods.ecr.common.rl
+import team._0mods.ecr.api.rl
 
 class MithrilineFurnaceScreen(
     menu: MithrilineFurnaceContainer,

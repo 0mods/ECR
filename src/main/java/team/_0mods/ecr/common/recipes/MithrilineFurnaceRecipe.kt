@@ -13,7 +13,7 @@ import net.minecraft.world.item.crafting.ShapedRecipe
 import net.minecraftforge.items.IItemHandler
 import team._0mods.ecr.common.init.registry.ECRecipeTypes
 import team._0mods.ecr.common.init.registry.ECRegistry
-import team._0mods.ecr.common.utils.recipe.ForgefiedRecipe
+import team._0mods.ecr.api.recipe.ForgefiedRecipe
 
 class MithrilineFurnaceRecipe(
     private val recipeId: ResourceLocation,

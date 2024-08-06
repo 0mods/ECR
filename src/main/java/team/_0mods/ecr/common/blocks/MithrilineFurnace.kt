@@ -12,6 +12,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BaseEntityBlock
+import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -112,4 +113,6 @@ class MithrilineFurnace(properties: Properties) : BaseEntityBlock(
 
         return shape
     }
+
+    override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
 }

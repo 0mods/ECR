@@ -7,7 +7,7 @@ import mezz.jei.api.registration.IGuiHandlerRegistration
 import mezz.jei.api.registration.IRecipeCatalystRegistration
 import net.minecraft.resources.ResourceLocation
 import team._0mods.ecr.ModId
-import team._0mods.ecr.common.rl
+import team._0mods.ecr.api.rl
 
 @JeiPlugin
 class ECJEIPlugin: IModPlugin {

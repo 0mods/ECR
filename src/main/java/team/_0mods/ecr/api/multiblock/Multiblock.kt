@@ -1,4 +1,4 @@
-package team._0mods.ecr.common.utils.multiblock
+package team._0mods.ecr.api.multiblock
 
 import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceLocation

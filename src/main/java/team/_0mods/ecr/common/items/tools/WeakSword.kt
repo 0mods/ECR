@@ -3,7 +3,7 @@ package team._0mods.ecr.common.items.tools
 import net.minecraft.world.item.SwordItem
 import team._0mods.ecr.common.init.registry.ECTabs
 import team._0mods.ecr.common.items.ECToolMaterials
-import team._0mods.ecr.common.utils.mru.MRUWeapon
+import team._0mods.ecr.api.mru.MRUWeapon
 
 class WeakSword : SwordItem(
     ECToolMaterials.WEAK,

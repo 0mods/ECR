@@ -11,10 +11,9 @@ import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraftforge.registries.ForgeRegistries
 import team._0mods.ecr.LOGGER
 import team._0mods.ecr.common.data.ECStructureData
-import team._0mods.ecr.common.rl
-import team._0mods.ecr.common.utils.multiblock.IMultiblock
-import team._0mods.ecr.common.utils.multiblock.Matcher
-import team._0mods.ecr.common.utils.multiblock.Multiblock
+import team._0mods.ecr.api.rl
+import team._0mods.ecr.api.multiblock.IMultiblock
+import team._0mods.ecr.api.multiblock.Matcher
 
 class ECStructureReloadListener(private val json: Json): SimplePreparableReloadListener<Unit>() {
     override fun prepare(resourceManager: ResourceManager, profiler: ProfilerFiller) {}

@@ -5,6 +5,8 @@ import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.item.ItemStack
+import team._0mods.ecr.api.*
+import team._0mods.ecr.api.onRegisterCommands
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.utils.*
 
