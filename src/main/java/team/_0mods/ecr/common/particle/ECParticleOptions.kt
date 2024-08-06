@@ -14,17 +14,18 @@ import java.awt.Color
 class ECParticleOptions(val color: Color, size: Float, val lifeTime: Int, val resizeSpeed: Float, val physical: Boolean, val removeOnGround: Boolean): ParticleOptions {
     companion object {
         @JvmField
-        val CODEC = RecordCodecBuilder.create {
+        val CODEC: Codec<ECParticleOptions> = RecordCodecBuilder.create {
             it.group(
-                Codec.INT.fieldOf("color").forGetter { t: ECParticleOptions -> t.color.rgb },
-                Codec.FLOAT.fieldOf("size").forGetter { t: ECParticleOptions -> t.size },
-                Codec.INT.fieldOf("lifetime").forGetter { t: ECParticleOptions -> t.lifeTime },
-                Codec.FLOAT.fieldOf("resize_speed").forGetter { t: ECParticleOptions -> t.resizeSpeed },
-                Codec.BOOL.fieldOf("has_physics").forGetter { t: ECParticleOptions -> t.physical },
-                Codec.BOOL.fieldOf("remove_on_ground").forGetter { t: ECParticleOptions -> t.removeOnGround }
+                Codec.INT.fieldOf("color").forGetter { t -> t.color.rgb },
+                Codec.FLOAT.fieldOf("size").forGetter { t -> t.size },
+                Codec.INT.fieldOf("lifetime").forGetter { t -> t.lifeTime },
+                Codec.FLOAT.fieldOf("resize_speed").forGetter { t -> t.resizeSpeed },
+                Codec.BOOL.fieldOf("has_physics").forGetter { t -> t.physical },
+                Codec.BOOL.fieldOf("remove_on_ground").forGetter { t -> t.removeOnGround }
             ).apply(it, ::ECParticleOptions)
         }
 
+        @JvmField
         val DESERIALIZER = object : ParticleOptions.Deserializer<ECParticleOptions> {
             override fun fromCommand(
                 particleType: ParticleType<ECParticleOptions>,

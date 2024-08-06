@@ -1,6 +1,7 @@
 package team._0mods.ecr.common.init.registry
 
 import net.minecraftforge.fml.ModList
+import team._0mods.ecr.LOGGER
 import team._0mods.ecr.api.plugin.ECRModPlugin
 import team._0mods.ecr.api.plugin.ECRPlugin
 import team._0mods.ecr.api.plugin.registry.impl.PlayerMatrixTypeRegistryImpl
