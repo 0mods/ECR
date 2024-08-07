@@ -57,12 +57,12 @@ object ECRegistry {
 
     // blocks
     val mithrilinePlating = block("mithriline_plating") {
-        Block(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f))
+        Block(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).requiresCorrectToolForDrops())
     }
 
     val mithrilineFurnace by blocksWE.register(
         "mithriline_furnace",
-        { MithrilineFurnace(BlockBehaviour.Properties.of(Material.METAL)) },
+        { MithrilineFurnace(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).requiresCorrectToolForDrops()) },
         ::MithrilineFurnaceEntity
     )
 

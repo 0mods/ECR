@@ -3,6 +3,8 @@ package team._0mods.ecr.common.items
 import net.minecraft.ChatFormatting
 import net.minecraft.client.renderer.item.ItemProperties
 import net.minecraft.core.NonNullList
+import net.minecraft.nbt.ListTag
+import net.minecraft.nbt.StringTag
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.*
@@ -15,6 +17,48 @@ import team._0mods.ecr.common.init.registry.ECTabs
 
 class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
     companion object {
+        var ItemStack.bookTypes: List<Type>
+            get() {
+                if (this.item !is ECBook) throw IllegalStateException("Failed to get book type to none-book item")
+                val tag = this.orCreateTag
+                val list = mutableListOf<Type>()
+
+                if (!tag.contains("ECBookTypes")) {
+                    val tags = ListTag()
+                    list += Type.BASIC
+                    tags.add(StringTag.valueOf(Type.BASIC.name))
+                    tag.put("ECBookTypes", tags)
+                } else {
+                    val t = tag.get("ECBookTypes") as? ListTag
+
+                    if (t == null) {
+                        val fixed = ListTag()
+                        LOGGER.info("ECBookTypes is not list tag... Stop, what? Correcting...")
+
+                        fixed.add(StringTag.valueOf(Type.BASIC.name))
+                        tag.put("ECBookTypes", fixed)
+
+                        return mutableListOf(Type.BASIC)
+                    }
+
+                    for (i in 0 ..< t.size) {
+                        val str = t.getString(i)
+                        list += Type.valueOf(str)
+                    }
+                }
+
+                return list
+            }
+            set(v) {
+                if (this.item !is ECBook) throw IllegalStateException("Failed to add book type to none-book item")
+                val tag = this.orCreateTag
+                val l = tag.get("ECBookTypes") as? ListTag ?: return
+
+                v.forEach {
+                    if (!l.contains(StringTag.valueOf(it.name))) l += StringTag.valueOf(it.name)
+                }
+            }
+
         @JvmStatic
         var ItemStack.bookType: Type
             get() {
@@ -52,6 +96,15 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
                     Type.HOANA -> 0.3f
                     Type.SHADE -> 0.4f
                 }
+            }
+
+            ItemProperties.register(this, ResourceLocation(ModId, "type")) { s, _, _, _ ->
+                val type = s.bookTypes
+                return@register if (!type.contains(Type.MRU) || type.isEmpty()) 0f
+                else if (!type.contains(Type.ENGINEER)) 0.1f
+                else if (!type.contains(Type.HOANA)) 0.2f
+                else if (!type.contains(Type.SHADE)) 0.3f
+                else 0.4f
             }
         }
     }
