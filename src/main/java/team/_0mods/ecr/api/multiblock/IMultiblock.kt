@@ -18,11 +18,19 @@ interface IMultiblock {
             return mb
         }
 
-        fun createMultiBlock(id: ResourceLocation, pattern: Array<Array<String>>, vararg rawMatchers: Any) =
+        fun createMultiBlock(id: ResourceLocation, pattern: Array<Array<String>>, vararg rawMatchers: Pair<Char, Any>): IMultiblock =
             createMultiBlock(id, pattern, '0', *rawMatchers)
 
-        fun createMultiBlock(id: ResourceLocation, pattern: Array<Array<String>>, startChar: Char, vararg rawMatchers: Any) =
-            Multiblock(id, pattern, startChar, *rawMatchers)
+        fun createMultiBlock(id: ResourceLocation, pattern: Array<Array<String>>, startChar: Char, vararg rawMatchers: Pair<Char, Any>): IMultiblock {
+            var arr = arrayOf<Any>()
+
+            rawMatchers.forEach {
+                arr += it.first
+                arr += it.second
+            }
+
+            return Multiblock(id, pattern, startChar, *arr)
+        }
     }
 
     fun isComplete(level: Level, center: BlockPos): Boolean

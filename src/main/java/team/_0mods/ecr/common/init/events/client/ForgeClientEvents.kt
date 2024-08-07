@@ -15,12 +15,12 @@ import team._0mods.ecr.common.items.ECBook.Companion.bookType
 import team._0mods.ecr.api.mru.MRUWeapon
 
 @SubscribeEvent
-fun onBookGMToolTip(e: ItemTooltipEvent) {
+fun onItemTooltip(e: ItemTooltipEvent) {
     val player = e.entity ?: return
     val stack = e.itemStack
+    val item = stack.item
 
     if (player.isCreative) {
-        val item = stack.item
         if (item is ECBook) {
             val type = stack.bookType
 
@@ -30,12 +30,12 @@ fun onBookGMToolTip(e: ItemTooltipEvent) {
                     .append(Component.translatable("tooltip.$ModId.rmc"))
             ).withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC)
         }
+    }
 
-        if (item is SwordItem && item is MRUWeapon) {
-            val multiplier = item.multiplier
-            e.toolTip += Component.literal(" ").append("$multiplier").append(" ").append(
-                Component.translatable("tooltip.$ModId.sword_multiplier")
-            ).withStyle(ChatFormatting.DARK_GREEN)
-        }
+    if (item is SwordItem && item is MRUWeapon) {
+        val multiplier = item.multiplier
+        e.toolTip += Component.literal(" ").append("$multiplier").append(" ").append(
+            Component.translatable("tooltip.$ModId.sword_multiplier")
+        ).withStyle(ChatFormatting.DARK_GREEN)
     }
 }

@@ -32,5 +32,6 @@
   "tooltip.ecremained.book.hoana": "Хоаны",
   "tooltip.ecremained.book.shade": "Тени",
   "tooltip.ecremained.soul_stone.tracking": "Отслеживается MRU матрица %s",
-  "tooltip.ecremained.soul_stone.detected_ubmru": "Обнаружено %s UBMRU энергии"
+  "tooltip.ecremained.soul_stone.detected_ubmru": "Обнаружено %s UBMRU энергии",
+  "tooltip.ecremained.soul_stone.matrix": "this tooltip is not writed"
 }

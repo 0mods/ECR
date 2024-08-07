@@ -26,7 +26,7 @@ class ECStructureReloadListener(private val json: Json): SimplePreparableReloadL
             val data = json.decodeFromStream(ECStructureData.serializer(), it.value.open())
             val matcher = data.symbols
 
-            val symbols: MutableList<Any> = mutableListOf()
+            var symbols: Array<Pair<Char, Any>> = arrayOf()
 
             if (data.pattern.isEmpty()) {
                 LOGGER.warn("Failed to load multiblock ($id). There no pattern found.")
@@ -36,8 +36,8 @@ class ECStructureReloadListener(private val json: Json): SimplePreparableReloadL
             data.pattern.forEach { a ->
                 a.forEach { b ->
                     if (b.contains(" ")) {
-                        val arr = arrayOf(' ', Matcher.any())
-                        if (!(symbols.contains(' ') && symbols.contains(Matcher.any()))) symbols.addAll(arr)
+                        val pair = ' ' to Matcher.any()
+                        if (!(symbols.contains(pair))) symbols += pair
                     }
                 }
             }
@@ -65,10 +65,10 @@ class ECStructureReloadListener(private val json: Json): SimplePreparableReloadL
                     val t = TagKey.create(Registry.BLOCK_REGISTRY, tag.tag.rl)
 
                     if (block != null) {
-                        symbols.addAll(arrayOf(c, Matcher.tag(block, t)))
+                        symbols += c to Matcher.tag(block, t)
                         if (m.isCenter) throw IllegalArgumentException("A tag cannot be a center block. (Error in: $id)")
                     } else {
-                        LOGGER.warn("Failed to load mutliblock, because $value is null")
+                        LOGGER.warn("Failed to load mutliblock ($id), because $value is null")
                         return@forEach
                     }
                 }
@@ -80,12 +80,12 @@ class ECStructureReloadListener(private val json: Json): SimplePreparableReloadL
                         else null
 
                     if (block != null) {
-                        symbols.addAll(arrayOf(c, block))
+                        symbols += c to block
                         if (m.isCenter && startChar == '0') {
                             startChar = c
                         }
                     } else {
-                        LOGGER.warn("Failed to load mutliblock, because $value is null")
+                        LOGGER.warn("Failed to load mutliblock ($id), because $value is null")
                         return@forEach
                     }
                 }
@@ -100,7 +100,7 @@ class ECStructureReloadListener(private val json: Json): SimplePreparableReloadL
                 id,
                 data.pattern,
                 startChar,
-                *symbols.toTypedArray()
+                *symbols
             )
         }
     }
