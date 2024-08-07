@@ -2,8 +2,6 @@ package team._0mods.ecr.common.capability.impl
 
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.IntTag
-import net.minecraft.nbt.StringTag
-import net.minecraft.nbt.Tag
 import net.minecraftforge.common.util.INBTSerializable
 import team._0mods.ecr.common.capability.MRUContainer
 import kotlin.math.max

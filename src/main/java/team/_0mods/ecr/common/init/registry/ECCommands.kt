@@ -8,7 +8,6 @@ import net.minecraft.world.item.ItemStack
 import team._0mods.ecr.api.*
 import team._0mods.ecr.api.onRegisterCommands
 import team._0mods.ecr.common.items.ECBook
-import team._0mods.ecr.common.utils.*
 
 object ECCommands {
     private val commandId = listOf("essentialcraft", "ec", "essential-craft", "ecr", "essentialcraftremained", "essential-craft-remained")

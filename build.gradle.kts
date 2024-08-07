@@ -5,6 +5,10 @@ val modId: String by project
 val minecraftVersion: String by project
 val forgeVersion: String by project
 val modVersion: String by project
+val shadowLibrary: Configuration by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
 
 plugins {
     java
@@ -12,9 +16,16 @@ plugins {
     id("dev.architectury.loom") version "1.6-SNAPSHOT"
     kotlin("jvm")
     kotlin("plugin.serialization")
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 java.withSourcesJar()
+
+configurations {
+    compileClasspath { extendsFrom(shadowLibrary) }
+    runtimeClasspath { extendsFrom(shadowLibrary) }
+
+}
 
 loom {
     silentMojangMappingsLicense()
@@ -41,6 +52,7 @@ repositories {
     maven("https://maven.blamejared.com/")
     maven("https://modmaven.dev")
     maven("https://maven.tterrag.com/")
+    maven("https://maven.0mods.team/releases")
 }
 
 dependencies {
@@ -57,9 +69,11 @@ dependencies {
         minecraftClientRuntimeLibraries(dep)
     }
 
-    shadow("thedarkcolour:kotlinforforge:3.12.0")
+    shadowLibrary("team.0mods:KotlinExtras:1.4-noreflect")
 
-    implementation(kotlin("stdlib", "2.0.0"))
+    shadow("team.chisel.ctm:CTM:${minecraftVersion}-${project.properties["ctm_version"].toString()}")
+
+    implementation(kotlin("stdlib", "2.0.10"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:+")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:+")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:+")
@@ -86,6 +100,20 @@ tasks {
         }
     }
 
+    shadowJar {
+        configurations = listOf(shadowLibrary)
+        archiveClassifier = "dev-shadow"
+
+        val relocateLibs = listOf(
+            "org.jetbrains", "com.typesafe", "kotlinx",
+            "kotlin", "okio", "org.intellij", "_COROUTINE"
+        )
+
+        relocateLibs.forEach {
+            relocate(it, "ecr_libs.$it")
+        }
+    }
+
     compileKotlin {
         useDaemonFallbackStrategy = false
         compilerOptions.freeCompilerArgs.add("-Xjvm-default=all")
@@ -107,6 +135,10 @@ tasks {
         }
 
         inputs.properties(replacement)
+    }
+
+    remapJar {
+        inputFile = shadowJar.get().archiveFile
     }
 
     withType<JavaCompile> {
