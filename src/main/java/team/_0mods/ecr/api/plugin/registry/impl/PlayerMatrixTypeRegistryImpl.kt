@@ -27,7 +27,7 @@ class PlayerMatrixTypeRegistryImpl(private val modId: String): PlayerMatrixTypeR
             registeredMatrixTypes[rlId] = type
         else
             LOGGER.warn(
-                "Oh... Mod: {} trying to register a research with id {}, because research with this id is already registered! Skipping...",
+                "Oh... Mod: {} trying to register player matrix type with id {}, because player matrix type with this id is already registered! Skipping...",
                 ModList.get().getModContainerById(modId).get().modInfo.displayName,
                 id
             )

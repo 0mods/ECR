@@ -13,6 +13,7 @@
   "item.ecremained.weakness_elemental_pickaxe": "Weakness Elemental Pickaxe",
   "item.ecremained.weakness_elemental_shovel": "Weakness Elemental Shovel",
   "item.ecremained.weakness_elemental_sword": "Weakness Elemental Sword",
+  "item.ecremained.bound_gem": "Bound Gem",
 
   "block.ecremained.mithriline_furnace": "Mithriline Furnace",
   "block.ecremained.mithriline_plating": "Mithriline Plating",
@@ -33,5 +34,7 @@
   "tooltip.ecremained.book.shade": "Shade",
   "tooltip.ecremained.soul_stone.tracking": "Tracking MRU Matrix of %s",
   "tooltip.ecremained.soul_stone.detected_ubmru": "Detected %s UBMRU Energy",
-  "tooltip.ecremained.soul_stone.matrix": "this tooltip is not writed"
+  "tooltip.ecremained.soul_stone.matrix": "this tooltip is not writed",
+  "tooltip.ecremained.bound_gem.bound": "Bound gem was bounded at pos: X: %s Y: %s Z: %s",
+  "tooltip.ecremained.bound_gem.unbound": "Bound gem was unbounded"
 }

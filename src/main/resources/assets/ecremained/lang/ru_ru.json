@@ -13,6 +13,7 @@
   "item.ecremained.weakness_elemental_pickaxe": "Ослабленная элементальная кирка",
   "item.ecremained.weakness_elemental_shovel": "Ослабленная элементальная лопата",
   "item.ecremained.weakness_elemental_sword": "Ослабленный элементальный меч",
+  "item.ecremained.bound_gem": "Кристалл привязки",
 
   "block.ecremained.mithriline_furnace": "Мифрилиновая печь",
   "block.ecremained.mithriline_plating": "Мифрилиновое покрытие",
@@ -33,5 +34,7 @@
   "tooltip.ecremained.book.shade": "Тени",
   "tooltip.ecremained.soul_stone.tracking": "Отслеживается MRU матрица %s",
   "tooltip.ecremained.soul_stone.detected_ubmru": "Обнаружено %s UBMRU энергии",
-  "tooltip.ecremained.soul_stone.matrix": "this tooltip is not writed"
+  "tooltip.ecremained.soul_stone.matrix": "this tooltip is not writed",
+  "tooltip.ecremained.bound_gem.bound": "Кристалл привязки был привязан на позиции: X: %s Y: %s Z: %s",
+  "tooltip.ecremained.bound_gem.unbound": "Кристал привязки отвязан"
 }

@@ -9,10 +9,12 @@ import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 import net.minecraftforge.fml.loading.FMLEnvironment
+import team._0mods.ecr.ModId
 import team._0mods.ecr.api.mru.MRUGenerator
 import team._0mods.ecr.common.init.registry.ECTabs
 
@@ -44,6 +46,7 @@ class BoundGem : Item(Properties().tab(ECTabs.tabItems)) {
 
         if (player.isShiftKeyDown) {
             if (stack.boundPos != null) {
+                player.displayClientMessage(Component.translatable("tooltip.$ModId.bound_gem.unbound"), true)
                 stack.boundPos = null
                 return InteractionResultHolder.success(stack)
             }
@@ -62,6 +65,7 @@ class BoundGem : Item(Properties().tab(ECTabs.tabItems)) {
 
         if (block is MRUGenerator || !FMLEnvironment.production) {
             if (stack.boundPos == null) {
+                player.displayClientMessage(Component.translatable("tooltip.$ModId.bound_gem.bound", pos.x, pos.y, pos.z), true)
                 if (stack.count > 1) {
                     val copiedStack = stack.copy().apply {
                         count = 1
@@ -83,6 +87,10 @@ class BoundGem : Item(Properties().tab(ECTabs.tabItems)) {
         }
 
         return super.useOn(context)
+    }
+
+    override fun getRarity(stack: ItemStack): Rarity {
+        return if (stack.boundPos != null) Rarity.EPIC else super.getRarity(stack)
     }
 
     override fun getMaxStackSize(stack: ItemStack?): Int {

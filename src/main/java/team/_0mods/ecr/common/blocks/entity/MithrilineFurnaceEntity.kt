@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraftforge.common.capabilities.Capability
@@ -17,6 +18,7 @@ import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.ItemStackHandler
 import team._0mods.ecr.LOGGER
 import team._0mods.ecr.ModId
+import team._0mods.ecr.api.block.StructuralPosition
 import team._0mods.ecr.common.capability.MRUContainer
 import team._0mods.ecr.common.capability.impl.MRUContainerImpl
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
@@ -27,6 +29,13 @@ import team._0mods.ecr.common.init.registry.ECRegistry
 class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     BlockEntity(ECRegistry.mithrilineFurnace.second, pos, blockState), MenuProvider {
     companion object {
+        private val collectorPos = StructuralPosition.builder
+            .pos(2, 2, 2)
+            .pos(-2, 2, -2)
+            .pos(-2, 2, 2)
+            .pos(2, 2, -2)
+            .build
+
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MithrilineFurnaceEntity) {
             val complete = be.successfulStructure
@@ -34,10 +43,11 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
             if (!level.isClientSide) {
                 be.successfulStructure = ECMultiblocks.mithrilineFurnace.isComplete(level, pos)
                 if (complete) {
-                    if (be.tickCount++ % 160 == 0) {
+                    val collectors = collectorPos.get(pos).filter { level.getBlockState(it).block == ECRegistry.mithrilineCrystal.get() }
+
+                    if (collectors.isNotEmpty() && (be.tickCount++ % (160 / collectors.size) == 0)) {
                         be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent {
-                            it.receiveMru(1, false)
-                            LOGGER.info("Cap: ${it.mruStorage}/${it.maxMRUStorage} ${it.mruType.name}")
+                            it.receiveMru(collectors.size * 4 - 3 + 1, false)
                         }
                     }
                 }

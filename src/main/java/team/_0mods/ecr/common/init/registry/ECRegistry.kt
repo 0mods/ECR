@@ -14,13 +14,10 @@ import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 import team._0mods.ecr.ModId
-import team._0mods.ecr.common.blocks.MithrilineFurnace
-import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
+import team._0mods.ecr.common.blocks.*
+import team._0mods.ecr.common.blocks.entity.*
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
-import team._0mods.ecr.common.items.BoundGem
-import team._0mods.ecr.common.items.ECBook
-import team._0mods.ecr.common.items.ECGem
-import team._0mods.ecr.common.items.SoulStone
+import team._0mods.ecr.common.items.*
 import team._0mods.ecr.common.items.tools.*
 import team._0mods.ecr.api.makeBERegistry
 import team._0mods.ecr.common.particle.ECParticleType
@@ -65,6 +62,10 @@ object ECRegistry {
         { MithrilineFurnace(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).requiresCorrectToolForDrops()) },
         ::MithrilineFurnaceEntity
     )
+
+    val mithrilineCrystal = block("mithriline_crystal") {
+        CrystalBlock(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).requiresCorrectToolForDrops())
+    }
 
     // containers
     val mithrilineFurnaceContainer: RegistryObject<MenuType<MithrilineFurnaceContainer>> = containers.register("mithriline_furnace") {

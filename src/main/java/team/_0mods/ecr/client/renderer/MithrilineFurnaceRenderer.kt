@@ -16,8 +16,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.client.resources.model.Material
 import net.minecraft.world.inventory.InventoryMenu
 import team._0mods.ecr.ModId
-import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.api.rl
+import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import kotlin.math.roundToInt
 
 class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): BlockEntityRenderer<MithrilineFurnaceEntity> {
@@ -30,7 +30,6 @@ class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): Block
             val meshDefinition = MeshDefinition().apply {
                 root.addOrReplaceChild(
                     "core",
-                    /*
                     CubeListBuilder.create().texOffs(0, 4).addBox(2.0f, 2.0f, -2.0f, 2.0f, 2.0f, 4.0f, CubeDeformation(0.0f))
                         .texOffs(0, 4).addBox(-4.0f, 2.0f, -2.0f, 2.0f, 2.0f, 4.0f, CubeDeformation(0.0f))
                         .texOffs(0, 2).addBox(-2.0f, 2.0f, 2.0f, 4.0f, 2.0f, 2.0f, CubeDeformation(0.0f))
@@ -42,9 +41,8 @@ class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): Block
                         .texOffs(0, 2).addBox(-4.0f, -3.0f, -4.0f, 2.0f, 6.0f, 2.0f, CubeDeformation(0.0f))
                         .texOffs(0, 2).addBox(-4.0f, -3.0f, 2.0f, 2.0f, 6.0f, 2.0f, CubeDeformation(0.0f))
                         .texOffs(0, 2).addBox(2.0f, -3.0f, -4.0f, 2.0f, 6.0f, 2.0f, CubeDeformation(0.0f))
-                        .texOffs(0, 2).addBox(2.0f, -3.0f, 2.0f, 2.0f, 6.0f, 2.0f, CubeDeformation(0.0f))
-                    */
-                    CubeListBuilder.create().texOffs(8, 8)
+                        .texOffs(0, 2).addBox(2.0f, -3.0f, 2.0f, 2.0f, 6.0f, 2.0f, CubeDeformation(0.0f)),
+                    /*CubeListBuilder.create().texOffs(8, 8)
                         .addBox(2.0f, 2.0f, -2.0f, 2.0f, 2.0f, 4.0f, CubeDeformation(0.0f))
                         .texOffs(8, 2).addBox(-4.0f, 2.0f, -2.0f, 2.0f, 2.0f, 4.0f, CubeDeformation(0.0f))
                         .texOffs(16, 8).addBox(-2.0f, 2.0f, 2.0f, 4.0f, 2.0f, 2.0f, CubeDeformation(0.0f))
@@ -56,13 +54,13 @@ class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): Block
                         .texOffs(22, 22).addBox(-4.0f, -2.0f, -4.0f, 2.0f, 4.0f, 2.0f, CubeDeformation(0.0f))
                         .texOffs(16, 18).addBox(-4.0f, -2.0f, 2.0f, 2.0f, 4.0f, 2.0f, CubeDeformation(0.0f))
                         .texOffs(0, 18).addBox(2.0f, -2.0f, -4.0f, 2.0f, 4.0f, 2.0f, CubeDeformation(0.0f))
-                        .texOffs(8, 18).addBox(2.0f, -2.0f, 2.0f, 2.0f, 4.0f, 2.0f, CubeDeformation(0.0f)),
+                        .texOffs(8, 18).addBox(2.0f, -2.0f, 2.0f, 2.0f, 4.0f, 2.0f, CubeDeformation(0.0f)),*/
                     PartPose.offset(0.0f, 16.0f, 0.0f)
                 )
             }
 
-            //return LayerDefinition.create(meshDefinition, 16, 16)
-            return LayerDefinition.create(meshDefinition, 32, 32)
+            return LayerDefinition.create(meshDefinition, 16, 16)
+//            return LayerDefinition.create(meshDefinition, 32, 32)
         }
     }
 
