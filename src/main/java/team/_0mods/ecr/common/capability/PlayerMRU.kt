@@ -6,4 +6,6 @@ interface PlayerMRU {
     var matrixDestruction: Double
 
     var matrixType: PlayerMatrixType
+
+    var isInfused: Boolean
 }

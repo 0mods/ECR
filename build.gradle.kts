@@ -30,7 +30,12 @@ configurations {
 loom {
     silentMojangMappingsLicense()
 
+    val awFile = project.file("src/main/resources/$modId.accesswidener")
+    if (awFile.exists()) accessWidenerPath = awFile
+
     forge {
+        convertAccessWideners = true
+        extraAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
         mixinConfigs("$modId.mixins.json")
     }
 }
@@ -53,6 +58,7 @@ repositories {
     maven("https://modmaven.dev")
     maven("https://maven.tterrag.com/")
     maven("https://maven.0mods.team/releases")
+    maven("https://repo.spongepowered.org/repository/maven-public/")
 }
 
 dependencies {
@@ -61,6 +67,8 @@ dependencies {
         officialMojangMappings()
         parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${project.properties["parchmentVersion"].toString()}@zip")
     })
+
+    compileOnly("org.spongepowered:mixin:0.8")
 
     forge("net.minecraftforge:forge:${minecraftVersion}-${forgeVersion}")
 

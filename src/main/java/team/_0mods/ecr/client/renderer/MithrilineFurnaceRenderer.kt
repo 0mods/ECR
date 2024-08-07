@@ -13,8 +13,8 @@ import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
+import net.minecraft.client.renderer.texture.TextureAtlas
 import net.minecraft.client.resources.model.Material
-import net.minecraft.world.inventory.InventoryMenu
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.rl
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
@@ -22,27 +22,15 @@ import kotlin.math.roundToInt
 
 class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): BlockEntityRenderer<MithrilineFurnaceEntity> {
     companion object {
-        @JvmField val MF_LAYER = ModelLayerLocation("$ModId:block/mithriline_furnace".rl, "main")
-        @JvmField val MF_RESOURCE_LOCATION = Material(InventoryMenu.BLOCK_ATLAS, "$ModId:entity/mithriline_furnace/core".rl)
+        @JvmField val MF_LAYER = ModelLayerLocation("$ModId:mithriline_furnace".rl, "core")
+        @JvmField val MF_RESOURCE_LOCATION = Material(TextureAtlas.LOCATION_BLOCKS, "$ModId:entity/mithriline_furnace/core".rl)
 
         @JvmStatic
         fun createBodyLayer(): LayerDefinition {
             val meshDefinition = MeshDefinition().apply {
                 root.addOrReplaceChild(
                     "core",
-                    CubeListBuilder.create().texOffs(0, 4).addBox(2.0f, 2.0f, -2.0f, 2.0f, 2.0f, 4.0f, CubeDeformation(0.0f))
-                        .texOffs(0, 4).addBox(-4.0f, 2.0f, -2.0f, 2.0f, 2.0f, 4.0f, CubeDeformation(0.0f))
-                        .texOffs(0, 2).addBox(-2.0f, 2.0f, 2.0f, 4.0f, 2.0f, 2.0f, CubeDeformation(0.0f))
-                        .texOffs(0, 4).addBox(2.0f, -4.0f, -2.0f, 2.0f, 2.0f, 4.0f, CubeDeformation(0.0f))
-                        .texOffs(0, 4).addBox(-4.0f, -4.0f, -2.0f, 2.0f, 2.0f, 4.0f, CubeDeformation(0.0f))
-                        .texOffs(0, 2).addBox(-2.0f, -4.0f, 2.0f, 4.0f, 2.0f, 2.0f, CubeDeformation(0.0f))
-                        .texOffs(0, 2).addBox(-2.0f, 2.0f, -4.0f, 4.0f, 2.0f, 2.0f, CubeDeformation(0.0f))
-                        .texOffs(0, 2).addBox(-2.0f, -4.0f, -4.0f, 4.0f, 2.0f, 2.0f, CubeDeformation(0.0f))
-                        .texOffs(0, 2).addBox(-4.0f, -3.0f, -4.0f, 2.0f, 6.0f, 2.0f, CubeDeformation(0.0f))
-                        .texOffs(0, 2).addBox(-4.0f, -3.0f, 2.0f, 2.0f, 6.0f, 2.0f, CubeDeformation(0.0f))
-                        .texOffs(0, 2).addBox(2.0f, -3.0f, -4.0f, 2.0f, 6.0f, 2.0f, CubeDeformation(0.0f))
-                        .texOffs(0, 2).addBox(2.0f, -3.0f, 2.0f, 2.0f, 6.0f, 2.0f, CubeDeformation(0.0f)),
-                    /*CubeListBuilder.create().texOffs(8, 8)
+                    CubeListBuilder.create().texOffs(8, 8)
                         .addBox(2.0f, 2.0f, -2.0f, 2.0f, 2.0f, 4.0f, CubeDeformation(0.0f))
                         .texOffs(8, 2).addBox(-4.0f, 2.0f, -2.0f, 2.0f, 2.0f, 4.0f, CubeDeformation(0.0f))
                         .texOffs(16, 8).addBox(-2.0f, 2.0f, 2.0f, 4.0f, 2.0f, 2.0f, CubeDeformation(0.0f))
@@ -54,22 +42,16 @@ class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): Block
                         .texOffs(22, 22).addBox(-4.0f, -2.0f, -4.0f, 2.0f, 4.0f, 2.0f, CubeDeformation(0.0f))
                         .texOffs(16, 18).addBox(-4.0f, -2.0f, 2.0f, 2.0f, 4.0f, 2.0f, CubeDeformation(0.0f))
                         .texOffs(0, 18).addBox(2.0f, -2.0f, -4.0f, 2.0f, 4.0f, 2.0f, CubeDeformation(0.0f))
-                        .texOffs(8, 18).addBox(2.0f, -2.0f, 2.0f, 2.0f, 4.0f, 2.0f, CubeDeformation(0.0f)),*/
-                    PartPose.offset(0.0f, 16.0f, 0.0f)
+                        .texOffs(8, 18).addBox(2.0f, -2.0f, 2.0f, 2.0f, 4.0f, 2.0f, CubeDeformation(0.0f)),
+                    PartPose.ZERO
                 )
             }
 
-            return LayerDefinition.create(meshDefinition, 16, 16)
-//            return LayerDefinition.create(meshDefinition, 32, 32)
+            return LayerDefinition.create(meshDefinition, 32, 32)
         }
     }
 
-    private val body: ModelPart
-
-    init {
-        val part = ctx.bakeLayer(MF_LAYER)
-        body = part.getChild("core")
-    }
+    private val body: ModelPart = ctx.bakeLayer(MF_LAYER)
 
     override fun render(
         blockEntity: MithrilineFurnaceEntity,
@@ -91,7 +73,7 @@ class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): Block
         }
 
         poseStack.pushPose()
-        poseStack.translate(0.5, -0.5, 0.5)
+        poseStack.translate(0.5, 0.5, 0.5)
         poseStack.mulPose(Vector3f.YP.rotationDegrees(rotAngle))
 
         body.yRot = 0f

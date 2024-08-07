@@ -1,9 +1,9 @@
 {
-	"credit": "Made with Blockbench",
+	"credit": "Model by AlgorithmLX",
 	"texture_size": [128, 128],
 	"textures": {
-		"2": "texture",
-		"particle": "texture"
+		"2": "ecremained:block/mithriline_furnace",
+		"particle": "ecremained:particle/mithriline_furnace"
 	},
 	"elements": [
 		{
