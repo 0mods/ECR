@@ -8,5 +8,5 @@ object PlayerHeartType {
         internal set
 
     @JvmStatic
-    val radiationInfused: HeartType = reg("radiation_infused", 10, true)
+    val radiationInfused: HeartType? = if (this::reg.isInitialized) reg("radiation_infused", 10, true) else null
 }

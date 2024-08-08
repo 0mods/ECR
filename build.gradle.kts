@@ -23,8 +23,6 @@ java.withSourcesJar()
 
 configurations {
     compileClasspath { extendsFrom(shadowLibrary) }
-    runtimeClasspath { extendsFrom(shadowLibrary) }
-
 }
 
 loom {
@@ -81,11 +79,11 @@ dependencies {
 
     shadow("team.chisel.ctm:CTM:${minecraftVersion}-${project.properties["ctm_version"].toString()}")
 
-    implementation(kotlin("stdlib", "2.0.10"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:+")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:+")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:+")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:+")
+    implementation(kotlin("stdlib", "2.0.10")); minecraftClientRuntimeLibraries(kotlin("stdlib", "2.0.10"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:+") { minecraftClientRuntimeLibraries(this) }
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:+") { minecraftClientRuntimeLibraries(this) }
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:+") { minecraftClientRuntimeLibraries(this) }
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:+") { minecraftClientRuntimeLibraries(this) }
 
     modApi("mezz.jei:jei-${minecraftVersion}-forge:${project.properties["jei_version"].toString()}")
 }

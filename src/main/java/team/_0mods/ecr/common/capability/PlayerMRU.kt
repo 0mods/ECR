@@ -1,6 +1,6 @@
 package team._0mods.ecr.common.capability
 
-import team._0mods.ecr.api.mru.player.PlayerMatrixType
+import net.minecraft.network.chat.Component
 
 interface PlayerMRU {
     var matrixDestruction: Double
@@ -8,4 +8,12 @@ interface PlayerMRU {
     var matrixType: PlayerMatrixType
 
     var isInfused: Boolean
+
+    interface PlayerMatrixType {
+        val name: Component
+
+        val reduceRadiationMultiplier: Double
+
+        val protectMatrixDecay: Boolean
+    }
 }

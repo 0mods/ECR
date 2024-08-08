@@ -3,24 +3,20 @@ package team._0mods.ecr.api.plugin.registry.impl
 import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.fml.ModList
 import team._0mods.ecr.LOGGER
-import team._0mods.ecr.api.mru.player.PlayerMatrixType
 import team._0mods.ecr.api.plugin.registry.PlayerMatrixTypeRegistry
 import team._0mods.ecr.api.rl
+import team._0mods.ecr.common.capability.PlayerMRU
 
-class PlayerMatrixTypeRegistryImpl(private val modId: String): PlayerMatrixTypeRegistry {
+internal class InternalPlayerMatrixTypeRegistry(private val modId: String): PlayerMatrixTypeRegistry {
     companion object {
         @JvmStatic
-        private val registeredMatrixTypes: MutableMap<ResourceLocation, PlayerMatrixType> = linkedMapOf()
+        internal val registeredMatrixTypes: MutableMap<ResourceLocation, PlayerMRU.PlayerMatrixType> = linkedMapOf()
     }
 
-    override val matrixTypes: Map<ResourceLocation, PlayerMatrixType>
+    override val matrixTypes: Map<ResourceLocation, PlayerMRU.PlayerMatrixType>
         get() = registeredMatrixTypes
 
-    override fun getValue(id: ResourceLocation): PlayerMatrixType? = matrixTypes[id]
-
-    override fun getKey(matrix: PlayerMatrixType): ResourceLocation? = matrixTypes.filter { it.value == matrix }.keys.toList().getOrNull(0)
-
-    override fun <T: PlayerMatrixType> register(id: String, type: T): () -> T {
+    override fun <T: PlayerMRU.PlayerMatrixType> register(id: String, type: T): () -> T {
         val rlId = "$modId:$id".rl
 
         if (registeredMatrixTypes.keys.stream().noneMatch { it == rlId })

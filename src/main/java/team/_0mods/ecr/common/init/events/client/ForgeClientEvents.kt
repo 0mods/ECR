@@ -6,6 +6,8 @@ import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.SwordItem
 import net.minecraftforge.api.distmarker.Dist
+import net.minecraftforge.event.TickEvent
+import net.minecraftforge.event.TickEvent.ClientTickEvent
 import net.minecraftforge.event.entity.player.ItemTooltipEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
@@ -13,6 +15,8 @@ import team._0mods.ecr.ModId
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECBook.Companion.bookType
 import team._0mods.ecr.api.mru.MRUWeapon
+import team._0mods.ecr.client.keys.ECKeys
+import team._0mods.ecr.common.hiddenFurnace
 
 @SubscribeEvent
 fun onItemTooltip(e: ItemTooltipEvent) {
@@ -38,4 +42,11 @@ fun onItemTooltip(e: ItemTooltipEvent) {
             Component.translatable("tooltip.$ModId.sword_multiplier")
         ).withStyle(ChatFormatting.DARK_GREEN)
     }
+}
+
+@SubscribeEvent
+fun onClientTick(e: ClientTickEvent) {
+    if (e.phase != TickEvent.Phase.END) return
+
+    //keys
 }

@@ -9,16 +9,23 @@ import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.effect.MobEffects
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.EntityRenderersEvent
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent
+import net.minecraftforge.client.event.ScreenEvent.KeyReleased
 import net.minecraftforge.client.event.TextureStitchEvent
+import net.minecraftforge.event.TickEvent
+import net.minecraftforge.event.TickEvent.ClientTickEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import team._0mods.ecr.LOGGER
 import team._0mods.ecr.ModId
+import team._0mods.ecr.client.keys.ECKeys
+import team._0mods.ecr.client.keys.kbList
 import team._0mods.ecr.client.particle.ECParticleFactory
 import team._0mods.ecr.client.renderer.MithrilineFurnaceRenderer
 import team._0mods.ecr.client.screen.container.MithrilineFurnaceScreen
+import team._0mods.ecr.common.hiddenFurnace
 import team._0mods.ecr.common.init.registry.ECRegistry
 
 @SubscribeEvent
@@ -45,8 +52,14 @@ fun onParticleRegister(e: RegisterParticleProvidersEvent) {
     e.register(ECRegistry.ecParticle.get(), ::ECParticleFactory)
 }
 
+@SubscribeEvent
 fun onTexturesSwitch(e: TextureStitchEvent.Pre) {
     if (!e.atlas.location().equals(TextureAtlas.LOCATION_BLOCKS)) return
 
     e.addSprite(MithrilineFurnaceRenderer.MF_RESOURCE_LOCATION.texture())
+}
+
+@SubscribeEvent
+fun onKeybindRegister(e: RegisterKeyMappingsEvent) {
+    kbList.forEach(e::register)
 }

@@ -3,7 +3,7 @@ package team._0mods.ecr.common.init.registry
 import net.minecraftforge.fml.ModList
 import team._0mods.ecr.api.plugin.ECRModPlugin
 import team._0mods.ecr.api.plugin.ECRPlugin
-import team._0mods.ecr.api.plugin.registry.impl.PlayerMatrixTypeRegistryImpl
+import team._0mods.ecr.api.plugin.registry.impl.InternalPlayerMatrixTypeRegistry
 import java.lang.annotation.ElementType
 
 object ECAnnotationProcessor {
@@ -19,7 +19,7 @@ object ECAnnotationProcessor {
                 if (ECRModPlugin::class.java.isAssignableFrom(it)) {
                     val plugin = it.getDeclaredConstructor().newInstance() as ECRModPlugin
 
-                    plugin.onMatrixTypeRegistry(PlayerMatrixTypeRegistryImpl(annotation.modId))
+                    plugin.onMatrixTypeRegistry(InternalPlayerMatrixTypeRegistry(annotation.modId))
                 }
             }
     }

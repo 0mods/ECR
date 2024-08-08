@@ -2,26 +2,35 @@
 
 package team._0mods.ecr.common.init.events
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import net.minecraft.client.Minecraft
+import net.minecraft.world.entity.player.Player
 import net.minecraftforge.event.AddReloadListenerEvent
+import net.minecraftforge.event.AttachCapabilitiesEvent
 import net.minecraftforge.event.RegisterCommandsEvent
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import team._0mods.ecr.ModId
+import team._0mods.ecr.api.rl
 import team._0mods.ecr.client.screen.ECBookScreen
+import team._0mods.ecr.common.capability.impl.PlayerMRUImpl
+import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECCommands
 import team._0mods.ecr.common.init.registry.reload.ECStructureReloadListener
 import team._0mods.ecr.common.init.registry.reload.SoulStoneDataReloadListener
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECBook.Companion.bookType
 
+@OptIn(ExperimentalSerializationApi::class)
 private val json = Json {
     ignoreUnknownKeys = true
     encodeDefaults = true
     prettyPrint = true
     prettyPrintIndent = "  "
+    allowComments = true
+    allowTrailingComma = true
 }
 
 @SubscribeEvent
@@ -60,4 +69,8 @@ fun onCommandRegister(e: RegisterCommandsEvent) {
 fun onRegisterReloadListener(e: AddReloadListenerEvent) {
     e.addListener(SoulStoneDataReloadListener(json))
     e.addListener(ECStructureReloadListener(json))
+}
+
+fun onCapabilityPlayerAttach(e: AttachCapabilitiesEvent<Player>) {
+    if (!e.`object`.getCapability(ECCapabilities.PLAYER_MRU).isPresent) e.addCapability("$ModId:player_mru".rl, PlayerMRUImpl.Provider())
 }

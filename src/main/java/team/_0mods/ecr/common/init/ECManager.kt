@@ -2,8 +2,10 @@
 
 package team._0mods.ecr.common.init
 
+import net.minecraft.world.entity.player.Player
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
+import team._0mods.ecr.common.init.events.onCapabilityPlayerAttach
 import team._0mods.ecr.common.init.registry.ECAnnotationProcessor
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.network.ECNetworkManager
@@ -17,4 +19,6 @@ fun initCommon() {
 
     ECNetworkManager.init()
     ECRegistry.init(modBus)
+
+    forgeBus.addGenericListener(Player::class.java, ::onCapabilityPlayerAttach)
 }

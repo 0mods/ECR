@@ -25,6 +25,7 @@ import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECMultiblocks
 import team._0mods.ecr.common.init.registry.ECRegistry
+import kotlin.math.floor
 
 class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     BlockEntity(ECRegistry.mithrilineFurnace.second, pos, blockState), MenuProvider {
@@ -39,11 +40,12 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MithrilineFurnaceEntity) {
             val complete = be.successfulStructure
+            be.successfulStructure = ECMultiblocks.mithrilineFurnace.isComplete(level, pos)
 
             if (!level.isClientSide) {
-                be.successfulStructure = ECMultiblocks.mithrilineFurnace.isComplete(level, pos)
                 if (complete) {
-                    val collectors = collectorPos.get(pos).filter { level.getBlockState(it).block == ECRegistry.mithrilineCrystal.get() }
+                    val collectors = collectorPos.get(pos)
+                        .filter { level.getBlockState(it).block == ECRegistry.mithrilineCrystal.get() }
 
                     if (collectors.isNotEmpty() && (be.tickCount++ % (160 / collectors.size) == 0)) {
                         be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent {
@@ -51,14 +53,17 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
                         }
                     }
                 }
+            } else {
+                be.previousRot = be.rotAngle
+
+                if (complete) {
+                    be.rotAngle += 45f * (1f / 20f)
+                } else if (be.rotAngle % 360 != 0f) {
+                    be.rotAngle += 45f * (1f / 20f) / 2
+
+                    if (be.rotAngle % 90 == 0f) be.rotAngle = 90f * floor(be.rotAngle / 90)
+                }
             }
-        }
-
-        fun onClientTick(level: Level, pos: BlockPos, state: BlockState, be: MithrilineFurnaceEntity) {
-            val complete = be.successfulStructure
-
-            if (complete)
-                be.tickCount++
         }
     }
 
@@ -70,6 +75,11 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
     var successfulStructure = false
     var tickCount = 0
+
+    // Calculates only on a client
+    var previousRot = 0f
+    var rotAngle = 0f
+    // end
 
     override fun setRemoved() {
         super.setRemoved()
