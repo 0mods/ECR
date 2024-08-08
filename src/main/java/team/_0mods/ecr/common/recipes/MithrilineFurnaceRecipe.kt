@@ -1,27 +1,30 @@
 package team._0mods.ecr.common.recipes
 
 import com.google.gson.JsonObject
+import com.google.gson.JsonSyntaxException
 import net.minecraft.core.NonNullList
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.GsonHelper
+import net.minecraft.world.SimpleContainer
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.crafting.Ingredient
-import net.minecraft.world.item.crafting.RecipeSerializer
-import net.minecraft.world.item.crafting.RecipeType
-import net.minecraft.world.item.crafting.ShapedRecipe
-import net.minecraftforge.items.IItemHandler
-import team._0mods.ecr.common.init.registry.ECRecipeTypes
+import net.minecraft.world.item.crafting.*
+import net.minecraft.world.level.Level
 import team._0mods.ecr.common.init.registry.ECRegistry
-import team._0mods.ecr.api.recipe.ForgefiedRecipe
 
 class MithrilineFurnaceRecipe(
     private val recipeId: ResourceLocation,
     private val ingredient: Ingredient,
     val mrusu: Int,
     private val result: ItemStack
-): ForgefiedRecipe {
-    override fun assemble(inv: IItemHandler): ItemStack = result.copy()
+): Recipe<SimpleContainer> {
+    override fun matches(container: SimpleContainer, level: Level): Boolean {
+        if (level.isClientSide) return false
+
+        return ingredient.test(container.getItem(0))
+    }
+
+    override fun assemble(inv: SimpleContainer): ItemStack = result.copy()
 
     override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
 
@@ -33,16 +36,21 @@ class MithrilineFurnaceRecipe(
         return NonNullList.of(this.ingredient)
     }
 
-    override fun getSerializer(): RecipeSerializer<*> = ECRegistry.mithrilineFurnaceRecipe.get()
+    override fun getSerializer(): RecipeSerializer<*> = ECRegistry.mithrilineFurnaceRecipeSerial.get()
 
-    override fun getType(): RecipeType<*> = ECRecipeTypes.mithrilineFurnace
+    override fun getType(): RecipeType<*> = ECRegistry.mithrilineFurnaceRecipe.get()
 
     class Serializer(val serial: (ResourceLocation, Ingredient, Int, ItemStack) -> MithrilineFurnaceRecipe): RecipeSerializer<MithrilineFurnaceRecipe> {
         override fun fromJson(recipeId: ResourceLocation, serializedRecipe: JsonObject): MithrilineFurnaceRecipe {
-            val input = GsonHelper.getAsJsonObject(serializedRecipe, "in")
+            if (!serializedRecipe.has("ingredient")) throw JsonSyntaxException("Recipe can not be created, because argument \"ingredient\" is missing.")
+            val input = GsonHelper.getAsJsonObject(serializedRecipe, "ingredient")
             val i = Ingredient.fromJson(input)
-            val result = ShapedRecipe.itemStackFromJson(serializedRecipe.getAsJsonObject("out"))
-            val mru = GsonHelper.getAsInt(serializedRecipe, "mrusu")
+
+            if (!serializedRecipe.has("result")) throw JsonSyntaxException("Recipe can not be created, because argument \"result\" is missing.")
+            val result = ShapedRecipe.itemStackFromJson(serializedRecipe.getAsJsonObject("result"))
+
+            val mru = GsonHelper.getAsInt(serializedRecipe, "mrusu", 100)
+
             return serial(recipeId, i, mru, result)
         }
 

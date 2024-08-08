@@ -12,6 +12,8 @@ interface MRUContainer {
 
     fun receiveMru(max: Int, simulate: Boolean = false): Int
 
+    fun setMru(value: Int)
+
     val mruType: MRUType
 
     enum class MRUType {

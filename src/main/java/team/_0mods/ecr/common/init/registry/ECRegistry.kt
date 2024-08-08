@@ -5,6 +5,7 @@ import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.crafting.RecipeSerializer
+import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.Material
@@ -14,22 +15,28 @@ import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 import team._0mods.ecr.ModId
-import team._0mods.ecr.common.blocks.*
-import team._0mods.ecr.common.blocks.entity.*
-import team._0mods.ecr.common.container.MithrilineFurnaceContainer
-import team._0mods.ecr.common.items.*
-import team._0mods.ecr.common.items.tools.*
 import team._0mods.ecr.api.makeBERegistry
+import team._0mods.ecr.api.register
+import team._0mods.ecr.api.rl
+import team._0mods.ecr.common.blocks.CrystalBlock
+import team._0mods.ecr.common.blocks.MithrilineFurnace
+import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
+import team._0mods.ecr.common.container.MithrilineFurnaceContainer
+import team._0mods.ecr.common.items.BoundGem
+import team._0mods.ecr.common.items.ECBook
+import team._0mods.ecr.common.items.ECGem
+import team._0mods.ecr.common.items.SoulStone
+import team._0mods.ecr.common.items.tools.*
 import team._0mods.ecr.common.particle.ECParticleType
 import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
-import team._0mods.ecr.api.register
 
 object ECRegistry {
     private val items: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, ModId)
     private val blocksWE = makeBERegistry(ModId)
     private val blocks: DeferredRegister<Block> = DeferredRegister.create(ForgeRegistries.BLOCKS, ModId)
     private val containers: DeferredRegister<MenuType<*>> = DeferredRegister.create(ForgeRegistries.MENU_TYPES, ModId)
-    private val recipes: DeferredRegister<RecipeSerializer<*>> = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, ModId)
+    private val recipes: DeferredRegister<RecipeType<*>> = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, ModId)
+    private val recipeSerializers: DeferredRegister<RecipeSerializer<*>> = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, ModId)
     private val particles: DeferredRegister<ParticleType<*>> = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, ModId)
 
     // items
@@ -72,8 +79,13 @@ object ECRegistry {
         MenuType(IContainerFactory { id, inv, buf -> MithrilineFurnaceContainer(id, inv, buf) })
     }
 
-    // recipes
-    val mithrilineFurnaceRecipe: RegistryObject<MithrilineFurnaceRecipe.Serializer> = recipes.register("mithriline_furnace") {
+    // recipe types
+    val mithrilineFurnaceRecipe: RegistryObject<RecipeType<MithrilineFurnaceRecipe>> = recipes.register("mithriline_furnace") {
+        RecipeType.simple("$ModId:mithriline_furnace".rl)
+    }
+
+    // recipes serializers
+    val mithrilineFurnaceRecipeSerial: RegistryObject<MithrilineFurnaceRecipe.Serializer> = recipeSerializers.register("mithriline_furnace") {
         MithrilineFurnaceRecipe.Serializer(::MithrilineFurnaceRecipe)
     }
 
@@ -87,6 +99,7 @@ object ECRegistry {
         blocksWE.register(bus)
         containers.register(bus)
         recipes.register(bus)
+        recipeSerializers.register(bus)
         particles.register(bus)
     }
 

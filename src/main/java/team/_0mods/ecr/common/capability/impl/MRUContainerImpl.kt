@@ -11,8 +11,7 @@ open class MRUContainerImpl(
     override val mruType: MRUContainer.MRUType,
     private var capacity: Int,
     private var mru: Int,
-    private var maxReceive: Int,
-    private var maxExtract: Int
+    private val onContextChanged: (MRUContainer) -> Unit
 ): MRUContainer, INBTSerializable<CompoundTag> {
     init {
         mru = max(0, min(capacity, mru))
@@ -25,20 +24,29 @@ open class MRUContainerImpl(
         get() = capacity
 
     override fun extractMru(max: Int, simulate: Boolean): Int {
-        val extracted = min(mru, min(maxExtract, max))
+        val extracted = min(mru, max)
 
         if (!simulate) mru -= extracted
+
+        onContextChanged(this)
 
         return extracted
     }
 
     override fun receiveMru(max: Int, simulate: Boolean): Int {
-        val received = min(capacity - mru, min(maxReceive, max))
+        val received = min(capacity - mru, max)
 
-        if (!simulate)
-            mru += received
+        if (!simulate) mru += received
+
+        onContextChanged(this)
 
         return received
+    }
+
+    override fun setMru(value: Int) {
+        this.mru = min(value, maxMRUStorage)
+
+        onContextChanged(this)
     }
 
     override fun serializeNBT(): CompoundTag = CompoundTag().apply {

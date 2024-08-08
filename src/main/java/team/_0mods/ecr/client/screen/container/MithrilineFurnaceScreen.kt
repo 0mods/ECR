@@ -7,9 +7,9 @@ import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import team._0mods.ecr.ModId
-import team._0mods.ecr.common.container.MithrilineFurnaceContainer
-import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.api.rl
+import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
+import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 
 class MithrilineFurnaceScreen(
     menu: MithrilineFurnaceContainer,
@@ -44,22 +44,27 @@ class MithrilineFurnaceScreen(
 
         blit(poseStack, this.guiLeft, this.guiTop, 0f, 0f, this.imageWidth, this.imageHeight, 256, 256)
 
-        /*
-        private static final int ENERGY_LEFT = 96;
-    private static final int ENERGY_WIDTH = 72;
-    private static final int ENERGY_TOP = 8;
-    private static final int ENERGY_HEIGHT = 8;
-        */
+        fill(poseStack, 8.xPos, 60.yPos/* + m*/, 23.xPos, 75.yPos, 0x66ff66)
 
-        //8, 60
-        //graphics.fillGradient(leftPos + ENERGY_LEFT, topPos + ENERGY_TOP, leftPos + ENERGY_LEFT + p, topPos + ENERGY_TOP + ENERGY_HEIGHT, 0xffff0000, 0xff000000);
-//        fill(poseStack,leftPos + ENERGY_LEFT, topPos + ENERGY_TOP, leftPos + ENERGY_LEFT + p, topPos + ENERGY_TOP + ENERGY_HEIGHT, 0xffff00)
-        fill(poseStack, 8, 60/* + m*/, 23, 75, 0x66ff66)
+        val be = menu.blockEntity
+        if (be != null && be is MithrilineFurnaceEntity) {
+            val mru = be.mruStorage
 
-        this.menu.blockEntity?.getCapability(ECCapabilities.MRU_CONTAINER)?.ifPresent {
-            val m = (it.mruStorage / it.maxMRUStorage) * 16
-
-
+            if (isCursorAtPos(mouseX, mouseY, 7.xPos, 59.yPos, 18, 18))
+                this.renderTooltip(poseStack, Component.literal("MRUSU: ${mru.mruStorage}/${mru.maxMRUStorage}"), mouseX, mouseY)
         }
+    }
+
+    fun isCursorAtPos(cursorX: Int, cursorY: Int, x: Int, y: Int, width: Int, height: Int) : Boolean =
+        cursorX >= x && cursorY >=y && cursorX <= x + width && cursorY <= y + height
+
+    val Int.xPos: Int get() {
+        val j = ((this@MithrilineFurnaceScreen.width / 2) - (this@MithrilineFurnaceScreen.imageWidth / 2))
+        return j + this
+    }
+
+    val Int.yPos: Int get() {
+        val j = ((this@MithrilineFurnaceScreen.height / 2) - (this@MithrilineFurnaceScreen.imageHeight / 2))
+        return j + this
     }
 }
