@@ -15,8 +15,6 @@ import team._0mods.ecr.ModId
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECBook.Companion.bookType
 import team._0mods.ecr.api.mru.MRUWeapon
-import team._0mods.ecr.client.keys.ECKeys
-import team._0mods.ecr.common.hiddenFurnace
 
 @SubscribeEvent
 fun onItemTooltip(e: ItemTooltipEvent) {
