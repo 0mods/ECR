@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ECStructureData(
+    val replaces: String = "",
     val pattern: Array<Array<String>>,
     val symbols: Array<SymbolMatcher>
 ) {

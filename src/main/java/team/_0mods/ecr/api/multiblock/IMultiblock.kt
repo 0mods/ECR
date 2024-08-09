@@ -3,7 +3,7 @@ package team._0mods.ecr.api.multiblock
 import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.Level
-import team._0mods.ecr.api.rl
+import team._0mods.ecr.api.utils.rl
 import java.util.function.BiFunction
 
 interface IMultiblock {
@@ -18,10 +18,10 @@ interface IMultiblock {
             return mb
         }
 
-        fun createMultiBlock(id: ResourceLocation, pattern: Array<Array<String>>, vararg rawMatchers: Pair<Char, Any>): IMultiblock =
-            createMultiBlock(id, pattern, '0', *rawMatchers)
+        fun createMultiBlock(id: ResourceLocation, pattern: Array<Array<String>>, replacesExists: Boolean, vararg rawMatchers: Pair<Char, Any>): IMultiblock =
+            createMultiBlock(id, pattern, '0', replacesExists, *rawMatchers)
 
-        fun createMultiBlock(id: ResourceLocation, pattern: Array<Array<String>>, startChar: Char, vararg rawMatchers: Pair<Char, Any>): IMultiblock {
+        fun createMultiBlock(id: ResourceLocation, pattern: Array<Array<String>>, startChar: Char, replacesExists: Boolean, vararg rawMatchers: Pair<Char, Any>): IMultiblock {
             var arr = arrayOf<Any>()
 
             rawMatchers.forEach {
@@ -29,7 +29,7 @@ interface IMultiblock {
                 arr += it.second
             }
 
-            return Multiblock(id, pattern, startChar, *arr)
+            return Multiblock(id, pattern, startChar, replacesExists, *arr)
         }
     }
 

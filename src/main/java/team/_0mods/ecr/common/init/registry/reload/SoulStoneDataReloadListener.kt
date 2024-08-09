@@ -12,7 +12,7 @@ import team._0mods.ecr.LOGGER
 import team._0mods.ecr.ModId
 import team._0mods.ecr.common.data.SoulStoneData
 import team._0mods.ecr.common.items.SoulStone
-import team._0mods.ecr.api.rl
+import team._0mods.ecr.api.utils.rl
 
 class SoulStoneDataReloadListener(private val json: Json): SimplePreparableReloadListener<Unit>() {
     override fun prepare(resourceManager: ResourceManager, profiler: ProfilerFiller) {}

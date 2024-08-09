@@ -1,4 +1,4 @@
-package team._0mods.ecr.api
+package team._0mods.ecr.api.utils
 
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.ArgumentType

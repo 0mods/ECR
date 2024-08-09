@@ -1,0 +1,10 @@
+{
+  "type": "ecremained:mithriline_furnace",
+  "ingredient": {
+    "item": "minecraft:stone"
+  },
+  "result": {
+    "item": "ecremained:soul_stone"
+  },
+  "mrusu": 100
+}

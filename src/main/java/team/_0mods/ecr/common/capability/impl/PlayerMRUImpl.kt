@@ -8,7 +8,7 @@ import net.minecraftforge.common.util.INBTSerializable
 import net.minecraftforge.common.util.LazyOptional
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.plugin.registry.PlayerMatrixTypeRegistry
-import team._0mods.ecr.api.rl
+import team._0mods.ecr.api.utils.rl
 import team._0mods.ecr.common.capability.PlayerMRU
 import team._0mods.ecr.common.init.registry.ECCapabilities
 

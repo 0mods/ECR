@@ -10,10 +10,10 @@ import net.minecraft.tags.TagKey
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraftforge.registries.ForgeRegistries
 import team._0mods.ecr.LOGGER
-import team._0mods.ecr.common.data.ECStructureData
-import team._0mods.ecr.api.rl
 import team._0mods.ecr.api.multiblock.IMultiblock
 import team._0mods.ecr.api.multiblock.Matcher
+import team._0mods.ecr.api.utils.rl
+import team._0mods.ecr.common.data.ECStructureData
 
 class ECStructureReloadListener(private val json: Json): SimplePreparableReloadListener<Unit>() {
     override fun prepare(resourceManager: ResourceManager, profiler: ProfilerFiller) {}
@@ -22,7 +22,7 @@ class ECStructureReloadListener(private val json: Json): SimplePreparableReloadL
     override fun apply(`object`: Unit, resourceManager: ResourceManager, profiler: ProfilerFiller) {
         resourceManager.listResources("multiblock") { it.path.endsWith(".json") }.forEach {
             var startChar = '0'
-            val id = "${it.key.namespace}:${it.key.path.split("/")[1].removeSuffix(".json")}".rl
+            var id = "${it.key.namespace}:${it.key.path.split("/")[1].removeSuffix(".json")}".rl
             val data = json.decodeFromStream(ECStructureData.serializer(), it.value.open())
             val matcher = data.symbols
 
@@ -96,10 +96,14 @@ class ECStructureReloadListener(private val json: Json): SimplePreparableReloadL
                 return@forEach
             }
 
+            if (data.replaces.isNotEmpty())
+                id = data.replaces.rl
+
             IMultiblock.createMultiBlock(
                 id,
                 data.pattern,
                 startChar,
+                data.replaces.isNotEmpty(),
                 *symbols
             )
         }

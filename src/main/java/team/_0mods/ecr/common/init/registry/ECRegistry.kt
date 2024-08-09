@@ -15,9 +15,9 @@ import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 import team._0mods.ecr.ModId
-import team._0mods.ecr.api.makeBERegistry
-import team._0mods.ecr.api.register
-import team._0mods.ecr.api.rl
+import team._0mods.ecr.api.utils.makeBERegistry
+import team._0mods.ecr.api.utils.register
+import team._0mods.ecr.api.utils.rl
 import team._0mods.ecr.common.blocks.CrystalBlock
 import team._0mods.ecr.common.blocks.MithrilineFurnace
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity

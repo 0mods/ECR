@@ -4,7 +4,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.fml.ModList
 import team._0mods.ecr.LOGGER
 import team._0mods.ecr.api.plugin.registry.PlayerMatrixTypeRegistry
-import team._0mods.ecr.api.rl
+import team._0mods.ecr.api.utils.rl
 import team._0mods.ecr.common.capability.PlayerMRU
 
 internal class InternalPlayerMatrixTypeRegistry(private val modId: String): PlayerMatrixTypeRegistry {

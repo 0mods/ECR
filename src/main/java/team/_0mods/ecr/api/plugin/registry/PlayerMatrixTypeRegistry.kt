@@ -24,12 +24,9 @@ interface PlayerMatrixTypeRegistry {
     fun register(id: String, c: () -> PlayerMatrixKonstructor): () -> PlayerMRU.PlayerMatrixType {
         val construct = c()
         val type = object : PlayerMRU.PlayerMatrixType {
-            override val name: Component
-                get() = construct.name
-            override val reduceRadiationMultiplier: Double
-                get() = construct.reduceMultiplier
-            override val protectMatrixDecay: Boolean
-                get() = construct.protectDecay
+            override val name: Component get() = construct.name
+            override val reduceRadiationMultiplier: Double get() = construct.reduceMultiplier
+            override val protectMatrixDecay: Boolean get() = construct.protectDecay
         }
 
         return register(id, type)

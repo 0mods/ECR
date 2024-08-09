@@ -19,11 +19,12 @@ import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
 import team._0mods.ecr.ModId
-import team._0mods.ecr.api.StackHelper
 import team._0mods.ecr.api.block.StructuralPosition
+import team._0mods.ecr.api.utils.StackHelper
 import team._0mods.ecr.common.capability.MRUContainer
 import team._0mods.ecr.common.capability.impl.MRUContainerImpl
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
+import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECMultiblocks
 import team._0mods.ecr.common.init.registry.ECRegistry
@@ -34,11 +35,12 @@ import kotlin.math.floor
 class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     BlockEntity(ECRegistry.mithrilineFurnace.second, pos, blockState), MenuProvider {
     companion object {
+        private val pp = ECCommonConfig.instance.mithrilineFurnaceConfig.pylonPositions
         private val collectorPos = StructuralPosition.builder
-            .pos(2, 2, 2)
-            .pos(-2, 2, -2)
-            .pos(-2, 2, 2)
-            .pos(2, 2, -2)
+            .pos(pp.firstPylonOffset.x, pp.firstPylonOffset.y, pp.firstPylonOffset.z)
+            .pos(pp.secondPylonOffset.x, pp.secondPylonOffset.y, pp.secondPylonOffset.z)
+            .pos(pp.thirdPylonOffset.x, pp.thirdPylonOffset.y, pp.thirdPylonOffset.z)
+            .pos(pp.fourthPylonOffset.x, pp.fourthPylonOffset.y, pp.fourthPylonOffset.z)
             .build
 
         @JvmStatic
@@ -53,7 +55,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
                     if (collectors.isNotEmpty() && (be.tickCount++ % (160 / collectors.size) == 0)) {
                         var collect = collectors.size * 4 - 3 + 1
 
-                        if (be.notFrozenMRGeneration) collect /= 4
+                        if (!be.notFrozenMRGeneration) collect /= 4
 
                         be.getCapability(ECCapabilities.MRU_CONTAINER)
                             .ifPresent {
@@ -71,21 +73,23 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
                             val mfr = recipe.get()
                             val result = mfr.resultItem
 
-                            be.maxProgress = mfr.espe
+                            be.notFrozenMRGeneration = false
+
+                            be.containerData.set(1, mfr.espe)
 
                             if (StackHelper.canCombineStacks(result.copy(), be.itemHandler.getStackInSlot(1))) {
+                                be.containerData.set(0, be.progress)
+
                                 if (mfr.espe > be.mruStorage.mruStorage) {
                                     be.progress++
                                     be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(1, false) }
                                 } else if (be.mruStorage.mruStorage >= mfr.espe) {
-                                    be.notFrozenMRGeneration = false
                                     be.progress = mfr.espe
                                     be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(mfr.espe, false) }
                                 }
 
                                 if (be.progress >= mfr.espe) {
                                     be.progress = 0
-                                    be.notFrozenMRGeneration = true
                                     inv.clearContent()
                                     be.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent {
                                         it.extractItem(0, 1, false)
@@ -94,6 +98,8 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
                                     be.setChanged()
                                     be.maxProgress = 0
+                                    be.containerData.set(0, 0)
+                                    be.containerData.set(1, 0)
                                 }
                             }
                         } else {
@@ -107,13 +113,17 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
                         be.progress = 0
                         be.maxProgress = 0
                     }
+                } else {
+                    be.notFrozenMRGeneration = true
+                    be.progress = 0
+                    be.maxProgress = 0
                 }
             } else {
                 be.previousRot = be.rotAngle
 
                 if (complete) {
                     be.rotAngle += 45f * (1f / 20f)
-                } else if (be.rotAngle % 360 != 0f) {
+                } else if (be.rotAngle % 90 != 0f) {
                     be.rotAngle += 45f * (1f / 20f) / 2
 
                     if (be.rotAngle % 90 == 0f) be.rotAngle = 90f * floor(be.rotAngle / 90)
@@ -175,7 +185,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
     override fun saveAdditional(tag: CompoundTag) {
         tag.put("ItemStorage", itemHandler.serializeNBT())
-        tag.put("MRUSUStorage", mruStorage.serializeNBT())
+        tag.put("ESPEStorage", mruStorage.serializeNBT())
         tag.putBoolean("FullStructure", successfulStructure)
         tag.putBoolean("CanGenerate", notFrozenMRGeneration)
         super.saveAdditional(tag)
@@ -183,7 +193,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
     override fun load(tag: CompoundTag) {
         itemHandler.deserializeNBT(tag.getCompound("ItemStorage"))
-        mruStorage.deserializeNBT(tag.getCompound("MRUSUStorage"))
+        mruStorage.deserializeNBT(tag.getCompound("ESPEStorage"))
         successfulStructure = tag.getBoolean("FullStructure")
         notFrozenMRGeneration = tag.getBoolean("CanGenerate")
         super.load(tag)

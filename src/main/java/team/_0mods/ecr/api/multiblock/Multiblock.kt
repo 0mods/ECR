@@ -11,6 +11,7 @@ class Multiblock internal constructor(
     private val name: ResourceLocation,
     pattern: Array<Array<String>>,
     private val startChar: Char,
+    replaces: Boolean,
     vararg rawMatchers: Any
 ): IMultiblock {
     private val match: MutableMap<BlockPos, Matcher> = HashMap()
@@ -95,7 +96,9 @@ class Multiblock internal constructor(
             if (matcher.check != null) this.match[BlockPos(x, y, z)] = matcher
         }
 
-        (IMultiblock.MULTIBLOCKS as HashMap) += this.name to this
+        if (!replaces)
+            (IMultiblock.MULTIBLOCKS as HashMap) += this.name to this
+        else (IMultiblock.MULTIBLOCKS as HashMap)[this.name] = this
     }
 
     override fun isComplete(level: Level, center: BlockPos): Boolean {

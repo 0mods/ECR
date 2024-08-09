@@ -1,4 +1,4 @@
-package team._0mods.ecr.api
+package team._0mods.ecr.api.utils
 
 import net.minecraft.world.item.ItemStack
 

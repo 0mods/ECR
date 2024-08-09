@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import team._0mods.ecr.ModId
-import team._0mods.ecr.api.rl
+import team._0mods.ecr.api.utils.rl
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 

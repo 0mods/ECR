@@ -14,7 +14,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import team._0mods.ecr.ModId
-import team._0mods.ecr.api.rl
+import team._0mods.ecr.api.utils.rl
 import team._0mods.ecr.common.compact.ECJEIPlugin
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
