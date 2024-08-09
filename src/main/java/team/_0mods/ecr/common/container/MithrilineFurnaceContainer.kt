@@ -3,7 +3,9 @@ package team._0mods.ecr.common.container
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.inventory.ContainerData
 import net.minecraft.world.inventory.ContainerLevelAccess
+import net.minecraft.world.inventory.SimpleContainerData
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraftforge.items.IItemHandler
@@ -17,14 +19,15 @@ class MithrilineFurnaceContainer(
     inv: Inventory,
     container: IItemHandler,
     val blockEntity: BlockEntity?,
-    access: ContainerLevelAccess
+    access: ContainerLevelAccess,
+    val data: ContainerData
 ) : AbstractContainer(ECRegistry.mithrilineFurnaceContainer.get(), containerId, access) {
     constructor(containerId: Int, inv: Inventory, buf: FriendlyByteBuf):
-            this(containerId, inv, ItemStackHandler(2), inv.player.commandSenderWorld.getBlockEntity(buf.readBlockPos()), ContainerLevelAccess.NULL)
+            this(containerId, inv, ItemStackHandler(2), inv.player.commandSenderWorld.getBlockEntity(buf.readBlockPos()), ContainerLevelAccess.NULL, SimpleContainerData(2))
 
     init {
         addSlot(SpecialSlot(container, 0, 80, 60))
-        addSlot(SpecialSlot(container, 1, 80, 30, { false }))
+        addSlot(SpecialSlot(container, 1, 80, 22, { false }))
 
         makeInv(inv, 8, 84)
     }
@@ -39,23 +42,18 @@ class MithrilineFurnaceContainer(
             qms = raw.copy()
 
             if (index == 1) {
-                // try to move to hotbar
                 if (!this.moveItemStackTo(raw, 2, 38, true))
                     return ItemStack.EMPTY
 
                 ms.onQuickCraft(raw, qms)
             } else if (index in 2 ..< 38) {
-                // try to move from inventory to craft slot
                 if (!this.moveItemStackTo(raw, 0, 1, false)) {
                     if (index in 12 ..< 38) {
-                        // try to move to hotbar
                         if (!this.moveItemStackTo(raw, 2, 11, false))
                             return ItemStack.EMPTY
-                        // try to move to inventory no hotbar
                     } else if (!this.moveItemStackTo(raw, 12, 38, false))
                         return ItemStack.EMPTY
                 }
-                // try to move to inventory
             } else if (!this.moveItemStackTo(raw, 2, 38, false))
                 return ItemStack.EMPTY
 
@@ -72,4 +70,15 @@ class MithrilineFurnaceContainer(
 
     override fun stillValid(player: Player): Boolean =
         stillValid(this.access, player, ECRegistry.mithrilineFurnace.first)
+
+    val hasActiveRecipe = this.data.get(0) > 0
+
+    fun scaleProgress(): Int {
+        val progress = this.data.get(0)
+        val maxProgress = this.data.get(1)
+
+        return if (progress != 0 && maxProgress != 0)
+            -(progress * 16 / maxProgress)
+        else 0
+    }
 }

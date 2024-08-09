@@ -44,26 +44,34 @@ class MithrilineFurnaceScreen(
 
         blit(poseStack, this.guiLeft, this.guiTop, 0f, 0f, this.imageWidth, this.imageHeight, 256, 256)
 
-        fill(poseStack, 8.xPos, 60.yPos/* + m*/, 23.xPos, 75.yPos, 0x66ff66)
+        fill(poseStack, 7.xPos, 59.yPos, 23.xPos, 75.yPos, 0x66ff66)
 
         val be = menu.blockEntity
         if (be != null && be is MithrilineFurnaceEntity) {
             val mru = be.mruStorage
 
-            if (isCursorAtPos(mouseX, mouseY, 7.xPos, 59.yPos, 18, 18))
-                this.renderTooltip(poseStack, Component.literal("MRUSU: ${mru.mruStorage}/${mru.maxMRUStorage}"), mouseX, mouseY)
+            if (isCursorAtPos(mouseX, mouseY, 6.xPos, 59.yPos, 18, 18))
+                this.renderTooltip(poseStack, Component.literal("ESPE: ${mru.mruStorage}/${mru.maxMRUStorage}"), mouseX, mouseY)
+
+            renderProgressArrow(poseStack, be)
         }
     }
 
-    fun isCursorAtPos(cursorX: Int, cursorY: Int, x: Int, y: Int, width: Int, height: Int) : Boolean =
+    private fun renderProgressArrow(poseStack: PoseStack, be: MithrilineFurnaceEntity) {
+        if (menu.hasActiveRecipe) {
+            blit(poseStack, 7.xPos, 16.yPos, 176, 15, 8, menu.scaleProgress())
+        }
+    }
+
+    private fun isCursorAtPos(cursorX: Int, cursorY: Int, x: Int, y: Int, width: Int, height: Int) : Boolean =
         cursorX >= x && cursorY >=y && cursorX <= x + width && cursorY <= y + height
 
-    val Int.xPos: Int get() {
+    private val Int.xPos: Int get() {
         val j = ((this@MithrilineFurnaceScreen.width / 2) - (this@MithrilineFurnaceScreen.imageWidth / 2))
         return j + this
     }
 
-    val Int.yPos: Int get() {
+    private val Int.yPos: Int get() {
         val j = ((this@MithrilineFurnaceScreen.height / 2) - (this@MithrilineFurnaceScreen.imageHeight / 2))
         return j + this
     }

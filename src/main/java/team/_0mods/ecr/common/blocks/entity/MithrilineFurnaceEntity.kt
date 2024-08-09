@@ -8,6 +8,7 @@ import net.minecraft.world.SimpleContainer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
+import net.minecraft.world.inventory.ContainerData
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
@@ -70,17 +71,19 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
                             val mfr = recipe.get()
                             val result = mfr.resultItem
 
+                            be.maxProgress = mfr.espe
+
                             if (StackHelper.canCombineStacks(result.copy(), be.itemHandler.getStackInSlot(1))) {
-                                if (mfr.mrusu > be.mruStorage.maxMRUStorage) {
+                                if (mfr.espe > be.mruStorage.mruStorage) {
                                     be.progress++
                                     be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(1, false) }
-                                } else if (be.mruStorage.mruStorage >= mfr.mrusu) {
+                                } else if (be.mruStorage.mruStorage >= mfr.espe) {
                                     be.notFrozenMRGeneration = false
-                                    be.progress = mfr.mrusu
-                                    be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(mfr.mrusu, false) }
+                                    be.progress = mfr.espe
+                                    be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(mfr.espe, false) }
                                 }
 
-                                if (be.progress >= mfr.mrusu) {
+                                if (be.progress >= mfr.espe) {
                                     be.progress = 0
                                     be.notFrozenMRGeneration = true
                                     inv.clearContent()
@@ -90,18 +93,19 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
                                     }
 
                                     be.setChanged()
+                                    be.maxProgress = 0
                                 }
                             }
-
-                            inv.clearContent()
                         } else {
                             inv.clearContent()
                             be.notFrozenMRGeneration = true
                             be.progress = 0
+                            be.maxProgress = 0
                         }
                     } else {
                         be.notFrozenMRGeneration = true
                         be.progress = 0
+                        be.maxProgress = 0
                     }
                 }
             } else {
@@ -119,11 +123,28 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     }
 
     private val itemHandler = createStackHandler()
-    val mruStorage = MRUContainerImpl(MRUContainer.MRUType.MRUSU, 10000, 0) {
+    val mruStorage = MRUContainerImpl(MRUContainer.MRUType.ESPE, 10000, 0) {
         if (!level!!.isClientSide) {
             MithrilineFurnaceMRUContainerS2CPacket(it.mruStorage, this.blockPos).sendToClient()
             setChanged()
         }
+    }
+
+    val containerData: ContainerData = object : ContainerData {
+        override fun get(index: Int): Int = when(index) {
+            0 -> this@MithrilineFurnaceEntity.progress
+            1 -> this@MithrilineFurnaceEntity.maxProgress
+            else -> 0
+        }
+
+        override fun set(index: Int, value: Int) {
+            when(index) {
+                0 -> this@MithrilineFurnaceEntity.progress = value
+                1 -> this@MithrilineFurnaceEntity.maxProgress = value
+            }
+        }
+
+        override fun getCount(): Int = 2
     }
 
     private var itemHandlerLazy = LazyOptional.empty<IItemHandler>()
@@ -132,6 +153,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     var successfulStructure = false
     var tickCount = 0
     var progress = 0
+    var maxProgress = 0
     var notFrozenMRGeneration = true
 
     // Calculates only on a client
@@ -169,7 +191,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
     override fun createMenu(id: Int, inv: Inventory, player: Player): AbstractContainerMenu? {
         MithrilineFurnaceMRUContainerS2CPacket(this.mruStorage.mruStorage, this.blockPos).sendToClient()
-        return MithrilineFurnaceContainer(id, inv, itemHandler, this, ContainerLevelAccess.create(this.level ?: return null, this.blockPos))
+        return MithrilineFurnaceContainer(id, inv, itemHandler, this, ContainerLevelAccess.create(this.level ?: return null, this.blockPos), this.containerData)
     }
 
     override fun getDisplayName(): Component = Component.translatable("container.$ModId.mithriline_furnace")

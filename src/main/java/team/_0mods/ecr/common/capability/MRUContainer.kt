@@ -17,6 +17,6 @@ interface MRUContainer {
     val mruType: MRUType
 
     enum class MRUType {
-        MRUSU, RADIATION_UNIT, UBMRU
+        MRUSU, RADIATION_UNIT, UBMRU, ESPE
     }
 }
