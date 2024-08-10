@@ -6,6 +6,7 @@ import team._0mods.ecr.common.init.initCommon
 
 val LOGGER = LoggerFactory.getLogger("ECR")
 const val ModId = "ecremained"
+const val SHORT_ID = "ecr"
 
 @Mod(ModId)
 class ECRemained {

@@ -12,9 +12,9 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import team._0mods.ecr.ModId
+import team._0mods.ecr.api.mru.MRUWeapon
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECBook.Companion.bookType
-import team._0mods.ecr.api.mru.MRUWeapon
 
 @SubscribeEvent
 fun onItemTooltip(e: ItemTooltipEvent) {
@@ -26,19 +26,19 @@ fun onItemTooltip(e: ItemTooltipEvent) {
         if (item is ECBook) {
             val type = stack.bookType
 
-            e.toolTip += Component.translatable(
+            e.toolTip.add(Component.translatable(
                 if (type != ECBook.Type.SHADE) "tooltip.$ModId.book.upgrade" else "tooltip.$ModId.book.downgrade",
                 Component.literal("SHIFT + ")
                     .append(Component.translatable("tooltip.$ModId.rmc"))
-            ).withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC)
+            ).withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC))
         }
     }
 
     if (item is SwordItem && item is MRUWeapon) {
         val multiplier = item.multiplier
-        e.toolTip += Component.literal(" ").append("$multiplier").append(" ").append(
+        e.toolTip.add(Component.literal(" ").append("$multiplier").append(" ").append(
             Component.translatable("tooltip.$ModId.sword_multiplier")
-        ).withStyle(ChatFormatting.DARK_GREEN)
+        ).withStyle(ChatFormatting.DARK_GREEN))
     }
 }
 

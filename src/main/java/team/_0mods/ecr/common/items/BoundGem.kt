@@ -108,7 +108,7 @@ class BoundGem : Item(Properties().tab(ECTabs.tabItems)) {
         val pos = stack.boundPos
 
         if (pos != null) {
-            tooltipComponents += Component.literal("${pos.x} ${pos.y} ${pos.z}")
+            tooltipComponents.add(Component.literal("${pos.x} ${pos.y} ${pos.z}"))
         }
     }
 }

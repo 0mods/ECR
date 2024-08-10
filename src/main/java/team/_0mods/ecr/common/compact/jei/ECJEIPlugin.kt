@@ -1,4 +1,4 @@
-package team._0mods.ecr.common.compact
+package team._0mods.ecr.common.compact.jei
 
 import mezz.jei.api.IModPlugin
 import mezz.jei.api.JeiPlugin
@@ -11,15 +11,14 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.utils.rl
-import team._0mods.ecr.common.compact.categories.MithrilineFurnaceCategory
+import team._0mods.ecr.common.compact.jei.categories.MithrilineFurnaceCategory
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
 
 @JeiPlugin
 class ECJEIPlugin: IModPlugin {
     companion object {
-        @JvmField
-        val MITHRILINE_FURNACE = RecipeType(MithrilineFurnaceCategory.RL_ID, MithrilineFurnaceRecipe::class.java)
+        @JvmField val MITHRILINE_FURNACE = RecipeType(MithrilineFurnaceCategory.RL_ID, MithrilineFurnaceRecipe::class.java)
     }
 
     override fun getPluginUid(): ResourceLocation = "$ModId:jei_plugin".rl

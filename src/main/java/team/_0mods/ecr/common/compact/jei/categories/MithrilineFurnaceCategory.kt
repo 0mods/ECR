@@ -1,4 +1,4 @@
-package team._0mods.ecr.common.compact.categories
+package team._0mods.ecr.common.compact.jei.categories
 
 import com.mojang.blaze3d.vertex.PoseStack
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder
@@ -15,7 +15,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.utils.rl
-import team._0mods.ecr.common.compact.ECJEIPlugin
+import team._0mods.ecr.common.compact.jei.ECJEIPlugin
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
 

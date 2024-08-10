@@ -16,11 +16,10 @@ import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.entity.living.LivingDeathEvent
-import team._0mods.ecr.LOGGER
 import team._0mods.ecr.ModId
-import team._0mods.ecr.common.init.registry.ECTabs
 import team._0mods.ecr.api.mru.MRUWeapon
-import java.util.UUID
+import team._0mods.ecr.common.init.registry.ECTabs
+import java.util.*
 import kotlin.math.roundToInt
 
 class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
@@ -138,16 +137,16 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
         if (stack.owner != null) {
             val player = level.getPlayerByUUID(stack.owner!!)
 
-            tooltipComponents += Component.translatable(
+            tooltipComponents.add(Component.translatable(
                 "tooltip.$ModId.soul_stone.tracking",
                 (player?.name as? MutableComponent)?.withStyle(ChatFormatting.GOLD) ?:
                 Component.literal("Not Loaded").withStyle(ChatFormatting.GOLD)
-            ).withStyle(ChatFormatting.DARK_GRAY)
+            ).withStyle(ChatFormatting.DARK_GRAY))
 
-            tooltipComponents += Component.translatable(
+            tooltipComponents.add(Component.translatable(
                 "tooltip.$ModId.soul_stone.detected_ubmru",
                 Component.literal(stack.capacity.toString()).withStyle(ChatFormatting.GREEN)
-            ).withStyle(ChatFormatting.DARK_GRAY)
+            ).withStyle(ChatFormatting.DARK_GRAY))
         }
     }
 

@@ -21,10 +21,6 @@ plugins {
 
 java.withSourcesJar()
 
-configurations {
-    compileClasspath { extendsFrom(shadowLibrary) }
-}
-
 loom {
     silentMojangMappingsLicense()
 
@@ -41,29 +37,30 @@ loom {
 version = modVersion
 
 base {
-    archivesName = project.properties["archivesName"].toString()
+    archivesName = "archivesName".fromProperties
 }
 
 repositories {
     mavenCentral()
-    maven("https://maven.0mods.team/releases")
-    maven("https://maven.minecraftforge.net/")
-    maven("https://maven.architectury.dev/")
+    maven("https://maven.0mods.team/releases") // Kotlin Extras
+    maven("https://maven.minecraftforge.net/") // MinecraftForge
+    maven("https://maven.architectury.dev/") // Architectury API
     maven("https://maven.fabricmc.net/")
-    maven("https://maven.parchmentmc.org")
-    maven("https://thedarkcolour.github.io/KotlinForForge/")
-    maven("https://maven.blamejared.com/")
-    maven("https://modmaven.dev")
-    maven("https://maven.tterrag.com/")
-    maven("https://maven.0mods.team/releases")
-    maven("https://repo.spongepowered.org/repository/maven-public/")
+    maven("https://maven.parchmentmc.org") // Mappings
+    maven("https://maven.blamejared.com/") // CT
+    maven("https://modmaven.dev") // JEI
+    maven("https://maven.tterrag.com/") // CTM
+    maven("https://repo.spongepowered.org/repository/maven-public/") // Mixins
+    maven("https://maven.saps.dev/releases") // Kubejs
+    maven("https://api.modrinth.com/maven") // Modrinth maven for some mods
+    maven("https://maven.terraformersmc.com/")
 }
 
 dependencies {
     minecraft("com.mojang:minecraft:${minecraftVersion}")
     mappings(loom.layered {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${project.properties["parchmentVersion"].toString()}@zip")
+        parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${"parchmentVersion".fromProperties}@zip")
     })
 
     compileOnly("org.spongepowered:mixin:0.8")
@@ -77,15 +74,25 @@ dependencies {
 
     shadowLibrary("team.0mods:KotlinExtras:1.4-noreflect")
 
-    shadow("team.chisel.ctm:CTM:${minecraftVersion}-${project.properties["ctm_version"].toString()}")
+    shadow("team.chisel.ctm:CTM:${minecraftVersion}-${"ctm_version".fromProperties}")
 
-    implementation(kotlin("stdlib", "2.0.10")); minecraftClientRuntimeLibraries(kotlin("stdlib", "2.0.10"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:+") { minecraftClientRuntimeLibraries(this) }
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:+") { minecraftClientRuntimeLibraries(this) }
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:+") { minecraftClientRuntimeLibraries(this) }
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:+") { minecraftClientRuntimeLibraries(this) }
+    implementation(kotlin("stdlib", "2.0.10")); minecraftRuntimeLibraries(kotlin("stdlib", "2.0.10"))
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:+") { minecraftRuntimeLibraries(this) }
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:+") { minecraftRuntimeLibraries(this) }
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:+") { minecraftRuntimeLibraries(this) }
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:+") { minecraftRuntimeLibraries(this) }
 
-    modApi("mezz.jei:jei-${minecraftVersion}-forge:${project.properties["jei_version"].toString()}")
+    modApi("mezz.jei:jei-${minecraftVersion}-forge:${"jei_version".fromProperties}")
+    modApi("com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:${"ct_version".fromProperties}")
+    modApi("dev.latvian.mods:kubejs-forge:${"kubejs_version".fromProperties}")
+    modApi("maven.modrinth:jade:${"jade_version".fromProperties}")
+
+    modRuntimeOnly("dev.latvian.mods:rhino-forge:${"rhino_version".fromProperties}")
+    modRuntimeOnly("dev.architectury:architectury-forge:${"architectury_version".fromProperties}")
+
+    minecraftRuntimeLibraries("io.github.llamalad7:mixinextras-common:0.4.0")
+
+    annotationProcessor("com.blamejared.crafttweaker:Crafttweaker_Annotation_Processors:${"ct_annot_version".fromProperties}")
 }
 
 tasks {
@@ -93,7 +100,7 @@ tasks {
         manifest {
             attributes(
                 mapOf(
-                    "Specification-Title" to project.properties["modName"].toString(),
+                    "Specification-Title" to "modName".fromProperties,
                     "Specification-Vendor" to "0mods",
                     "Specification-Version" to "1",
                     "Implementation-Title" to project.name,
@@ -129,11 +136,11 @@ tasks {
         from(project.sourceSets.main.get().resources)
 
         val replacement = mapOf(
-            "modId" to modId, "modVersion" to modVersion, "modName" to project.properties["modName"].toString(),
-            "modCredits" to project.properties["modCredits"].toString(), "modAuthors" to project.properties["modAuthors"].toString(),
-            "modDesc" to project.properties["modDesc"].toString(), "forgeVersionRange" to project.properties["forgeVersionRange"].toString(),
-            "minecraftVersionRange" to project.properties["minecraftVersionRange"].toString(), "loaderVersionRange" to project.properties["loaderVersionRange"].toString(),
-            "modLicense" to project.properties["modLicense"]
+            "modId" to modId, "modVersion" to modVersion, "modName" to "modName".fromProperties,
+            "modCredits" to "modCredits".fromProperties, "modAuthors" to "modAuthors".fromProperties,
+            "modDesc" to "modDesc".fromProperties, "forgeVersionRange" to "forgeVersionRange".fromProperties,
+            "minecraftVersionRange" to "minecraftVersionRange".fromProperties, "loaderVersionRange" to "loaderVersionRange".fromProperties,
+            "modLicense" to "modLicense".fromProperties
         )
 
         filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta", "*.mixins.json")) {
@@ -152,6 +159,9 @@ tasks {
         options.release = 17
     }
 }
+
+val String.fromProperties
+    get() = project.properties[this].toString()
 
 kotlin {
     jvmToolchain(17)

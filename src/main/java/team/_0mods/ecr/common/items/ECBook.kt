@@ -97,15 +97,6 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
                     Type.SHADE -> 0.4f
                 }
             }
-
-            ItemProperties.register(this, ResourceLocation(ModId, "type")) { s, _, _, _ ->
-                val type = s.bookTypes
-                return@register if (!type.contains(Type.MRU) || type.isEmpty()) 0f
-                else if (!type.contains(Type.ENGINEER)) 0.1f
-                else if (!type.contains(Type.HOANA)) 0.2f
-                else if (!type.contains(Type.SHADE)) 0.3f
-                else 0.4f
-            }
         }
     }
 
@@ -131,31 +122,31 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
     ) {
         val bookType = stack.bookType
 
-        tooltipComponents += Component.translatable("tooltip.$ModId.book.knowledge_contains").withStyle(ChatFormatting.GOLD).append(":")
+        tooltipComponents.add(Component.translatable("tooltip.$ModId.book.knowledge_contains").withStyle(ChatFormatting.GOLD).append(":"))
 
         when (bookType) {
-            Type.BASIC -> tooltipComponents += Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.basic"))
+            Type.BASIC -> tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.basic")))
             Type.MRU -> {
-                tooltipComponents += Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.basic"))
-                tooltipComponents += Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.mru"))
+                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.basic")))
+                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.mru")))
             }
             Type.ENGINEER -> {
-                tooltipComponents += Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.basic"))
-                tooltipComponents += Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.mru"))
-                tooltipComponents += Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.engineer"))
+                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.basic")))
+                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.mru")))
+                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.engineer")))
             }
             Type.HOANA -> {
-                tooltipComponents += Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.basic"))
-                tooltipComponents += Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.mru"))
-                tooltipComponents += Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.engineer"))
-                tooltipComponents += Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.hoana"))
+                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.basic")))
+                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.mru")))
+                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.engineer")))
+                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.hoana")))
             }
             Type.SHADE -> {
-                tooltipComponents += Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.basic"))
-                tooltipComponents += Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.mru"))
-                tooltipComponents += Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.engineer"))
-                tooltipComponents += Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.hoana"))
-                tooltipComponents += Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.shade"))
+                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.basic")))
+                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.mru")))
+                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.engineer")))
+                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.hoana")))
+                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.shade")))
             }
         }
     }
