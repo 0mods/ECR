@@ -3,6 +3,9 @@ package team._0mods.ecr.common.blocks.entity
 import net.minecraft.core.BlockPos
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ClientGamePacketListener
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.SimpleContainer
 import net.minecraft.world.entity.player.Inventory
@@ -29,19 +32,27 @@ import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECMultiblocks
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.network.ECNetworkManager.sendToClient
-import team._0mods.ecr.network.packets.MithrilineFurnaceMRUContainerS2CPacket
+import team._0mods.ecr.network.packets.MithrilineFurnaceS2CUpdatePacket
 import kotlin.math.floor
 
 class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     BlockEntity(ECRegistry.mithrilineFurnace.second, pos, blockState), MenuProvider {
     companion object {
-        private val pp = ECCommonConfig.instance.mithrilineFurnaceConfig.pylonPositions
-        private val collectorPos = StructuralPosition.builder
-            .pos(pp.firstPylonOffset.x, pp.firstPylonOffset.y, pp.firstPylonOffset.z)
-            .pos(pp.secondPylonOffset.x, pp.secondPylonOffset.y, pp.secondPylonOffset.z)
-            .pos(pp.thirdPylonOffset.x, pp.thirdPylonOffset.y, pp.thirdPylonOffset.z)
-            .pos(pp.fourthPylonOffset.x, pp.fourthPylonOffset.y, pp.fourthPylonOffset.z)
-            .build
+        @JvmField
+        val CRYSTAL_POSITION = makePositions()
+
+        private fun makePositions(): StructuralPosition? {
+            val builder = StructuralPosition.builder
+            val positions = ECCommonConfig.instance.mithrilineFurnaceConfig.crystalPositions
+
+            if (positions.isEmpty()) return null
+
+            positions.forEach {
+                builder.pos(it.x, it.y, it.z)
+            }
+
+            return builder.build
+        }
 
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MithrilineFurnaceEntity) {
@@ -50,17 +61,23 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
             if (!level.isClientSide) {
                 if (complete) {
-                    val collectors = collectorPos.get(pos).filter { level.getBlockState(it).block == ECRegistry.mithrilineCrystal.get() }
+                    val collectors = be.getActiveCollectors(level, pos)
 
-                    if (collectors.isNotEmpty() && (be.tickCount++ % (160 / collectors.size) == 0)) {
-                        var collect = collectors.size * 4 - 3 + 1
+                    if (collectors != 0 && (be.tickCount++ % (160 / collectors) == 0)) {
+                        var collect = collectors * 4 - 3 + 1
 
                         if (!be.notFrozenMRGeneration) collect /= 4
 
                         be.getCapability(ECCapabilities.MRU_CONTAINER)
                             .ifPresent {
-                                it.receiveMru(collect, false)
+                                it.receiveMru(collect)
                             }
+                    } else if (CRYSTAL_POSITION == null) {
+                        if (be.tickCount++ % 160 == 0) {
+                            be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent {
+                                it.receiveMru(14)
+                            }
+                        }
                     }
 
                     if (!be.itemHandler.getStackInSlot(0).isEmpty) {
@@ -72,19 +89,25 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
                         if (recipe.isPresent) {
                             val mfr = recipe.get()
                             val result = mfr.resultItem
+                            val ingrCount = mfr.ingredients[0].items[0].count
 
                             be.notFrozenMRGeneration = false
 
                             be.containerData.set(1, mfr.espe)
 
-                            if (StackHelper.canCombineStacks(result.copy(), be.itemHandler.getStackInSlot(1))) {
+                            if (
+                                StackHelper.canCombineStacks(result.copy(), be.itemHandler.getStackInSlot(1)) &&
+                                inv.getItem(0).count >= ingrCount
+                            ) {
                                 be.containerData.set(0, be.progress)
 
                                 if (mfr.espe > be.mruStorage.mruStorage) {
                                     be.progress++
+                                    be.containerData.set(0, be.progress)
                                     be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(1, false) }
                                 } else if (be.mruStorage.mruStorage >= mfr.espe) {
                                     be.progress = mfr.espe
+                                    be.containerData.set(0, be.progress)
                                     be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(mfr.espe, false) }
                                 }
 
@@ -92,7 +115,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
                                     be.progress = 0
                                     inv.clearContent()
                                     be.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent {
-                                        it.extractItem(0, 1, false)
+                                        it.extractItem(0, ingrCount, false)
                                         it.insertItem(1, result.copy(), false)
                                     }
 
@@ -135,7 +158,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     private val itemHandler = createStackHandler()
     val mruStorage = MRUContainerImpl(MRUContainer.MRUType.ESPE, 10000, 0) {
         if (!level!!.isClientSide) {
-            MithrilineFurnaceMRUContainerS2CPacket(it.mruStorage, this.blockPos).sendToClient()
+            MithrilineFurnaceS2CUpdatePacket(it.mruStorage, this.blockPos).sendToClient()
             setChanged()
         }
     }
@@ -200,7 +223,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     }
 
     override fun createMenu(id: Int, inv: Inventory, player: Player): AbstractContainerMenu? {
-        MithrilineFurnaceMRUContainerS2CPacket(this.mruStorage.mruStorage, this.blockPos).sendToClient()
+        MithrilineFurnaceS2CUpdatePacket(this.mruStorage.mruStorage, this.blockPos).sendToClient()
         return MithrilineFurnaceContainer(id, inv, itemHandler, this, ContainerLevelAccess.create(this.level ?: return null, this.blockPos), this.containerData)
     }
 
@@ -215,6 +238,14 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         }
 
         return super.getCapability(cap)
+    }
+
+    override fun getUpdatePacket(): Packet<ClientGamePacketListener> = ClientboundBlockEntityDataPacket.create(this)
+
+    fun getActiveCollectors(level: Level, pos: BlockPos): Int {
+        val collectors = CRYSTAL_POSITION?.get(pos)?.filter { level.getBlockState(it).block == ECRegistry.mithrilineCrystal.get() }
+        if (collectors.isNullOrEmpty()) return 0
+        return collectors.size
     }
 
     private fun createStackHandler() = object : ItemStackHandler(2) {

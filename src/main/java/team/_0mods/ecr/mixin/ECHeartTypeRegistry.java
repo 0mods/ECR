@@ -13,9 +13,7 @@ public class ECHeartTypeRegistry {
     @Shadow @Final @Mutable private static Gui.HeartType[] $VALUES;
 
     @Invoker("<init>")
-    public static Gui.HeartType ecremained$invoke(String internalName, int internalId, int index, boolean canBlink) {
-        throw new AssertionError();
-    }
+    public static Gui.HeartType ecremained$invoke(String internalName, int internalId, int index, boolean canBlink) { throw new AssertionError(); }
 
     @Unique
     private static Gui.HeartType ecremained$addVariant(String internalName, int index, boolean canBlink) {

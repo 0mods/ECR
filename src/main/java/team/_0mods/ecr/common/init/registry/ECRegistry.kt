@@ -66,12 +66,12 @@ object ECRegistry {
 
     val mithrilineFurnace by blocksWE.register(
         "mithriline_furnace",
-        { MithrilineFurnace(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).requiresCorrectToolForDrops()) },
+        { MithrilineFurnace(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops()) },
         ::MithrilineFurnaceEntity
     )
 
     val mithrilineCrystal = block("mithriline_crystal") {
-        CrystalBlock(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).requiresCorrectToolForDrops())
+        CrystalBlock(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops())
     }
 
     // containers

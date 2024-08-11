@@ -8,7 +8,7 @@ import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 import java.util.function.Supplier
 
-class MithrilineFurnaceMRUContainerS2CPacket(val mru: Int, val pos: BlockPos) {
+class MithrilineFurnaceS2CUpdatePacket(val mru: Int, val pos: BlockPos) {
     constructor(buf: FriendlyByteBuf): this(buf.readInt(), buf.readBlockPos())
 
     fun toNetwork(buf: FriendlyByteBuf) {

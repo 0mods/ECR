@@ -16,27 +16,31 @@ class ECCommonConfig(
 
     @Serializable
     data class MithrilineFurnace(
-        @SerialName("pylon_offsets")
-        val pylonPositions: PylonPositions = PylonPositions()
+        @SerialName("crystal_positions") val crystalPositions: Array<Offset> = arrayOf(
+            Offset(2, 2, 2), Offset(-2, 2, -2),
+            Offset(-2, 2, 2), Offset(2, 2, -2),
+            Offset(2, 1, 0), Offset(0, 1, 2),
+            Offset(-2, 1, 0), Offset(0, 1, -2)
+        )
     ) {
-
         @Serializable
-        data class PylonPositions(
-            @SerialName("first")
-            val firstPylonOffset: Offset = Offset(2, 2, 2),
-            @SerialName("second")
-            val secondPylonOffset: Offset = Offset(-2, 2, -2),
-            @SerialName("third")
-            val thirdPylonOffset: Offset = Offset(-2, 2, 2),
-            @SerialName("fourth")
-            val fourthPylonOffset: Offset = Offset(2, 2, -2)
-        ) {
-            @Serializable
-            data class Offset(
-                val x: Int,
-                val y: Int,
-                val z: Int
-            )
+        data class Offset(
+            val x: Int,
+            val y: Int,
+            val z: Int
+        )
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as MithrilineFurnace
+
+            return crystalPositions.contentEquals(other.crystalPositions)
+        }
+
+        override fun hashCode(): Int {
+            return crystalPositions.contentHashCode()
         }
     }
 }

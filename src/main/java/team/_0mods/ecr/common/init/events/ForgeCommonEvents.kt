@@ -24,7 +24,7 @@ import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECBook.Companion.bookType
 
 @OptIn(ExperimentalSerializationApi::class)
-internal val json = Json {
+private val json = Json {
     ignoreUnknownKeys = true
     encodeDefaults = true
     prettyPrint = true

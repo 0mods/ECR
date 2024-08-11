@@ -7,7 +7,9 @@ import snownee.jade.api.BlockAccessor
 import snownee.jade.api.IBlockComponentProvider
 import snownee.jade.api.ITooltip
 import snownee.jade.api.config.IPluginConfig
+import team._0mods.ecr.ModId
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
+import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECRegistry
 
 class MithrilineFurnaceComponent: IBlockComponentProvider {
@@ -16,6 +18,9 @@ class MithrilineFurnaceComponent: IBlockComponentProvider {
     override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
         val be = accessor.blockEntity as MithrilineFurnaceEntity
         val storage = be.mruStorage
+        val collectors = be.getActiveCollectors(be.level!!, be.blockPos)
+        val maxCollectors = ECCommonConfig.instance.mithrilineFurnaceConfig.crystalPositions.size
+        tooltip.add(Component.translatable("jade.$ModId.mithriline_furnace.espe_collector", collectors, maxCollectors))
         tooltip.add(Component.literal("ESPE: ${storage.mruStorage}/${storage.maxMRUStorage}"))
     }
 }

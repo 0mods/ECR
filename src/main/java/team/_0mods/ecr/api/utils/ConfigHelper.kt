@@ -14,7 +14,15 @@ inline fun <reified T> T.loadConfig(json: Json, fileName: String): T {
     val file = FMLPaths.GAMEDIR.get().resolve("config/").toFile().resolve("$fileName.json")
 
     return if (file.exists()) {
-        decodeCfg(json, file)
+        try {
+            decodeCfg(json, file)
+        } catch (e: Exception) {
+            LOGGER.error("Failed to load config with name ${file.canonicalPath}.")
+            LOGGER.warn("Regenerating config... Using defaults.")
+            file.delete()
+            encodeCfg(json, file)
+            this
+        }
     } else {
         encodeCfg(json, file)
         this

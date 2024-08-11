@@ -7,7 +7,7 @@ import net.minecraftforge.network.PacketDistributor
 import net.minecraftforge.network.simple.SimpleChannel
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.utils.rl
-import team._0mods.ecr.network.packets.MithrilineFurnaceMRUContainerS2CPacket
+import team._0mods.ecr.network.packets.MithrilineFurnaceS2CUpdatePacket
 
 object ECNetworkManager {
     private const val NETWORK_VER = "1"
@@ -23,10 +23,10 @@ object ECNetworkManager {
     fun init() {
         sc = NetworkRegistry.newSimpleChannel("$ModId:main".rl, ::NETWORK_VER, NETWORK_VER::equals, NETWORK_VER::equals)
 
-        sc.messageBuilder(MithrilineFurnaceMRUContainerS2CPacket::class.java, id, NetworkDirection.PLAY_TO_CLIENT)
-            .decoder(::MithrilineFurnaceMRUContainerS2CPacket)
-            .encoder(MithrilineFurnaceMRUContainerS2CPacket::toNetwork)
-            .consumerMainThread(MithrilineFurnaceMRUContainerS2CPacket::handle)
+        sc.messageBuilder(MithrilineFurnaceS2CUpdatePacket::class.java, id, NetworkDirection.PLAY_TO_CLIENT)
+            .decoder(::MithrilineFurnaceS2CUpdatePacket)
+            .encoder(MithrilineFurnaceS2CUpdatePacket::toNetwork)
+            .consumerMainThread(MithrilineFurnaceS2CUpdatePacket::handle)
             .add()
     }
 

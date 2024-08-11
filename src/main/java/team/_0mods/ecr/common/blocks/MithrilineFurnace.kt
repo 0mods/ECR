@@ -27,9 +27,7 @@ import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.init.registry.ECMultiblocks
 
 
-class MithrilineFurnace(properties: Properties) : BaseEntityBlock(
-    properties.noOcclusion()
-) {
+class MithrilineFurnace(properties: Properties) : BaseEntityBlock(properties) {
     override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = MithrilineFurnaceEntity(pos, state)
 
     override fun <T : BlockEntity> getTicker(
