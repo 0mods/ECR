@@ -9,6 +9,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.utils.loadConfig
 import team._0mods.ecr.common.init.config.ECCommonConfig
+import team._0mods.ecr.common.init.registry.ECRecipes
 
 @SubscribeEvent
 fun onModSetup(e: FMLCommonSetupEvent) {
@@ -21,5 +22,6 @@ fun onModSetup(e: FMLCommonSetupEvent) {
     }
 
     ECCommonConfig.instance = ECCommonConfig().loadConfig(json, "essential-craft/common")
+    ECRecipes.init()
 }
 

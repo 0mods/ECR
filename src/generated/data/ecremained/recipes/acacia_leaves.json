@@ -1,0 +1,10 @@
+{
+  "type": "ecremained:mithriline_furnace",
+  "espe": 1,
+  "ingredient": {
+    "item": "minecraft:birch_leaves"
+  },
+  "result": {
+    "item": "minecraft:acacia_leaves"
+  }
+}

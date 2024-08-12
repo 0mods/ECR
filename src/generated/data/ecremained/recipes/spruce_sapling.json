@@ -1,0 +1,10 @@
+{
+  "type": "ecremained:mithriline_furnace",
+  "espe": 1,
+  "ingredient": {
+    "item": "minecraft:jungle_sapling"
+  },
+  "result": {
+    "item": "minecraft:spruce_sapling"
+  }
+}

@@ -6,7 +6,9 @@ import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
 import net.minecraftforge.fml.loading.FMLPaths
 import team._0mods.ecr.LOGGER
+import java.io.BufferedWriter
 import java.io.File
+import java.io.FileWriter
 
 inline fun <reified T> T.loadConfig(json: Json, fileName: String): T {
     LOGGER.debug("Loading config '$fileName'")
@@ -19,6 +21,7 @@ inline fun <reified T> T.loadConfig(json: Json, fileName: String): T {
         } catch (e: Exception) {
             LOGGER.error("Failed to load config with name ${file.canonicalPath}.")
             LOGGER.warn("Regenerating config... Using defaults.")
+            backupFile(file)
             file.delete()
             encodeCfg(json, file)
             this
@@ -49,4 +52,32 @@ inline fun <reified T> decodeCfg(json: Json, file: File): T = try {
 } catch (e: FileSystemException) {
     LOGGER.error("Failed to read config from file '$file'", e)
     throw e
+}
+
+fun backupFile(original: File) {
+    val originalBakName = original.canonicalPath + ".bak"
+    var i = 0
+    var p: String
+    var bakFile = File(originalBakName)
+
+    while (true) {
+        if (bakFile.exists()) {
+            i++
+            p = "${original.canonicalPath}.bak$i"
+            bakFile = File(p)
+
+            continue
+        } else break
+    }
+
+    val l = original.readLines()
+
+    BufferedWriter(FileWriter(bakFile, true)).use { w ->
+        l.forEach {
+            w.write(it)
+            w.newLine()
+        }
+    }
+
+    bakFile.createNewFile()
 }

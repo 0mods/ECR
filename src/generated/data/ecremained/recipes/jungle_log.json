@@ -1,0 +1,10 @@
+{
+  "type": "ecremained:mithriline_furnace",
+  "espe": 1,
+  "ingredient": {
+    "item": "minecraft:acacia_log"
+  },
+  "result": {
+    "item": "minecraft:jungle_log"
+  }
+}

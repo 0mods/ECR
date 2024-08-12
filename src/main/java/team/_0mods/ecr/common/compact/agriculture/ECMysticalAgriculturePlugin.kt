@@ -10,5 +10,4 @@ class ECMysticalAgriculturePlugin: IMysticalAgriculturePlugin {
     override fun configure(config: PluginConfig) {
         config.modId = ModId
     }
-
 }

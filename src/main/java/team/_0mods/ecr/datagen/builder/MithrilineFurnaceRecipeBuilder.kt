@@ -10,6 +10,8 @@ import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.level.ItemLike
 import net.minecraftforge.registries.ForgeRegistries
+import team._0mods.ecr.ModId
+import team._0mods.ecr.api.utils.rl
 import team._0mods.ecr.common.init.registry.ECRegistry
 import java.util.function.Consumer
 
@@ -46,6 +48,10 @@ class MithrilineFurnaceRecipeBuilder private constructor(private val result: Ite
     override fun group(groupName: String?): RecipeBuilder = this
 
     override fun getResult(): Item = this.result.asItem()
+
+    override fun save(finishedRecipeConsumer: Consumer<FinishedRecipe>) {
+        this.save(finishedRecipeConsumer, "$ModId:${ForgeRegistries.ITEMS.getKey(this.result.asItem())!!.path}".rl)
+    }
 
     override fun save(finishedRecipeConsumer: Consumer<FinishedRecipe>, recipeId: ResourceLocation) {
         finishedRecipeConsumer.accept(Finalized(recipeId, result.asItem(), count, espe, ingredient, ingredientCount))

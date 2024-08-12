@@ -51,7 +51,7 @@ class MithrilineFurnaceRecipe(
             if (!serializedRecipe.has("result")) throw JsonSyntaxException("Recipe can not be created, because argument \"result\" is missing.")
             val result = ShapedRecipe.itemStackFromJson(serializedRecipe.getAsJsonObject("result"))
 
-            val mru = GsonHelper.getAsInt(serializedRecipe, "mrusu", 100)
+            val mru = GsonHelper.getAsInt(serializedRecipe, "espe", 100)
 
             ils[0] = i
 

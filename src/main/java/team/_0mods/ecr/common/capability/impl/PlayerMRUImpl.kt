@@ -40,7 +40,6 @@ class PlayerMRUImpl : PlayerMRU {
 
         override fun <T : Any?> getCapability(capability: Capability<T>, arg: Direction?): LazyOptional<T> {
             if (capability == ECCapabilities.PLAYER_MRU) return lazy.cast()
-
             return LazyOptional.empty()
         }
 

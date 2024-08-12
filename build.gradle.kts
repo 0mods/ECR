@@ -96,12 +96,12 @@ dependencies {
 
     modApi("mezz.jei:jei-${minecraftVersion}-forge:${"jei_version".fromProperties}")
     modApi("com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:${"ct_version".fromProperties}")
-    modApi("dev.latvian.mods:kubejs-forge:${"kubejs_version".fromProperties}")
+//    modApi("dev.latvian.mods:kubejs-forge:${"kubejs_version".fromProperties}")
     modApi("maven.modrinth:jade:${"jade_version".fromProperties}")
     modApi("maven.modrinth:mystical-agriculture:${"ma_version".fromProperties}")
 
-    modRuntimeOnly("dev.latvian.mods:rhino-forge:${"rhino_version".fromProperties}") // KJS lib
-    modRuntimeOnly("dev.architectury:architectury-forge:${"architectury_version".fromProperties}") // KJS lib
+//    modRuntimeOnly("dev.latvian.mods:rhino-forge:${"rhino_version".fromProperties}") // KJS lib
+//    modRuntimeOnly("dev.architectury:architectury-forge:${"architectury_version".fromProperties}") // KJS lib
     modRuntimeOnly("maven.modrinth:cucumber:${"cucumber_version".fromProperties}")
 
     minecraftRuntimeLibraries("io.github.llamalad7:mixinextras-common:0.4.0")

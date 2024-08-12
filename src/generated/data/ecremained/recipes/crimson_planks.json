@@ -1,0 +1,10 @@
+{
+  "type": "ecremained:mithriline_furnace",
+  "espe": 1,
+  "ingredient": {
+    "item": "minecraft:warped_planks"
+  },
+  "result": {
+    "item": "minecraft:crimson_planks"
+  }
+}

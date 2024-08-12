@@ -17,6 +17,7 @@
 
   "block.ecremained.mithriline_furnace": "Мифрилиновая печь",
   "block.ecremained.mithriline_plating": "Мифрилиновое покрытие",
+  "block.ecremained.mithriline_crystal": "Мифрилиновый кристалл",
 
   "info.ecremained.soul_stone.bounded": "Камень души привязан к %s",
   "info.ecremained.soul_stone.can_not_unbound": "Вы не можете отвязать этот камень души",
@@ -36,5 +37,7 @@
   "tooltip.ecremained.soul_stone.detected_ubmru": "Обнаружено %s UBMRU энергии",
   "tooltip.ecremained.soul_stone.matrix": "this tooltip is not writed",
   "tooltip.ecremained.bound_gem.bound": "Кристалл привязки был привязан на позиции: X: %s Y: %s Z: %s",
-  "tooltip.ecremained.bound_gem.unbound": "Кристал привязки отвязан"
+  "tooltip.ecremained.bound_gem.unbound": "Кристал привязки отвязан",
+  "config.jade.plugin_ecremained.mithriline_furnace": "Мифрилиновая печь",
+  "jade.ecremained.mithriline_furnace.espe_collector": "Активные сборщики ESPE: %s/%s"
 }

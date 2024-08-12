@@ -1,3 +1,6 @@
 {
-  "parent": "ecremained:block/mithriline_crystal"
+  "parent": "ecremained:item/crystal/crystal_item_base",
+  "textures": {
+    "texture": "ecremained:block/mithriline_plating"
+  }
 }

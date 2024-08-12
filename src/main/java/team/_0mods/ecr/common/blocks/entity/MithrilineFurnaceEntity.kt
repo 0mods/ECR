@@ -1,6 +1,7 @@
 package team._0mods.ecr.common.blocks.entity
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
@@ -119,10 +120,11 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
                                         it.insertItem(1, result.copy(), false)
                                     }
 
-                                    be.setChanged()
                                     be.maxProgress = 0
                                     be.containerData.set(0, 0)
                                     be.containerData.set(1, 0)
+                                    be.notFrozenMRGeneration = true
+                                    be.setChanged()
                                 }
                             }
                         } else {
@@ -156,6 +158,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     }
 
     private val itemHandler = createStackHandler()
+
     val mruStorage = MRUContainerImpl(MRUContainer.MRUType.ESPE, 10000, 0) {
         if (!level!!.isClientSide) {
             MithrilineFurnaceS2CUpdatePacket(it.mruStorage, this.blockPos).sendToClient()
@@ -229,15 +232,12 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
     override fun getDisplayName(): Component = Component.translatable("container.$ModId.mithriline_furnace")
 
-    override fun <T : Any?> getCapability(cap: Capability<T>): LazyOptional<T> {
-        if (cap == ForgeCapabilities.ITEM_HANDLER)
-            return itemHandlerLazy.cast()
+    override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) return itemHandlerLazy.cast()
 
-        if (cap == ECCapabilities.MRU_CONTAINER) {
-            return mruStorageLazy.cast()
-        }
+        if (cap == ECCapabilities.MRU_CONTAINER) return mruStorageLazy.cast()
 
-        return super.getCapability(cap)
+        return super.getCapability(cap, side)
     }
 
     override fun getUpdatePacket(): Packet<ClientGamePacketListener> = ClientboundBlockEntityDataPacket.create(this)
