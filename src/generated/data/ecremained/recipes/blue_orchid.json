@@ -1,0 +1,10 @@
+{
+  "type": "ecremained:mithriline_furnace",
+  "espe": 1,
+  "ingredient": {
+    "item": "minecraft:poppy"
+  },
+  "result": {
+    "item": "minecraft:blue_orchid"
+  }
+}
