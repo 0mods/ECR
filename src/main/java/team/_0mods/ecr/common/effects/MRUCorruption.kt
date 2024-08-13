@@ -11,8 +11,8 @@ import java.awt.Color
 class MRUCorruption: MobEffect(MobEffectCategory.HARMFUL, Color.magenta.rgb) {
     override fun applyEffectTick(livingEntity: LivingEntity, amplifier: Int) {
         if (!livingEntity.commandSenderWorld.isClientSide && livingEntity is Player) {
-            if (livingEntity.hasEffect(MobEffects.HEAL))
-                livingEntity.removeEffect(MobEffects.HEAL)
+            if (livingEntity.hasEffect(MobEffects.REGENERATION))
+                livingEntity.removeEffect(MobEffects.REGENERATION)
             livingEntity.hurt(ECDamageSources.MRU, if (amplifier > 0) 2.5f * amplifier + amplifier else 2.5f)
         }
     }
