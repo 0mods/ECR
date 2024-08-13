@@ -1,6 +1,7 @@
 package team._0mods.ecr.common.init.registry
 
 import net.minecraft.core.particles.ParticleType
+import net.minecraft.world.effect.MobEffect
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
@@ -25,6 +26,7 @@ import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.container.MatrixDestructorContainer
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
+import team._0mods.ecr.common.effects.MRUCorruption
 import team._0mods.ecr.common.items.BoundGem
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECGem
@@ -41,6 +43,7 @@ object ECRegistry {
     private val recipes: DeferredRegister<RecipeType<*>> = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, ModId)
     private val recipeSerializers: DeferredRegister<RecipeSerializer<*>> = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, ModId)
     private val particles: DeferredRegister<ParticleType<*>> = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, ModId)
+    private val effects: DeferredRegister<MobEffect> = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, ModId)
 
     // items
     val flameGem: RegistryObject<ECGem> = items.register("flame_gem", ECGem.flame)
@@ -105,6 +108,9 @@ object ECRegistry {
     // particle
     val ecParticle: RegistryObject<ECParticleType> = particles.register("ec_part", ::ECParticleType)
 
+    // effects
+    val mruCorruption: RegistryObject<MobEffect> = effects.register("mru_corruption", ::MRUCorruption)
+
     @JvmStatic
     fun init(bus: IEventBus) {
         items.register(bus)
@@ -114,6 +120,7 @@ object ECRegistry {
         recipes.register(bus)
         recipeSerializers.register(bus)
         particles.register(bus)
+        effects.register(bus)
     }
 
     private fun basicItem(id: String, properties: Item.Properties.() -> Unit = { tab(ECTabs.tabItems) }): RegistryObject<Item> {

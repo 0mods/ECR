@@ -1,5 +1,5 @@
 {
-	"credit": "Model Artist: AlgorithmLX",
+	"credit": "Made with Blockbench",
 	"texture_size": [128, 128],
 	"textures": {
 		"0": "ecremained:block/matrix_destructor",
@@ -59,8 +59,8 @@
 			}
 		},
 		{
-			"from": [1, 1, 1],
-			"to": [15, 9, 15],
+			"from": [1.001, 1.001, 1.001],
+			"to": [14.999, 8.999, 14.999],
 			"rotation": {"angle": 0, "axis": "y", "origin": [14, 1, 2]},
 			"faces": {
 				"north": {"uv": [5.75, 4, 7.5, 5], "texture": "#0"},

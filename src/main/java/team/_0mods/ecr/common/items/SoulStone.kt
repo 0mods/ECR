@@ -68,37 +68,39 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         val stack = player.getItemInHand(usedHand)
 
-        if (!player.isShiftKeyDown) {
-            if (stack.owner == null) {
-                if (stack.count > 1) {
-                    val copiedStack = stack.copy().apply {
-                        count = 1
-                        owner = player.uuid
-                    }
-                    stack.shrink(1)
+        if (!level.isClientSide) {
+            if (!player.isShiftKeyDown) {
+                if (stack.owner == null) {
+                    if (stack.count > 1) {
+                        val copiedStack = stack.copy().apply {
+                            count = 1
+                            owner = player.uuid
+                        }
+                        stack.shrink(1)
 
-                    val ent = ItemEntity(level, player.x, player.y, player.z, copiedStack).apply {
-                        setNoPickUpDelay()
+                        val ent = ItemEntity(level, player.x, player.y, player.z, copiedStack).apply {
+                            setNoPickUpDelay()
+                        }
+
+                        level.addFreshEntity(ent)
+                    } else {
+                        stack.owner = player.uuid
                     }
 
-                    level.addFreshEntity(ent)
-                } else {
-                    stack.owner = player.uuid
+                    player.displayClientMessage(Component.translatable("info.$ModId.soul_stone.bounded", player.name), true)
+                    return InteractionResultHolder.success(stack)
                 }
-
-                player.displayClientMessage(Component.translatable("info.$ModId.soul_stone.bounded", player.name), true)
-                return InteractionResultHolder.success(stack)
-            }
-        } else {
-            if (stack.owner != null) {
-                 if (stack.owner != player.uuid) {
-                     player.displayClientMessage(Component.translatable("info.$ModId.soul_stone.can_not_unbound"), true)
-                     return InteractionResultHolder.fail(stack)
-                 } else {
-                     stack.owner = null
-                     player.displayClientMessage(Component.translatable("info.$ModId.soul_stone.unbounded"), true)
-                     return InteractionResultHolder.fail(stack)
-                 }
+            } else {
+                if (stack.owner != null) {
+                    if (stack.owner != player.uuid) {
+                        player.displayClientMessage(Component.translatable("info.$ModId.soul_stone.can_not_unbound"), true)
+                        return InteractionResultHolder.fail(stack)
+                    } else {
+                        stack.owner = null
+                        player.displayClientMessage(Component.translatable("info.$ModId.soul_stone.unbounded"), true)
+                        return InteractionResultHolder.fail(stack)
+                    }
+                }
             }
         }
 
