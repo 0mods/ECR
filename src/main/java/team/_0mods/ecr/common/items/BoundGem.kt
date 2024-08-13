@@ -15,7 +15,7 @@ import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 import net.minecraftforge.fml.loading.FMLEnvironment
 import team._0mods.ecr.ModId
-import team._0mods.ecr.api.mru.MRUGenerator
+import team._0mods.ecr.api.block.MRUGenerator
 import team._0mods.ecr.common.init.registry.ECTabs
 
 class BoundGem : Item(Properties().tab(ECTabs.tabItems)) {

@@ -11,7 +11,7 @@ open class MRUContainerImpl(
     override val mruType: MRUContainer.MRUType,
     private var capacity: Int,
     private var mru: Int,
-    private val onContextChanged: (MRUContainer) -> Unit
+    private val onContextChanged: (MRUContainer) -> Unit = {}
 ): MRUContainer, INBTSerializable<CompoundTag> {
     init {
         mru = max(0, min(capacity, mru))

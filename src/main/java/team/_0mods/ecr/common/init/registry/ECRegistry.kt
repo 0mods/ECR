@@ -19,8 +19,11 @@ import team._0mods.ecr.api.utils.makeBERegistry
 import team._0mods.ecr.api.utils.register
 import team._0mods.ecr.api.utils.rl
 import team._0mods.ecr.common.blocks.CrystalBlock
+import team._0mods.ecr.common.blocks.MatrixDestructor
 import team._0mods.ecr.common.blocks.MithrilineFurnace
+import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
+import team._0mods.ecr.common.container.MatrixDestructorContainer
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 import team._0mods.ecr.common.items.BoundGem
 import team._0mods.ecr.common.items.ECBook
@@ -70,6 +73,12 @@ object ECRegistry {
         ::MithrilineFurnaceEntity
     )
 
+    val matrixDestructor by blocksWE.register(
+        "matrix_destructor",
+        { MatrixDestructor(BlockBehaviour.Properties.of(Material.METAL)) },
+        ::MatrixDestructorEntity
+    )
+
     val mithrilineCrystal = block("mithriline_crystal") {
         CrystalBlock(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops())
     }
@@ -77,6 +86,10 @@ object ECRegistry {
     // containers
     val mithrilineFurnaceContainer: RegistryObject<MenuType<MithrilineFurnaceContainer>> = containers.register("mithriline_furnace") {
         MenuType(IContainerFactory { id, inv, buf -> MithrilineFurnaceContainer(id, inv, buf) })
+    }
+
+    val matrixDestructorContainer: RegistryObject<MenuType<MatrixDestructorContainer>> = containers.register("matrix_destructor") {
+        MenuType(IContainerFactory { id, inv, buf -> MatrixDestructorContainer(id, inv, buf) })
     }
 
     // recipe types

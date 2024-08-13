@@ -5,11 +5,11 @@ import net.minecraft.core.BlockPos
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraftforge.network.NetworkEvent
 import team._0mods.ecr.api.network.SimplePacket
-import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
+import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 import java.util.function.Supplier
 
-class MithrilineFurnaceS2CUpdatePacket(val mru: Int, val pos: BlockPos): SimplePacket {
+class MatrixDestructorS2CUpdatePacket(val mru: Int, val pos: BlockPos): SimplePacket {
     constructor(buf: FriendlyByteBuf): this(buf.readInt(), buf.readBlockPos())
 
     override fun toNetwork(buf: FriendlyByteBuf) {
@@ -22,7 +22,7 @@ class MithrilineFurnaceS2CUpdatePacket(val mru: Int, val pos: BlockPos): SimpleP
             val level = Minecraft.getInstance().level
             val be = level?.getBlockEntity(pos)
 
-            if (be is MithrilineFurnaceEntity) {
+            if (be is MatrixDestructorEntity) {
                 val container = Minecraft.getInstance().player?.containerMenu
 
                 be.mruStorage.setMru(mru)
@@ -33,4 +33,5 @@ class MithrilineFurnaceS2CUpdatePacket(val mru: Int, val pos: BlockPos): SimpleP
             }
         }
     }
+
 }

@@ -27,7 +27,6 @@ import team._0mods.ecr.api.block.client.LowSizeBreakParticle
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.init.registry.ECMultiblocks
 
-
 class MithrilineFurnace(properties: Properties) : BaseEntityBlock(properties), LowSizeBreakParticle {
     override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = MithrilineFurnaceEntity(pos, state)
 
@@ -35,10 +34,8 @@ class MithrilineFurnace(properties: Properties) : BaseEntityBlock(properties), L
         level: Level,
         state: BlockState,
         blockEntityType: BlockEntityType<T>
-    ): BlockEntityTicker<T> {
-        return BlockEntityTicker<T> { l, bp, s, e ->
-            MithrilineFurnaceEntity.onTick(l, bp, s, e as MithrilineFurnaceEntity)
-        }
+    ): BlockEntityTicker<T> = BlockEntityTicker<T> { l, bp, s, e ->
+        MithrilineFurnaceEntity.onTick(l, bp, s, e as MithrilineFurnaceEntity)
     }
 
     @Suppress("OVERRIDE_DEPRECATION")

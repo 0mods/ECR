@@ -1,12 +1,15 @@
 package team._0mods.ecr.network
 
+import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.server.level.ServerPlayer
 import net.minecraftforge.network.NetworkDirection
 import net.minecraftforge.network.NetworkRegistry
 import net.minecraftforge.network.PacketDistributor
 import net.minecraftforge.network.simple.SimpleChannel
 import team._0mods.ecr.ModId
+import team._0mods.ecr.api.network.SimplePacket
 import team._0mods.ecr.api.utils.rl
+import team._0mods.ecr.network.packets.MatrixDestructorS2CUpdatePacket
 import team._0mods.ecr.network.packets.MithrilineFurnaceS2CUpdatePacket
 
 object ECNetworkManager {
@@ -23,11 +26,8 @@ object ECNetworkManager {
     fun init() {
         sc = NetworkRegistry.newSimpleChannel("$ModId:main".rl, ::NETWORK_VER, NETWORK_VER::equals, NETWORK_VER::equals)
 
-        sc.messageBuilder(MithrilineFurnaceS2CUpdatePacket::class.java, id, NetworkDirection.PLAY_TO_CLIENT)
-            .decoder(::MithrilineFurnaceS2CUpdatePacket)
-            .encoder(MithrilineFurnaceS2CUpdatePacket::toNetwork)
-            .consumerMainThread(MithrilineFurnaceS2CUpdatePacket::handle)
-            .add()
+        makeS2C { MithrilineFurnaceS2CUpdatePacket(it) }
+        makeS2C { MatrixDestructorS2CUpdatePacket(it) }
     }
 
     fun <MSG> MSG.sendToServer() {
@@ -40,5 +40,21 @@ object ECNetworkManager {
 
     fun <MSG> MSG.sendToClient() {
         sc.send(PacketDistributor.ALL.noArg(), this)
+    }
+
+    private inline fun <reified T: SimplePacket> makeS2C(noinline decoder: (FriendlyByteBuf) -> T) {
+        sc.messageBuilder(T::class.java, id, NetworkDirection.PLAY_TO_CLIENT)
+            .decoder(decoder)
+            .encoder { t, b -> t.toNetwork(b) }
+            .consumerMainThread { t, nh -> t.handle(nh) }
+            .add()
+    }
+
+    private inline fun <reified T: SimplePacket> makeC2S(noinline decoder: (FriendlyByteBuf) -> T) {
+        sc.messageBuilder(T::class.java, id, NetworkDirection.PLAY_TO_SERVER)
+            .decoder(decoder)
+            .encoder { t, b -> t.toNetwork(b) }
+            .consumerMainThread { t, nh -> t.handle(nh) }
+            .add()
     }
 }

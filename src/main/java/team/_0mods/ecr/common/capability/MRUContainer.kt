@@ -1,5 +1,6 @@
 package team._0mods.ecr.common.capability
 
+import net.minecraft.network.chat.Component
 import net.minecraftforge.common.capabilities.AutoRegisterCapability
 
 @AutoRegisterCapability
@@ -16,7 +17,9 @@ interface MRUContainer {
 
     val mruType: MRUType
 
-    enum class MRUType {
-        MRUSU, RADIATION_UNIT, UBMRU, ESPE
+    enum class MRUType(val display: Component) {
+        RADIATION_UNIT(Component.literal("MRU")),
+        UBMRU(Component.literal("UBMRU")),
+        ESPE(Component.literal("ESPE"))
     }
 }

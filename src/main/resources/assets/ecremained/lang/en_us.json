@@ -1,5 +1,6 @@
 {
-  "itemGroup.ecremained.items": "Essential Craft Remained: Items",
+  "itemGroup.ecremained.items": "Essential Craft: Items",
+  "itemGroup.ecremained.blocks": "Essential Craft: Blocks",
 
   "item.ecremained.book": "Research Book",
   "item.ecremained.elemental_gem": "Elemental Gem",

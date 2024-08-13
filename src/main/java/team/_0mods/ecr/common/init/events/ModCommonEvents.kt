@@ -2,6 +2,7 @@
 
 package team._0mods.ecr.common.init.events
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
@@ -11,6 +12,7 @@ import team._0mods.ecr.api.utils.loadConfig
 import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECRecipes
 
+@OptIn(ExperimentalSerializationApi::class)
 @SubscribeEvent
 fun onModSetup(e: FMLCommonSetupEvent) {
     val json = Json {
@@ -19,6 +21,7 @@ fun onModSetup(e: FMLCommonSetupEvent) {
         prettyPrintIndent = "  "
         allowComments = true
         allowTrailingComma = true
+        isLenient = true
     }
 
     ECCommonConfig.instance = ECCommonConfig().loadConfig(json, "essential-craft/common")

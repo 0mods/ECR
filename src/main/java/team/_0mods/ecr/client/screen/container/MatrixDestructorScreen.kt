@@ -9,25 +9,21 @@ import net.minecraft.world.entity.player.Inventory
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.client.isCursorAtPos
 import team._0mods.ecr.api.utils.rl
-import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
-import team._0mods.ecr.common.container.MithrilineFurnaceContainer
+import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
+import team._0mods.ecr.common.container.MatrixDestructorContainer
+import kotlin.math.roundToInt
 
-class MithrilineFurnaceScreen(
-    menu: MithrilineFurnaceContainer,
+class MatrixDestructorScreen(
+    menu: MatrixDestructorContainer,
     playerInventory: Inventory,
     title: Component
-) : AbstractContainerScreen<MithrilineFurnaceContainer>(
+) : AbstractContainerScreen<MatrixDestructorContainer>(
     menu,
     playerInventory,
     title
 ) {
     companion object {
-        private val texture = "$ModId:textures/gui/mithriline_furnace.png".rl
-    }
-
-    init {
-        imageWidth = 175
-        imageHeight = 166
+        private val texture = "$ModId:textures/gui/matrix_destructor.png".rl
     }
 
     override fun render(poseStack: PoseStack, mouseX: Int, mouseY: Int, partialTick: Float) {
@@ -36,39 +32,32 @@ class MithrilineFurnaceScreen(
         this.renderTooltip(poseStack, mouseX, mouseY)
     }
 
-    override fun renderLabels(poseStack: PoseStack, mouseX: Int, mouseY: Int) {}
-
     override fun renderBg(poseStack: PoseStack, partialTick: Float, mouseX: Int, mouseY: Int) {
         RenderSystem.setShader(GameRenderer::getPositionShader)
         RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
         RenderSystem.setShaderTexture(0, texture)
-
         blit(poseStack, this.guiLeft, this.guiTop, 0f, 0f, this.imageWidth, this.imageHeight, 256, 256)
 
+        //38 22
+
         val be = menu.blockEntity
-        if (be is MithrilineFurnaceEntity) {
+        if (be is MatrixDestructorEntity) {
             val mru = be.mruStorage
-
-            if (isCursorAtPos(mouseX, mouseY, 6.xPos, 59.yPos, 18, 18))
+            val m = ((mru.mruStorage / mru.maxMRUStorage.toFloat()) * 38).roundToInt()
+//            fill(poseStack, 38.xPos, 22.yPos, (m + 100).xPos, 84.yPos, 0x8b00ff)
+            fill(poseStack, 38.xPos, 22.yPos, 137.xPos, 27.yPos, 0x8b00ff)
+            if (isCursorAtPos(mouseX, mouseY, 37.xPos, 21.yPos, 102, 10))
                 this.renderTooltip(poseStack, Component.literal("${mru.mruType.display.string}: ${mru.mruStorage}/${mru.maxMRUStorage}"), mouseX, mouseY)
-
-            renderProgressArrow(poseStack, be)
-        }
-    }
-
-    private fun renderProgressArrow(poseStack: PoseStack, be: MithrilineFurnaceEntity) {
-        if (menu.hasActiveRecipe) {
-            blit(poseStack, 7.xPos, 16.yPos, 176, 15, 8, menu.scaleProgress())
         }
     }
 
     private val Int.xPos: Int get() {
-        val j = ((this@MithrilineFurnaceScreen.width / 2) - (this@MithrilineFurnaceScreen.imageWidth / 2))
+        val j = ((this@MatrixDestructorScreen.width / 2) - (this@MatrixDestructorScreen.imageWidth / 2))
         return j + this
     }
 
     private val Int.yPos: Int get() {
-        val j = ((this@MithrilineFurnaceScreen.height / 2) - (this@MithrilineFurnaceScreen.imageHeight / 2))
+        val j = ((this@MatrixDestructorScreen.height / 2) - (this@MatrixDestructorScreen.imageHeight / 2))
         return j + this
     }
 }

@@ -32,8 +32,10 @@ import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECMultiblocks
 import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.particle.ECParticleOptions
 import team._0mods.ecr.network.ECNetworkManager.sendToClient
 import team._0mods.ecr.network.packets.MithrilineFurnaceS2CUpdatePacket
+import java.awt.Color
 import kotlin.math.floor
 
 class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
@@ -61,6 +63,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
             be.successfulStructure = ECMultiblocks.mithrilineFurnace.isComplete(level, pos)
 
             if (!level.isClientSide) {
+                MithrilineFurnaceS2CUpdatePacket(be.mruStorage.mruStorage, be.blockPos).sendToClient()
                 if (complete) {
                     val collectors = be.getActiveCollectors(level, pos)
 
@@ -154,10 +157,21 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
                     if (be.rotAngle % 90 == 0f) be.rotAngle = 90f * floor(be.rotAngle / 90)
                 }
             }
+
+            if (complete) {
+                level.addParticle(
+                    ECParticleOptions(Color.GREEN, 0.5f, 10, 0.1f, true, false),
+                    pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, 1.0, 1.0, 1.0
+                )
+            }
         }
     }
 
-    private val itemHandler = createStackHandler()
+    private val itemHandler = object : ItemStackHandler(2) {
+        override fun onContentsChanged(slot: Int) {
+            setChanged()
+        }
+    }
 
     val mruStorage = MRUContainerImpl(MRUContainer.MRUType.ESPE, 10000, 0) {
         if (!level!!.isClientSide) {
@@ -214,6 +228,8 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         tag.put("ESPEStorage", mruStorage.serializeNBT())
         tag.putBoolean("FullStructure", successfulStructure)
         tag.putBoolean("CanGenerate", notFrozenMRGeneration)
+        tag.putInt("Progress", progress)
+        tag.putInt("MaxProgress", maxProgress)
         super.saveAdditional(tag)
     }
 
@@ -222,6 +238,8 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         mruStorage.deserializeNBT(tag.getCompound("ESPEStorage"))
         successfulStructure = tag.getBoolean("FullStructure")
         notFrozenMRGeneration = tag.getBoolean("CanGenerate")
+        progress = tag.getInt("Progress")
+        maxProgress = tag.getInt("MaxProgress")
         super.load(tag)
     }
 
@@ -246,11 +264,5 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         val collectors = CRYSTAL_POSITION?.get(pos)?.filter { level.getBlockState(it).block == ECRegistry.mithrilineCrystal.get() }
         if (collectors.isNullOrEmpty()) return 0
         return collectors.size
-    }
-
-    private fun createStackHandler() = object : ItemStackHandler(2) {
-        override fun onContentsChanged(slot: Int) {
-            setChanged()
-        }
     }
 }

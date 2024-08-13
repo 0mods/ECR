@@ -1,6 +1,7 @@
 package team._0mods.ecr.common.items
 
 import net.minecraft.ChatFormatting
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.MutableComponent
 import net.minecraft.world.InteractionHand
@@ -15,9 +16,12 @@ import net.minecraft.world.item.SwordItem
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import net.minecraftforge.common.MinecraftForge
+import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.event.entity.living.LivingDeathEvent
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.mru.MRUWeapon
+import team._0mods.ecr.common.capability.impl.SoulStoneMRUContainer
+import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECTabs
 import java.util.*
 import kotlin.math.roundToInt
@@ -34,7 +38,13 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
             get() {
                 if (this.item !is SoulStone) throw UnsupportedOperationException()
                 val tag = this.orCreateTag
-                return if (tag.contains("SoulStoneOwner")) tag.getUUID("SoulStoneOwner") else null
+                return if (tag.contains("SoulStoneOwner")) {
+                    try {
+                        tag.getUUID("SoulStoneOwner")
+                    } catch (e: Exception) {
+                        null
+                    }
+                } else null
             }
             set(value) {
                 if (this.item !is SoulStone) throw UnsupportedOperationException()
@@ -43,37 +53,12 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
                 if (!tag.contains("SoulStoneOwner")) {
                     tag.putUUID("SoulStoneOwner", value!!)
                 } else {
-                    tag.remove("SoulStoneOwner")
-                    tag.remove("SoulStoneCapacity")
+                    if (value == null) {
+                        tag.remove("SoulStoneOwner")
+                        this.invalidateCaps()
+                    }
                 }
             }
-
-        @JvmStatic
-        var ItemStack.capacity: Int
-            get() {
-                if (this.item !is SoulStone) throw UnsupportedOperationException()
-                val tag = this.orCreateTag
-                if (owner == null) {
-                    tag.remove("SoulStoneCapacity")
-                    return 0
-                }
-
-                return tag.getInt("SoulStoneCapacity")
-            }
-            set(value) {
-                if (this.item !is SoulStone) throw UnsupportedOperationException()
-                val tag = this.orCreateTag
-
-                if (owner != null) tag.putInt("SoulStoneCapacity", value)
-            }
-
-        fun ItemStack.add(count: Float) {
-            val conv = count.roundToInt()
-            if (this.owner != null) {
-                val cap = this.capacity
-                this.capacity = cap + conv
-            }
-        }
     }
 
     init {
@@ -140,13 +125,15 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
             tooltipComponents.add(Component.translatable(
                 "tooltip.$ModId.soul_stone.tracking",
                 (player?.name as? MutableComponent)?.withStyle(ChatFormatting.GOLD) ?:
-                Component.literal("Not Loaded").withStyle(ChatFormatting.GOLD)
+                Component.literal("Not Loaded").withStyle(ChatFormatting.RED)
             ).withStyle(ChatFormatting.DARK_GRAY))
 
-            tooltipComponents.add(Component.translatable(
-                "tooltip.$ModId.soul_stone.detected_ubmru",
-                Component.literal(stack.capacity.toString()).withStyle(ChatFormatting.GREEN)
-            ).withStyle(ChatFormatting.DARK_GRAY))
+            stack.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent {
+                tooltipComponents.add(Component.translatable(
+                    "tooltip.$ModId.soul_stone.detected_ubmru",
+                    Component.literal(it.mruStorage.toString()).withStyle(ChatFormatting.GREEN)
+                ).withStyle(ChatFormatting.DARK_GRAY))
+            }
         }
     }
 
@@ -169,15 +156,20 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
 
         if (entityCapacityAdd.contains(ent.type)) {
             val a = entityCapacityAdd[ent.type]!!.random() * multiplier
-            item.add(a)
+            val cap = item.getCapability(ECCapabilities.MRU_CONTAINER).orElseThrow { NullPointerException("Capability is null") }
+            cap.receiveMru(a.roundToInt())
         } else {
             if (ent is Enemy) {
                 val a = defaultEnemyAdd.random() * multiplier
-                item.add(a)
+                val cap = item.getCapability(ECCapabilities.MRU_CONTAINER).orElseThrow { NullPointerException("Capability is null") }
+                cap.receiveMru(a.roundToInt())
             } else {
                 val a = defaultCapacityAdd.random() * multiplier
-                item.add(a)
+                val cap = item.getCapability(ECCapabilities.MRU_CONTAINER).orElseThrow { NullPointerException("Capability is null") }
+                cap.receiveMru(a.roundToInt())
             }
         }
     }
+
+    override fun initCapabilities(stack: ItemStack?, nbt: CompoundTag?): ICapabilityProvider = SoulStoneMRUContainer()
 }

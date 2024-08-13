@@ -1,5 +1,6 @@
 {
-  "itemGroup.ecremained.items": "Essential Craft Remained: Предметы",
+  "itemGroup.ecremained.items": "Essential Craft: Предметы",
+  "itemGroup.ecremained.blocks": "Essential Craft: Блоки",
 
   "item.ecremained.book": "Книга исследований",
   "item.ecremained.elemental_gem": "Элементальный кристалл",

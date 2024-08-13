@@ -20,7 +20,10 @@ class MithrilineFurnaceComponent: IBlockComponentProvider {
         val storage = be.mruStorage
         val collectors = be.getActiveCollectors(be.level!!, be.blockPos)
         val maxCollectors = ECCommonConfig.instance.mithrilineFurnaceConfig.crystalPositions.size
-        tooltip.add(Component.translatable("jade.$ModId.mithriline_furnace.espe_collector", collectors, maxCollectors))
-        tooltip.add(Component.literal("ESPE: ${storage.mruStorage}/${storage.maxMRUStorage}"))
+
+        if (be.successfulStructure) {
+            tooltip.add(Component.translatable("jade.$ModId.mithriline_furnace.espe_collector", collectors, maxCollectors))
+            tooltip.add(Component.literal("${storage.mruType.display.string}: ${storage.mruStorage}/${storage.maxMRUStorage}"))
+        }
     }
 }

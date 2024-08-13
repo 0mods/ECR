@@ -102,7 +102,7 @@ dependencies {
 
 //    modRuntimeOnly("dev.latvian.mods:rhino-forge:${"rhino_version".fromProperties}") // KJS lib
 //    modRuntimeOnly("dev.architectury:architectury-forge:${"architectury_version".fromProperties}") // KJS lib
-    modRuntimeOnly("maven.modrinth:cucumber:${"cucumber_version".fromProperties}")
+    modRuntimeOnly  ("maven.modrinth:cucumber:${"cucumber_version".fromProperties}")
 
     minecraftRuntimeLibraries("io.github.llamalad7:mixinextras-common:0.4.0")
 

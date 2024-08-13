@@ -6,7 +6,9 @@ import kotlinx.serialization.Serializable
 @Serializable
 class ECCommonConfig(
     @SerialName("mithriline_furnace")
-    val mithrilineFurnaceConfig: MithrilineFurnace = MithrilineFurnace()
+    val mithrilineFurnaceConfig: MithrilineFurnace = MithrilineFurnace(),
+    @SerialName("matrix_destructor")
+    val matrixDestructorConfig: MatrixDestructor = MatrixDestructor()
 ) {
     companion object {
         @JvmStatic
@@ -43,4 +45,7 @@ class ECCommonConfig(
             return crystalPositions.contentHashCode()
         }
     }
+
+    @Serializable
+    data class MatrixDestructor(val ubmruToMruCost: Int = 10)
 }

@@ -17,6 +17,7 @@ import team._0mods.ecr.ModId
 import team._0mods.ecr.client.keys.kbList
 import team._0mods.ecr.client.particle.ECParticleFactory
 import team._0mods.ecr.client.renderer.MithrilineFurnaceRenderer
+import team._0mods.ecr.client.screen.container.MatrixDestructorScreen
 import team._0mods.ecr.client.screen.container.MithrilineFurnaceScreen
 import team._0mods.ecr.common.init.registry.ECRegistry
 
@@ -26,6 +27,7 @@ fun onClientStartup(e: FMLClientSetupEvent) {
     e.enqueueWork {
         LOGGER.info("Registering screens")
         MenuScreens.register(ECRegistry.mithrilineFurnaceContainer.get(), ::MithrilineFurnaceScreen)
+        MenuScreens.register(ECRegistry.matrixDestructorContainer.get(), ::MatrixDestructorScreen)
     }
 }
 
