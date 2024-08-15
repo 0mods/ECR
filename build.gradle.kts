@@ -13,7 +13,7 @@ val shadowLibrary: Configuration by configurations.creating {
 plugins {
     java
     idea
-    id("dev.architectury.loom") version "1.6-SNAPSHOT"
+    id("dev.architectury.loom") version "1.7-SNAPSHOT"
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("com.github.johnrengelman.shadow") version "8.1.1"

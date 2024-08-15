@@ -1,10 +1,13 @@
 package team._0mods.ecr.common.blocks
 
 import net.minecraft.core.BlockPos
+import net.minecraft.core.NonNullList
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.Containers
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BaseEntityBlock
@@ -18,12 +21,13 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
+import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.network.NetworkHooks
 import team._0mods.ecr.api.block.MRUGenerator
 import team._0mods.ecr.api.block.client.LowSizeBreakParticle
 import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 
-
+@Suppress("OVERRIDE_DEPRECATION")
 class MatrixDestructor(properties: Properties) : BaseEntityBlock(properties), MRUGenerator, LowSizeBreakParticle   {
     override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = MatrixDestructorEntity(pos, state)
 
@@ -35,7 +39,6 @@ class MatrixDestructor(properties: Properties) : BaseEntityBlock(properties), MR
         MatrixDestructorEntity.onTick(l, bp, s, e as MatrixDestructorEntity)
     }
 
-    @Suppress("OVERRIDE_DEPRECATION")
     override fun use(
         state: BlockState,
         level: Level,
@@ -52,6 +55,24 @@ class MatrixDestructor(properties: Properties) : BaseEntityBlock(properties), MR
         }
 
         return InteractionResult.SUCCESS
+    }
+
+    override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
+        if (state.block != newState.block) {
+            val be = level.getBlockEntity(pos)
+            if (be is MatrixDestructorEntity) {
+                be.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent {
+                    val nnl = NonNullList.withSize(it.slots, ItemStack.EMPTY)
+                    for (i in 0 ..< it.slots) {
+                        nnl[i] = it.getStackInSlot(i)
+                    }
+
+                    Containers.dropContents(level, pos, nnl)
+                }
+            }
+        }
+
+        super.onRemove(state, level, pos, newState, isMoving)
     }
 
     override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL

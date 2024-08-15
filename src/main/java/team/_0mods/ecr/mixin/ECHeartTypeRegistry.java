@@ -10,7 +10,7 @@ import java.util.Arrays;
 
 @Mixin(Gui.HeartType.class)
 public class ECHeartTypeRegistry {
-    @Shadow @Final @Mutable private static Gui.HeartType[] $VALUES;
+    @Shadow(remap = false) @Final @Mutable private static Gui.HeartType[] $VALUES;
 
     @Invoker("<init>")
     public static Gui.HeartType ecr$invoke(String internalName, int internalId, int index, boolean canBlink) { throw new AssertionError(); }

@@ -41,19 +41,14 @@ class MatrixDestructorScreen(
         val be = menu.blockEntity
         if (be is MatrixDestructorEntity) {
             val mru = be.mruStorage
-            val m = ((mru.mruStorage / mru.maxMRUStorage.toFloat()) * 38).toInt()
             val startX = 38
             val startY = 22
-            /*
-            private static final int ENERGY_LEFT = 96;
-            private static final int ENERGY_WIDTH = 72;
-            private static final int ENERGY_TOP = 8;
-            private static final int ENERGY_HEIGHT = 8;
-            int p = (int) ((power / (float) GeneratorBlockEntity.CAPACITY) * ENERGY_WIDTH);
-            */
-            //graphics.fillGradient(leftPos + ENERGY_LEFT, topPos + ENERGY_TOP, leftPos + ENERGY_LEFT + p, topPos + ENERGY_TOP + ENERGY_HEIGHT, 0xffff0000, 0xff000000);
-            fill(poseStack, startX.xPos, startY.yPos, (startX + m).xPos, (startY + 8).yPos, Color(139, 0, 255).rgb)
-            if (isCursorAtPos(mouseX, mouseY, 37.xPos, 21.yPos, 102, 10))
+            val width = 100
+            val height = 8
+            val m = ((mru.mruStorage.toFloat() / mru.maxMRUStorage) * width).toInt()
+
+            fillGradient(poseStack, startX.xPos, startY.yPos, (startX + m).xPos, (startY + height).yPos, Color(139, 0, 255).rgb, Color(50, 18, 122).rgb)
+            if (isCursorAtPos(mouseX, mouseY, startX.xPos, startY.yPos, width, height))
                 this.renderTooltip(poseStack, Component.literal("${mru.mruType.display.string}: ${mru.mruStorage}/${mru.maxMRUStorage}"), mouseX, mouseY)
         }
     }

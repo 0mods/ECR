@@ -27,6 +27,7 @@ import team._0mods.ecr.common.container.MatrixDestructorContainer
 import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.items.SoulStone
 import team._0mods.ecr.network.ECNetworkManager.sendToClient
 import team._0mods.ecr.network.packets.MatrixDestructorS2CUpdatePacket
 
@@ -41,16 +42,17 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity
                 val stack = be.itemHandler.getStackInSlot(0)
 
                 if (!stack.isEmpty) {
-                    if (stack.`is`(ECRegistry.soulStone.get())) {
-                        val cap = stack.getCapability(ECCapabilities.MRU_CONTAINER).orElseThrow { NullPointerException("Capability is null") }
-                        val storage = cap.mruStorage
+                    if (stack.item is SoulStone) {
+                        val i = stack.item as SoulStone
+                        val storage = i.getCapacity(stack)
+
                         if (storage - 1 >= 0) {
                             if (be.mruStorage.mruStorage < be.mruStorage.maxMRUStorage) {
                                 if (storage >= convertCost) {
-                                    cap.extractMru(convertCost)
+                                    i.remove(stack, convertCost)
                                     be.progress = convertCost
                                 } else {
-                                    cap.extractMru(1)
+                                    i.remove(stack, 1)
                                     be.progress++
                                 }
 

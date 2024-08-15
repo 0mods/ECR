@@ -11,7 +11,7 @@ import net.minecraftforge.items.ItemStackHandler
 import team._0mods.ecr.api.container.AbstractContainer
 import team._0mods.ecr.api.container.slot.SpecialSlot
 import team._0mods.ecr.common.init.registry.ECRegistry
-import team._0mods.ecr.common.items.SoulStone.Companion.owner
+import team._0mods.ecr.common.items.SoulStone
 
 class MatrixDestructorContainer(
     containerId: Int,
@@ -28,8 +28,9 @@ class MatrixDestructorContainer(
 
     init {
         addSlot(SpecialSlot(container, 0, 80, 60, {
-            if (it.`is`(ECRegistry.soulStone.get())) {
-                it.owner != null
+            if (it.item is SoulStone) {
+                val ss = it.item as SoulStone
+                ss.getOwner(it) != null
             } else false
         }))
         makeInv(inv, 8, 84)
