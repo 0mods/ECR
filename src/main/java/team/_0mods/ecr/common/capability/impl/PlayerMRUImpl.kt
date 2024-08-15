@@ -7,25 +7,25 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider
 import net.minecraftforge.common.util.INBTSerializable
 import net.minecraftforge.common.util.LazyOptional
 import team._0mods.ecr.ModId
-import team._0mods.ecr.api.plugin.registry.PlayerMatrixTypeRegistry
 import team._0mods.ecr.api.utils.rl
 import team._0mods.ecr.common.capability.PlayerMRU
 import team._0mods.ecr.common.init.registry.ECCapabilities
+import team._0mods.ecr.common.init.registry.ECPlugin
 
 class PlayerMRUImpl : PlayerMRU {
     override var matrixDestruction: Double = 0.0
-    override var matrixType: PlayerMRU.PlayerMatrixType = PlayerMatrixTypeRegistry.getValue("$ModId:basic_matrix".rl)!!
+    override var matrixType: PlayerMRU.PlayerMatrixType = ECPlugin.getMatrixValue("$ModId:basic_matrix".rl)!!
     override var isInfused: Boolean = false
 
     fun save(tag: CompoundTag) {
         tag.putDouble("ECMatrixDestructionLevel", matrixDestruction)
-        tag.putString("ECMatrixType", PlayerMatrixTypeRegistry.getKey(matrixType)?.toString() ?: throw NullPointerException("Enable to serialize unregistered matrix type"))
+        tag.putString("ECMatrixType", ECPlugin.getMatrixKey(matrixType)?.toString() ?: throw NullPointerException("Enable to serialize unregistered matrix type"))
         tag.putBoolean("ECIsInfusedMatrix", isInfused)
     }
 
     fun load(tag: CompoundTag) {
         matrixDestruction = tag.getDouble("ECMatrixDestructionLevel")
-        matrixType = PlayerMatrixTypeRegistry.getValue(tag.getString("ECMatrixType").rl) ?: PlayerMatrixTypeRegistry.getValue("$ModId:basic_matrix".rl)!!
+        matrixType = ECPlugin.getMatrixValue(tag.getString("ECMatrixType").rl) ?: ECPlugin.getMatrixValue("$ModId:basic_matrix".rl)!!
         isInfused = tag.getBoolean("ECIsInfusedMatrix")
     }
 

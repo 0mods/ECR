@@ -1,0 +1,45 @@
+{
+  "itemGroup.ecreimagined.items": "Essential Craft: Items",
+  "itemGroup.ecreimagined.blocks": "Essential Craft: Blocks",
+
+  "item.ecreimagined.book": "Research Book",
+  "item.ecreimagined.elemental_gem": "Elemental Gem",
+  "item.ecreimagined.flame_gem": "Flame Gem",
+  "item.ecreimagined.water_gem": "Water Gem",
+  "item.ecreimagined.earth_gem": "Earth Gem",
+  "item.ecreimagined.air_gem": "Air Gem",
+  "item.ecreimagined.soul_stone": "Soul Stone",
+  "item.ecreimagined.weakness_elemental_axe": "Weakness Elemental Axe",
+  "item.ecreimagined.weakness_elemental_hoe": "Weakness Elemental Hoe",
+  "item.ecreimagined.weakness_elemental_pickaxe": "Weakness Elemental Pickaxe",
+  "item.ecreimagined.weakness_elemental_shovel": "Weakness Elemental Shovel",
+  "item.ecreimagined.weakness_elemental_sword": "Weakness Elemental Sword",
+  "item.ecreimagined.bound_gem": "Bound Gem",
+
+  "block.ecreimagined.mithriline_furnace": "Mithriline Furnace",
+  "block.ecreimagined.mithriline_plating": "Mithriline Plating",
+  "block.ecreimagined.mithriline_crystal": "Mithriline Crystal",
+
+  "info.ecreimagined.soul_stone.bounded": "The soul stone is bounded to %s",
+  "info.ecreimagined.soul_stone.can_not_unbound": "You can't unbound this soul stone",
+  "info.ecreimagined.soul_stone.unbounded": "The soul stone is unbounded",
+
+  "tooltip.ecreimagined.sword_multiplier": "MRU Gain Bonus",
+  "tooltip.ecreimagined.rmc": "RMC",
+  "tooltip.ecreimagined.book.upgrade": "Hold %s to upgrade the book",
+  "tooltip.ecreimagined.book.downgrade": "Hold %s to reset all knowledge in the book",
+  "tooltip.ecreimagined.book.knowledge_contains": "Contains Knowledge",
+  "tooltip.ecreimagined.book.basic": "Basics",
+  "tooltip.ecreimagined.book.mru": "MRU Knowledge",
+  "tooltip.ecreimagined.book.engineer": "Engineer's",
+  "tooltip.ecreimagined.book.hoana": "Hoana",
+  "tooltip.ecreimagined.book.shade": "Shade",
+  "tooltip.ecreimagined.soul_stone.tracking": "Tracking MRU Matrix of %s",
+  "tooltip.ecreimagined.soul_stone.detected_ubmru": "Detected %s UBMRU Energy",
+  "tooltip.ecreimagined.soul_stone.matrix": "this tooltip is not writed",
+  "tooltip.ecreimagined.bound_gem.bound": "Bound gem was bounded at pos: X: %s Y: %s Z: %s",
+  "tooltip.ecreimagined.bound_gem.unbound": "Bound gem was unbounded",
+
+  "config.jade.plugin_ecreimagined.mithriline_furnace": "Mithriline Furnace",
+  "jade.ecreimagined.mithriline_furnace.espe_collector": "Active ESPE collectors: %s/%s"
+}

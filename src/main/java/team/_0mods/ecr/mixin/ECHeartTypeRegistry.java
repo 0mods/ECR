@@ -13,18 +13,18 @@ public class ECHeartTypeRegistry {
     @Shadow @Final @Mutable private static Gui.HeartType[] $VALUES;
 
     @Invoker("<init>")
-    public static Gui.HeartType ecremained$invoke(String internalName, int internalId, int index, boolean canBlink) { throw new AssertionError(); }
+    public static Gui.HeartType ecr$invoke(String internalName, int internalId, int index, boolean canBlink) { throw new AssertionError(); }
 
     @Unique
-    private static Gui.HeartType ecremained$addVariant(String internalName, int index, boolean canBlink) {
+    private static Gui.HeartType ecr$addVariant(String internalName, int index, boolean canBlink) {
         var entries = new ArrayList<>(Arrays.asList($VALUES));
-        var v = ecremained$invoke(internalName, entries.get(entries.size() - 1).ordinal() + 1, index, canBlink);
+        var v = ecr$invoke(internalName, entries.get(entries.size() - 1).ordinal() + 1, index, canBlink);
         entries.add(v);
         ECHeartTypeRegistry.$VALUES = entries.toArray(new Gui.HeartType[0]);
         return v;
     }
 
     static {
-        PlayerHeartType.setReg$EC_Remained(ECHeartTypeRegistry::ecremained$addVariant);
+        PlayerHeartType.setReg$EC_Reimagined(ECHeartTypeRegistry::ecr$addVariant);
     }
 }

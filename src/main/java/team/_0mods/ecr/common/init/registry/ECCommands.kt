@@ -3,6 +3,7 @@ package team._0mods.ecr.common.init.registry
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.commands.CommandSourceStack
+import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.item.ItemStack
 import team._0mods.ecr.api.utils.arg
@@ -31,6 +32,32 @@ object ECCommands {
                         }
 
                         level.addFreshEntity(ent)
+                    }
+
+                    "debug" {
+                        val argument = this.source.playerOrException
+                        val uuid = argument.uuid
+                        val cap = if (argument.getCapability(ECCapabilities.PLAYER_MRU).isPresent)
+                            argument.getCapability(ECCapabilities.PLAYER_MRU).orElseThrow { IllegalStateException("Capability is present but not present") }
+                        else null
+
+                        val builder = StringBuilder()
+                        builder.append("Debug info about ${argument.displayName.string}:")
+                            .append('\n').append(' ')
+                            .append("Current UUID: $uuid")
+                            .append('\n').append(' ')
+                            .append(if (cap != null) "Capability: " else "Capability is null.")
+
+                        if (cap != null) {
+                            builder.append('\n').append(' ').append(' ')
+                                .append("MatrixType: ${cap.matrixType.name.string}")
+                                .append('\n').append(' ').append(' ')
+                                .append("Matrix Destruction: ${cap.matrixDestruction}")
+                                .append('\n').append(' ').append(' ')
+                                .append("Are infused: ${cap.isInfused}")
+                        }
+
+                        argument.sendSystemMessage(Component.literal(builder.toString()))
                     }
                 }
             }

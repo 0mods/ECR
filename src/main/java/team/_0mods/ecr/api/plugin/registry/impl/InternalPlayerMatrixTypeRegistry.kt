@@ -29,4 +29,9 @@ internal class InternalPlayerMatrixTypeRegistry(private val modId: String): Play
             )
         return { type }
     }
+
+    override fun getValue(id: ResourceLocation): PlayerMRU.PlayerMatrixType? = registeredMatrixTypes[id]
+
+    override fun getKey(value: PlayerMRU.PlayerMatrixType): ResourceLocation? =
+        registeredMatrixTypes.filter { it.value == value }.keys.toList().getOrNull(0)
 }

@@ -1,0 +1,10 @@
+{
+  "type": "ecreimagined:mithriline_furnace",
+  "espe": 1,
+  "ingredient": {
+    "item": "minecraft:dark_oak_planks"
+  },
+  "result": {
+    "item": "minecraft:mangrove_planks"
+  }
+}

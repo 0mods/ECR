@@ -1,0 +1,11 @@
+{
+  "type": "ecreimagined:mithriline_furnace",
+  "espe": 32,
+  "ingredient": {
+    "item": "minecraft:gunpowder"
+  },
+  "result": {
+    "count": 12,
+    "item": "minecraft:clay"
+  }
+}

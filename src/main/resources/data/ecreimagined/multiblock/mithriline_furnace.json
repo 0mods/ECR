@@ -1,0 +1,36 @@
+{
+  "pattern": [
+    [
+      "a   a",
+      "     ",
+      "     ",
+      "     ",
+      "a   a"
+    ],
+    [
+      "a a a",
+      "     ",
+      "a b a",
+      "     ",
+      "a a a"
+    ],
+    [
+      "a a a",
+      " aaa ",
+      "aa aa",
+      " aaa ",
+      "a a a"
+    ]
+  ],
+  "symbols": [
+    {
+      "symbol": "a",
+      "block": "ecreimagined:mithriline_plating"
+    },
+    {
+      "symbol": "b",
+      "block": "ecreimagined:mithriline_furnace",
+      "center": true
+    }
+  ]
+}
