@@ -28,7 +28,7 @@ import team._0mods.ecr.api.block.client.LowSizeBreakParticle
 import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 
 @Suppress("OVERRIDE_DEPRECATION")
-class MatrixDestructor(properties: Properties) : BaseEntityBlock(properties), MRUGenerator, LowSizeBreakParticle   {
+class MatrixDestructor(properties: Properties) : BaseEntityBlock(properties), MRUGenerator, LowSizeBreakParticle {
     override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = MatrixDestructorEntity(pos, state)
 
     override fun <T : BlockEntity?> getTicker(

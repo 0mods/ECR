@@ -38,10 +38,15 @@ loom {
     }
 
     runs {
+        named("client") {
+            client()
+            programArgs(/*"--uuid", "--accessToken", "--userType",*/ "--username", "AlgorithmLX")
+        }
+
         create("data") {
             data()
-            programArgs.addAll(listOf("--all", "--mod", modId))
-            programArgs.addAll(listOf("--output", file("src/generated").absolutePath))
+            programArgs("--all", "--mod", modId)
+            programArgs("--output", file("src/generated").absolutePath)
         }
     }
 }
@@ -102,7 +107,7 @@ dependencies {
 
 //    modRuntimeOnly("dev.latvian.mods:rhino-forge:${"rhino_version".fromProperties}") // KJS lib
 //    modRuntimeOnly("dev.architectury:architectury-forge:${"architectury_version".fromProperties}") // KJS lib
-    modRuntimeOnly  ("maven.modrinth:cucumber:${"cucumber_version".fromProperties}")
+    modRuntimeOnly("maven.modrinth:cucumber:${"cucumber_version".fromProperties}")
 
     minecraftRuntimeLibraries("io.github.llamalad7:mixinextras-common:0.4.0")
 
@@ -110,23 +115,6 @@ dependencies {
 }
 
 tasks {
-    jar {
-        manifest {
-            attributes(
-                mapOf(
-                    "Specification-Title" to "modName".fromProperties,
-                    "Specification-Vendor" to "0mods",
-                    "Specification-Version" to "1",
-                    "Implementation-Title" to project.name,
-                    "Implementation-Version" to version,
-                    "Implementation-Timestamp" to ZonedDateTime.now()
-                        .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ")),
-                    "MixinConfigs" to "$modId.mixins.json"
-                )
-            )
-        }
-    }
-
     shadowJar {
         configurations = listOf(shadowLibrary)
         archiveClassifier = "dev-shadow"
@@ -174,9 +162,9 @@ tasks {
     }
 }
 
-val String.fromProperties
-    get() = project.properties[this].toString()
-
 kotlin {
     jvmToolchain(17)
 }
+
+val String.fromProperties
+    get() = project.properties[this].toString()
