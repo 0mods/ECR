@@ -1,0 +1,10 @@
+{
+  "type": "ecreimagined:mithriline_furnace",
+  "espe": 1,
+  "ingredient": {
+    "item": "minecraft:charcoal"
+  },
+  "result": {
+    "item": "minecraft:coal"
+  }
+}

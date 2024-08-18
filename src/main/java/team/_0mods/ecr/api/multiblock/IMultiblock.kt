@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.Level
 import team._0mods.ecr.api.utils.rl
-import java.util.function.BiFunction
 
 interface IMultiblock {
     companion object {
@@ -35,7 +34,7 @@ interface IMultiblock {
 
     fun isComplete(level: Level, center: BlockPos): Boolean
 
-    fun forEach(center: BlockPos, c: Char, function: BiFunction<BlockPos, Matcher, Boolean>): Boolean
+    fun forEach(center: BlockPos, c: Char, function: /*BiFunction<BlockPos, Matcher, Boolean>*/ (BlockPos, Matcher) -> Boolean): Boolean
 
     fun getStart(center: BlockPos): BlockPos
 

@@ -13,7 +13,6 @@ import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
-import net.minecraftforge.fml.loading.FMLEnvironment
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.block.MRUGenerator
 import team._0mods.ecr.common.init.registry.ECTabs
@@ -63,7 +62,7 @@ class BoundGem : Item(Properties().tab(ECTabs.tabItems)) {
 
         val block = level.getBlockState(pos).block
 
-        if (block is MRUGenerator || !FMLEnvironment.production) {
+        if (block is MRUGenerator) {
             if (stack.boundPos == null) {
                 player.displayClientMessage(Component.translatable("tooltip.$ModId.bound_gem.bound", pos.x, pos.y, pos.z), true)
                 if (stack.count > 1) {

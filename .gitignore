@@ -31,3 +31,4 @@ build/
 .kotlin/*
 
 .cache
+AUTH_DATA

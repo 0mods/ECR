@@ -1,0 +1,10 @@
+{
+  "type": "ecreimagined:mithriline_furnace",
+  "espe": 1,
+  "ingredient": {
+    "item": "minecraft:packed_ice"
+  },
+  "result": {
+    "item": "minecraft:blue_ice"
+  }
+}

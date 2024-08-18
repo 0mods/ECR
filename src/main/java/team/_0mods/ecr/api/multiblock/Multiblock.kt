@@ -5,7 +5,6 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
-import java.util.function.BiFunction
 
 class Multiblock internal constructor(
     private val name: ResourceLocation,
@@ -109,10 +108,10 @@ class Multiblock internal constructor(
         }
     }
 
-    override fun forEach(center: BlockPos, c: Char, function: BiFunction<BlockPos, Matcher, Boolean>): Boolean {
+    override fun forEach(center: BlockPos, c: Char, function: (BlockPos, Matcher) -> Boolean): Boolean {
         val start = this.getStart(center)
         for ((offset, value) in this.match) {
-            if (c.code == 0 || c == startChar || this.getChar(offset) == c) if (!function.apply(start.offset(offset), value)) return false
+            if (c.code == 0 || c == startChar || this.getChar(offset) == c) if (!function(start.offset(offset), value)) return false
         }
         return true
     }

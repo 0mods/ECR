@@ -1,0 +1,10 @@
+{
+  "type": "ecreimagined:mithriline_furnace",
+  "espe": 1,
+  "ingredient": {
+    "item": "minecraft:dirt"
+  },
+  "result": {
+    "item": "minecraft:coarse_dirt"
+  }
+}

@@ -4,10 +4,9 @@
   "ingredient": {
     "type": "forge:nbt",
     "count": 3,
-    "item": "minecraft:ender_pearl"
+    "item": "minecraft:wheat"
   },
   "result": {
-    "count": 2,
-    "item": "minecraft:blaze_rod"
+    "item": "minecraft:leather"
   }
 }

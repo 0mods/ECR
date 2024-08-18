@@ -1,0 +1,10 @@
+{
+  "type": "ecreimagined:mithriline_furnace",
+  "espe": 24,
+  "ingredient": {
+    "item": "minecraft:salmon"
+  },
+  "result": {
+    "item": "minecraft:tropical_fish"
+  }
+}
