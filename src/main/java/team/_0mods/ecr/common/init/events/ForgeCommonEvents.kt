@@ -1,4 +1,4 @@
-@file:Mod.EventBusSubscriber(modid = ModId, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@file:Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
 
 package team._0mods.ecr.common.init.events
 

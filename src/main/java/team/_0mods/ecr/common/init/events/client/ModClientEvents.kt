@@ -1,4 +1,4 @@
-@file:Mod.EventBusSubscriber(Dist.CLIENT, modid = ModId, bus = Mod.EventBusSubscriber.Bus.MOD)
+@file:Mod.EventBusSubscriber(Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 
 package team._0mods.ecr.common.init.events.client
 
@@ -13,7 +13,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import team._0mods.ecr.LOGGER
-import team._0mods.ecr.ModId
 import team._0mods.ecr.client.keys.kbList
 import team._0mods.ecr.client.particle.ECParticleFactory
 import team._0mods.ecr.client.renderer.MithrilineFurnaceRenderer

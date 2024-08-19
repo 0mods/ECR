@@ -1,4 +1,4 @@
-@file:Mod.EventBusSubscriber(Dist.CLIENT, modid = ModId, bus = Mod.EventBusSubscriber.Bus.FORGE)
+@file:Mod.EventBusSubscriber(Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 
 package team._0mods.ecr.common.init.events.client
 
