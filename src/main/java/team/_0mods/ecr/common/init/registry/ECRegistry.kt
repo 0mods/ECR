@@ -33,6 +33,7 @@ import team._0mods.ecr.common.items.ECGem
 import team._0mods.ecr.common.items.SoulStone
 import team._0mods.ecr.common.items.tools.*
 import team._0mods.ecr.common.particle.ECParticleType
+import team._0mods.ecr.common.recipes.EnvoyerRecipe
 import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
 
 object ECRegistry {
@@ -78,7 +79,7 @@ object ECRegistry {
 
     val matrixDestructor by blocksWE.register(
         "matrix_destructor",
-        { MatrixDestructor(BlockBehaviour.Properties.of(Material.METAL)) },
+        { MatrixDestructor(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops()) },
         ::MatrixDestructorEntity
     )
 
@@ -87,23 +88,16 @@ object ECRegistry {
     }
 
     // containers
-    val mithrilineFurnaceContainer: RegistryObject<MenuType<MithrilineFurnaceContainer>> = containers.register("mithriline_furnace") {
-        MenuType(IContainerFactory { id, inv, buf -> MithrilineFurnaceContainer(id, inv, buf) })
-    }
-
-    val matrixDestructorContainer: RegistryObject<MenuType<MatrixDestructorContainer>> = containers.register("matrix_destructor") {
-        MenuType(IContainerFactory { id, inv, buf -> MatrixDestructorContainer(id, inv, buf) })
-    }
+    val mithrilineFurnaceContainer: RegistryObject<MenuType<MithrilineFurnaceContainer>> = containers.register("mithriline_furnace") { MenuType(IContainerFactory { id, inv, buf -> MithrilineFurnaceContainer(id, inv, buf) }) }
+    val matrixDestructorContainer: RegistryObject<MenuType<MatrixDestructorContainer>> = containers.register("matrix_destructor") { MenuType(IContainerFactory { id, inv, buf -> MatrixDestructorContainer(id, inv, buf) }) }
 
     // recipe types
-    val mithrilineFurnaceRecipe: RegistryObject<RecipeType<MithrilineFurnaceRecipe>> = recipes.register("mithriline_furnace") {
-        RecipeType.simple("$ModId:mithriline_furnace".rl)
-    }
+    val mithrilineFurnaceRecipe: RegistryObject<RecipeType<MithrilineFurnaceRecipe>> = recipes.register("mithriline_furnace") { RecipeType.simple("$ModId:mithriline_furnace".rl) }
+    val envoyerRecipe: RegistryObject<RecipeType<EnvoyerRecipe>> = recipes.register("envoyer") { RecipeType.simple("$ModId:envoyer".rl) }
 
     // recipes serializers
-    val mithrilineFurnaceRecipeSerial: RegistryObject<MithrilineFurnaceRecipe.Serializer> = recipeSerializers.register("mithriline_furnace") {
-        MithrilineFurnaceRecipe.Serializer(::MithrilineFurnaceRecipe)
-    }
+    val mithrilineFurnaceRecipeSerial: RegistryObject<MithrilineFurnaceRecipe.Serializer> = recipeSerializers.register("mithriline_furnace") { MithrilineFurnaceRecipe.Serializer(::MithrilineFurnaceRecipe) }
+    val envoyerRecipeSerial: RegistryObject<EnvoyerRecipe.Serializer> = recipeSerializers.register("envoyer") { EnvoyerRecipe.Serializer(::EnvoyerRecipe) }
 
     // particle
     val ecParticle: RegistryObject<ECParticleType> = particles.register("ec_part", ::ECParticleType)

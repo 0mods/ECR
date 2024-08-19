@@ -10,6 +10,7 @@ import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
+import net.minecraft.world.level.block.LevelEvent
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.EnumProperty
@@ -64,11 +65,8 @@ class CrystalBlock(properties: Properties) : Block(properties), Multipart<Crysta
 
         if (otherState.`is`(this) && otherState.getValue(PART) != part) {
             level.setBlock(otherPos, Blocks.AIR.defaultBlockState(), 35)
-            level.levelEvent(player, 2001, otherPos, getId(otherState))
+            level.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, otherPos, getId(otherState))
         }
-
-        level.setBlock(pos, Blocks.AIR.defaultBlockState(), 35)
-        level.levelEvent(player, 2001, pos, getId(state))
 
         super.playerWillDestroy(level, pos, state, player)
     }
