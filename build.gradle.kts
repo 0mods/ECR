@@ -132,7 +132,7 @@ tasks {
         )
 
         relocateLibs.forEach {
-            relocate(it, "ecr_libs.$it")
+            relocate(it, "${"modGroupId".fromProperties}.$modId.shadowlibs.$it")
         }
     }
 

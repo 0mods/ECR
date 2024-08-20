@@ -27,7 +27,7 @@ object MithrilineFurnaceCTRecipe: IRecipeManager<MithrilineFurnaceRecipe> {
     @JvmStatic
     @ZenCodeType.Method
     fun addRecipe(name: String, output: IItemStack, input: IIngredient, espe: Int) {
-        val fixedName = MithrilineFurnaceCTRecipe.fixRecipeName(name)
+        val fixedName = fixRecipeName(name)
         val nnl = NonNullList.withSize(1, Ingredient.EMPTY)
         nnl[0] = input.asVanillaIngredient()
         CraftTweakerAPI.apply(ActionAddRecipe(MithrilineFurnaceCTRecipe, MithrilineFurnaceRecipe(CraftTweakerConstants.rl(fixedName), nnl, espe, output.internal)))

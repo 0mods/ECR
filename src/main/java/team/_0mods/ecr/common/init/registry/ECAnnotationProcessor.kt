@@ -1,6 +1,7 @@
 package team._0mods.ecr.common.init.registry
 
 import net.minecraftforge.fml.ModList
+import team._0mods.ecr.LOGGER
 import team._0mods.ecr.api.plugin.ECRModPlugin
 import team._0mods.ecr.api.plugin.ECRPlugin
 import team._0mods.ecr.api.plugin.registry.impl.InternalPlayerMatrixTypeRegistry
@@ -18,12 +19,29 @@ object ECAnnotationProcessor {
         searchAnnotations<T> {
             val annotation = this.getAnnotation(T::class.java)
             if (V::class.java.isAssignableFrom(this)) {
-                if (Modifier.isFinal(this.modifiers) || Modifier.isFinal(this.getDeclaredConstructor().modifiers)) {
-                    val f = this.getDeclaredField("INSTANCE")
+                if (!Modifier.isPublic(this.getDeclaredConstructor().modifiers)) {
+                    try {
+                        val f = this.getDeclaredField("INSTANCE")
 
-                    if (Modifier.isStatic(f.modifiers)) {
-                        val c = f.get(null) as V
-                        a(annotation, c)
+                        if (Modifier.isStatic(f.modifiers)) {
+                            val c = f.get(null) as V
+                            a(annotation, c)
+                        }
+                    } catch (e: Exception) {
+                        LOGGER.info("Failed to load ECR Plugin (${this::class.java.name}), because constructor is private and field \"INSTANCE\" is not present. Trying to load with \"getInstance\" method.")
+
+                        try {
+                            val m = this.getDeclaredMethod("getInstance")
+
+                            if (Modifier.isStatic(m.modifiers)) {
+                                if (m.parameterCount < 1) {
+                                    val c = m.invoke(null) as V
+                                    a(annotation, c)
+                                }
+                            }
+                        } catch (e: IllegalAccessException) {
+                            LOGGER.error("Failed to load ECR Plugin (${this::class.java.name}). Plugin's constructor is private and field named \"INSTANCE\" is not present or method named \"getInstance\" is not present or it's argument count large than 0. Make the constructor public or create objects containing the names \"INSTANCE\" or \"getInstance\" public without arguments.")
+                        }
                     }
                 } else {
                     val c = this.getDeclaredConstructor().newInstance() as V

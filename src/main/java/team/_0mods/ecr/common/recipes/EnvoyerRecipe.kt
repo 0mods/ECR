@@ -30,7 +30,7 @@ class EnvoyerRecipe(
             }
         }
 
-        return false
+        return true
     }
 
     override fun assemble(container: SimpleContainer): ItemStack = result.copy()
@@ -75,7 +75,7 @@ class EnvoyerRecipe(
             return serial(recipeId, inputs, catal, time, pseudoEnergy, result)
         }
 
-        override fun fromNetwork(recipeId: ResourceLocation, buffer: FriendlyByteBuf): EnvoyerRecipe? {
+        override fun fromNetwork(recipeId: ResourceLocation, buffer: FriendlyByteBuf): EnvoyerRecipe {
             val inputs = NonNullList.withSize(4, Ingredient.EMPTY)
             for (i in 0 ..< inputs.size) {
                 inputs[i] = Ingredient.fromNetwork(buffer)

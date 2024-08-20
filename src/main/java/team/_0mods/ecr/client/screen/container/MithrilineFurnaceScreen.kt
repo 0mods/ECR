@@ -57,6 +57,7 @@ class MithrilineFurnaceScreen(
     }
 
     private fun renderProgressArrow(poseStack: PoseStack, be: MithrilineFurnaceEntity) {
+
         if (menu.hasActiveRecipe) {
             blit(poseStack, 7.xPos, 16.yPos, 176, 15, 8, menu.scaleProgress())
         }
