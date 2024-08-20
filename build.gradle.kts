@@ -10,7 +10,7 @@ val shadowLibrary: Configuration by configurations.creating {
     isCanBeConsumed = false
 }
 
-val authData = if (project.file("AUTH_DATA").exists()) project.file("AUTH_DATA").readText().trim() else ""
+val authData = if (project.file("auth.data").exists()) project.file("auth.data").readText().trim() else ""
 
 plugins {
     java
@@ -42,11 +42,13 @@ loom {
     runs {
         named("client") {
             client()
-            val lines = authData.lines()
-            if (lines.isNotEmpty()) {
-                println("UUID: ${lines[0]}")
-                println("USERNAME: ${lines[1]}")
-                programArgs("--uuid", lines[0], "--username", lines[1])
+            if (authData.isNotEmpty()) {
+                val lines = authData.lines()
+                if (lines.isNotEmpty()) {
+                    println("UUID: ${lines[0]}")
+                    println("USERNAME: ${lines[1]}")
+                    programArgs("--uuid", lines[0], "--username", lines[1])
+                }
             }
         }
 
