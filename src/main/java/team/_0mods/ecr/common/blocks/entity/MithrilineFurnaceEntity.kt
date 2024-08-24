@@ -14,6 +14,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerData
 import net.minecraft.world.inventory.ContainerLevelAccess
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
@@ -43,133 +44,6 @@ import kotlin.math.floor
 
 class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     BlockEntity(ECRegistry.mithrilineFurnace.second, pos, blockState), MenuProvider {
-    companion object {
-        @JvmField
-        val CRYSTAL_POSITION = makePositions()
-
-        private fun makePositions(): StructuralPosition? {
-            val builder = StructuralPosition.builder
-            val positions = ECCommonConfig.instance.mithrilineFurnaceConfig.crystalPositions
-
-            if (positions.isEmpty()) return null
-
-            positions.forEach {
-                builder.pos(it.x, it.y, it.z)
-            }
-
-            return builder.build
-        }
-
-        @JvmStatic
-        fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MithrilineFurnaceEntity) {
-            val complete = be.successfulStructure
-            be.successfulStructure = ECMultiblocks.mithrilineFurnace.isComplete(level, pos)
-
-            if (!level.isClientSide) {
-                MithrilineFurnaceS2CUpdatePacket(be.mruStorage.mruStorage, be.blockPos).sendToClient()
-                if (complete) {
-                    val collectors = be.getActiveCollectors(level, pos)
-
-                    if (collectors != 0 && (be.tickCount++ % (160 / collectors) == 0)) {
-                        var collect = collectors * 4 - 3 + 1
-
-                        if (!be.notFrozenMRGeneration) collect /= 4
-
-                        be.getCapability(ECCapabilities.MRU_CONTAINER)
-                            .ifPresent {
-                                it.receiveMru(collect)
-                            }
-                    } else if (CRYSTAL_POSITION == null) {
-                        if (be.tickCount++ % 160 == 0) {
-                            be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent {
-                                it.receiveMru(14)
-                            }
-                        }
-                    }
-
-                    if (!be.itemHandler.getStackInSlot(0).isEmpty) {
-                        val inv = SimpleContainer(1).apply {
-                            this.setItem(0, be.itemHandler.getStackInSlot(0))
-                        }
-
-                        val recipe = level.recipeManager.getRecipeFor(ECRegistry.mithrilineFurnaceRecipe.get(), inv, level)
-                        if (recipe.isPresent) {
-                            val mfr = recipe.get()
-                            val result = mfr.resultItem
-                            val ingrCount = mfr.ingredients[0].items[0].count
-
-                            be.notFrozenMRGeneration = false
-
-                            be.containerData.set(1, mfr.espe)
-
-                            if (
-                                StackHelper.canCombineStacks(result.copy(), be.itemHandler.getStackInSlot(1)) &&
-                                inv.getItem(0).count >= ingrCount
-                            ) {
-                                be.containerData.set(0, be.progress)
-
-                                if (mfr.espe > be.mruStorage.mruStorage) {
-                                    be.progress++
-                                    be.containerData.set(0, be.progress)
-                                    be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(1, false) }
-                                } else if (be.mruStorage.mruStorage >= mfr.espe) {
-                                    be.progress = mfr.espe
-                                    be.containerData.set(0, be.progress)
-                                    be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(mfr.espe, false) }
-                                }
-
-                                if (be.progress >= mfr.espe) {
-                                    be.progress = 0
-                                    inv.clearContent()
-                                    be.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent {
-                                        it.extractItem(0, ingrCount, false)
-                                        it.insertItem(1, result.copy(), false)
-                                    }
-
-                                    be.maxProgress = 0
-                                    be.containerData.set(0, 0)
-                                    be.containerData.set(1, 0)
-                                    be.notFrozenMRGeneration = true
-                                    be.setChanged()
-                                }
-                            }
-                        } else {
-                            inv.clearContent()
-                            be.notFrozenMRGeneration = true
-                            be.progress = 0
-                            be.maxProgress = 0
-                        }
-                    } else {
-                        be.notFrozenMRGeneration = true
-                        be.progress = 0
-                        be.maxProgress = 0
-                    }
-                } else {
-                    be.notFrozenMRGeneration = true
-                    be.progress = 0
-                    be.maxProgress = 0
-                }
-            } else {
-                be.previousRot = be.rotAngle
-
-                if (complete) {
-                    be.rotAngle += 45f * (1f / 20f)
-                } else if (be.rotAngle % 90 != 0f) {
-                    be.rotAngle += 45f * (1f / 20f) / 2
-
-                    if (be.rotAngle % 90 == 0f) be.rotAngle = 90f * floor(be.rotAngle / 90)
-                }
-            }
-
-            if (complete) {
-                level.addParticle(
-                    ECParticleOptions(Color.GREEN, 0.5f, 10, 0.1f, true, false),
-                    pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, 1.0, 1.0, 1.0
-                )
-            }
-        }
-    }
-
     private val itemHandler = object : ItemStackHandler(2) {
         override fun onContentsChanged(slot: Int) {
             setChanged()
@@ -208,13 +82,11 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     var tickCount = 0
     var progress = 0
     var maxProgress = 0
-    var notFrozenMRGeneration = true
+    var canGenerate = true
 
     // Calculates only on a client
-    @OnlyIn(Dist.CLIENT)
-    var previousRot = 0f
-    @OnlyIn(Dist.CLIENT)
-    var rotAngle = 0f
+    @OnlyIn(Dist.CLIENT) var previousRot = 0f
+    @OnlyIn(Dist.CLIENT) var rotAngle = 0f
     // end
 
     override fun onLoad() {
@@ -235,7 +107,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         tag.put("ItemStorage", itemHandler.serializeNBT())
         tag.put("ESPEStorage", mruStorage.serializeNBT())
         tag.putBoolean("FullStructure", successfulStructure)
-        tag.putBoolean("CanGenerate", notFrozenMRGeneration)
+        tag.putBoolean("CanGenerate", canGenerate)
         tag.putInt("Progress", progress)
         tag.putInt("MaxProgress", maxProgress)
         super.saveAdditional(tag)
@@ -245,7 +117,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         itemHandler.deserializeNBT(tag.getCompound("ItemStorage"))
         mruStorage.deserializeNBT(tag.getCompound("ESPEStorage"))
         successfulStructure = tag.getBoolean("FullStructure")
-        notFrozenMRGeneration = tag.getBoolean("CanGenerate")
+        canGenerate = tag.getBoolean("CanGenerate")
         progress = tag.getInt("Progress")
         maxProgress = tag.getInt("MaxProgress")
         super.load(tag)
@@ -275,5 +147,142 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         val collectors = CRYSTAL_POSITION?.get(pos)?.filter { level.getBlockState(it).block == ECRegistry.mithrilineCrystal.get() }
         if (collectors.isNullOrEmpty()) return 0
         return collectors.size
+    }
+
+    companion object {
+        @JvmField
+        val CRYSTAL_POSITION = makePositions()
+
+        @JvmStatic
+        private fun makePositions(): StructuralPosition? {
+            val builder = StructuralPosition.builder
+            val positions = ECCommonConfig.instance.mithrilineFurnaceConfig.crystalPositions
+
+            if (positions.isEmpty()) return null
+
+            positions.forEach {
+                builder.pos(it.x, it.y, it.z)
+            }
+
+            return builder.build
+        }
+
+        @JvmStatic
+        fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MithrilineFurnaceEntity) {
+            val complete = be.successfulStructure
+            be.successfulStructure = ECMultiblocks.mithrilineFurnace.isComplete(level, pos)
+
+            if (!level.isClientSide) {
+                MithrilineFurnaceS2CUpdatePacket(be.mruStorage.mruStorage, be.blockPos).sendToClient()
+                if (complete) {
+                    generateESPE(level, pos, be)
+                    processRecipeIfPresent(be, level)
+                } else {
+                    resetProgress(be)
+                }
+            } else {
+                processRot(be)
+            }
+
+            if (complete) {
+                level.addParticle(
+                    ECParticleOptions(Color.GREEN, 0.5f, 10, 0.1f, true, false),
+                    pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, 1.0, 1.0, 1.0
+                )
+            }
+        }
+
+        @JvmStatic
+        private fun generateESPE(level: Level, pos: BlockPos, be: MithrilineFurnaceEntity) {
+            val collectors = be.getActiveCollectors(level, pos)
+
+            if (collectors != 0 && (be.tickCount++ % (160 / collectors) == 0)) {
+                var collect = collectors * 4 - 3 + 1
+
+                if (!be.canGenerate) collect /= 4
+
+                be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.receiveMru(collect) }
+            } else if (CRYSTAL_POSITION == null && (be.tickCount++ % 160 == 0)) {
+                be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.receiveMru(10) }
+            }
+        }
+
+        @JvmStatic
+        private fun hasRecipe(be: MithrilineFurnaceEntity, level: Level): Boolean {
+            if (!be.itemHandler.getStackInSlot(0).isEmpty) {
+                val inv = SimpleContainer(1).apply { this.setItem(0, be.itemHandler.getStackInSlot(0)) }
+                val recipe = level.recipeManager.getRecipeFor(ECRegistry.mithrilineFurnaceRecipe.get(), inv, level)
+
+                return recipe.isPresent
+            }
+
+            return false
+        }
+
+        @JvmStatic
+        private fun processRecipeIfPresent(be: MithrilineFurnaceEntity, level: Level) {
+            if (!be.itemHandler.getStackInSlot(0).isEmpty) {
+                val inv = SimpleContainer(1).apply { this.setItem(0, be.itemHandler.getStackInSlot(0)) }
+                if (hasRecipe(be, level)) {
+                    val recipe = level.recipeManager.getRecipeFor(ECRegistry.mithrilineFurnaceRecipe.get(), inv, level)
+
+                    val mfr = recipe.get()
+                    val result = mfr.resultItem
+                    val ingrCount = mfr.ingredients[0].items[0].count
+
+                    be.canGenerate = false
+
+                    if (canCombine(result.copy(), be.itemHandler.getStackInSlot(1), inv.getItem(0).count, ingrCount)) {
+                        if (mfr.espe > be.mruStorage.mruStorage) {
+                            be.progress++
+                            be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(1, false) }
+                        } else if (be.mruStorage.mruStorage >= mfr.espe) {
+                            be.progress = mfr.espe
+                            be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(mfr.espe, false) }
+                        }
+
+                        if (be.progress >= mfr.espe) {
+                            inv.clearContent()
+                            be.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent {
+                                it.extractItem(0, ingrCount, false)
+                                it.insertItem(1, result.copy(), false)
+                            }
+
+                            resetProgress(be)
+                        }
+                    }
+                } else {
+                    inv.clearContent()
+                    resetProgress(be)
+                }
+            } else {
+                resetProgress(be)
+            }
+        }
+
+        @JvmStatic
+        private fun canCombine(result: ItemStack, hand: ItemStack, count: Int, ingredientCount: Int): Boolean =
+            StackHelper.canCombineStacks(result, hand) && count >= ingredientCount
+
+        @JvmStatic
+        private fun resetProgress(be: MithrilineFurnaceEntity) {
+            be.canGenerate = true
+            be.progress = 0
+            be.maxProgress = 0
+        }
+
+        @OnlyIn(Dist.CLIENT)
+        @JvmStatic
+        private fun processRot(be: MithrilineFurnaceEntity) {
+            be.previousRot = be.rotAngle
+
+            if (be.successfulStructure) {
+                be.rotAngle += 45f * (1f / 20f)
+            } else if (be.rotAngle % 90 != 0f) {
+                be.rotAngle += 45f * (1f / 20f) / 2
+
+                if (be.rotAngle % 90 == 0f) be.rotAngle = 90f * floor(be.rotAngle / 90)
+            }
+        }
     }
 }

@@ -52,12 +52,11 @@ class MithrilineFurnaceScreen(
             if (isCursorAtPos(mouseX, mouseY, 6.xPos, 59.yPos, 18, 18))
                 this.renderTooltip(poseStack, Component.literal("${mru.mruType.display.string}: ${mru.mruStorage}/${mru.maxMRUStorage}"), mouseX, mouseY)
 
-            renderProgressArrow(poseStack, be)
+            renderProgressArrow(poseStack)
         }
     }
 
-    private fun renderProgressArrow(poseStack: PoseStack, be: MithrilineFurnaceEntity) {
-
+    private fun renderProgressArrow(poseStack: PoseStack) {
         if (menu.hasActiveRecipe) {
             blit(poseStack, 7.xPos, 16.yPos, 176, 15, 8, menu.scaleProgress())
         }
