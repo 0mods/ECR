@@ -17,6 +17,8 @@ import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraftforge.api.distmarker.Dist
+import net.minecraftforge.api.distmarker.OnlyIn
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
@@ -24,6 +26,7 @@ import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.block.StructuralPosition
+import team._0mods.ecr.api.block.inventory.WrappedInventory
 import team._0mods.ecr.api.utils.StackHelper
 import team._0mods.ecr.common.capability.MRUContainer
 import team._0mods.ecr.common.capability.impl.MRUContainerImpl
@@ -199,6 +202,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
     private var itemHandlerLazy = LazyOptional.empty<IItemHandler>()
     private var mruStorageLazy = LazyOptional.empty<MRUContainer>()
+    private var wrappedHandlerLazy = LazyOptional.empty<WrappedInventory>()
 
     var successfulStructure = false
     var tickCount = 0
@@ -207,7 +211,9 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     var notFrozenMRGeneration = true
 
     // Calculates only on a client
+    @OnlyIn(Dist.CLIENT)
     var previousRot = 0f
+    @OnlyIn(Dist.CLIENT)
     var rotAngle = 0f
     // end
 
@@ -215,12 +221,14 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         super.onLoad()
         itemHandlerLazy = LazyOptional.of(::itemHandler)
         mruStorageLazy = LazyOptional.of(::mruStorage)
+        wrappedHandlerLazy = LazyOptional.of { WrappedInventory(itemHandler, { it == 1 && successfulStructure }) { i, s -> i == 0 && itemHandler.isItemValid(i, s) && successfulStructure } }
     }
 
     override fun invalidateCaps() {
         super.invalidateCaps()
         itemHandlerLazy.invalidate()
         mruStorageLazy.invalidate()
+        wrappedHandlerLazy.invalidate()
     }
 
     override fun saveAdditional(tag: CompoundTag) {
@@ -251,7 +259,10 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     override fun getDisplayName(): Component = Component.translatable("container.$ModId.mithriline_furnace")
 
     override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) return itemHandlerLazy.cast()
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
+            if (side == null) return itemHandlerLazy.cast()
+            return wrappedHandlerLazy.cast()
+        }
 
         if (cap == ECCapabilities.MRU_CONTAINER) return mruStorageLazy.cast()
 
