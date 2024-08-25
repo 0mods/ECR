@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.network.chat.Component
+import net.minecraft.util.Mth
 import net.minecraft.world.entity.player.Inventory
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.client.isCursorAtPos
@@ -25,15 +26,11 @@ class MithrilineFurnaceScreen(
         private val texture = "$ModId:textures/gui/mithriline_furnace.png".rl
     }
 
-    init {
-        imageWidth = 175
-        imageHeight = 166
-    }
-
     override fun render(poseStack: PoseStack, mouseX: Int, mouseY: Int, partialTick: Float) {
         this.renderBackground(poseStack)
         super.render(poseStack, mouseX, mouseY, partialTick)
         this.renderTooltip(poseStack, mouseX, mouseY)
+
     }
 
     override fun renderLabels(poseStack: PoseStack, mouseX: Int, mouseY: Int) {}
@@ -57,8 +54,14 @@ class MithrilineFurnaceScreen(
     }
 
     private fun renderProgressArrow(poseStack: PoseStack) {
-        if (menu.hasActiveRecipe) {
-            blit(poseStack, 7.xPos, 16.yPos, 176, 15, 8, menu.scaleProgress())
+        val progress = this.menu.data.get(0)
+        val maxProgress = this.menu.data.get(1)
+
+        if (maxProgress > 0) {
+            val calc = progress.toFloat() / maxProgress.toFloat()
+            val fl = Mth.floor(calc * 16)
+
+            blit(poseStack, 84.xPos, (57 - fl).yPos, 176, 16 - fl, 8, fl)
         }
     }
 

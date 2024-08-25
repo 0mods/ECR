@@ -57,7 +57,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         }
     }
 
-    val containerData: ContainerData = object : ContainerData {
+    private val containerData: ContainerData = object : ContainerData {
         override fun get(index: Int): Int = when(index) {
             0 -> this@MithrilineFurnaceEntity.progress
             1 -> this@MithrilineFurnaceEntity.maxProgress
@@ -231,6 +231,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
                     val ingrCount = mfr.ingredients[0].items[0].count
 
                     be.canGenerate = false
+                    be.maxProgress = mfr.espe
 
                     if (canCombine(result.copy(), be.itemHandler.getStackInSlot(1), inv.getItem(0).count, ingrCount)) {
                         if (mfr.espe > be.mruStorage.mruStorage) {

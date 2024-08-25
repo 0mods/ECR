@@ -72,14 +72,4 @@ class MithrilineFurnaceContainer(
 
     override fun stillValid(player: Player): Boolean =
         stillValid(this.access, player, ECRegistry.mithrilineFurnace.first)
-
-    val hasActiveRecipe = this.data.get(1) > 0
-
-    fun scaleProgress(): Int {
-        val progress = this.data.get(0)
-        val maxProgress = this.data.get(1)
-        return if (progress != 0 && maxProgress != 0)
-            -(progress * 16 / maxProgress)
-        else 0
-    }
 }

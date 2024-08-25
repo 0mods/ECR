@@ -1,6 +1,3 @@
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-
 val modId: String by project
 val minecraftVersion: String by project
 val forgeVersion: String by project
@@ -47,7 +44,7 @@ loom {
                 if (lines.isNotEmpty()) {
                     println("UUID: ${lines[0]}")
                     println("USERNAME: ${lines[1]}")
-                    programArgs("--uuid", lines[0], "--username", lines[1])
+                    programArgs("--uuid", lines[0], "--username", lines[1], /*"-XX:+AllowEnhancedClassRedefinition"*/)
                 }
             }
         }
