@@ -66,14 +66,14 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
                 val tag = this.orCreateTag
 
                 if (!tag.contains("ECBookType")) {
-                   tag.putString("ECBookType", Type.BASIC.name)
+                   tag.putString("ECBookType", Type.BASIC.name.lowercase())
                 }
 
                 return try {
-                    Type.valueOf(tag.getString("ECBookType"))
+                    Type.valueOf(tag.getString("ECBookType").uppercase())
                 } catch (e: NullPointerException) {
-                    LOGGER.error("Taken item with unsupported book type. Sets default value", e)
-                    tag.putString("ECBookType", Type.BASIC.name)
+                    LOGGER.error("Taken item with unsupported book type. Sets default value")
+                    tag.putString("ECBookType", Type.BASIC.name.lowercase())
                     return Type.BASIC
                 }
             }
@@ -81,7 +81,7 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
                 if (this.item !is ECBook) throw IllegalStateException("Failed to get book type to none-book item")
                 val tag = this.orCreateTag
 
-                tag.putString("ECBookType", value.name)
+                tag.putString("ECBookType", value.name.lowercase())
             }
     }
 

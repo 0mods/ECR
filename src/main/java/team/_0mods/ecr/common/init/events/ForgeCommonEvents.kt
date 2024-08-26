@@ -72,5 +72,6 @@ fun onRegisterReloadListener(e: AddReloadListenerEvent) {
 }
 
 fun onCapabilityPlayerAttach(e: AttachCapabilitiesEvent<Player>) {
-    if (!e.`object`.getCapability(ECCapabilities.PLAYER_MRU).isPresent) e.addCapability("$ModId:player_mru".rl, PlayerMRUImpl.Provider())
+    if (!e.`object`.getCapability(ECCapabilities.PLAYER_MRU).isPresent)
+        e.addCapability("$ModId:player_mru".rl, PlayerMRUImpl.Provider())
 }

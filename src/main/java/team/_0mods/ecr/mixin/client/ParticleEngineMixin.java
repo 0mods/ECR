@@ -1,4 +1,4 @@
-package team._0mods.ecr.mixin;
+package team._0mods.ecr.mixin.client;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;

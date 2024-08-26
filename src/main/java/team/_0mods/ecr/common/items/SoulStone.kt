@@ -2,7 +2,6 @@ package team._0mods.ecr.common.items
 
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.MutableComponent
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.entity.EntityType
@@ -60,6 +59,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
                         level.addFreshEntity(ent)
                     } else {
                         stack.owner = player.uuid
+                        setOwnerNick(stack, player.name.string)
                     }
 
                     player.displayClientMessage(
@@ -78,6 +78,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
                         return InteractionResultHolder.fail(stack)
                     } else {
                         stack.owner = null
+                        setOwnerNick(stack, null)
                         player.displayClientMessage(Component.translatable("info.$ModId.soul_stone.unbounded"), true)
                         return InteractionResultHolder.fail(stack)
                     }
@@ -103,13 +104,10 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
         level ?: return
 
         if (stack.owner != null) {
-            val player = level.getPlayerByUUID(stack.owner!!)
-
             tooltipComponents.add(
                 Component.translatable(
                     "tooltip.$ModId.soul_stone.tracking",
-                    (player?.name as? MutableComponent)?.withStyle(ChatFormatting.GOLD)
-                        ?: Component.literal("Not Loaded").withStyle(ChatFormatting.RED)
+                    Component.literal(getOwnerNick(stack)).withStyle(if (getOwnerNick(stack) == "Not Loaded") ChatFormatting.RED else ChatFormatting.GOLD)
                 ).withStyle(ChatFormatting.DARK_GRAY)
             )
 
@@ -177,6 +175,29 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
                 tag.remove("SoulStoneOwner")
                 tag.remove("SoulStoneCapacity")
             }
+        }
+    }
+
+    private fun getOwnerNick(stack: ItemStack): String {
+        if (stack.item !is SoulStone) throw UnsupportedOperationException()
+        val tag = stack.orCreateTag
+        return if (tag.contains("SoulStoneOwnerName")) {
+            try {
+                tag.getString("SoulStoneOwnerName")
+            } catch (e: Exception) {
+                "Not Loaded"
+            }
+        } else "Not Loaded"
+    }
+
+    private fun setOwnerNick(stack: ItemStack, name: String?) {
+        if (stack.item !is SoulStone) throw UnsupportedOperationException()
+        val tag = stack.orCreateTag
+
+        if (name != null) {
+            tag.putString("SoulStoneOwnerName", name)
+        } else {
+            tag.remove("SoulStoneOwnerName")
         }
     }
 

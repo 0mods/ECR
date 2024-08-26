@@ -88,34 +88,30 @@ dependencies {
 
     compileOnly("org.spongepowered:mixin:0.8")
 
-    forge("net.minecraftforge:forge:${minecraftVersion}-${forgeVersion}")
+    implementation(include("io.github.llamalad7:mixinextras-forge:0.4.1")) {}
+    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1")) {}
 
-    fun shadow(dep: Any) {
-        include(dep)
-        minecraftClientRuntimeLibraries(dep)
-    }
+    forge("net.minecraftforge:forge:${minecraftVersion}-${forgeVersion}")
 
     shadowLibrary("team.0mods:KotlinExtras:1.4-noreflect")
 
-    shadow("team.chisel.ctm:CTM:${minecraftVersion}-${"ctm_version".fromProperties}")
+    include(minecraftRuntimeLibraries("team.chisel.ctm:CTM:${minecraftVersion}-${"ctm_version".fromProperties}")) {}
 
-    implementation(kotlin("stdlib", "2.0.10")); minecraftRuntimeLibraries(kotlin("stdlib", "2.0.10"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:+") { minecraftRuntimeLibraries(this) }
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:+") { minecraftRuntimeLibraries(this) }
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:+") { minecraftRuntimeLibraries(this) }
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:+") { minecraftRuntimeLibraries(this) }
+    implementation(minecraftRuntimeLibraries(kotlin("stdlib", "2.0.10"))) {}
+    implementation(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-coroutines-core:+")) {}
+    implementation(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:+")) {}
+    implementation(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-serialization-core:+")) {}
+    implementation(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-serialization-json:+")) {}
 
     modApi("mezz.jei:jei-${minecraftVersion}-forge:${"jei_version".fromProperties}")
     modApi("com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:${"ct_version".fromProperties}")
-//    modApi("dev.latvian.mods:kubejs-forge:${"kubejs_version".fromProperties}")
+    modApi("dev.latvian.mods:kubejs-forge:${"kubejs_version".fromProperties}")
     modApi("maven.modrinth:jade:${"jade_version".fromProperties}")
     modApi("maven.modrinth:mystical-agriculture:${"ma_version".fromProperties}")
 
-//    modRuntimeOnly("dev.latvian.mods:rhino-forge:${"rhino_version".fromProperties}") // KJS lib
-//    modRuntimeOnly("dev.architectury:architectury-forge:${"architectury_version".fromProperties}") // KJS lib
+    modRuntimeOnly("dev.latvian.mods:rhino-forge:${"rhino_version".fromProperties}") // KJS lib
+    modRuntimeOnly("dev.architectury:architectury-forge:${"architectury_version".fromProperties}") // KJS lib
     modRuntimeOnly("maven.modrinth:cucumber:${"cucumber_version".fromProperties}")
-
-    minecraftRuntimeLibraries("io.github.llamalad7:mixinextras-common:0.4.0")
 
     annotationProcessor("com.blamejared.crafttweaker:Crafttweaker_Annotation_Processors:${"ct_annot_version".fromProperties}")
 }
