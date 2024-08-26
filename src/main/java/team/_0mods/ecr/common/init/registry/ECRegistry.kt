@@ -11,19 +11,22 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.Material
 import net.minecraftforge.eventbus.api.IEventBus
-import net.minecraftforge.network.IContainerFactory
 import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 import team._0mods.ecr.ModId
+import team._0mods.ecr.api.menu.simpleMenuFactory
 import team._0mods.ecr.api.utils.makeBERegistry
 import team._0mods.ecr.api.utils.register
 import team._0mods.ecr.api.utils.rl
 import team._0mods.ecr.common.blocks.CrystalBlock
+import team._0mods.ecr.common.blocks.Envoyer
 import team._0mods.ecr.common.blocks.MatrixDestructor
 import team._0mods.ecr.common.blocks.MithrilineFurnace
+import team._0mods.ecr.common.blocks.entity.EnvoyerBlockEntity
 import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
+import team._0mods.ecr.common.container.EnvoyerContainer
 import team._0mods.ecr.common.container.MatrixDestructorContainer
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 import team._0mods.ecr.common.effects.MRUCorruption
@@ -83,13 +86,20 @@ object ECRegistry {
         ::MatrixDestructorEntity
     )
 
+    val envoyer by blocksWE.register(
+        "envoyer",
+        { Envoyer(BlockBehaviour.Properties.of(Material.METAL)) },
+        ::EnvoyerBlockEntity
+    )
+
     val mithrilineCrystal = block("mithriline_crystal") {
         CrystalBlock(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops())
     }
 
     // containers
-    val mithrilineFurnaceContainer: RegistryObject<MenuType<MithrilineFurnaceContainer>> = containers.register("mithriline_furnace") { MenuType(IContainerFactory { id, inv, buf -> MithrilineFurnaceContainer(id, inv, buf) }) }
-    val matrixDestructorContainer: RegistryObject<MenuType<MatrixDestructorContainer>> = containers.register("matrix_destructor") { MenuType(IContainerFactory { id, inv, buf -> MatrixDestructorContainer(id, inv, buf) }) }
+    val mithrilineFurnaceContainer: RegistryObject<MenuType<MithrilineFurnaceContainer>> = containers.register("mithriline_furnace") { simpleMenuFactory(::MithrilineFurnaceContainer) }
+    val matrixDestructorContainer: RegistryObject<MenuType<MatrixDestructorContainer>> = containers.register("matrix_destructor") { simpleMenuFactory(::MatrixDestructorContainer) }
+    val envoyerContainer: RegistryObject<MenuType<EnvoyerContainer>> = containers.register("envoyer") { simpleMenuFactory(::EnvoyerContainer) }
 
     // recipe types
     val mithrilineFurnaceRecipe: RegistryObject<RecipeType<MithrilineFurnaceRecipe>> = recipes.register("mithriline_furnace") { RecipeType.simple("$ModId:mithriline_furnace".rl) }

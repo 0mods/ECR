@@ -1,15 +1,16 @@
 package team._0mods.ecr.client.screen.container
 
-import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
-import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.network.chat.Component
-import net.minecraft.util.Mth
 import net.minecraft.world.entity.player.Inventory
 import team._0mods.ecr.ModId
+import team._0mods.ecr.api.client.blit
 import team._0mods.ecr.api.client.isCursorAtPos
+import team._0mods.ecr.api.client.xPos
+import team._0mods.ecr.api.client.yPos
 import team._0mods.ecr.api.utils.rl
+import team._0mods.ecr.client.screen.container.widget.MithrilineFurnaceProgressArrow
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 
@@ -26,52 +27,28 @@ class MithrilineFurnaceScreen(
         private val texture = "$ModId:textures/gui/mithriline_furnace.png".rl
     }
 
+    override fun init() {
+        super.init()
+        addRenderableOnly(MithrilineFurnaceProgressArrow(xPos(84), yPos(41), this.menu))
+    }
+
     override fun render(poseStack: PoseStack, mouseX: Int, mouseY: Int, partialTick: Float) {
         this.renderBackground(poseStack)
         super.render(poseStack, mouseX, mouseY, partialTick)
         this.renderTooltip(poseStack, mouseX, mouseY)
 
+        val be = menu.blockEntity
+        if (be is MithrilineFurnaceEntity) {
+            val mru = be.mruStorage
+
+            if (isCursorAtPos(mouseX, mouseY, xPos(6), yPos(59), 18, 18))
+                this.renderTooltip(poseStack, Component.literal("${mru.mruType.display.string}: ${mru.mruStorage}/${mru.maxMRUStorage}"), mouseX, mouseY)
+        }
     }
 
     override fun renderLabels(poseStack: PoseStack, mouseX: Int, mouseY: Int) {}
 
     override fun renderBg(poseStack: PoseStack, partialTick: Float, mouseX: Int, mouseY: Int) {
-        RenderSystem.setShader(GameRenderer::getPositionShader)
-        RenderSystem.setShaderColor(1f, 1f, 1f, 1f)
-        RenderSystem.setShaderTexture(0, texture)
-
-        blit(poseStack, this.guiLeft, this.guiTop, 0f, 0f, this.imageWidth, this.imageHeight, 256, 256)
-
-        val be = menu.blockEntity
-        if (be is MithrilineFurnaceEntity) {
-            val mru = be.mruStorage
-
-            if (isCursorAtPos(mouseX, mouseY, 6.xPos, 59.yPos, 18, 18))
-                this.renderTooltip(poseStack, Component.literal("${mru.mruType.display.string}: ${mru.mruStorage}/${mru.maxMRUStorage}"), mouseX, mouseY)
-
-            renderProgressArrow(poseStack)
-        }
-    }
-
-    private fun renderProgressArrow(poseStack: PoseStack) {
-        val progress = this.menu.data.get(0)
-        val maxProgress = this.menu.data.get(1)
-
-        if (maxProgress > 0) {
-            val calc = progress.toFloat() / maxProgress.toFloat()
-            val fl = Mth.floor(calc * 16)
-
-            blit(poseStack, 84.xPos, (57 - fl).yPos, 176, 16 - fl, 8, fl)
-        }
-    }
-
-    private val Int.xPos: Int get() {
-        val j = ((this@MithrilineFurnaceScreen.width / 2) - (this@MithrilineFurnaceScreen.imageWidth / 2))
-        return j + this
-    }
-
-    private val Int.yPos: Int get() {
-        val j = ((this@MithrilineFurnaceScreen.height / 2) - (this@MithrilineFurnaceScreen.imageHeight / 2))
-        return j + this
+        poseStack.blit(texture, this.guiLeft, this.guiTop)
     }
 }

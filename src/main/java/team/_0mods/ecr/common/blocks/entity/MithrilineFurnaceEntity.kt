@@ -235,8 +235,9 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
                     if (canCombine(result.copy(), be.itemHandler.getStackInSlot(1), inv.getItem(0).count, ingrCount)) {
                         if (mfr.espe > be.mruStorage.mruStorage) {
-                            be.progress++
-                            be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(1, false) }
+                            /*be.progress++
+                            be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(1, false) }*/
+                            processTick(be, mfr.espe)
                         } else if (be.mruStorage.mruStorage >= mfr.espe) {
                             be.progress = mfr.espe
                             be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(mfr.espe, false) }
@@ -259,6 +260,30 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
             } else {
                 resetProgress(be)
             }
+        }
+
+        @JvmStatic
+        private fun processTick(be: MithrilineFurnaceEntity, neededESPE: Int) {
+            val storage = be.mruStorage
+
+            if (be.checkExtraction(neededESPE, 1000)) {
+                storage.extractMru(1000)
+                be.progress += 1000
+            } else if (be.checkExtraction(neededESPE, 100)) {
+                storage.extractMru(100)
+                be.progress += 100
+            } else if (be.checkExtraction(neededESPE, 10)) {
+                storage.extractMru(10)
+                be.progress += 10
+            } else {
+                storage.extractMru(1)
+                be.progress++
+            }
+        }
+
+        private fun MithrilineFurnaceEntity.checkExtraction(neededESPE: Int, max: Int): Boolean {
+            val storage = this.mruStorage
+            return ((storage.mruStorage - max) >= 0) && (neededESPE >= (max + this.progress))
         }
 
         @JvmStatic

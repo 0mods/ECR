@@ -1,7 +1,6 @@
 package team._0mods.ecr.common.blocks
 
 import net.minecraft.core.BlockPos
-import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
@@ -18,10 +17,11 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
-import net.minecraftforge.network.NetworkHooks
 import team._0mods.ecr.api.block.MRUGenerator
+import team._0mods.ecr.api.block.checkAndOpenMenu
 import team._0mods.ecr.api.block.client.LowSizeBreakParticle
 import team._0mods.ecr.api.block.prepareDrops
+import team._0mods.ecr.api.block.simpleTicker
 import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 
 @Suppress("OVERRIDE_DEPRECATION")
@@ -32,9 +32,7 @@ class MatrixDestructor(properties: Properties) : BaseEntityBlock(properties), MR
         level: Level,
         state: BlockState,
         blockEntityType: BlockEntityType<T>
-    ): BlockEntityTicker<T> = BlockEntityTicker { l, bp, s, e ->
-        MatrixDestructorEntity.onTick(l, bp, s, e as MatrixDestructorEntity)
-    }
+    ): BlockEntityTicker<T> = simpleTicker<T, MatrixDestructorEntity>(MatrixDestructorEntity::onTick)
 
     override fun use(
         state: BlockState,
@@ -44,14 +42,7 @@ class MatrixDestructor(properties: Properties) : BaseEntityBlock(properties), MR
         hand: InteractionHand,
         hit: BlockHitResult
     ): InteractionResult {
-        if (!level.isClientSide) {
-            val be = level.getBlockEntity(pos)
-            if (be is MatrixDestructorEntity) {
-                NetworkHooks.openScreen(player as ServerPlayer, be, pos)
-            } else throw IllegalStateException("Can not open any block entity that is not instanceof MatrixDestructorEntity")
-        }
-
-        return InteractionResult.SUCCESS
+        return checkAndOpenMenu<MatrixDestructorEntity>(player, level, pos)
     }
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {

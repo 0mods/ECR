@@ -1,7 +1,6 @@
 package team._0mods.ecr.common.blocks
 
 import net.minecraft.core.BlockPos
-import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
@@ -18,9 +17,10 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
-import net.minecraftforge.network.NetworkHooks
+import team._0mods.ecr.api.block.checkAndOpenMenu
 import team._0mods.ecr.api.block.client.LowSizeBreakParticle
 import team._0mods.ecr.api.block.prepareDrops
+import team._0mods.ecr.api.block.simpleTicker
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.init.registry.ECMultiblocks
 
@@ -31,9 +31,7 @@ class MithrilineFurnace(properties: Properties) : BaseEntityBlock(properties), L
         level: Level,
         state: BlockState,
         blockEntityType: BlockEntityType<T>
-    ): BlockEntityTicker<T> = BlockEntityTicker<T> { l, bp, s, e ->
-        MithrilineFurnaceEntity.onTick(l, bp, s, e as MithrilineFurnaceEntity)
-    }
+    ): BlockEntityTicker<T> = simpleTicker<T, MithrilineFurnaceEntity>(MithrilineFurnaceEntity::onTick)
 
     @Suppress("OVERRIDE_DEPRECATION")
     override fun use(
@@ -44,16 +42,9 @@ class MithrilineFurnace(properties: Properties) : BaseEntityBlock(properties), L
         hand: InteractionHand,
         hit: BlockHitResult
     ): InteractionResult {
-        if (ECMultiblocks.mithrilineFurnace.isComplete(level, pos)) {
-            if (!level.isClientSide) {
-                val blockEntity = level.getBlockEntity(pos)
-                if (blockEntity is MithrilineFurnaceEntity) {
-                    NetworkHooks.openScreen(player as ServerPlayer, blockEntity, blockEntity.blockPos)
-                } else throw IllegalStateException("Can not open any block entity that is not instanceof MithrilineFurnaceEntity")
-            }
-
-            return InteractionResult.SUCCESS
-        } else return InteractionResult.FAIL
+        return if (ECMultiblocks.mithrilineFurnace.isComplete(level, pos)) {
+            checkAndOpenMenu<MithrilineFurnaceEntity>(player, level, pos)
+        } else InteractionResult.FAIL
     }
 
     @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
