@@ -2,18 +2,35 @@ package team._0mods.ecr.common.init.config
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.*
 
 @Serializable
 class ECCommonConfig(
     @SerialName("mithriline_furnace")
     val mithrilineFurnaceConfig: MithrilineFurnace = MithrilineFurnace(),
     @SerialName("matrix_destructor")
-    val matrixDestructorConfig: MatrixDestructor = MatrixDestructor()
+    val matrixConfig: JsonObject = buildJsonObject {
+        put("_comment", "Sets the conversion value. Default: 10 for input; 1 for output")
+        put("generation", buildJsonObject {
+            put("umbru_get", 10)
+            put("mru_exit", 1)
+        })
+    }
 ) {
     companion object {
         @JvmStatic
         lateinit var instance: ECCommonConfig
             internal set
+    }
+
+    val matrixConsuming: Int get() {
+        val generation = matrixConfig["generation"]!!
+        return generation.jsonObject["umbru_get"]!!.jsonPrimitive.int
+    }
+
+    val matrixResult: Int get() {
+        val generation = matrixConfig["generation"]!!
+        return generation.jsonObject["mru_exit"]!!.jsonPrimitive.int
     }
 
     @Serializable
@@ -45,7 +62,4 @@ class ECCommonConfig(
             return crystalPositions.contentHashCode()
         }
     }
-
-    @Serializable
-    data class MatrixDestructor(val ubmruToMruCost: Int = 10)
 }

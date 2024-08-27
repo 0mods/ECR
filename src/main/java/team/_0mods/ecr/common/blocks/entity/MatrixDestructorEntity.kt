@@ -35,7 +35,8 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity
     companion object {
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MatrixDestructorEntity) {
-            val convertCost = ECCommonConfig.instance.matrixDestructorConfig.ubmruToMruCost
+            val convertCost = ECCommonConfig.instance.matrixConsuming
+            val receiveCost = ECCommonConfig.instance.matrixResult
 
             if (!level.isClientSide) {
                 MatrixDestructorS2CUpdatePacket(be.mruStorage.mruStorage, be.blockPos).sendToClient()
@@ -46,7 +47,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity
                         val i = stack.item as SoulStone
                         val storage = i.getCapacity(stack)
 
-                        if (storage - 1 >= 0) {
+                        if (storage - receiveCost >= 0) {
                             if (be.mruStorage.mruStorage < be.mruStorage.maxMRUStorage) {
                                 if (storage >= convertCost) {
                                     i.remove(stack, convertCost)
@@ -58,7 +59,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity
 
                                 if (be.progress >= convertCost) {
                                     be.progress = 0
-                                    be.mruStorage.receiveMru(1)
+                                    be.mruStorage.receiveMru(receiveCost)
                                     be.setChanged()
                                 }
                             }
