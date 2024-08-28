@@ -31,45 +31,7 @@ import team._0mods.ecr.common.items.SoulStone
 import team._0mods.ecr.network.ECNetworkManager.sendToClient
 import team._0mods.ecr.network.packets.MatrixDestructorS2CUpdatePacket
 
-class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity(ECRegistry.matrixDestructor.second, pos, blockState), MenuProvider, MRUGenerator.BlockEntity{
-    companion object {
-        @JvmStatic
-        fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MatrixDestructorEntity) {
-            val convertCost = ECCommonConfig.instance.matrixConsuming
-            val receiveCost = ECCommonConfig.instance.matrixResult
-
-            if (!level.isClientSide) {
-                MatrixDestructorS2CUpdatePacket(be.mruStorage.mruStorage, be.blockPos).sendToClient()
-                val stack = be.itemHandler.getStackInSlot(0)
-
-                if (!stack.isEmpty) {
-                    if (stack.item is SoulStone) {
-                        val i = stack.item as SoulStone
-                        val storage = i.getCapacity(stack)
-
-                        if (storage - receiveCost >= 0) {
-                            if (be.mruStorage.mruStorage < be.mruStorage.maxMRUStorage) {
-                                if (storage >= convertCost) {
-                                    i.remove(stack, convertCost)
-                                    be.progress = convertCost
-                                } else {
-                                    i.remove(stack, 1)
-                                    be.progress++
-                                }
-
-                                if (be.progress >= convertCost) {
-                                    be.progress = 0
-                                    be.mruStorage.receiveMru(receiveCost)
-                                    be.setChanged()
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
+class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity(ECRegistry.matrixDestructor.second, pos, blockState), MenuProvider, MRUGenerator.BlockEntity {
     private val itemHandler = object : ItemStackHandler(1) {
         override fun onContentsChanged(slot: Int) {
             setChanged()
@@ -131,4 +93,42 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity
     }
 
     override fun getDisplayName(): Component = Component.empty()
+
+    companion object {
+        @JvmStatic
+        fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MatrixDestructorEntity) {
+            val convertCost = ECCommonConfig.instance.matrixConsuming
+            val receiveCost = ECCommonConfig.instance.matrixResult
+
+            if (!level.isClientSide) {
+                MatrixDestructorS2CUpdatePacket(be.mruStorage.mruStorage, be.blockPos).sendToClient()
+                val stack = be.itemHandler.getStackInSlot(0)
+
+                if (!stack.isEmpty) {
+                    if (stack.item is SoulStone) {
+                        val i = stack.item as SoulStone
+                        val storage = i.getCapacity(stack)
+
+                        if (storage - receiveCost >= 0) {
+                            if (be.mruStorage.mruStorage < be.mruStorage.maxMRUStorage) {
+                                if (storage >= convertCost) {
+                                    i.remove(stack, convertCost)
+                                    be.progress = convertCost
+                                } else {
+                                    i.remove(stack, 1)
+                                    be.progress++
+                                }
+
+                                if (be.progress >= convertCost) {
+                                    be.progress = 0
+                                    be.mruStorage.receiveMru(receiveCost)
+                                    be.setChanged()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

@@ -31,12 +31,10 @@ class EnvoyerContainer(
         addSlot(SpecialSlot(container, 1, 62, 17, stackSize = 1))
         addSlot(SpecialSlot(container, 2, 44, 35, stackSize = 1))
         addSlot(SpecialSlot(container, 3, 26, 53, stackSize = 1))
-        addSlot(SpecialSlot(container, 4, 26, 53, stackSize = 1))
+        addSlot(SpecialSlot(container, 4, 62, 53, stackSize = 1))
         addSlot(SpecialSlot(container, 5, 114, 35, { false }, stackSize = 1))
 
-        addSlot(SpecialSlot(container, 6, 152, 53, {
-            it.item is BoundGem && it.boundPos != null
-        }, stackSize = 1))
+        addSlot(SpecialSlot(container, 6, 152, 53, { it.item is BoundGem && it.boundPos != null }))
 
         makeInv(inv, 8, 84)
     }

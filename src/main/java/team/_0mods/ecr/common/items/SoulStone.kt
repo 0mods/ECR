@@ -54,6 +54,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
 
                         val ent = ItemEntity(level, player.x, player.y, player.z, copiedStack).apply {
                             setNoPickUpDelay()
+                            this.owner = player.uuid
                         }
 
                         level.addFreshEntity(ent)
