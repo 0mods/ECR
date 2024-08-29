@@ -22,11 +22,10 @@ block.ecreimagined:
   mithriline_plating: Мифрилиновое покрытие
   mithriline_crystal: Мифрилиновый кристалл
 
-info.ecreimagined:
-  soul_stone:
-    bounded: Камень души привязан к %s
-    can_not_unbound: Вы не можете отвязать этот камень души
-    unbounded: Камень души отвязан
+info.ecreimagined.soul_stone:
+  bounded: Камень души привязан к %s
+  can_not_unbound: Вы не можете отвязать этот камень души
+  unbounded: Камень души отвязан
 
 tooltip.ecreimagined:
   sword_multiplier: Бонус получения MRU

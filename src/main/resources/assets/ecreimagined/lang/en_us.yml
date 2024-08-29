@@ -22,11 +22,10 @@ block.ecreimagined:
   mithriline_plating: Mithriline Plating
   mithriline_crystal: Mithriline Crystal
 
-info.ecreimagined:
-  soul_stone:
-    bounded: The soul stone is bounded to %s
-    can_not_unbound: You can't unbound this soul stone
-    unbounded: The soul stone is unbounded
+info.ecreimagined.soul_stone:
+  bounded: The soul stone is bounded to %s
+  can_not_unbound: You can't unbound this soul stone
+  unbounded: The soul stone is unbounded
 
 tooltip.ecreimagined:
   sword_multiplier: MRU Gain Bonus
