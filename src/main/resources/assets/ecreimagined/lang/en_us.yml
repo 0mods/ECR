@@ -1,0 +1,55 @@
+itemGroup.ecreimagined:
+  items: "Essential Craft: Items"
+  blocks: "Essential Craft: Blocks"
+
+item.ecreimagined:
+  book: Research Book
+  elemental_gem: Elemental Gem
+  flame_gem: Flame Gem
+  water_gem: Water Gem
+  earth_gem: Earth Gem
+  air_gem: Air Gem
+  soul_stone: Soul Stone
+  weakness_elemental_axe: Weakness Elemental Axe
+  weakness_elemental_hoe: Weakness Elemental Hoe
+  weakness_elemental_pickaxe: Weakness Elemental Pickaxe
+  weakness_elemental_shovel: Weakness Elemental Shovel
+  weakness_elemental_sword: Weakness Elemental Sword
+  bound_gem: Bound Gem
+
+block.ecreimagined:
+  mithriline_furnace: Mithriline Furnace
+  mithriline_plating: Mithriline Plating
+  mithriline_crystal: Mithriline Crystal
+
+info.ecreimagined:
+  soul_stone:
+    bounded: The soul stone is bounded to %s
+    can_not_unbound: You can't unbound this soul stone
+    unbounded: The soul stone is unbounded
+
+tooltip.ecreimagined:
+  sword_multiplier: MRU Gain Bonus
+  rmc: RMC
+  book:
+    upgrade: Hold %s to upgrade the book
+    downgrade: Hold %s to reset all knowledge in the book
+    knowledge_contains: Contains Knowledge
+    basic: Basics
+    mru: MRU Knowledge
+    engineer: Engineer's
+    hoana: Hoana
+    shade: Shade
+  soul_stone:
+    tracking: Tracking MRU Matrix of %s
+    detected_ubmru: Detected %s UBMRU Energy
+    matrix: this tooltip is not writed
+  bound_gem:
+    bound: "Bound gem was bounded at pos: X: %s Y: %s Z: %s"
+    unbound: Bound gem was unbounded
+
+config.jade.plugin_ecreimagined:
+  mithriline_furnace: Mithriline Furnace
+
+jade.ecreimagined:
+  espe_collector: "Active ESPE collectors: %s/%s"

@@ -7,8 +7,8 @@ import snownee.jade.api.BlockAccessor
 import snownee.jade.api.IBlockComponentProvider
 import snownee.jade.api.ITooltip
 import snownee.jade.api.config.IPluginConfig
-import team._0mods.ecr.ModId
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
+import team._0mods.ecr.common.compact.jade.ECJadePlugin.Companion.withJade
 import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECRegistry
 
@@ -22,7 +22,7 @@ class MithrilineFurnaceComponent: IBlockComponentProvider {
         val maxCollectors = ECCommonConfig.instance.mithrilineFurnaceConfig.crystalPositions.size
 
         if (be.successfulStructure) {
-            tooltip.add(Component.translatable("jade.$ModId.mithriline_furnace.espe_collector", collectors, maxCollectors))
+            tooltip.add(Component.translatable("mithriline_furnace.espe_collector".withJade, collectors, maxCollectors))
             tooltip.add(Component.literal("${storage.mruType.display.string}: ${storage.mruStorage}/${storage.maxMRUStorage}"))
         }
     }

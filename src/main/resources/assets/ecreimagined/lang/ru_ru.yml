@@ -1,0 +1,55 @@
+itemGroup.ecreimagined:
+  items: "Essential Craft: Предметы"
+  blocks: "Essential Craft: Блоки"
+
+item.ecreimagined:
+  book: Книга исследований
+  elemental_gem: Элементальный кристалл
+  flame_gem: Пылающий кристалл
+  water_gem: Водный кристалл
+  earth_gem: Земляной кристалл
+  air_gem: Воздушный кристалл
+  soul_stone: Камень души
+  weakness_elemental_axe: Ослабленный элементальный топор
+  weakness_elemental_hoe: Ослабленная элементальная мотыга
+  weakness_elemental_pickaxe: Ослабленная элементальная кирка
+  weakness_elemental_shovel: Ослабленная элементальная лопата
+  weakness_elemental_sword: Ослабленный элементальный меч
+  bound_gem: Кристалл привязки
+
+block.ecreimagined:
+  mithriline_furnace: Мифрилиновая печь
+  mithriline_plating: Мифрилиновое покрытие
+  mithriline_crystal: Мифрилиновый кристалл
+
+info.ecreimagined:
+  soul_stone:
+    bounded: Камень души привязан к %s
+    can_not_unbound: Вы не можете отвязать этот камень души
+    unbounded: Камень души отвязан
+
+tooltip.ecreimagined:
+  sword_multiplier: Бонус получения MRU
+  rmc: ПКМ
+  book:
+    upgrade: Зажмите %s чтобы улучшить книгу
+    downgrade: Зажмите %s чтобы сбросить все знания в книге
+    knowledge_contains: Содержит знания
+    basic: Основы
+    mru: Знания об MRU
+    engineer: Инженерию
+    hoana: Хоаны
+    shade: Тени
+  soul_stone:
+    tracking: Отслеживается MRU матрица %s
+    detected_ubmru: Обнаружено %s UBMRU энергии
+    matrix: this tooltip is not writed
+  bound_gem:
+    bound: "Кристалл привязки был привязан на позиции: X: %s Y: %s Z: %s"
+    unbound: Кристал привязки отвязан
+
+config.jade.plugin_ecreimagined:
+  mithriline_furnace: Мифрилиновая печь
+
+jade.ecreimagined:
+  espe_collector: "Активные сборщики ESPE: %s/%s"

@@ -16,6 +16,7 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.serialization")
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("me.fallenbreath.yamlang") version "1.4.0"
 }
 
 java.withSourcesJar()
@@ -166,6 +167,11 @@ tasks {
 
 kotlin {
     jvmToolchain(17)
+}
+
+yamlang {
+    targetSourceSets = listOf(sourceSets.main.get())
+    inputDir = "assets/$modId/lang"
 }
 
 val String.fromProperties
