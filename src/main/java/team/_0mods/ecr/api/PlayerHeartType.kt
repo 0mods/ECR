@@ -4,9 +4,9 @@ import net.minecraft.client.gui.Gui.HeartType
 
 object PlayerHeartType {
     @JvmStatic
-    lateinit var reg: (String, Int, Boolean) -> HeartType
+    lateinit var reg: (String, Boolean) -> HeartType
         internal set
 
     @JvmStatic
-    val radiationInfused: HeartType = if (this::reg.isInitialized) reg("radiation_infused", 10, true) else HeartType.NORMAL
+    val radiationInfused: HeartType = if (this::reg.isInitialized) reg("radiation_infused", true) else HeartType.NORMAL
 }

@@ -1,4 +1,4 @@
-package team._0mods.ecr.common.compact.kubejs
+package team._0mods.ecr.common.compact.kubejs.schema
 
 import dev.latvian.mods.kubejs.item.InputItem
 import dev.latvian.mods.kubejs.item.OutputItem

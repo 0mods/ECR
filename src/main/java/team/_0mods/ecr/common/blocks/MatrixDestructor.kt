@@ -17,7 +17,6 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
-import team._0mods.ecr.api.block.MRUGenerator
 import team._0mods.ecr.api.block.checkAndOpenMenu
 import team._0mods.ecr.api.block.client.LowSizeBreakParticle
 import team._0mods.ecr.api.block.prepareDrops
@@ -25,7 +24,7 @@ import team._0mods.ecr.api.block.simpleTicker
 import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 
 @Suppress("OVERRIDE_DEPRECATION")
-class MatrixDestructor(properties: Properties) : BaseEntityBlock(properties), MRUGenerator, LowSizeBreakParticle {
+class MatrixDestructor(properties: Properties) : BaseEntityBlock(properties), LowSizeBreakParticle {
     override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = MatrixDestructorEntity(pos, state)
 
     override fun <T : BlockEntity?> getTicker(

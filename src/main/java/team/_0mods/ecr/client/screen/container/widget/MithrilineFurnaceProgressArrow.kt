@@ -16,7 +16,7 @@ class MithrilineFurnaceProgressArrow(x: Int, y: Int, private val menu: Mithrilin
     }
 
     override fun render(poseStack: PoseStack, mouseX: Int, mouseY: Int, partialTick: Float) {
-        poseStack.blit(texture, this.x, this.y, 0f, 0f, 8, 16, 16, 16)
+        poseStack.blit(texture, this.x, this.y, width = 8, height = 16, textureWidth = 16, textureHeight = 16)
         renderProgressArrow(poseStack)
     }
 

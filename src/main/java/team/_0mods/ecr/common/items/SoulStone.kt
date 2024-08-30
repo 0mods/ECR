@@ -16,7 +16,7 @@ import net.minecraft.world.level.Level
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.entity.living.LivingDeathEvent
 import team._0mods.ecr.ModId
-import team._0mods.ecr.api.mru.MRUWeapon
+import team._0mods.ecr.api.mru.MRUMultiplierWeapon
 import team._0mods.ecr.common.init.registry.ECTabs
 import java.util.*
 import kotlin.math.roundToInt
@@ -136,7 +136,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
         if (ent.isBaby && ent !is Enemy) return
 
         val weapon = source.getItemInHand(InteractionHand.MAIN_HAND).item
-        val multiplier = if (weapon is MRUWeapon && weapon is SwordItem) weapon.multiplier else 1f
+        val multiplier = if (weapon is MRUMultiplierWeapon && weapon is SwordItem) weapon.multiplier else 1f
 
         if (entityCapacityAdd.contains(ent.type)) {
             val a = entityCapacityAdd[ent.type]!!.random() * multiplier

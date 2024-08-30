@@ -283,7 +283,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
         private fun MithrilineFurnaceEntity.checkExtraction(neededESPE: Int, max: Int): Boolean {
             val storage = this.mruStorage
-            return ((storage.mruStorage - max) >= 0) && (neededESPE >= (max + this.progress))
+            return storage.canExtract(max) && (neededESPE >= (max + this.progress))
         }
 
         @JvmStatic

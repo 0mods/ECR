@@ -9,6 +9,7 @@ import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerLevelAccess
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
@@ -17,10 +18,14 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
+import team._0mods.ecr.api.mru.MRUReceivable
+import team._0mods.ecr.api.mru.processReceive
+import team._0mods.ecr.common.capability.MRUContainer
+import team._0mods.ecr.common.capability.impl.MRUContainerImpl
 import team._0mods.ecr.common.container.EnvoyerContainer
 import team._0mods.ecr.common.init.registry.ECRegistry
 
-class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : BlockEntity(ECRegistry.envoyer.second, pos, blockState), MenuProvider {
+class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : BlockEntity(ECRegistry.envoyer.second, pos, blockState), MenuProvider, MRUReceivable {
     private val itemHandler = object : ItemStackHandler(7) {
         override fun onContentsChanged(slot: Int) {
             super.onContentsChanged(slot)
@@ -32,25 +37,31 @@ class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : BlockEntity(EC
         }
     }
 
+    private val mruStorage = MRUContainerImpl(MRUContainer.MRUType.RADIATION_UNIT, 5000, 0)
+
     private var itemHandlerLazy = LazyOptional.empty<IItemHandler>()
+    private var mruStorageLazy = LazyOptional.empty<MRUContainer>()
 
     var progress = 0
     var maxProgress = 0
 
     override fun onLoad() {
         itemHandlerLazy = LazyOptional.of(::itemHandler)
+        mruStorageLazy = LazyOptional.of(::mruStorage)
         super.onLoad()
     }
 
     override fun invalidateCaps() {
         super.invalidateCaps()
         itemHandlerLazy.invalidate()
+        mruStorageLazy.invalidate()
     }
 
     override fun saveAdditional(tag: CompoundTag) {
         tag.putInt("Progress", progress)
         tag.putInt("MaxProgress", maxProgress)
         tag.put("Items", itemHandler.serializeNBT())
+        tag.put("MRU", mruStorage.serializeNBT())
         super.saveAdditional(tag)
     }
 
@@ -58,6 +69,7 @@ class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : BlockEntity(EC
         progress = tag.getInt("Progress")
         maxProgress = tag.getInt("MaxProgress")
         itemHandler.deserializeNBT(tag.getCompound("Items"))
+        mruStorage.deserializeNBT(tag.getCompound("MRU"))
         super.load(tag)
     }
 
@@ -75,6 +87,14 @@ class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : BlockEntity(EC
 
     companion object {
         @JvmStatic
-        fun onTick(level: Level, pos: BlockPos, state: BlockState, be: EnvoyerBlockEntity) {}
+        fun onTick(level: Level, pos: BlockPos, state: BlockState, be: EnvoyerBlockEntity) {
+            be.processReceive(level)
+        }
     }
+
+    override val positionCrystal: ItemStack
+        get() = this.itemHandler.getStackInSlot(6)
+
+    override val mruContainer: MRUContainer
+        get() = this.mruStorage
 }

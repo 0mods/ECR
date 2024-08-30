@@ -12,7 +12,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import team._0mods.ecr.ModId
-import team._0mods.ecr.api.mru.MRUWeapon
+import team._0mods.ecr.api.mru.MRUMultiplierWeapon
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECBook.Companion.bookType
 
@@ -34,7 +34,7 @@ fun onItemTooltip(e: ItemTooltipEvent) {
         }
     }
 
-    if (item is SwordItem && item is MRUWeapon) {
+    if (item is SwordItem && item is MRUMultiplierWeapon) {
         val multiplier = item.multiplier
         e.toolTip.add(Component.literal(" ").append("$multiplier").append(" ").append(
             Component.translatable("tooltip.$ModId.sword_multiplier")

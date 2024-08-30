@@ -1,5 +1,5 @@
 package team._0mods.ecr.api.mru
 
-interface MRUWeapon {
+interface MRUMultiplierWeapon {
     val multiplier: Float
 }

@@ -20,7 +20,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
-import team._0mods.ecr.api.block.MRUGenerator
+import team._0mods.ecr.api.mru.MRUGenerator
 import team._0mods.ecr.common.capability.MRUContainer
 import team._0mods.ecr.common.capability.impl.MRUContainerImpl
 import team._0mods.ecr.common.container.MatrixDestructorContainer
@@ -31,7 +31,7 @@ import team._0mods.ecr.common.items.SoulStone
 import team._0mods.ecr.network.ECNetworkManager.sendToClient
 import team._0mods.ecr.network.packets.MatrixDestructorS2CUpdatePacket
 
-class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity(ECRegistry.matrixDestructor.second, pos, blockState), MenuProvider, MRUGenerator.BlockEntity {
+class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity(ECRegistry.matrixDestructor.second, pos, blockState), MenuProvider, MRUGenerator {
     private val itemHandler = object : ItemStackHandler(1) {
         override fun onContentsChanged(slot: Int) {
             setChanged()

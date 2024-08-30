@@ -25,7 +25,7 @@ public abstract class LivingEntityMixin {
             cancellable = true
     )
     public void eat(Level level, ItemStack food, CallbackInfoReturnable<ItemStack> cir) {
-        if ( ((LivingEntity) (Object) this) instanceof Player player && food.getItem() instanceof UnConsumeBreakItem) {
+        if (((LivingEntity) (Object) this) instanceof Player player && food.getItem() instanceof UnConsumeBreakItem) {
             if (food.getMaxDamage() > 0) {
                 food.hurtAndBreak(1, player, (p) -> {});
                 this.addEatEffect(food, level, (LivingEntity) (Object) this);

@@ -14,29 +14,20 @@ import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
 import team._0mods.ecr.ModId
-import team._0mods.ecr.api.block.MRUGenerator
+import team._0mods.ecr.api.mru.MRUGenerator
 import team._0mods.ecr.common.init.registry.ECTabs
+import team._0mods.ecr.api.item.BoundGem as BoundGemApi
 
-class BoundGem : Item(Properties().tab(ECTabs.tabItems)) {
+class BoundGem : Item(Properties().tab(ECTabs.tabItems)), BoundGemApi {
     companion object {
         var ItemStack.boundPos: BlockPos?
             get() {
                 if (this.item !is BoundGem) throw UnsupportedOperationException()
-                val tag = this.orCreateTag
-                if (!tag.contains("BoundGemX") && !tag.contains("BoundGemY") && !tag.contains("BoundGemZ")) return null
-                return BlockPos(tag.getInt("BoundGemX"), tag.getInt("BoundGemY"), tag.getInt("BoundGemZ"))
+                return (this.item as BoundGemApi).getBlockPos(this)
             }
             set(value) {
                 if (this.item !is BoundGem) throw UnsupportedOperationException()
-                val tag = this.orCreateTag
-
-                if (value == null) {
-                    this.tag = null
-                } else {
-                    tag.putInt("BoundGemX", value.x)
-                    tag.putInt("BoundGemY", value.y)
-                    tag.putInt("BoundGemZ", value.z)
-                }
+                (this.item as BoundGemApi).setBlockPos(this, value)
             }
     }
 
@@ -60,9 +51,9 @@ class BoundGem : Item(Properties().tab(ECTabs.tabItems)) {
         val level = context.level
         val pos = context.clickedPos
 
-        val block = level.getBlockState(pos).block
+        val blockEntity = level.getBlockEntity(pos)
 
-        if (block is MRUGenerator) {
+        if (blockEntity != null && blockEntity is MRUGenerator) {
             if (stack.boundPos == null) {
                 player.displayClientMessage(Component.translatable("tooltip.$ModId.bound_gem.bound", pos.x, pos.y, pos.z), true)
                 if (stack.count > 1) {
