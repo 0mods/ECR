@@ -16,18 +16,18 @@ import net.minecraft.world.level.Level
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.mru.MRUGenerator
 import team._0mods.ecr.common.init.registry.ECTabs
-import team._0mods.ecr.api.item.BoundGem as BoundGemApi
+import team._0mods.ecr.api.item.BoundGem
 
-class BoundGem : Item(Properties().tab(ECTabs.tabItems)), BoundGemApi {
+class LocallyBoundGem : Item(Properties().tab(ECTabs.tabItems)), BoundGem {
     companion object {
         var ItemStack.boundPos: BlockPos?
             get() {
-                if (this.item !is BoundGem) throw UnsupportedOperationException()
-                return (this.item as BoundGemApi).getBlockPos(this)
+                if (this.item !is LocallyBoundGem) throw UnsupportedOperationException()
+                return (this.item as BoundGem).getBlockPos(this)
             }
             set(value) {
-                if (this.item !is BoundGem) throw UnsupportedOperationException()
-                (this.item as BoundGemApi).setBlockPos(this, value)
+                if (this.item !is LocallyBoundGem) throw UnsupportedOperationException()
+                (this.item as BoundGem).setBlockPos(this, value)
             }
     }
 
