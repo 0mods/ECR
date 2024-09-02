@@ -6,9 +6,11 @@
   "client": [
     "client.ECHeartTypeRegistry",
     "client.GuiHeartTypeMixin",
-    "client.ParticleEngineMixin"
+    "client.ParticleEngineMixin",
+    "client.ScreenAccessor"
   ],
   "mixins": [
+    "GameRemapperMixin",
     "ItemStackMixin",
     "LivingEntityMixin"
   ],

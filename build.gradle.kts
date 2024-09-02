@@ -6,6 +6,11 @@ val shadowLibrary: Configuration by configurations.creating {
     isCanBeResolved = true
     isCanBeConsumed = false
 }
+val ktShadow: Configuration by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+val imguiVersion: String by project
 
 val authData = if (project.file("auth.data").exists()) project.file("auth.data").readText().trim() else ""
 
@@ -64,6 +69,11 @@ base {
     archivesName = "archivesName".fromProperties
 }
 
+configurations {
+    implementation.get().extendsFrom(shadowLibrary)
+    minecraftRuntimeLibraries.get().extendsFrom(shadowLibrary)
+}
+
 repositories {
     mavenCentral()
     maven("https://maven.0mods.team/releases") // Kotlin Extras
@@ -92,8 +102,14 @@ dependencies {
 
     forge("net.minecraftforge:forge:${minecraftVersion}-${forgeVersion}")
 
+    // required library
+    modImplementation("ru.hollowhorizon:HollowCore-forge-1.19.2:2.0.1")
+
     // Include libs
-    shadowLibrary("team.0mods:KotlinExtras:1.4-noreflect")
+    //Shadow
+    ktShadow("team.0mods:KotlinExtras:1.4-noreflect")
+
+    //ModInclude
     minecraftRuntimeLibraries(include("team.chisel.ctm:CTM:${minecraftVersion}-${"ctm_version".fromProperties}")) {}
     implementation(include("io.github.llamalad7:mixinextras-forge:0.4.1")) {}
 
@@ -105,16 +121,36 @@ dependencies {
     implementation(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-serialization-json:+")) {}
 
     // Mod compact libraries
-    modApi("mezz.jei:jei-${minecraftVersion}-forge:${"jei_version".fromProperties}")
-    modApi("com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:${"ct_version".fromProperties}")
-    modApi("dev.latvian.mods:kubejs-forge:${"kubejs_version".fromProperties}")
-    modApi("maven.modrinth:jade:${"jade_version".fromProperties}")
-    modApi("maven.modrinth:mystical-agriculture:${"ma_version".fromProperties}")
+    modImplementation("mezz.jei:jei-${minecraftVersion}-forge:${"jei_version".fromProperties}")
+    modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:${"ct_version".fromProperties}")
+    modImplementation("dev.latvian.mods:kubejs-forge:${"kubejs_version".fromProperties}")
+    modImplementation("maven.modrinth:jade:${"jade_version".fromProperties}")
+    modImplementation("maven.modrinth:mystical-agriculture:${"ma_version".fromProperties}")
 
-    // Runtime libs for compact test
+    // Runtime libs for test
     modRuntimeOnly("dev.latvian.mods:rhino-forge:${"rhino_version".fromProperties}") // KJS lib
     modRuntimeOnly("dev.architectury:architectury-forge:${"architectury_version".fromProperties}") // KJS lib
     modRuntimeOnly("maven.modrinth:cucumber:${"cucumber_version".fromProperties}")
+
+    minecraftRuntimeLibraries("com.akuleshov7:ktoml-core-jvm:0.5.1")
+    minecraftRuntimeLibraries("team.0mods:imgui-app:$imguiVersion")
+    minecraftRuntimeLibraries("team.0mods:imgui-binding:$imguiVersion")
+    minecraftRuntimeLibraries("team.0mods:imgui-lwjgl3:$imguiVersion")
+    minecraftRuntimeLibraries("team.0mods:imgui-binding-natives:$imguiVersion")
+    minecraftRuntimeLibraries("com.tianscar.imageio:imageio-apng:1.0.1")
+    minecraftRuntimeLibraries("org.joml:joml:1.10.8")
+
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-reflect:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-jvm:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-jvm-host:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-script-runtime:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-compiler-embeddable-mcfriendly:2.0.0")  { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-metadata-jvm:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.4.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-common:2.0.0") { exclude("org.jetbrains.kotlin") }
 
     // Annotation processors
     annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1")
@@ -123,16 +159,16 @@ dependencies {
 
 tasks {
     shadowJar {
-        configurations = listOf(shadowLibrary)
+        configurations = listOf(shadowLibrary, ktShadow)
         archiveClassifier = "dev-shadow"
 
         val relocateLibs = listOf(
             "org.jetbrains", "com.typesafe", "kotlinx",
-            "kotlin", "okio", "org.intellij", "_COROUTINE"
+            "kotlin", "okio", "org.intellij", "_COROUTINE", "imgui", "io.imgui"
         )
 
         relocateLibs.forEach {
-            relocate(it, "${"modGroupId".fromProperties}.$modId.shadowlibs.$it")
+            relocate(it, "team._0mods.$modId.shadowlibs.$it")
         }
     }
 
