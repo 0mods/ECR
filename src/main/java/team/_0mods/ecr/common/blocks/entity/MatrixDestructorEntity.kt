@@ -31,7 +31,7 @@ import team._0mods.ecr.common.items.SoulStone
 import team._0mods.ecr.network.ECNetworkManager.sendToClient
 import team._0mods.ecr.network.packets.MatrixDestructorS2CUpdatePacket
 
-class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity(ECRegistry.matrixDestructor.second, pos, blockState), MenuProvider, MRUGenerator {
+class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity(ECRegistry.matrixDestructorEntity.get(), pos, blockState), MenuProvider, MRUGenerator {
     private val itemHandler = object : ItemStackHandler(1) {
         override fun onContentsChanged(slot: Int) {
             setChanged()

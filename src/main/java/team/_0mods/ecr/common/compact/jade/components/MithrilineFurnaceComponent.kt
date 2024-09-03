@@ -13,7 +13,7 @@ import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECRegistry
 
 class MithrilineFurnaceComponent: IBlockComponentProvider {
-    override fun getUid(): ResourceLocation = ForgeRegistries.BLOCKS.getKey(ECRegistry.mithrilineFurnace.first)!!
+    override fun getUid(): ResourceLocation = ForgeRegistries.BLOCKS.getKey(ECRegistry.mithrilineFurnace.get())!!
 
     override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
         val be = accessor.blockEntity as MithrilineFurnaceEntity

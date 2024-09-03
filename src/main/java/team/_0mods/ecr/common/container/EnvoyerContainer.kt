@@ -72,5 +72,5 @@ class EnvoyerContainer(
         return qms
     }
 
-    override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.envoyer.first)
+    override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.envoyer.get())
 }

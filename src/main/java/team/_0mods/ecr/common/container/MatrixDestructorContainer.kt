@@ -70,5 +70,5 @@ class MatrixDestructorContainer(
         return qms
     }
 
-    override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.matrixDestructor.first)
+    override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.matrixDestructor.get())
 }

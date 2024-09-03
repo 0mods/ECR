@@ -71,5 +71,5 @@ class MithrilineFurnaceContainer(
     }
 
     override fun stillValid(player: Player): Boolean =
-        stillValid(this.access, player, ECRegistry.mithrilineFurnace.first)
+        stillValid(this.access, player, ECRegistry.mithrilineFurnace.get())
 }

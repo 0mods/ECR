@@ -34,7 +34,7 @@ fun onClientStartup(e: FMLClientSetupEvent) {
 
 @SubscribeEvent
 fun onRenderRegister(e: EntityRenderersEvent.RegisterRenderers) {
-    e.registerBlockEntityRenderer(ECRegistry.mithrilineFurnace.second, ::MithrilineFurnaceRenderer)
+    e.registerBlockEntityRenderer(ECRegistry.mithrilineFurnaceEntity.get(), ::MithrilineFurnaceRenderer)
 }
 
 @SubscribeEvent

@@ -30,7 +30,7 @@ class ECJEIPlugin: IModPlugin {
     }
 
     override fun registerRecipeCatalysts(registration: IRecipeCatalystRegistration) {
-        registration.addRecipeCatalyst(ItemStack(ECRegistry.mithrilineFurnace.first), MITHRILINE_FURNACE)
+        registration.addRecipeCatalyst(ItemStack(ECRegistry.mithrilineFurnace.get()), MITHRILINE_FURNACE)
     }
 
     override fun registerRecipes(registration: IRecipeRegistration) {

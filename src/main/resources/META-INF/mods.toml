@@ -20,3 +20,9 @@ license="${modLicense}"
     versionRange="${minecraftVersionRange}"
     ordering="NONE"
     side="BOTH"
+[[dependencies.${modId}]]
+    modId="hollowcore"
+    mandatory=true
+    versionRange="${hcVersionRange}"
+    ordering="NONE"
+    side="BOTH"

@@ -25,12 +25,12 @@ class MithrilineFurnaceCategory(guiHelper: IGuiHelper): IRecipeCategory<Mithrili
         val RL_ID = "$ModId:mithriline_furnace".rl
     }
 
-    private val icon = guiHelper.createDrawableItemStack(ItemStack(ECRegistry.mithrilineFurnace.first))
+    private val icon = guiHelper.createDrawableItemStack(ItemStack(ECRegistry.mithrilineFurnace.get()))
     private val bg = guiHelper.createDrawable("$ModId:textures/gui/jei/${RL_ID.path}.png".rl, 0, 0, 170, 80)
 
     override fun getRecipeType(): RecipeType<MithrilineFurnaceRecipe> = ECJEIPlugin.MITHRILINE_FURNACE
 
-    override fun getTitle(): Component = ECRegistry.mithrilineFurnace.first.name.withStyle(ChatFormatting.RESET)
+    override fun getTitle(): Component = ECRegistry.mithrilineFurnace.get().name.withStyle(ChatFormatting.RESET)
 
     override fun getBackground(): IDrawable = bg
 

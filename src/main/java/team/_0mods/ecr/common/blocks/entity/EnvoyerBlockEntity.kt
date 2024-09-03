@@ -25,7 +25,7 @@ import team._0mods.ecr.common.capability.impl.MRUContainerImpl
 import team._0mods.ecr.common.container.EnvoyerContainer
 import team._0mods.ecr.common.init.registry.ECRegistry
 
-class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : BlockEntity(ECRegistry.envoyer.second, pos, blockState), MenuProvider, MRUReceivable {
+class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : BlockEntity(ECRegistry.envoyerEntity.get(), pos, blockState), MenuProvider, MRUReceivable {
     private val itemHandler = object : ItemStackHandler(7) {
         override fun onContentsChanged(slot: Int) {
             super.onContentsChanged(slot)

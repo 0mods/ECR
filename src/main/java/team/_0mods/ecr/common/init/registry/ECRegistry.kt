@@ -1,24 +1,18 @@
 package team._0mods.ecr.common.init.registry
 
-import net.minecraft.core.particles.ParticleType
-import net.minecraft.world.effect.MobEffect
-import net.minecraft.world.inventory.MenuType
-import net.minecraft.world.item.BlockItem
+import net.minecraft.core.Registry
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
-import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.Material
-import net.minecraftforge.eventbus.api.IEventBus
-import net.minecraftforge.registries.DeferredRegister
-import net.minecraftforge.registries.ForgeRegistries
-import net.minecraftforge.registries.RegistryObject
+import ru.hollowhorizon.hc.client.utils.rl
+import ru.hollowhorizon.hc.common.registry.HollowRegistry
+import ru.hollowhorizon.hc.common.registry.RegistryObject
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.menu.simpleMenuFactory
-import team._0mods.ecr.api.utils.makeBERegistry
-import team._0mods.ecr.api.utils.register
-import team._0mods.ecr.api.utils.rl
 import team._0mods.ecr.common.blocks.CrystalBlock
 import team._0mods.ecr.common.blocks.Envoyer
 import team._0mods.ecr.common.blocks.MatrixDestructor
@@ -30,111 +24,87 @@ import team._0mods.ecr.common.container.EnvoyerContainer
 import team._0mods.ecr.common.container.MatrixDestructorContainer
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 import team._0mods.ecr.common.effects.MRUCorruption
-import team._0mods.ecr.common.items.LocallyBoundGem
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECGem
+import team._0mods.ecr.common.items.LocallyBoundGem
 import team._0mods.ecr.common.items.SoulStone
 import team._0mods.ecr.common.items.tools.*
 import team._0mods.ecr.common.particle.ECParticleType
 import team._0mods.ecr.common.recipes.EnvoyerRecipe
 import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
 
-object ECRegistry {
-    private val items: DeferredRegister<Item> = DeferredRegister.create(ForgeRegistries.ITEMS, ModId)
-    private val blocksWE = makeBERegistry(ModId)
-    private val blocks: DeferredRegister<Block> = DeferredRegister.create(ForgeRegistries.BLOCKS, ModId)
-    private val containers: DeferredRegister<MenuType<*>> = DeferredRegister.create(ForgeRegistries.MENU_TYPES, ModId)
-    private val recipes: DeferredRegister<RecipeType<*>> = DeferredRegister.create(ForgeRegistries.RECIPE_TYPES, ModId)
-    private val recipeSerializers: DeferredRegister<RecipeSerializer<*>> = DeferredRegister.create(ForgeRegistries.RECIPE_SERIALIZERS, ModId)
-    private val particles: DeferredRegister<ParticleType<*>> = DeferredRegister.create(ForgeRegistries.PARTICLE_TYPES, ModId)
-    private val effects: DeferredRegister<MobEffect> = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, ModId)
-
+object ECRegistry: HollowRegistry() {
     // items
-    val flameGem: RegistryObject<ECGem> = items.register("flame_gem", ECGem.flame)
-    val waterGem: RegistryObject<ECGem> = items.register("water_gem", ECGem.water)
-    val earthGem: RegistryObject<ECGem> = items.register("earth_gem", ECGem.earth)
-    val airGem: RegistryObject<ECGem> = items.register("air_gem", ECGem.air)
-    val elementalGem: RegistryObject<ECGem> = items.register("elemental_gem", ECGem.elemental)
+    val flameGem by register("flame_gem".id, registryEntry = ECGem.flame)
+    val waterGem by register("water_gem".id, registryEntry = ECGem.flame)
+    val earthGem by register("earth_gem".id, registryEntry = ECGem.flame)
+    val airGem by register("air_gem".id, registryEntry = ECGem.flame)
+    val elementalGem by register("elemental_gem".id, registryEntry = ECGem.flame)
 
-    val researchBook: RegistryObject<ECBook> = items.register("research_book", ::ECBook)
+    val researchBook by register("research_book".id, false) { ECBook() }
 
-    val soulStone: RegistryObject<SoulStone> = items.register("soul_stone", ::SoulStone)
-    val boundGem: RegistryObject<LocallyBoundGem> = items.register("bound_gem", ::LocallyBoundGem)
+    val soulStone by register("soul_stone".id) { SoulStone() }
+    val boundGem by register("bound_gem".id, false) { LocallyBoundGem() }
 
     val elementalCore = basicItem("elemental_core")
 
-    val weakAxe: RegistryObject<WeakAxe> = items.register("weakness_elemental_axe", ::WeakAxe)
-    val weakHoe: RegistryObject<WeakHoe> = items.register("weakness_elemental_hoe", ::WeakHoe)
-    val weakPickaxe: RegistryObject<WeakPickaxe> = items.register("weakness_elemental_pickaxe", ::WeakPickaxe)
-    val weakShovel: RegistryObject<WeakShovel> = items.register("weakness_elemental_shovel", ::WeakShovel)
-    val weakSword: RegistryObject<WeakSword> = items.register("weakness_elemental_sword", ::WeakSword)
+    val weakAxe by register("weakness_elemental_axe".id) { WeakAxe() }
+    val weakHoe by register("weakness_elemental_hoe".id) { WeakHoe() }
+    val weakPickaxe by register("weakness_elemental_pickaxe".id) { WeakPickaxe() }
+    val weakShovel by register("weakness_elemental_shovel".id) { WeakShovel() }
+    val weakSword by register("weakness_elemental_sword".id) { WeakSword() }
 
     // blocks
-    val mithrilinePlating = block("mithriline_plating") {
+    val mithrilinePlating by register("mithriline_plating".id, registry = Registry.BLOCK) {
         Block(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).requiresCorrectToolForDrops())
     }
-
-    val mithrilineFurnace by blocksWE.register(
-        "mithriline_furnace",
-        { MithrilineFurnace(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops()) },
-        ::MithrilineFurnaceEntity
-    )
-
-    val matrixDestructor by blocksWE.register(
-        "matrix_destructor",
-        { MatrixDestructor(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops()) },
-        ::MatrixDestructorEntity
-    )
-
-    val envoyer by blocksWE.register(
-        "envoyer",
-        { Envoyer(BlockBehaviour.Properties.of(Material.METAL)) },
-        ::EnvoyerBlockEntity
-    )
-
-    val mithrilineCrystal = block("mithriline_crystal") {
+    val mithrilineFurnace by register("mithriline_furnace".id, false, Registry.BLOCK) {
+        MithrilineFurnace(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops())
+    }
+    val matrixDestructor by register("matrix_destructor".id, false, Registry.BLOCK) {
+        MatrixDestructor(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops())
+    }
+    val envoyer by register("envoyer".id, false, registry = Registry.BLOCK) { Envoyer(BlockBehaviour.Properties.of(Material.METAL)) }
+    val mithrilineCrystal by register("mithriline_crystal".id, registry = Registry.BLOCK) {
         CrystalBlock(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops())
     }
 
-    // containers
-    val mithrilineFurnaceContainer: RegistryObject<MenuType<MithrilineFurnaceContainer>> = containers.register("mithriline_furnace") { simpleMenuFactory(::MithrilineFurnaceContainer) }
-    val matrixDestructorContainer: RegistryObject<MenuType<MatrixDestructorContainer>> = containers.register("matrix_destructor") { simpleMenuFactory(::MatrixDestructorContainer) }
-    val envoyerContainer: RegistryObject<MenuType<EnvoyerContainer>> = containers.register("envoyer") { simpleMenuFactory(::EnvoyerContainer) }
+    // blockEntity
+    val mithrilineFurnaceEntity by register("mithriline_furnace".id) {
+        BlockEntityType.Builder.of(::MithrilineFurnaceEntity, mithrilineFurnace.get()).build(promise())
+    }
+    val matrixDestructorEntity by register("matrix_destructor".id) {
+        BlockEntityType.Builder.of(::MatrixDestructorEntity, matrixDestructor.get()).build(promise())
+    }
+    val envoyerEntity by register("envoyer".id) {
+        BlockEntityType.Builder.of(::EnvoyerBlockEntity, envoyer.get()).build(promise())
+    }
+
+    // menu types
+    val mithrilineFurnaceContainer by register("mithriline_furnace".id) { simpleMenuFactory(::MithrilineFurnaceContainer) }
+    val matrixDestructorContainer by register("matrix_destructor".id) { simpleMenuFactory(::MatrixDestructorContainer) }
+    val envoyerContainer by register("envoyer".id) { simpleMenuFactory(::EnvoyerContainer) }
 
     // recipe types
-    val mithrilineFurnaceRecipe: RegistryObject<RecipeType<MithrilineFurnaceRecipe>> = recipes.register("mithriline_furnace") { RecipeType.simple("$ModId:mithriline_furnace".rl) }
-    val envoyerRecipe: RegistryObject<RecipeType<EnvoyerRecipe>> = recipes.register("envoyer") { RecipeType.simple("$ModId:envoyer".rl) }
+    val mithrilineFurnaceRecipe by register("mithriline_furnace".id, registry = Registry.RECIPE_TYPE) { RecipeType.simple<MithrilineFurnaceRecipe>("mithriline_furnace".id) }
+    val envoyerRecipe by register("envoyer".id, registry = Registry.RECIPE_TYPE) { RecipeType.simple<EnvoyerRecipe>("envoyer".id) }
 
-    // recipes serializers
-    val mithrilineFurnaceRecipeSerial: RegistryObject<MithrilineFurnaceRecipe.Serializer> = recipeSerializers.register("mithriline_furnace") { MithrilineFurnaceRecipe.Serializer(::MithrilineFurnaceRecipe) }
-    val envoyerRecipeSerial: RegistryObject<EnvoyerRecipe.Serializer> = recipeSerializers.register("envoyer") { EnvoyerRecipe.Serializer(::EnvoyerRecipe) }
+    // recipe serializers
+    val mithrilineFurnaceRecipeSerial by register("mithriline_furnace".id) { MithrilineFurnaceRecipe.Serializer(::MithrilineFurnaceRecipe) }
+    val envoyerRecipeSerial by register("envoyer".id) { EnvoyerRecipe.Serializer(::EnvoyerRecipe) }
 
-    // particle
-    val ecParticle: RegistryObject<ECParticleType> = particles.register("ec_part", ::ECParticleType)
+    // particles
+    val ecParticle by register("ec_part".id) { ECParticleType() }
 
     // effects
-    val mruCorruption: RegistryObject<MobEffect> = effects.register("mru_corruption", ::MRUCorruption)
+    val mruCorruption by register("mru_corruption".id, registry = Registry.MOB_EFFECT) { MRUCorruption() }
 
-    @JvmStatic
-    fun init(bus: IEventBus) {
-        items.register(bus)
-        blocks.register(bus)
-        blocksWE.register(bus)
-        containers.register(bus)
-        recipes.register(bus)
-        recipeSerializers.register(bus)
-        particles.register(bus)
-        effects.register(bus)
+    private fun basicItem(id: String, autoModel: Boolean = true, props: Item.Properties.() -> Unit = {}): RegistryObject<Item> {
+        val p = Item.Properties().apply(props)
+        val reg by register(id.id, autoModel) { Item(p) }
+        return reg
     }
 
-    private fun basicItem(id: String, properties: Item.Properties.() -> Unit = { tab(ECTabs.tabItems) }): RegistryObject<Item> {
-        val props = Item.Properties().apply(properties)
-        return items.register(id) { Item(props) }
-    }
-
-    private fun <T: Block> block(id: String, b: () -> T): RegistryObject<T> {
-        val block = this.blocks.register(id, b)
-        items.register(id) { BlockItem(block.get(), Item.Properties().tab(ECTabs.tabBlocks)) }
-        return block
-    }
+    private val String.id: ResourceLocation
+        get() = "$ModId:$this".rl
 }

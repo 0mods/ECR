@@ -103,7 +103,7 @@ dependencies {
     forge("net.minecraftforge:forge:${minecraftVersion}-${forgeVersion}")
 
     // required library
-    modImplementation("ru.hollowhorizon:HollowCore-forge-1.19.2:2.0.1")
+    modImplementation("ru.hollowhorizon:HollowCore-forge-1.19.2:${"hc_version".fromProperties}")
 
     // Include libs
     //Shadow
@@ -185,7 +185,7 @@ tasks {
             "modCredits" to "modCredits".fromProperties, "modAuthors" to "modAuthors".fromProperties,
             "modDesc" to "modDesc".fromProperties, "forgeVersionRange" to "forgeVersionRange".fromProperties,
             "minecraftVersionRange" to "minecraftVersionRange".fromProperties, "loaderVersionRange" to "loaderVersionRange".fromProperties,
-            "modLicense" to "modLicense".fromProperties
+            "modLicense" to "modLicense".fromProperties, "hcVersionRange" to "[$minecraftVersion-${"hcVersion".fromProperties},)"
         )
 
         filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta", "*.mixins.json")) {

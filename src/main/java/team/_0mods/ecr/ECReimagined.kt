@@ -12,5 +12,7 @@ const val SHORT_ID = "ecr"
 class ECRemained {
     init {
         initCommon()
+
+        //HollowSoundHandler.MODS.add(ModId)
     }
 }

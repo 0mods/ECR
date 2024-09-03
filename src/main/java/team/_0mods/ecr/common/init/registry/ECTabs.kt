@@ -2,7 +2,6 @@ package team._0mods.ecr.common.init.registry
 
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.Items
 import team._0mods.ecr.ModId
 
 object ECTabs {
@@ -11,6 +10,6 @@ object ECTabs {
     }
 
     val tabBlocks = object : CreativeModeTab("$ModId.blocks") {
-        override fun makeIcon(): ItemStack = ItemStack(ECRegistry.mithrilineFurnace.first)
+        override fun makeIcon(): ItemStack = ItemStack(ECRegistry.mithrilineFurnace.get())
     }
 }

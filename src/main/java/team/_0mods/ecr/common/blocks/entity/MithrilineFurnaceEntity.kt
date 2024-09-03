@@ -43,7 +43,7 @@ import java.awt.Color
 import kotlin.math.floor
 
 class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
-    BlockEntity(ECRegistry.mithrilineFurnace.second, pos, blockState), MenuProvider {
+    BlockEntity(ECRegistry.mithrilineFurnaceEntity.get(), pos, blockState), MenuProvider {
     private val itemHandler = object : ItemStackHandler(2) {
         override fun onContentsChanged(slot: Int) {
             setChanged()
