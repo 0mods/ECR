@@ -11,7 +11,7 @@ import team._0mods.ecr.common.compact.jade.components.MithrilineFurnaceComponent
 class ECJadePlugin: IWailaPlugin {
     companion object {
         val String.withJade: String
-            get() = "jade.$ModId.$this"
+            get() = "config.jade.plugin_$ModId.$this"
     }
 
     override fun registerClient(registration: IWailaClientRegistration) {

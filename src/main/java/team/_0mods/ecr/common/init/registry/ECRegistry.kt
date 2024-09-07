@@ -1,18 +1,26 @@
 package team._0mods.ecr.common.init.registry
 
+import com.google.common.base.Supplier
+import com.google.common.base.Suppliers
 import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.Material
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
+import net.minecraftforge.registries.DeferredRegister
+import net.minecraftforge.registries.ForgeRegistries
 import ru.hollowhorizon.hc.client.utils.rl
 import ru.hollowhorizon.hc.common.registry.HollowRegistry
 import ru.hollowhorizon.hc.common.registry.RegistryObject
 import team._0mods.ecr.ModId
+import team._0mods.ecr.api.block.PropertiedBlock
 import team._0mods.ecr.api.menu.simpleMenuFactory
+import team._0mods.ecr.api.utils.makeBERegistry
+import team._0mods.ecr.api.utils.register
 import team._0mods.ecr.common.blocks.CrystalBlock
 import team._0mods.ecr.common.blocks.Envoyer
 import team._0mods.ecr.common.blocks.MatrixDestructor
@@ -34,6 +42,14 @@ import team._0mods.ecr.common.recipes.EnvoyerRecipe
 import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
 
 object ECRegistry: HollowRegistry() {
+    private val blocks = DeferredRegister.create<Block>(ForgeRegistries.BLOCKS, ModId)
+    private val blocksEntity = makeBERegistry(ModId)
+
+    init {
+        blocks.register(FMLJavaModLoadingContext.get().modEventBus)
+        blocksEntity.register(FMLJavaModLoadingContext.get().modEventBus)
+    }
+
     // items
     val flameGem by register("flame_gem".id, registryEntry = ECGem.flame)
     val waterGem by register("water_gem".id, registryEntry = ECGem.flame)
@@ -44,18 +60,18 @@ object ECRegistry: HollowRegistry() {
     val researchBook by register("research_book".id, false) { ECBook() }
 
     val soulStone by register("soul_stone".id) { SoulStone() }
-    val boundGem by register("bound_gem".id, false) { LocallyBoundGem() }
+    val boundGem by register("bound_gem".id) { LocallyBoundGem() }
 
     val elementalCore = basicItem("elemental_core")
 
-    val weakAxe by register("weakness_elemental_axe".id) { WeakAxe() }
-    val weakHoe by register("weakness_elemental_hoe".id) { WeakHoe() }
-    val weakPickaxe by register("weakness_elemental_pickaxe".id) { WeakPickaxe() }
-    val weakShovel by register("weakness_elemental_shovel".id) { WeakShovel() }
-    val weakSword by register("weakness_elemental_sword".id) { WeakSword() }
+    val weakAxe by register("weakness_elemental_axe".id, false) { WeakAxe() }
+    val weakHoe by register("weakness_elemental_hoe".id, false) { WeakHoe() }
+    val weakPickaxe by register("weakness_elemental_pickaxe".id, false) { WeakPickaxe() }
+    val weakShovel by register("weakness_elemental_shovel".id, false) { WeakShovel() }
+    val weakSword by register("weakness_elemental_sword".id, false) { WeakSword() }
 
     // blocks
-    val mithrilinePlating by register("mithriline_plating".id, registry = Registry.BLOCK) {
+    /*val mithrilinePlating by register("mithriline_plating".id, registry = Registry.BLOCK) {
         Block(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).requiresCorrectToolForDrops())
     }
     val mithrilineFurnace by register("mithriline_furnace".id, false, Registry.BLOCK) {
@@ -67,10 +83,40 @@ object ECRegistry: HollowRegistry() {
     val envoyer by register("envoyer".id, false, registry = Registry.BLOCK) { Envoyer(BlockBehaviour.Properties.of(Material.METAL)) }
     val mithrilineCrystal by register("mithriline_crystal".id, registry = Registry.BLOCK) {
         CrystalBlock(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops())
+    }*/
+
+    val mithrilinePlating = blocks.register("mithriline_plating") {
+        PropertiedBlock(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).requiresCorrectToolForDrops())
+    }
+    val mf by blocksEntity.register("mithriline_furnace", {
+        MithrilineFurnace(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops())
+    }, ::MithrilineFurnaceEntity)
+    val md by blocksEntity.register("matrix_destructor", {
+        MatrixDestructor(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops())
+    }, ::MatrixDestructorEntity)
+    val envo by blocksEntity.register("envoyer", {
+        Envoyer(BlockBehaviour.Properties.of(Material.METAL))
+    }, ::EnvoyerBlockEntity)
+    val mithrilineCrystal = blocks.register("mithriline_crystal") {
+        CrystalBlock(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops())
     }
 
+    init {
+        register("mithriline_plating".id, false) { BlockItem(mithrilinePlating.get(), Item.Properties().tab(ECTabs.tabBlocks)) }
+        register("mithriline_crystal".id, false) { BlockItem(mithrilineCrystal.get(), Item.Properties().tab(ECTabs.tabBlocks)) }
+    }
+
+    // SUPPLIERIZERS
+    val mithrilineFurnace = supplierize { mf.first }
+    val matrixDestructor = supplierize { md.first }
+    val envoyer = supplierize { envo.first }
+
+    val mithrilineFurnaceEntity = supplierize { mf.second }
+    val matrixDestructorEntity = supplierize { md.second }
+    val envoyerEntity = supplierize { envo.second }
+
     // blockEntity
-    val mithrilineFurnaceEntity by register("mithriline_furnace".id) {
+    /*val mithrilineFurnaceEntity by register("mithriline_furnace".id) {
         BlockEntityType.Builder.of(::MithrilineFurnaceEntity, mithrilineFurnace.get()).build(promise())
     }
     val matrixDestructorEntity by register("matrix_destructor".id) {
@@ -78,7 +124,7 @@ object ECRegistry: HollowRegistry() {
     }
     val envoyerEntity by register("envoyer".id) {
         BlockEntityType.Builder.of(::EnvoyerBlockEntity, envoyer.get()).build(promise())
-    }
+    }*/
 
     // menu types
     val mithrilineFurnaceContainer by register("mithriline_furnace".id) { simpleMenuFactory(::MithrilineFurnaceContainer) }
@@ -107,4 +153,6 @@ object ECRegistry: HollowRegistry() {
 
     private val String.id: ResourceLocation
         get() = "$ModId:$this".rl
+
+    private fun <T> supplierize(value: () -> T): Supplier<T> = Suppliers.memoize { value() }
 }

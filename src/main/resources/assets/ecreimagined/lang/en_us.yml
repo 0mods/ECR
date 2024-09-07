@@ -48,7 +48,6 @@ tooltip.ecreimagined:
     unbound: Bound gem was unbounded
 
 config.jade.plugin_ecreimagined:
-  mithriline_furnace: Mithriline Furnace
-
-jade.ecreimagined:
-  espe_collector: "Active ESPE collectors: %s/%s"
+  mithriline_furnace:
+    .: Mithriline Furnace
+    espe_collector: "Active ESPE collectors: %s/%s"

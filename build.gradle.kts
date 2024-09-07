@@ -133,10 +133,10 @@ dependencies {
     modRuntimeOnly("maven.modrinth:cucumber:${"cucumber_version".fromProperties}")
 
     minecraftRuntimeLibraries("com.akuleshov7:ktoml-core-jvm:0.5.1")
-    minecraftRuntimeLibraries("team.0mods:imgui-app:$imguiVersion")
-    minecraftRuntimeLibraries("team.0mods:imgui-binding:$imguiVersion")
-    minecraftRuntimeLibraries("team.0mods:imgui-lwjgl3:$imguiVersion")
-    minecraftRuntimeLibraries("team.0mods:imgui-binding-natives:$imguiVersion")
+    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-app:$imguiVersion")) {}
+    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding:$imguiVersion")) {}
+    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-lwjgl3:$imguiVersion")) {}
+    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding-natives:$imguiVersion")) {}
     minecraftRuntimeLibraries("com.tianscar.imageio:imageio-apng:1.0.1")
     minecraftRuntimeLibraries("org.joml:joml:1.10.8")
 

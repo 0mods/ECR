@@ -19,10 +19,11 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import team._0mods.ecr.api.block.Multipart
+import team._0mods.ecr.api.block.PropertiedBlock
 import team._0mods.ecr.api.block.client.LowSizeBreakParticle
 import team._0mods.ecr.common.blocks.part.CrystalPart
 
-class CrystalBlock(properties: Properties) : Block(properties), Multipart<CrystalPart>, LowSizeBreakParticle {
+class CrystalBlock(properties: Properties) : PropertiedBlock(properties), Multipart<CrystalPart>, LowSizeBreakParticle {
     companion object {
         @JvmField
         val PART: EnumProperty<CrystalPart> = EnumProperty.create("part", CrystalPart::class.java)

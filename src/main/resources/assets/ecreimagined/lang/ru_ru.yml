@@ -48,7 +48,6 @@ tooltip.ecreimagined:
     unbound: Кристал привязки отвязан
 
 config.jade.plugin_ecreimagined:
-  mithriline_furnace: Мифрилиновая печь
-
-jade.ecreimagined:
-  espe_collector: "Активные сборщики ESPE: %s/%s"
+  mithriline_furnace:
+    .: Мифрилиновая печь
+    espe_collector: "Активные сборщики ESPE: %s/%s"

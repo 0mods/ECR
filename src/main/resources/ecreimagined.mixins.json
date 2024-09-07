@@ -10,6 +10,7 @@
     "client.ScreenAccessor"
   ],
   "mixins": [
+    "EnvironmentMixin",
     "GameRemapperMixin",
     "ItemStackMixin",
     "LivingEntityMixin"
