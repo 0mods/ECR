@@ -6,9 +6,9 @@ import net.minecraftforge.network.NetworkDirection
 import net.minecraftforge.network.NetworkRegistry
 import net.minecraftforge.network.PacketDistributor
 import net.minecraftforge.network.simple.SimpleChannel
+import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.network.SimplePacket
-import team._0mods.ecr.api.utils.rl
 import team._0mods.ecr.network.packets.MatrixDestructorS2CUpdatePacket
 import team._0mods.ecr.network.packets.MithrilineFurnaceS2CUpdatePacket
 

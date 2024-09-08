@@ -14,8 +14,8 @@ import net.minecraft.core.NonNullList
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.crafting.RecipeType
 import org.openzen.zencode.java.ZenCodeType
+import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.SHORT_ID
-import team._0mods.ecr.api.utils.rl
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
 

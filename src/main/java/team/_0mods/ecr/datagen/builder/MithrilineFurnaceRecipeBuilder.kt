@@ -10,8 +10,8 @@ import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.level.ItemLike
 import net.minecraftforge.registries.ForgeRegistries
+import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.ModId
-import team._0mods.ecr.api.utils.rl
 import team._0mods.ecr.common.init.registry.ECRegistry
 import java.util.function.Consumer
 

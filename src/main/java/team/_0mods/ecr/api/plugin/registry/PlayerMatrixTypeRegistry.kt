@@ -1,14 +1,10 @@
 package team._0mods.ecr.api.plugin.registry
 
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
+import team._0mods.ecr.api.plugin.registry.helper.ECRegistryObject
 import team._0mods.ecr.common.capability.PlayerMRU
 
-interface PlayerMatrixTypeRegistry {
-    val matrixTypes: Map<ResourceLocation, PlayerMRU.PlayerMatrixType>
-
-    fun <T: PlayerMRU.PlayerMatrixType> register(id: String, type: T): () -> T
-
+interface PlayerMatrixTypeRegistry: ECRegistryObject<PlayerMRU.PlayerMatrixType> {
     fun register(id: String, c: () -> PlayerMatrixKonstructor): () -> PlayerMRU.PlayerMatrixType {
         val construct = c()
         val type = object : PlayerMRU.PlayerMatrixType {
@@ -19,10 +15,6 @@ interface PlayerMatrixTypeRegistry {
 
         return register(id, type)
     }
-
-    fun getValue(id: ResourceLocation): PlayerMRU.PlayerMatrixType?
-
-    fun getKey(value: PlayerMRU.PlayerMatrixType): ResourceLocation?
 
     fun makeConstructor(name: Component, reduceMultiplier: Double, protectDecay: Boolean) = PlayerMatrixKonstructor(name, reduceMultiplier, protectDecay)
 

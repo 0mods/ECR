@@ -14,8 +14,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.client.renderer.texture.TextureAtlas
 import net.minecraft.client.resources.model.Material
+import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.ModId
-import team._0mods.ecr.api.utils.rl
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 
 class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): BlockEntityRenderer<MithrilineFurnaceEntity> {

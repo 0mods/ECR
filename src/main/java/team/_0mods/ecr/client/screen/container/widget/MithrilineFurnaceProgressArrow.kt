@@ -5,9 +5,9 @@ import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.network.chat.Component
 import net.minecraft.util.Mth
+import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.client.blit
-import team._0mods.ecr.api.utils.rl
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 
 class MithrilineFurnaceProgressArrow(x: Int, y: Int, private val menu: MithrilineFurnaceContainer) : AbstractWidget(x, y, 16, 8, Component.empty()) {

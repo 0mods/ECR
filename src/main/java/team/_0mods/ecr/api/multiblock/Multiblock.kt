@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
+import team._0mods.ecr.api.registries.ECRegistries
 
 class Multiblock internal constructor(
     private val name: ResourceLocation,
@@ -89,15 +90,15 @@ class Multiblock internal constructor(
             i += 2
         }
 
-        for (x in 0 until this.w) for (y in 0 until this.h) for (z in 0 until this.d) {
+        for (x in 0 ..< this.w) for (y in 0 ..< this.h) for (z in 0 ..< this.d) {
             val matcher = matchers[rp[x][y][z]]
                 ?: throw IllegalStateException()
             if (matcher.check != null) this.match[BlockPos(x, y, z)] = matcher
         }
 
         if (!replaces)
-            (IMultiblock.MULTIBLOCKS as HashMap) += this.name to this
-        else (IMultiblock.MULTIBLOCKS as HashMap)[this.name] = this
+            (ECRegistries.MULTIBLOCKS.registries as LinkedHashMap) += this.name to this
+        else (ECRegistries.MULTIBLOCKS.registries as LinkedHashMap)[this.name] = this
     }
 
     override fun isComplete(level: Level, center: BlockPos): Boolean {

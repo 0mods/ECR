@@ -1,14 +1,13 @@
 package team._0mods.ecr.common.init.registry
 
 import com.mojang.brigadier.CommandDispatcher
-import com.mojang.brigadier.arguments.StringArgumentType
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.network.chat.Component
-import net.minecraft.world.entity.item.ItemEntity
-import net.minecraft.world.item.ItemStack
-import team._0mods.ecr.api.utils.arg
+import net.minecraft.world.InteractionHand
+import team._0mods.ecr.api.registries.ECRegistries
 import team._0mods.ecr.api.utils.onRegisterCommands
 import team._0mods.ecr.common.items.ECBook
+import team._0mods.ecr.common.items.ECBook.Companion.bookTypes
 
 object ECCommands {
     private val commandId = listOf("essentialcraft", "ec", "essential-craft", "ecr", "essentialcraftremained", "essential-craft-remained")
@@ -17,23 +16,6 @@ object ECCommands {
         dispatcher.onRegisterCommands {
             commandId.forEach {
                 it {
-                    "book"(arg("type", StringArgumentType.greedyString(), books)) {
-                        val type = StringArgumentType.getString(this, "type").uppercase()
-                        val item = ECRegistry.researchBook.get()
-                        val player = this.source.playerOrException
-                        val level = player.level
-
-                        val stack = ItemStack(item).apply {
-                            this.orCreateTag.putString("ECBookType", type)
-                        }
-
-                        val ent = ItemEntity(level, player.x, player.y, player.z, stack).apply {
-                            setNoPickUpDelay()
-                        }
-
-                        level.addFreshEntity(ent)
-                    }
-
                     "debug" {
                         val argument = this.source.playerOrException
                         val uuid = argument.uuid
@@ -59,17 +41,25 @@ object ECCommands {
 
                         argument.sendSystemMessage(Component.literal(builder.toString()))
                     }
+
+                    "debug_item" {
+                        val player = this.source.playerOrException
+                        val handItem = player.getItemInHand(InteractionHand.MAIN_HAND)
+                        val str = StringBuilder()
+
+                        if (handItem.item is ECBook) {
+                            val bt = handItem.bookTypes
+                            str.append("Book Types").append(":").append(' ').append('\n')
+
+                            bt?.forEach {
+                                str.append(" -").append(ECRegistries.BOOK_TYPES.getKey(it)).append('\n')
+                            }
+
+                            player.sendSystemMessage(Component.literal(str.toString()))
+                        }
+                    }
                 }
             }
         }
-    }
-
-    private val books: Collection<String> get() {
-        val ids = mutableListOf<String>()
-        ECBook.Type.entries.forEach {
-            ids += it.name.lowercase()
-        }
-
-        return ids
     }
 }

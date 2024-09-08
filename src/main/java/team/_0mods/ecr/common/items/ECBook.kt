@@ -12,25 +12,29 @@ import net.minecraft.world.level.Level
 import net.minecraftforge.fml.loading.FMLEnvironment
 import ru.hollowhorizon.hc.client.utils.literal
 import ru.hollowhorizon.hc.client.utils.mcTranslate
+import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.LOGGER
 import team._0mods.ecr.ModId
+import team._0mods.ecr.api.item.ECBookType
+import team._0mods.ecr.api.registries.ECRegistries
+import team._0mods.ecr.common.init.registry.ECBookTypes
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.init.registry.ECTabs
 import javax.annotation.Nonnull
 
 class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
     companion object {
-        var ItemStack.bookTypes: List<Type>?
+        var ItemStack.bookTypes: List<ECBookType>?
             @Nonnull
             get() {
                 if (this.item !is ECBook) throw IllegalStateException("Failed to get book type to none-book item")
                 val tag = this.orCreateTag
-                val list = mutableListOf<Type>()
+                val list = mutableListOf<ECBookType>()
 
                 if (!tag.contains("ECBookTypes")) {
                     val tags = ListTag()
-                    list += Type.BASIC
-                    tags.add(StringTag.valueOf(Type.BASIC.name))
+                    list += ECBookTypes.BASIC
+                    tags.add(StringTag.valueOf(ECRegistries.BOOK_TYPES.getKey(ECBookTypes.BASIC).toString()))
                     tag.put("ECBookTypes", tags)
                 } else {
                     val t = tag.get("ECBookTypes") as? ListTag
@@ -39,15 +43,15 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
                         val fixed = ListTag()
                         LOGGER.info("ECBookTypes is not list tag... Stop, what? Correcting...")
 
-                        fixed.add(StringTag.valueOf(Type.BASIC.name))
+                        fixed.add(StringTag.valueOf(ECRegistries.BOOK_TYPES.getKey(ECBookTypes.BASIC).toString()))
                         tag.put("ECBookTypes", fixed)
 
-                        return mutableListOf(Type.BASIC)
+                        return mutableListOf(ECBookTypes.BASIC)
                     }
 
                     for (i in 0 ..< t.size) {
                         val str = t.getString(i)
-                        list += Type.valueOf(str)
+                        list += ECRegistries.BOOK_TYPES.getValue(str.rl)!!
                     }
                 }
 
@@ -59,13 +63,13 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
                 if (v == null) {
                     tag.remove("ECBookTypes")
                     tag.put("ECBookTypes", ListTag().apply {
-                        add(StringTag.valueOf(Type.BASIC.name))
+                        add(StringTag.valueOf(ECBookTypes.BASIC.name))
                     })
                 } else {
                     val l = tag.get("ECBookTypes") as? ListTag ?: return
 
                     v.forEach {
-                        if (!l.contains(StringTag.valueOf(it.name))) l += StringTag.valueOf(it.name)
+                        if (!l.contains(StringTag.valueOf(ECRegistries.BOOK_TYPES.getKey(it).toString()))) l += StringTag.valueOf(ECRegistries.BOOK_TYPES.getKey(it).toString())
                     }
                 }
             }
@@ -86,11 +90,15 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
 
     override fun fillItemCategory(category: CreativeModeTab, items: NonNullList<ItemStack>) {
         if (category == CreativeModeTab.TAB_SEARCH || category == ECTabs.tabItems) {
-            Type.entries.stream().forEach {
+            val values = ECRegistries.BOOK_TYPES.registries.values
+
+            for (i in 0 ..< values.size) {
                 val stack = ItemStack(ECRegistry.researchBook.get()).apply {
-                    for (i in 0 .. it.ordinal) {
+                    for (j in 0 .. i) {
                         var bt = this.bookTypes!!
-                        bt += Type.getById(i)
+                        values.toList()[j].let {
+                            bt += it
+                        }
                         this.bookTypes = bt
                     }
                 }
@@ -121,28 +129,5 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
 
         if (moreEntries > 0)
             tooltipComponents.add("- ".literal.append("tooltip.$ModId.book.more".mcTranslate(moreEntries)))
-    }
-
-    // TODO("Algorithm, rewrite it! Make dynamically, with registry.")
-    enum class Type(val translate: Component) {
-        BASIC(Component.translatable("bookType.$ModId.basic")),
-        MRU(Component.translatable("bookType.$ModId.mru")),
-        ENGINEER(Component.translatable("bookType.$ModId.engineer")),
-        HOANA(Component.translatable("bookType.$ModId.hoana")),
-        SHADE(Component.translatable("bookType.$ModId.shade"));
-
-        companion object {
-            @JvmStatic
-            fun getById(id: Int): Type {
-                val size = Type.entries.size
-                val allowedValues = size - 1
-                if (id > allowedValues) {
-                    LOGGER.warn("Out of array! Using default type.")
-                    return BASIC
-                }
-
-                return entries[id]
-            }
-        }
     }
 }

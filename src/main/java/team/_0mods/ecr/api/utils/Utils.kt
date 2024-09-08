@@ -13,13 +13,13 @@ import net.minecraftforge.registries.DeferredRegister
 import net.minecraftforge.registries.ForgeRegistries
 import net.minecraftforge.registries.RegistryObject
 import ru.hollowhorizon.hc.client.utils.rl
+import team._0mods.ecr.ModId
 import team._0mods.ecr.common.init.registry.ECTabs
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-@Deprecated("Use HollowCore variant", ReplaceWith("this.rl", "ru.hollowhorizon.hc.client.utils.rl"))
-val String.rl: ResourceLocation
-    get() = this.rl
+val String.ecRL: ResourceLocation
+    get() = "$ModId:$this".rl
 
 fun makeBERegistry(modId: String): Pair<Pair<DeferredRegister<Block>, DeferredRegister<Item>>, DeferredRegister<BlockEntityType<*>>> {
     val b = DeferredRegister.create(ForgeRegistries.BLOCKS, modId)
