@@ -25,6 +25,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
+import ru.hollowhorizon.hc.common.network.sendAllInDimension
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.block.StructuralPosition
 import team._0mods.ecr.api.block.inventory.WrappedInventory
@@ -37,8 +38,7 @@ import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECMultiblocks
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.particle.ECParticleOptions
-import team._0mods.ecr.network.ECNetworkManager.sendToClient
-import team._0mods.ecr.network.packets.MithrilineFurnaceS2CUpdatePacket
+import team._0mods.ecr.network.ClientMithrilineFurnaceUpdate
 import java.awt.Color
 import kotlin.math.floor
 
@@ -52,7 +52,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
     val mruStorage = MRUContainerImpl(MRUContainer.MRUType.ESPE, 10000, 0) {
         if (!level!!.isClientSide) {
-            MithrilineFurnaceS2CUpdatePacket(it.mruStorage, this.blockPos).sendToClient()
+            ClientMithrilineFurnaceUpdate(it.mruStorage, this.blockPos).sendAllInDimension(level!!)
             setChanged()
         }
     }
@@ -124,7 +124,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     }
 
     override fun createMenu(id: Int, inv: Inventory, player: Player): AbstractContainerMenu? {
-        MithrilineFurnaceS2CUpdatePacket(this.mruStorage.mruStorage, this.blockPos).sendToClient()
+        ClientMithrilineFurnaceUpdate(this.mruStorage.mruStorage, this.blockPos).sendAllInDimension(level!!)
         return MithrilineFurnaceContainer(id, inv, itemHandler, this, ContainerLevelAccess.create(this.level ?: return null, this.blockPos), this.containerData)
     }
 
@@ -173,7 +173,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
             be.successfulStructure = ECMultiblocks.mithrilineFurnace.isComplete(level, pos)
 
             if (!level.isClientSide) {
-                MithrilineFurnaceS2CUpdatePacket(be.mruStorage.mruStorage, be.blockPos).sendToClient()
+                ClientMithrilineFurnaceUpdate(be.mruStorage.mruStorage, be.blockPos).sendAllInDimension(level)
                 if (complete) {
                     generateESPE(level, pos, be)
                     processRecipeIfPresent(be, level)

@@ -69,7 +69,8 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
                     val l = tag.get("ECBookTypes") as? ListTag ?: return
 
                     v.forEach {
-                        if (!l.contains(StringTag.valueOf(ECRegistries.BOOK_TYPES.getKey(it).toString()))) l += StringTag.valueOf(ECRegistries.BOOK_TYPES.getKey(it).toString())
+                        if (!l.contains(StringTag.valueOf(ECRegistries.BOOK_TYPES.getKey(it).toString())))
+                            l += StringTag.valueOf(ECRegistries.BOOK_TYPES.getKey(it).toString())
                     }
                 }
             }
@@ -121,10 +122,10 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
 
         tooltipComponents.add(Component.translatable("tooltip.$ModId.book.knowledge_contains").withStyle(ChatFormatting.GOLD).append(":"))
 
-        bookType?.forEachIndexed { i, type ->
-            if (i <= 9) {
-                tooltipComponents.add("- ".literal.append(type.translate))
-            } else moreEntries++
+        for (i in 0 ..< bookType!!.size) {
+            if (i <= 9)
+                tooltipComponents.add("- ".literal.append(bookType[i].translate))
+            else moreEntries++
         }
 
         if (moreEntries > 0)

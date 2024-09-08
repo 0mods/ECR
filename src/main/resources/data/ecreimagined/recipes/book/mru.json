@@ -15,12 +15,12 @@
     "c": {
       "type": "forge:nbt",
       "item": "ecreimagined:research_book",
-      "nbt": "{ECBookType:\"BASIC\"}"
+      "nbt": "{ECBookTypes:[\"ecreimagined:basic\"]}"
     }
   },
   "result": {
     "item": "ecreimagined:research_book",
     "count": 1,
-    "nbt": "{ECBookType:\"MRU\"}"
+    "nbt": "{ECBookTypes:[\"ecreimagined:basic\",\"ecreimagined:mru\"]}"
   }
 }

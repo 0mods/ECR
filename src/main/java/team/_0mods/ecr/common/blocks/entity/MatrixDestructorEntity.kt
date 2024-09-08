@@ -20,6 +20,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
+import ru.hollowhorizon.hc.common.network.sendAllInDimension
 import team._0mods.ecr.api.mru.MRUGenerator
 import team._0mods.ecr.common.capability.MRUContainer
 import team._0mods.ecr.common.capability.impl.MRUContainerImpl
@@ -28,8 +29,7 @@ import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.items.SoulStone
-import team._0mods.ecr.network.ECNetworkManager.sendToClient
-import team._0mods.ecr.network.packets.MatrixDestructorS2CUpdatePacket
+import team._0mods.ecr.network.ClientMatrixDestructorUpdate
 
 class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity(ECRegistry.matrixDestructorEntity.get(), pos, blockState), MenuProvider, MRUGenerator {
     private val itemHandler = object : ItemStackHandler(1) {
@@ -40,7 +40,8 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity
 
     val mruStorage = MRUContainerImpl(MRUContainer.MRUType.RADIATION_UNIT, 10000, 0) {
         if (!level!!.isClientSide) {
-            MatrixDestructorS2CUpdatePacket(it.mruStorage, this.blockPos).sendToClient()
+            /*MatrixDestructorS2CUpdatePacket(it.mruStorage, this.blockPos).sendToClient()*/
+            ClientMatrixDestructorUpdate(it.mruStorage, this.blockPos).sendAllInDimension(level!!)
             setChanged()
         }
     }
@@ -101,7 +102,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity
             val receiveCost = ECCommonConfig.instance.matrixResult
 
             if (!level.isClientSide) {
-                MatrixDestructorS2CUpdatePacket(be.mruStorage.mruStorage, be.blockPos).sendToClient()
+                ClientMatrixDestructorUpdate(be.mruStorage.mruStorage, be.blockPos).sendAllInDimension(level)
                 val stack = be.itemHandler.getStackInSlot(0)
 
                 if (!stack.isEmpty) {

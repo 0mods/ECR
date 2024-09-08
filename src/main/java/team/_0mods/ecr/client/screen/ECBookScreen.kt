@@ -15,7 +15,6 @@ class ECBookScreen(private val type: List<ECBookType>): ImGuiScreen({
         pushScreenCursor()
         text(type.last().translate)
         popScreenCursor()
-
     }
 }) {
     override fun isPauseScreen(): Boolean = false

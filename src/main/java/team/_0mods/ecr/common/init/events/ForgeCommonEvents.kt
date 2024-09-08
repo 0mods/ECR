@@ -18,6 +18,7 @@ import team._0mods.ecr.client.screen.ECBookScreen
 import team._0mods.ecr.common.capability.impl.PlayerMRUImpl
 import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECCommands
+import team._0mods.ecr.common.init.registry.reload.ConfigReloadListener
 import team._0mods.ecr.common.init.registry.reload.ECStructureReloadListener
 import team._0mods.ecr.common.init.registry.reload.SoulStoneDataReloadListener
 import team._0mods.ecr.common.items.ECBook
@@ -29,6 +30,7 @@ private val json = Json {
     encodeDefaults = true
     prettyPrint = true
     prettyPrintIndent = "  "
+    coerceInputValues = true
     allowComments = true
     allowTrailingComma = true
 }
@@ -71,6 +73,7 @@ fun onCommandRegister(e: RegisterCommandsEvent) {
 fun onRegisterReloadListener(e: AddReloadListenerEvent) {
     e.addListener(SoulStoneDataReloadListener(json))
     e.addListener(ECStructureReloadListener(json))
+    e.addListener(ConfigReloadListener())
 }
 
 fun onCapabilityPlayerAttach(e: AttachCapabilitiesEvent<Player>) {

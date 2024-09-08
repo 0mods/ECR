@@ -10,7 +10,16 @@ import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
 
-inline fun <reified T> T.loadConfig(json: Json, fileName: String): T {
+@OptIn(ExperimentalSerializationApi::class)
+inline fun <reified T> T.loadConfig(fileName: String): T {
+    val json = Json {
+        encodeDefaults = true
+        prettyPrint = true
+        prettyPrintIndent = "  "
+        allowComments = true
+        allowTrailingComma = true
+    }
+
     LOGGER.debug("Loading config '$fileName'")
 
     val file = FMLPaths.GAMEDIR.get().resolve("config/").toFile().resolve("$fileName.json")
