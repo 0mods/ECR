@@ -14,7 +14,7 @@ object ECKeys {
 
     private fun <T: KeyMapping> register(devOnly: Boolean = false, kb: () -> T): Lazy<T> {
         val key = kb()
-        if (devOnly && FMLEnvironment.production) return lazy { key }
+        if (devOnly && !FMLEnvironment.production) return lazy { key }
         kbList as MutableList += key
         return lazy { key }
     }

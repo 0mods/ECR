@@ -21,7 +21,7 @@ import team._0mods.ecr.common.init.registry.ECCommands
 import team._0mods.ecr.common.init.registry.reload.ECStructureReloadListener
 import team._0mods.ecr.common.init.registry.reload.SoulStoneDataReloadListener
 import team._0mods.ecr.common.items.ECBook
-import team._0mods.ecr.common.items.ECBook.Companion.bookType
+import team._0mods.ecr.common.items.ECBook.Companion.bookTypes
 
 @OptIn(ExperimentalSerializationApi::class)
 private val json = Json {
@@ -42,18 +42,20 @@ fun onBookUsed(e: PlayerInteractEvent.RightClickItem) {
     val item = stack.item
 
     if (item is ECBook) {
-        val type = stack.bookType
+        val type = stack.bookTypes
         if (level.isClientSide) {
             if (player.isCreative && player.isShiftKeyDown) return
-            Minecraft.getInstance().setScreen(ECBookScreen(type))
+            Minecraft.getInstance().setScreen(ECBookScreen(type!!))
         } else {
             if (player.isCreative && player.isShiftKeyDown) {
-                when(type) {
-                    ECBook.Type.BASIC -> stack.bookType = ECBook.Type.MRU
-                    ECBook.Type.MRU -> stack.bookType = ECBook.Type.ENGINEER
-                    ECBook.Type.ENGINEER -> stack.bookType = ECBook.Type.HOANA
-                    ECBook.Type.HOANA -> stack.bookType = ECBook.Type.SHADE
-                    ECBook.Type.SHADE -> stack.bookType = ECBook.Type.BASIC
+                type?.forEachIndexed { i, type ->
+                    var bt = stack.bookTypes!!
+                    if (i != bt.lastIndex) {
+                        bt += type
+                        stack.bookTypes = bt
+                    } else {
+                        stack.bookTypes = null
+                    }
                 }
             }
         }

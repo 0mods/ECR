@@ -10,14 +10,18 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.*
 import net.minecraft.world.level.Level
 import net.minecraftforge.fml.loading.FMLEnvironment
+import ru.hollowhorizon.hc.client.utils.literal
+import ru.hollowhorizon.hc.client.utils.mcTranslate
 import team._0mods.ecr.LOGGER
 import team._0mods.ecr.ModId
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.init.registry.ECTabs
+import javax.annotation.Nonnull
 
 class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
     companion object {
-        var ItemStack.bookTypes: List<Type>
+        var ItemStack.bookTypes: List<Type>?
+            @Nonnull
             get() {
                 if (this.item !is ECBook) throw IllegalStateException("Failed to get book type to none-book item")
                 val tag = this.orCreateTag
@@ -52,50 +56,30 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
             set(v) {
                 if (this.item !is ECBook) throw IllegalStateException("Failed to add book type to none-book item")
                 val tag = this.orCreateTag
-                val l = tag.get("ECBookTypes") as? ListTag ?: return
+                if (v == null) {
+                    tag.remove("ECBookTypes")
+                    tag.put("ECBookTypes", ListTag().apply {
+                        add(StringTag.valueOf(Type.BASIC.name))
+                    })
+                } else {
+                    val l = tag.get("ECBookTypes") as? ListTag ?: return
 
-                v.forEach {
-                    if (!l.contains(StringTag.valueOf(it.name))) l += StringTag.valueOf(it.name)
+                    v.forEach {
+                        if (!l.contains(StringTag.valueOf(it.name))) l += StringTag.valueOf(it.name)
+                    }
                 }
-            }
-
-        @JvmStatic
-        var ItemStack.bookType: Type
-            get() {
-                if (this.item !is ECBook) throw IllegalStateException("Failed to get book type to none-book item")
-                val tag = this.orCreateTag
-
-                if (!tag.contains("ECBookType")) {
-                   tag.putString("ECBookType", Type.BASIC.name.lowercase())
-                }
-
-                return try {
-                    Type.valueOf(tag.getString("ECBookType").uppercase())
-                } catch (e: NullPointerException) {
-                    LOGGER.error("Taken item with unsupported book type. Sets default value")
-                    tag.putString("ECBookType", Type.BASIC.name.lowercase())
-                    return Type.BASIC
-                }
-            }
-            set(value) {
-                if (this.item !is ECBook) throw IllegalStateException("Failed to get book type to none-book item")
-                val tag = this.orCreateTag
-
-                tag.putString("ECBookType", value.name.lowercase())
             }
     }
 
     init {
         if (FMLEnvironment.dist.isClient) {
-            ItemProperties.register(this, ResourceLocation(ModId, "type")) { s, _, _, _ ->
-                val type = s.bookType
-                return@register when(type) {
-                    Type.BASIC -> 0.0f
-                    Type.MRU -> 0.1f
-                    Type.ENGINEER -> 0.2f
-                    Type.HOANA -> 0.3f
-                    Type.SHADE -> 0.4f
-                }
+            ItemProperties.register(this, ResourceLocation(ModId, "type")) r@ { s, _, _, _ ->
+                val types = s.bookTypes
+                if (types == null) return@r 0f
+                return@r if (types.isNotEmpty() && types.size < 6)
+                    types.size.toFloat() - 1
+                else if (types.size > 5) 4f
+                else 0f
             }
         }
     }
@@ -104,7 +88,11 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
         if (category == CreativeModeTab.TAB_SEARCH || category == ECTabs.tabItems) {
             Type.entries.stream().forEach {
                 val stack = ItemStack(ECRegistry.researchBook.get()).apply {
-                    this.bookType = it
+                    for (i in 0 .. it.ordinal) {
+                        var bt = this.bookTypes!!
+                        bt += Type.getById(i)
+                        this.bookTypes = bt
+                    }
                 }
 
                 items += stack
@@ -120,42 +108,41 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
         tooltipComponents: MutableList<Component>,
         isAdvanced: TooltipFlag
     ) {
-        val bookType = stack.bookType
+        val bookType = stack.bookTypes
+        var moreEntries = 0
 
         tooltipComponents.add(Component.translatable("tooltip.$ModId.book.knowledge_contains").withStyle(ChatFormatting.GOLD).append(":"))
 
-        when (bookType) {
-            Type.BASIC -> tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.basic")))
-            Type.MRU -> {
-                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.basic")))
-                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.mru")))
-            }
-            Type.ENGINEER -> {
-                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.basic")))
-                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.mru")))
-                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.engineer")))
-            }
-            Type.HOANA -> {
-                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.basic")))
-                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.mru")))
-                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.engineer")))
-                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.hoana")))
-            }
-            Type.SHADE -> {
-                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.basic")))
-                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.mru")))
-                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.engineer")))
-                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.hoana")))
-                tooltipComponents.add(Component.literal("- ").append(Component.translatable("tooltip.$ModId.book.shade")))
-            }
+        bookType?.forEachIndexed { i, type ->
+            if (i <= 9) {
+                tooltipComponents.add("- ".literal.append(type.translate))
+            } else moreEntries++
         }
+
+        if (moreEntries > 0)
+            tooltipComponents.add("- ".literal.append("tooltip.$ModId.book.more".mcTranslate(moreEntries)))
     }
 
-    enum class Type {
-        BASIC,
-        MRU,
-        ENGINEER,
-        HOANA,
-        SHADE
+    // TODO("Algorithm, rewrite it! Make dynamically, with registry.")
+    enum class Type(val translate: Component) {
+        BASIC(Component.translatable("bookType.$ModId.basic")),
+        MRU(Component.translatable("bookType.$ModId.mru")),
+        ENGINEER(Component.translatable("bookType.$ModId.engineer")),
+        HOANA(Component.translatable("bookType.$ModId.hoana")),
+        SHADE(Component.translatable("bookType.$ModId.shade"));
+
+        companion object {
+            @JvmStatic
+            fun getById(id: Int): Type {
+                val size = Type.entries.size
+                val allowedValues = size - 1
+                if (id > allowedValues) {
+                    LOGGER.warn("Out of array! Using default type.")
+                    return BASIC
+                }
+
+                return entries[id]
+            }
+        }
     }
 }

@@ -34,11 +34,7 @@ tooltip.ecreimagined:
     upgrade: Зажмите %s чтобы улучшить книгу
     downgrade: Зажмите %s чтобы сбросить все знания в книге
     knowledge_contains: Содержит знания
-    basic: Основы
-    mru: Знания об MRU
-    engineer: Инженерию
-    hoana: Хоаны
-    shade: Тени
+    more: И еще %s знаний
   soul_stone:
     tracking: Отслеживается MRU матрица %s
     detected_ubmru: Обнаружено %s UBMRU энергии
@@ -46,6 +42,13 @@ tooltip.ecreimagined:
   bound_gem:
     bound: "Кристалл привязки был привязан на позиции: X: %s Y: %s Z: %s"
     unbound: Кристал привязки отвязан
+
+bookType.ecreimagined:
+  basic: Основы
+  mru: Знания об MRU
+  engineer: Инженерию
+  hoana: Хоаны
+  shade: Тени
 
 config.jade.plugin_ecreimagined:
   mithriline_furnace:

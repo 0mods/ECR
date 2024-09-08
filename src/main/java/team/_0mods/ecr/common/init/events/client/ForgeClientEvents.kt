@@ -13,26 +13,12 @@ import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.mru.MRUMultiplierWeapon
-import team._0mods.ecr.common.items.ECBook
-import team._0mods.ecr.common.items.ECBook.Companion.bookType
 
 @SubscribeEvent
 fun onItemTooltip(e: ItemTooltipEvent) {
     val player = e.entity ?: return
     val stack = e.itemStack
     val item = stack.item
-
-    if (player.isCreative) {
-        if (item is ECBook) {
-            val type = stack.bookType
-
-            e.toolTip.add(Component.translatable(
-                if (type != ECBook.Type.SHADE) "tooltip.$ModId.book.upgrade" else "tooltip.$ModId.book.downgrade",
-                Component.literal("SHIFT + ")
-                    .append(Component.translatable("tooltip.$ModId.rmc"))
-            ).withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC))
-        }
-    }
 
     if (item is SwordItem && item is MRUMultiplierWeapon) {
         val multiplier = item.multiplier
