@@ -51,7 +51,7 @@ class ECJEIPlugin: IModPlugin {
             MITHRILINE_FURNACE,
             0,
             1,
-            3,
+            2,
             36
         )
     }
