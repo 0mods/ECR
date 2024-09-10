@@ -4,6 +4,7 @@ import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResultHolder
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.monster.Enemy
@@ -16,8 +17,15 @@ import net.minecraft.world.level.Level
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.entity.living.LivingDeathEvent
 import net.minecraftforge.server.ServerLifecycleHooks
+import ru.hollowhorizon.hc.client.utils.get
+import ru.hollowhorizon.hc.client.utils.literal
+import ru.hollowhorizon.hc.client.utils.mcTranslate
+import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.mru.MRUMultiplierWeapon
+import team._0mods.ecr.api.mru.PlayerMatrixType
+import team._0mods.ecr.api.registries.ECRegistries
+import team._0mods.ecr.common.capability.PlayerMRU
 import team._0mods.ecr.common.init.registry.ECTabs
 import java.util.*
 import kotlin.math.roundToInt
@@ -30,8 +38,8 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
         lateinit var defaultEnemyAdd: IntRange
     }
 
-    @get:JvmName("privateOwnerGet")
-    @set:JvmName("privateOwnerSet")
+    @get:JvmName("_getOwner")
+    @set:JvmName("_setOwner")
     private var ItemStack.owner
         get() = getOwner(this)
         set(value) = setOwner(this, value)
@@ -64,7 +72,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
                     }
 
                     player.displayClientMessage(
-                        Component.translatable("info.$ModId.soul_stone.bounded", player.name),
+                        Component.translatable("tooltip.$ModId.soul_stone.bounded", player.name),
                         true
                     )
                     return InteractionResultHolder.success(stack)
@@ -73,14 +81,14 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
                 if (stack.owner != null) {
                     if (stack.owner != player.uuid) {
                         player.displayClientMessage(
-                            Component.translatable("info.$ModId.soul_stone.can_not_unbound"),
+                            Component.translatable("tooltip.$ModId.soul_stone.can_not_unbound"),
                             true
                         )
                         return InteractionResultHolder.fail(stack)
                     } else {
                         stack.owner = null
                         setOwnerNick(stack, null)
-                        player.displayClientMessage(Component.translatable("info.$ModId.soul_stone.unbounded"), true)
+                        player.displayClientMessage(Component.translatable("tooltip.$ModId.soul_stone.unbounded"), true)
                         return InteractionResultHolder.fail(stack)
                     }
                 }
@@ -102,22 +110,36 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
         tooltipComponents: MutableList<Component>,
         isAdvanced: TooltipFlag
     ) {
-        level ?: return
-
         if (stack.owner != null) {
             tooltipComponents.add(
-                Component.translatable(
-                    "tooltip.$ModId.soul_stone.tracking",
-                    Component.literal(getOwnerNick(stack)).withStyle(if (getOwnerNick(stack) == "Not Loaded") ChatFormatting.RED else ChatFormatting.GOLD)
+                "tooltip.$ModId.soul_stone.tracking".mcTranslate(
+                    getOwnerNick(stack).literal.withStyle(if (getOwnerNick(stack) == "Not Loaded") ChatFormatting.RED else ChatFormatting.GOLD)
                 ).withStyle(ChatFormatting.DARK_GRAY)
             )
 
             tooltipComponents.add(
-                Component.translatable(
-                    "tooltip.$ModId.soul_stone.detected_ubmru",
-                    Component.literal(this.getCapacity(stack).toString()).withStyle(ChatFormatting.GREEN)
+                "tooltip.$ModId.soul_stone.detected_ubmru".mcTranslate(
+                    this.getCapacity(stack).toString().literal.withStyle(ChatFormatting.GREEN)
                 ).withStyle(ChatFormatting.DARK_GRAY)
             )
+
+            this.getMatrix(stack)?.let {
+                tooltipComponents.add("tooltip.$ModId.soul_stone.matrix".mcTranslate(it.displayName).withStyle(ChatFormatting.DARK_GRAY))
+            }
+        }
+    }
+
+    override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {
+        if (stack.item !is SoulStone) return
+        if (!level.isClientSide) {
+            val server = level.server!!
+            val uuid = this.getOwner(stack)
+            if (uuid != null) {
+                val player = server.playerList.getPlayer(uuid)
+                player?.let { this.setMatrix(stack, it[PlayerMRU::class].getMatrixType()) }
+            } else if (this.getMatrix(stack) != null) {
+                this.setMatrix(stack, null)
+            }
         }
     }
 
@@ -153,7 +175,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
     }
 
     fun getOwner(stack: ItemStack): UUID? {
-        if (stack.item !is SoulStone) throw UnsupportedOperationException()
+        if (stack.item !is SoulStone) return null
         val tag = stack.orCreateTag
         return if (tag.contains("SoulStoneOwner")) {
             try {
@@ -165,7 +187,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
     }
 
     fun setOwner(stack: ItemStack, newOwner: UUID?) {
-        if (stack.item !is SoulStone) throw UnsupportedOperationException()
+        if (stack.item !is SoulStone) return
         val tag = stack.orCreateTag
 
         if (!tag.contains("SoulStoneOwner")) {
@@ -187,7 +209,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
     }
 
     fun getOwnerNick(stack: ItemStack): String {
-        if (stack.item !is SoulStone) throw UnsupportedOperationException()
+        if (stack.item !is SoulStone) return "Lol, why you try to load owner nick, if item is not soul stone? Bro, it is not work."
         val tag = stack.orCreateTag
         return if (tag.contains("SoulStoneOwnerName")) {
             try {
@@ -199,7 +221,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
     }
 
     fun setOwnerNick(stack: ItemStack, name: String?) {
-        if (stack.item !is SoulStone) throw UnsupportedOperationException()
+        if (stack.item !is SoulStone) return
         val tag = stack.orCreateTag
 
         if (name != null) {
@@ -210,7 +232,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
     }
 
     fun getCapacity(stack: ItemStack): Int {
-        if (stack.item !is SoulStone) throw UnsupportedOperationException()
+        if (stack.item !is SoulStone) return 0
         val tag = stack.orCreateTag
         if (stack.owner == null) {
             tag.remove("SoulStoneCapacity")
@@ -221,7 +243,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
     }
 
     fun setCapacity(stack: ItemStack, newCapacity: Int) {
-        if (stack.item !is SoulStone) throw UnsupportedOperationException()
+        if (stack.item !is SoulStone) return
         val tag = stack.orCreateTag
 
         if (stack.owner != null) tag.putInt("SoulStoneCapacity", newCapacity)
@@ -251,6 +273,29 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
             } else {
                 setCapacity(stack, 0)
             }
+        }
+    }
+
+    fun getMatrix(stack: ItemStack): PlayerMatrixType? {
+        if (stack.item !is SoulStone) return null
+        val tag = stack.orCreateTag
+
+        return if (tag.contains("PlayerMatrixType")) {
+            ECRegistries.PLAYER_MATRICES.getValueOrNull(tag.getString("PlayerMatrixType").rl)
+        } else null
+    }
+
+    fun setMatrix(stack: ItemStack, matrixType: PlayerMatrixType?) {
+        if (stack.item !is SoulStone) return
+        val tag = stack.orCreateTag
+
+        if (matrixType != null) {
+            ECRegistries.PLAYER_MATRICES.getKey(matrixType)?.let {
+                tag.putString("PlayerMatrixType", it.toString())
+            }
+        } else {
+            if (tag.contains("PlayerMatrixType"))
+                tag.remove("PlayerMatrixType")
         }
     }
 }

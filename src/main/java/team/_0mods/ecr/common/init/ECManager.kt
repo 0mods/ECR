@@ -2,12 +2,10 @@
 
 package team._0mods.ecr.common.init
 
-import net.minecraft.world.entity.player.Player
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
 import team._0mods.ecr.api.multiblock.IMultiblock
 import team._0mods.ecr.api.utils.ecRL
-import team._0mods.ecr.common.init.events.onCapabilityPlayerAttach
 import team._0mods.ecr.common.init.registry.ECAnnotationProcessor
 
 @JvmName("init")
@@ -18,6 +16,4 @@ fun initCommon() {
     IMultiblock.createMultiBlock("nil".ecRL, arrayOf(arrayOf()), false)
 
     ECAnnotationProcessor.init()
-
-    forgeBus.addGenericListener(Player::class.java, ::onCapabilityPlayerAttach)
 }

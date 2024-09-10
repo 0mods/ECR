@@ -5,22 +5,21 @@ import team._0mods.ecr.LOGGER
 import team._0mods.ecr.api.item.ECBookType
 import team._0mods.ecr.api.mru.PlayerMatrixType
 import team._0mods.ecr.api.multiblock.IMultiblock
-import team._0mods.ecr.api.utils.ecRL
 
 object ECRegistries {
-    @JvmField val MULTIBLOCKS = SomeRegistry.createRegistry<IMultiblock>("Multiblock Registry", "nil".ecRL)
-    @JvmField val PLAYER_MATRICES = SomeRegistry.createRegistry<PlayerMatrixType>("Player Matrices", "basic_matrix".ecRL)
-    @JvmField val BOOK_TYPES = SomeRegistry.createRegistry<ECBookType>("Book Types", "basic".ecRL)
+    @JvmField val MULTIBLOCKS = SomeRegistry.createRegistry<IMultiblock>("Multiblock Registry")
+    @JvmField val PLAYER_MATRICES = SomeRegistry.createRegistry<PlayerMatrixType>("Player Matrices")
+    @JvmField val BOOK_TYPES = SomeRegistry.createRegistry<ECBookType>("Book Types")
 }
 
-class SomeRegistry<T> private constructor(val registryName: String, val defaultId: ResourceLocation) {
+class SomeRegistry<T> private constructor(val registryName: String) {
     companion object {
-        fun <T> createRegistry(registryName: String, defaultId: ResourceLocation): SomeRegistry<T> = SomeRegistry(registryName, defaultId)
+        fun <T> createRegistry(registryName: String): SomeRegistry<T> = SomeRegistry(registryName)
     }
 
     val registries: Map<ResourceLocation, T> = linkedMapOf()
 
-    fun getValue(id: ResourceLocation): T = if (isPresent(id)) this.getValueOrNull(id)!! else this.getValueOrNull(defaultId)!!
+    fun getValue(id: ResourceLocation): T = if (isPresent(id)) this.getValueOrNull(id)!! else this.registries.values.toList()[0]
 
     fun getValueOrNull(id: ResourceLocation): T? = registries[id]
 

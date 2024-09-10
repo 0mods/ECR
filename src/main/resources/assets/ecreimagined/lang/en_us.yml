@@ -22,11 +22,6 @@ block.ecreimagined:
   mithriline_plating: Mithriline Plating
   mithriline_crystal: Mithriline Crystal
 
-info.ecreimagined.soul_stone:
-  bounded: The soul stone is bounded to %s
-  can_not_unbound: You can't unbound this soul stone
-  unbounded: The soul stone is unbounded
-
 tooltip.ecreimagined:
   sword_multiplier: MRU Gain Bonus
   rmc: RMC
@@ -38,7 +33,10 @@ tooltip.ecreimagined:
   soul_stone:
     tracking: Tracking MRU Matrix of %s
     detected_ubmru: Detected %s UBMRU Energy
-    matrix: this tooltip is not writed
+    matrix: MRU Matrix twists with %s Energies
+    bounded: The soul stone is bounded to %s
+    can_not_unbound: You can't unbound this soul stone
+    unbounded: The soul stone is unbounded
   bound_gem:
     bound: "Bound gem was bounded at pos: X: %s Y: %s Z: %s"
     unbound: Bound gem was unbounded
@@ -49,6 +47,9 @@ bookType.ecreimagined:
   engineer: Engineer's
   hoana: Hoana
   shade: Shade
+
+matrix.ecreimagined:
+  neutral: Neutral
 
 config.jade.plugin_ecreimagined:
   mithriline_furnace:

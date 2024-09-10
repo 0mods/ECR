@@ -40,7 +40,7 @@ object ECCommands {
 
                         if (cap != null) {
                             builder.append("Capability: ").append('\n').append(' ').append(' ')
-                                .append("MatrixType: ${cap.getMatrixType().name.string}")
+                                .append("MatrixType: ${cap.getMatrixType().displayName.string}")
                                 .append('\n').append(' ').append(' ')
                                 .append("Matrix Destruction: ${cap.matrixDestruction}")
                                 .append('\n').append(' ').append(' ')
@@ -50,6 +50,25 @@ object ECCommands {
                         }
 
                         argument.sendSystemMessage(Component.literal(builder.toString()))
+                    }
+
+                    "reset_matrix"(arg("player", EntityArgument.player())) {
+                        val pl = try {
+                            EntityArgument.getPlayer(this, "player")
+                        } catch (_: Exception) {
+                            try {
+                                this.source.playerOrException
+                            } catch (_: Exception) {
+                                source.server.sendSystemMessage(Component.literal("No players found!"))
+                                throw CommandSourceStack.ERROR_NOT_PLAYER.create()
+                            }
+                        }
+
+                        pl[PlayerMRU::class].apply {
+                            this.setMatrixType(ECPlayerMatrices.NEUTRAL)
+                            this.isInfused = false
+                            this.matrixDestruction = 0.0
+                        }
                     }
 
                     "debug_item" {

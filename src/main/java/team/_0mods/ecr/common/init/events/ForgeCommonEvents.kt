@@ -5,9 +5,7 @@ package team._0mods.ecr.common.init.events
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import net.minecraft.client.Minecraft
-import net.minecraft.world.entity.player.Player
 import net.minecraftforge.event.AddReloadListenerEvent
-import net.minecraftforge.event.AttachCapabilitiesEvent
 import net.minecraftforge.event.RegisterCommandsEvent
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
@@ -70,7 +68,4 @@ fun onRegisterReloadListener(e: AddReloadListenerEvent) {
     e.addListener(SoulStoneDataReloadListener(json))
     e.addListener(ECStructureReloadListener(json))
     e.addListener(ConfigReloadListener())
-}
-
-fun onCapabilityPlayerAttach(e: AttachCapabilitiesEvent<Player>) {
 }

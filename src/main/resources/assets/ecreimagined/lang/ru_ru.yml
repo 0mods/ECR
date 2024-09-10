@@ -22,11 +22,6 @@ block.ecreimagined:
   mithriline_plating: Мифрилиновое покрытие
   mithriline_crystal: Мифрилиновый кристалл
 
-info.ecreimagined.soul_stone:
-  bounded: Камень души привязан к %s
-  can_not_unbound: Вы не можете отвязать этот камень души
-  unbounded: Камень души отвязан
-
 tooltip.ecreimagined:
   sword_multiplier: Бонус получения MRU
   rmc: ПКМ
@@ -39,6 +34,9 @@ tooltip.ecreimagined:
     tracking: Отслеживается MRU матрица %s
     detected_ubmru: Обнаружено %s UBMRU энергии
     matrix: this tooltip is not writed
+    bounded: Камень души привязан к %s
+    can_not_unbound: Вы не можете отвязать этот камень души
+    unbounded: Камень души отвязан
   bound_gem:
     bound: "Кристалл привязки был привязан на позиции: X: %s Y: %s Z: %s"
     unbound: Кристал привязки отвязан
