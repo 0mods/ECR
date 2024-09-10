@@ -15,6 +15,7 @@ import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.entity.living.LivingDeathEvent
+import net.minecraftforge.server.ServerLifecycleHooks
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.mru.MRUMultiplierWeapon
 import team._0mods.ecr.common.init.registry.ECTabs
@@ -60,7 +61,6 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
                         level.addFreshEntity(ent)
                     } else {
                         stack.owner = player.uuid
-                        setOwnerNick(stack, player.name.string)
                     }
 
                     player.displayClientMessage(
@@ -169,17 +169,24 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
         val tag = stack.orCreateTag
 
         if (!tag.contains("SoulStoneOwner")) {
-            if (newOwner != null)
+            if (newOwner != null) {
                 tag.putUUID("SoulStoneOwner", newOwner)
+                ServerLifecycleHooks.getCurrentServer()?.let { l ->
+                    l.playerList.getPlayer(newOwner)?.let {
+                        tag.putString("SoulStoneOwnerName", it.name.string)
+                    }
+                }
+            }
         } else {
             if (newOwner == null) {
                 tag.remove("SoulStoneOwner")
                 tag.remove("SoulStoneCapacity")
+                tag.remove("SoulStoneOwnerName")
             }
         }
     }
 
-    private fun getOwnerNick(stack: ItemStack): String {
+    fun getOwnerNick(stack: ItemStack): String {
         if (stack.item !is SoulStone) throw UnsupportedOperationException()
         val tag = stack.orCreateTag
         return if (tag.contains("SoulStoneOwnerName")) {
@@ -191,7 +198,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
         } else "Not Loaded"
     }
 
-    private fun setOwnerNick(stack: ItemStack, name: String?) {
+    fun setOwnerNick(stack: ItemStack, name: String?) {
         if (stack.item !is SoulStone) throw UnsupportedOperationException()
         val tag = stack.orCreateTag
 

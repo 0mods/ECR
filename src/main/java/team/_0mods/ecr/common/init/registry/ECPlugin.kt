@@ -10,14 +10,13 @@ import team._0mods.ecr.api.plugin.registry.PlayerMatrixTypeRegistry
 @ECRPlugin(ModId)
 object ECPlugin: ECRModPlugin {
     override fun onMatrixTypeRegistry(reg: PlayerMatrixTypeRegistry) {
-        reg.register("basic_matrix") { reg.makeConstructor(Component.empty(), 0.0, false) }
+        reg.register("basic_matrix") { reg.makeConstructor(Component.literal("Basic Matrix"), 0.0, false) }
     }
 
     override fun onBookTypeRegistry(reg: BookTypeRegistry) {
-        reg.register("basic", ECBookTypes.BASIC)
-        reg.register("mru", ECBookTypes.MRU)
-        reg.register("engineer", ECBookTypes.ENGINEER)
-        reg.register("hoana", ECBookTypes.HOANA)
-        reg.register("shade", ECBookTypes.SHADE)
+        ECBookTypes.entries.forEach {
+            val id = it.name.lowercase()
+            reg.register(id, it)
+        }
     }
 }

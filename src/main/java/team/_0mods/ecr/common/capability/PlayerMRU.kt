@@ -1,19 +1,27 @@
 package team._0mods.ecr.common.capability
 
-import net.minecraft.network.chat.Component
+import kotlinx.serialization.Serializable
+import net.minecraft.world.entity.player.Player
+import ru.hollowhorizon.hc.client.utils.rl
+import ru.hollowhorizon.hc.common.capabilities.CapabilityInstance
+import ru.hollowhorizon.hc.common.capabilities.HollowCapabilityV2
+import team._0mods.ecr.ModId
+import team._0mods.ecr.api.mru.PlayerMatrixType
+import team._0mods.ecr.api.registries.ECRegistries
 
-interface PlayerMRU {
-    var matrixDestruction: Double
+@Serializable
+@HollowCapabilityV2(Player::class)
+class PlayerMRU: CapabilityInstance() {
+    var matrixDestruction: Double by syncable(0.0)
+    var matrix by syncable("$ModId:basic_matrix")
+    var isInfused: Boolean by syncable(false)
 
-    var matrixType: PlayerMatrixType
+    fun getMatrixType(): PlayerMatrixType = ECRegistries.PLAYER_MATRICES.getValue(matrix.rl)
 
-    var isInfused: Boolean
+    fun setMatrixType(matrix: PlayerMatrixType): PlayerMRU {
+        if (ECRegistries.PLAYER_MATRICES.getKey(matrix) != null)
+            this.matrix = ECRegistries.PLAYER_MATRICES.getKey(matrix)!!.toString()
 
-    interface PlayerMatrixType {
-        val name: Component
-
-        val reduceRadiationMultiplier: Double
-
-        val protectMatrixDecay: Boolean
+        return this
     }
 }

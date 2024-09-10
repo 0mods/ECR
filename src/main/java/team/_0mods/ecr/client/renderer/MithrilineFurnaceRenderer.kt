@@ -14,14 +14,13 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.client.renderer.texture.TextureAtlas
 import net.minecraft.client.resources.model.Material
-import ru.hollowhorizon.hc.client.utils.rl
-import team._0mods.ecr.ModId
+import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 
 class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): BlockEntityRenderer<MithrilineFurnaceEntity> {
     companion object {
-        @JvmField val MF_LAYER = ModelLayerLocation("$ModId:mithriline_furnace".rl, "core")
-        @JvmField val MF_RESOURCE_LOCATION = Material(TextureAtlas.LOCATION_BLOCKS, "$ModId:block/mithriline_furnace".rl)
+        @JvmField val MF_LAYER = ModelLayerLocation("mithriline_furnace".ecRL, "core")
+        @JvmField val MF_RESOURCE_LOCATION = Material(TextureAtlas.LOCATION_BLOCKS, "block/mithriline_furnace".ecRL)
 
         @JvmStatic
         fun createBodyLayer(): LayerDefinition {

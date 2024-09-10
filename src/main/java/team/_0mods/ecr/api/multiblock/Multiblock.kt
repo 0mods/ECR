@@ -6,6 +6,7 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
 import team._0mods.ecr.api.registries.ECRegistries
+import team._0mods.ecr.api.utils.ecRL
 
 class Multiblock internal constructor(
     private val name: ResourceLocation,
@@ -30,7 +31,8 @@ class Multiblock internal constructor(
         var xOff = 0
         var yOff = 0
         var zOff = 0
-        var raw: Array<Array<CharArray>>? = null
+        var raw: Array<Array<CharArray>> = arrayOf()
+
 
         for (i in pattern.indices) {
             val row = pattern[i]
@@ -43,7 +45,7 @@ class Multiblock internal constructor(
                 if (depth < 0) depth = column.length
                 else require(column.length == depth)
 
-                if (raw == null) raw = Array(width) { Array(this.h) { CharArray(depth) } }
+                if (raw.isEmpty()) raw = Array(width) { Array(this.h) { CharArray(depth) } }
                 for (k in column.indices) {
                     val c = column[k]
                     raw[k][h - 1 - i][j] = c
@@ -56,12 +58,14 @@ class Multiblock internal constructor(
                 }
             }
         }
+
+
         this.d = depth
         this.w = width
         this.xo = xOff
         this.yo = yOff
         this.zo = zOff
-        this.rp = raw!!
+        this.rp = raw
 
         val matchers: MutableMap<Char, Matcher> = HashMap()
         var i = 0
@@ -96,9 +100,15 @@ class Multiblock internal constructor(
             if (matcher.check != null) this.match[BlockPos(x, y, z)] = matcher
         }
 
-        if (!replaces)
+        if (!replaces) {
             (ECRegistries.MULTIBLOCKS.registries as LinkedHashMap) += this.name to this
-        else (ECRegistries.MULTIBLOCKS.registries as LinkedHashMap)[this.name] = this
+            ECRegistries.MULTIBLOCKS.logReg("Registered: $name")
+        } else {
+            if (this.name != "nil".ecRL || this.name != "null".ecRL) {
+                (ECRegistries.MULTIBLOCKS.registries as LinkedHashMap)[this.name] = this
+                ECRegistries.MULTIBLOCKS.logReg("Replaced: $name")
+            }
+        }
     }
 
     override fun isComplete(level: Level, center: BlockPos): Boolean {

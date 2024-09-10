@@ -51,7 +51,7 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
 
                     for (i in 0 ..< t.size) {
                         val str = t.getString(i)
-                        list += ECRegistries.BOOK_TYPES.getValue(str.rl)!!
+                        list += ECRegistries.BOOK_TYPES.getValue(str.rl)
                     }
                 }
 

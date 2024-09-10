@@ -2,12 +2,12 @@ package team._0mods.ecr.api.plugin.registry
 
 import net.minecraft.network.chat.Component
 import team._0mods.ecr.api.plugin.registry.helper.ECRegistryObject
-import team._0mods.ecr.common.capability.PlayerMRU
+import team._0mods.ecr.api.mru.PlayerMatrixType
 
-interface PlayerMatrixTypeRegistry: ECRegistryObject<PlayerMRU.PlayerMatrixType> {
-    fun register(id: String, c: () -> PlayerMatrixKonstructor): () -> PlayerMRU.PlayerMatrixType {
+interface PlayerMatrixTypeRegistry: ECRegistryObject<PlayerMatrixType> {
+    fun register(id: String, c: () -> PlayerMatrixKonstructor): () -> PlayerMatrixType {
         val construct = c()
-        val type = object : PlayerMRU.PlayerMatrixType {
+        val type = object : PlayerMatrixType {
             override val name: Component get() = construct.name
             override val reduceRadiationMultiplier: Double get() = construct.reduceMultiplier
             override val protectMatrixDecay: Boolean get() = construct.protectDecay

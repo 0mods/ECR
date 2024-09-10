@@ -36,7 +36,7 @@ interface IMultiblock {
 
     fun isComplete(level: Level, center: BlockPos): Boolean
 
-    fun forEach(center: BlockPos, c: Char, function: /*BiFunction<BlockPos, Matcher, Boolean>*/ (BlockPos, Matcher) -> Boolean): Boolean
+    fun forEach(center: BlockPos, c: Char, function: (BlockPos, Matcher) -> Boolean): Boolean
 
     fun getStart(center: BlockPos): BlockPos
 

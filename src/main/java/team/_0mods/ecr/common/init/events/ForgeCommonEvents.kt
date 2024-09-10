@@ -12,11 +12,7 @@ import net.minecraftforge.event.RegisterCommandsEvent
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
-import ru.hollowhorizon.hc.client.utils.rl
-import team._0mods.ecr.ModId
 import team._0mods.ecr.client.screen.ECBookScreen
-import team._0mods.ecr.common.capability.impl.PlayerMRUImpl
-import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECCommands
 import team._0mods.ecr.common.init.registry.reload.ConfigReloadListener
 import team._0mods.ecr.common.init.registry.reload.ECStructureReloadListener
@@ -77,6 +73,4 @@ fun onRegisterReloadListener(e: AddReloadListenerEvent) {
 }
 
 fun onCapabilityPlayerAttach(e: AttachCapabilitiesEvent<Player>) {
-    if (!e.`object`.getCapability(ECCapabilities.PLAYER_MRU).isPresent)
-        e.addCapability("$ModId:player_mru".rl, PlayerMRUImpl.Provider())
 }

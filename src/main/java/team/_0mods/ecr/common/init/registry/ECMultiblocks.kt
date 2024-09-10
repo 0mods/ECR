@@ -1,9 +1,9 @@
 package team._0mods.ecr.common.init.registry
 
-import team._0mods.ecr.ModId
 import team._0mods.ecr.api.multiblock.IMultiblock
+import team._0mods.ecr.api.utils.ecRL
 
 object ECMultiblocks {
-    val mithrilineFurnace: IMultiblock = IMultiblock.getFromJson("$ModId:mithriline_furnace")
-    val soulStone: IMultiblock = IMultiblock.getFromJson("$ModId:soul_stone")
+    val mithrilineFurnace: IMultiblock = IMultiblock.getFromJson("mithriline_furnace".ecRL)
+    val soulStone: IMultiblock = IMultiblock.getFromJson("soul_stone".ecRL)
 }

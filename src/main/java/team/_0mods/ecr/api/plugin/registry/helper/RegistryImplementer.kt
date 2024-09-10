@@ -15,7 +15,7 @@ open class RegistryImplementer<T>(val modId: String, val registry: SomeRegistry<
 
         if (registry.registries.keys.stream().noneMatch { it == rlId }) {
             (registry.registries as LinkedHashMap)[rlId] = type
-            LOGGER.info("[${registry.registryName}] Registered: $rlId")
+            registry.logReg("Registered: $rlId")
         }
         else
             LOGGER.warn(
