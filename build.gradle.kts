@@ -88,6 +88,7 @@ repositories {
     maven("https://maven.saps.dev/releases") // Kubejs
     maven("https://api.modrinth.com/maven") // Modrinth maven for some mods
     maven("https://maven.terraformersmc.com/") // Mixin Extras
+    flatDir { dir("libs") }
 }
 
 dependencies {
@@ -103,7 +104,7 @@ dependencies {
     forge("net.minecraftforge:forge:${minecraftVersion}-${forgeVersion}")
 
     // required library
-    modImplementation("ru.hollowhorizon:HollowCore-forge-1.19.2:${"hc_version".fromProperties}")
+    modImplementation("ru.hollowhorizon:HollowCore-forge-$minecraftVersion:${"hc_version".fromProperties}")
 
     // Include libs
     //Shadow
@@ -123,13 +124,11 @@ dependencies {
     // Mod compact libraries
     modImplementation("mezz.jei:jei-${minecraftVersion}-forge:${"jei_version".fromProperties}")
     modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:${"ct_version".fromProperties}")
-    modImplementation("dev.latvian.mods:kubejs-forge:${"kubejs_version".fromProperties}")
     modImplementation("maven.modrinth:jade:${"jade_version".fromProperties}")
     modImplementation("maven.modrinth:mystical-agriculture:${"ma_version".fromProperties}")
+    modCompileOnly("dev.latvian.mods:kubejs-forge:${"kubejs_version".fromProperties}")
 
     // Runtime libs for test
-    modRuntimeOnly("dev.latvian.mods:rhino-forge:${"rhino_version".fromProperties}") // KJS lib
-    modRuntimeOnly("dev.architectury:architectury-forge:${"architectury_version".fromProperties}") // KJS lib
     modRuntimeOnly("maven.modrinth:cucumber:${"cucumber_version".fromProperties}")
 
     minecraftRuntimeLibraries("com.akuleshov7:ktoml-core-jvm:0.5.1")
