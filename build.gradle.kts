@@ -2,14 +2,6 @@ val modId: String by project
 val minecraftVersion: String by project
 val forgeVersion: String by project
 val modVersion: String by project
-val shadowLibrary: Configuration by configurations.creating {
-    isCanBeResolved = true
-    isCanBeConsumed = false
-}
-val ktShadow: Configuration by configurations.creating {
-    isCanBeResolved = true
-    isCanBeConsumed = false
-}
 val imguiVersion: String by project
 
 val authData = if (project.file("auth.data").exists()) project.file("auth.data").readText().trim() else ""
@@ -20,7 +12,6 @@ plugins {
     id("dev.architectury.loom") version "1.7-SNAPSHOT"
     kotlin("jvm")
     kotlin("plugin.serialization")
-    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("me.fallenbreath.yamlang") version "1.4.0"
 }
 
@@ -69,11 +60,6 @@ base {
     archivesName = "archivesName".fromProperties
 }
 
-configurations {
-    implementation.get().extendsFrom(shadowLibrary)
-    minecraftRuntimeLibraries.get().extendsFrom(shadowLibrary)
-}
-
 repositories {
     mavenCentral()
     maven("https://maven.0mods.team/releases") // Kotlin Extras
@@ -107,9 +93,6 @@ dependencies {
     modImplementation("ru.hollowhorizon:HollowCore-forge-$minecraftVersion:${"hc_version".fromProperties}")
 
     // Include libs
-    //Shadow
-    ktShadow("team.0mods:KotlinExtras:1.4-noreflect")
-
     //ModInclude
     minecraftRuntimeLibraries(include("team.chisel.ctm:CTM:${minecraftVersion}-${"ctm_version".fromProperties}")) {}
     implementation(include("io.github.llamalad7:mixinextras-forge:0.4.1")) {}
@@ -131,25 +114,10 @@ dependencies {
     // Runtime libs for test
     modRuntimeOnly("maven.modrinth:cucumber:${"cucumber_version".fromProperties}")
 
-    minecraftRuntimeLibraries("com.akuleshov7:ktoml-core-jvm:0.5.1")
     minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-app:$imguiVersion")) {}
     minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding:$imguiVersion")) {}
     minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-lwjgl3:$imguiVersion")) {}
     minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding-natives:$imguiVersion")) {}
-    minecraftRuntimeLibraries("com.tianscar.imageio:imageio-apng:1.0.1")
-    minecraftRuntimeLibraries("org.joml:joml:1.10.8")
-
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-reflect:2.0.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-jvm:2.0.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-jvm-host:2.0.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-script-runtime:2.0.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-compiler-embeddable-mcfriendly:2.0.0")  { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:2.0.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:2.0.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-metadata-jvm:2.0.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.4.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-common:2.0.0") { exclude("org.jetbrains.kotlin") }
 
     // Annotation processors
     annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1")
@@ -157,20 +125,6 @@ dependencies {
 }
 
 tasks {
-    shadowJar {
-        configurations = listOf(shadowLibrary, ktShadow)
-        archiveClassifier = "dev-shadow"
-
-        val relocateLibs = listOf(
-            "org.jetbrains", "com.typesafe", "kotlinx",
-            "kotlin", "okio", "org.intellij", "_COROUTINE", "imgui", "io.imgui"
-        )
-
-        relocateLibs.forEach {
-            relocate(it, "team._0mods.$modId.shadowlibs.$it")
-        }
-    }
-
     compileKotlin {
         useDaemonFallbackStrategy = false
         compilerOptions.freeCompilerArgs.add("-Xjvm-default=all")
@@ -192,10 +146,6 @@ tasks {
         }
 
         inputs.properties(replacement)
-    }
-
-    remapJar {
-        inputFile = shadowJar.get().archiveFile
     }
 
     withType<JavaCompile> {

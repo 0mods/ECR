@@ -45,7 +45,7 @@ object ECRegistry: HollowRegistry() {
     val weakSword by register("weakness_elemental_sword".id, AutoModelType.HANDHELD) { WeakSword() }
 
     // blocks
-    val mithrilinePlating by register("mithriline_plating".id, registry = Registry.BLOCK) {
+    val mithrilinePlating by register("mithriline_plating".id) {
         PropertiedBlock(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).requiresCorrectToolForDrops())
     }
     val mithrilineFurnace by register("mithriline_furnace".id, null) {
