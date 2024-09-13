@@ -15,8 +15,8 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.network.NetworkHooks
 
-fun BlockEntity.dropForgeContents(level: Level, pos: BlockPos) {
-    this.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent {
+fun BlockEntity?.dropForgeContents(level: Level, pos: BlockPos) {
+    this?.getCapability(ForgeCapabilities.ITEM_HANDLER)?.ifPresent {
         val nnl = NonNullList.withSize(it.slots, ItemStack.EMPTY)
         for (i in 0 ..< it.slots)
             nnl[i] = it.getStackInSlot(i)

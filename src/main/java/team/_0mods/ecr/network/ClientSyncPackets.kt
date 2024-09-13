@@ -11,10 +11,9 @@ import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 
-@HollowPacketV2(toTarget = HollowPacketV2.Direction.TO_CLIENT)
 @Serializable
-class ClientMatrixDestructorUpdate(val mru: Int, @Contextual val pos: BlockPos):
-    HollowPacketV3<ClientMatrixDestructorUpdate> {
+@HollowPacketV2(toTarget = HollowPacketV2.Direction.TO_CLIENT)
+class ClientMatrixDestructorUpdate(val mru: Int, @Contextual val pos: BlockPos): HollowPacketV3<ClientMatrixDestructorUpdate> {
     override fun handle(player: Player) {
         val level = Minecraft.getInstance().level
         val be = level?.getBlockEntity(pos)
@@ -30,10 +29,9 @@ class ClientMatrixDestructorUpdate(val mru: Int, @Contextual val pos: BlockPos):
     }
 }
 
-@HollowPacketV2(toTarget = HollowPacketV2.Direction.TO_CLIENT)
 @Serializable
-class ClientMithrilineFurnaceUpdate(val mru: Int, @Contextual val pos: BlockPos):
-    HollowPacketV3<ClientMithrilineFurnaceUpdate> {
+@HollowPacketV2(toTarget = HollowPacketV2.Direction.TO_CLIENT)
+class ClientMithrilineFurnaceUpdate(val mru: Int, @Contextual val pos: BlockPos): HollowPacketV3<ClientMithrilineFurnaceUpdate> {
     override fun handle(player: Player) {
         val level = Minecraft.getInstance().level
         val be = level?.getBlockEntity(pos)
