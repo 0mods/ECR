@@ -16,7 +16,6 @@ import team._0mods.ecr.api.mru.MRUMultiplierWeapon
 
 @SubscribeEvent
 fun onItemTooltip(e: ItemTooltipEvent) {
-    val player = e.entity ?: return
     val stack = e.itemStack
     val item = stack.item
 

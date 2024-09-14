@@ -281,7 +281,13 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
         val tag = stack.orCreateTag
 
         return if (tag.contains("PlayerMatrixType")) {
-            ECRegistries.PLAYER_MATRICES.getValueOrNull(tag.getString("PlayerMatrixType").rl)
+            val matrixId = tag.getString("PlayerMatrixType").rl
+            if (ECRegistries.PLAYER_MATRICES.isPresent(matrixId))
+                ECRegistries.PLAYER_MATRICES.getValue(matrixId)
+            else {
+                tag.remove("PlayerMatrixType")
+                null
+            }
         } else null
     }
 

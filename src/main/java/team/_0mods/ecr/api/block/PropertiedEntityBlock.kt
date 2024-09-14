@@ -18,7 +18,7 @@ abstract class PropertiedEntityBlock(properties: Properties): BaseEntityBlock(pr
         get() = Item.Properties().tab(ECTabs.tabBlocks)
 }
 
-open class BlockWithEntity<V: BlockEntity>(val blockEntity: (BlockPos, BlockState) -> V, properties: Properties): PropertiedEntityBlock(properties) {
+/*open class BlockWithEntity<V: BlockEntity>(val blockEntity: (BlockPos, BlockState) -> V, properties: Properties): PropertiedEntityBlock(properties) {
     override fun newBlockEntity(
         pos: BlockPos,
         state: BlockState
@@ -55,4 +55,4 @@ open class BlockWithEntity<V: BlockEntity>(val blockEntity: (BlockPos, BlockStat
         if (be is BlockEntityExtensions<*>)
             be.onPlacedBy(level, state, placer, stack)
     }
-}
+}*/
