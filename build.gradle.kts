@@ -113,11 +113,7 @@ dependencies {
 
     // Runtime libs for test
     modRuntimeOnly("maven.modrinth:cucumber:${"cucumber_version".fromProperties}")
-
-    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-app:$imguiVersion")) {}
-    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding:$imguiVersion")) {}
-    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-lwjgl3:$imguiVersion")) {}
-    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding-natives:$imguiVersion")) {}
+    prepareHCDeps()
 
     // Annotation processors
     annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1")
@@ -165,3 +161,30 @@ yamlang {
 
 val String.fromProperties
     get() = project.properties[this].toString()
+
+fun DependencyHandlerScope.prepareHCDeps() {
+    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-app:$imguiVersion")) {}
+    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding:$imguiVersion")) {}
+    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-lwjgl3:$imguiVersion")) {}
+    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding-natives:$imguiVersion")) {}
+
+    minecraftRuntimeLibraries("com.akuleshov7:ktoml-core-jvm:0.5.1")
+    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-app:$imguiVersion")) {}
+    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding:$imguiVersion")) {}
+    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-lwjgl3:$imguiVersion")) {}
+    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding-natives:$imguiVersion")) {}
+    minecraftRuntimeLibraries("com.tianscar.imageio:imageio-apng:1.0.1")
+    minecraftRuntimeLibraries("org.joml:joml:1.10.8")
+
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-reflect:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-jvm:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-jvm-host:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-script-runtime:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-compiler-embeddable-mcfriendly:2.0.0")  { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-metadata-jvm:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.4.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-common:2.0.0") { exclude("org.jetbrains.kotlin") }
+}

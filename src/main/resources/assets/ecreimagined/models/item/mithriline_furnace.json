@@ -2,7 +2,7 @@
   "credit": "Model Artist: AlgorithmLX, Texture Artist: IWaithI (Furnace), AlgorithmLX (Core)",
   "texture_size": [128, 128],
   "textures": {
-    "1": "ecreimagined:block/mithriline_furnace"
+    "1": "ecreimagined:blocks/mithriline_furnace"
   },
   "elements": [
     {

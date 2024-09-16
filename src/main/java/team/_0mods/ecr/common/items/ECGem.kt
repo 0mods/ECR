@@ -23,21 +23,21 @@ class ECGem private constructor(private val type: Type): Item(Properties().tab(E
 
     override fun getDescription(): Component {
         return when(type) {
-            Type.ELEMENTAL -> (super.getDescription() as MutableComponent).withStyle(ChatFormatting.LIGHT_PURPLE)
+            Type.ELEMENTAL -> (super.description as MutableComponent).withStyle(ChatFormatting.LIGHT_PURPLE)
             Type.FLAME -> {
-                val orig = (super.getDescription() as MutableComponent)
+                val orig = (super.description as MutableComponent)
                 val style = orig.style.withColor(Color.ORANGE.rgb)
 
                 ComponentUtils.mergeStyles(orig, style)
             }
-            Type.WATER -> (super.getDescription() as MutableComponent).withStyle(ChatFormatting.BLUE)
+            Type.WATER -> (super.description as MutableComponent).withStyle(ChatFormatting.BLUE)
             Type.EARTH -> {
-                val orig = (super.getDescription() as MutableComponent)
+                val orig = (super.description as MutableComponent)
                 val style = orig.style.withColor(0x964b00)
 
                 ComponentUtils.mergeStyles(orig, style)
             }
-            Type.AIR -> (super.getDescription() as MutableComponent).withStyle(ChatFormatting.GRAY)
+            Type.AIR -> (super.description as MutableComponent).withStyle(ChatFormatting.GRAY)
         }
     }
 

@@ -81,7 +81,7 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
             ItemProperties.register(this, ResourceLocation(ModId, "type")) r@ { s, _, _, _ ->
                 val types = s.bookTypes
                 if (types == null) return@r 0f
-                return@r if (types.isNotEmpty() && types.size < 6)
+                return@r if (types.isNotEmpty() && types.size <= 5)
                     types.size.toFloat() - 1
                 else if (types.size > 5) 4f
                 else 0f

@@ -214,7 +214,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
         return if (tag.contains("SoulStoneOwnerName")) {
             try {
                 tag.getString("SoulStoneOwnerName")
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 "Not Loaded"
             }
         } else "Not Loaded"

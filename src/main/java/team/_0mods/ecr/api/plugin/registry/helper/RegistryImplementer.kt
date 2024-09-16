@@ -19,7 +19,7 @@ open class RegistryImplementer<T>(val modId: String, val registry: SomeRegistry<
         }
         else
             LOGGER.warn(
-                "Oh... Mod: {} trying to register entry with id {}, because player matrix type with this id is already registered! Skipping...",
+                "Oh... Mod: {} trying to register entry with id {}, because entry with this id is already registered! Skipping...",
                 ModList.get().getModContainerById(modId).get().modInfo.displayName,
                 id
             )

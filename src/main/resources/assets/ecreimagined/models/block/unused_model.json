@@ -2,7 +2,7 @@
   "credit": "Model by AlgorithmLX",
   "texture_size": [128, 128],
   "textures": {
-    "2": "ecreimagined:block/mithriline_furnace",
+    "2": "ecreimagined:blocks/mithriline_furnace",
     "particle": "ecreimagined:particle/mithriline_furnace"
   },
   "elements": [
