@@ -20,7 +20,7 @@ import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): BlockEntityRenderer<MithrilineFurnaceEntity> {
     companion object {
         @JvmField val MF_LAYER = ModelLayerLocation("mithriline_furnace".ecRL, "core")
-        @JvmField val MF_RESOURCE_LOCATION = Material(TextureAtlas.LOCATION_BLOCKS, "blocks/mithriline_furnace".ecRL)
+        @JvmField val MF_RESOURCE_LOCATION = Material(TextureAtlas.LOCATION_BLOCKS, "block/mithriline_furnace".ecRL)
 
         @JvmStatic
         fun createBodyLayer(): LayerDefinition {

@@ -10,22 +10,25 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.*
 import net.minecraft.world.level.Level
 import net.minecraftforge.fml.loading.FMLEnvironment
+import org.jetbrains.annotations.NotNull
+import ru.hollowhorizon.hc.client.utils.HollowPack
 import ru.hollowhorizon.hc.client.utils.literal
 import ru.hollowhorizon.hc.client.utils.mcTranslate
 import ru.hollowhorizon.hc.client.utils.rl
+import ru.hollowhorizon.hc.common.registry.AutoModelType
 import team._0mods.ecr.LOGGER
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.item.ECBookType
 import team._0mods.ecr.api.registries.ECRegistries
+import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.init.registry.ECBookTypes
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.init.registry.ECTabs
-import javax.annotation.Nonnull
 
 class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
     companion object {
         var ItemStack.bookTypes: List<ECBookType>?
-            @Nonnull
+            @NotNull
             get() {
                 if (this.item !is ECBook) throw IllegalStateException("Failed to get book type to none-book item")
                 val tag = this.orCreateTag
@@ -87,6 +90,37 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
                 else 0f
             }
         }
+
+        val entries = ECRegistries.BOOK_TYPES.registries.keys
+
+        // textures for types
+        for (i in 0 ..< entries.size) {
+            val id = entries.toList()[i]
+            HollowPack.addItemModel("${id.namespace}:research_book/${id.path}".rl, AutoModelType.DEFAULT)
+        }
+
+        // textures for main book
+        val sb = buildString {
+            append("{").append('\n')
+            append("\"parent\":\"item/generated\",")
+            append("\"textures\":{\"layer0\":\"$ModId:item/research_book\"},")
+            append("\"overrides\":[")
+
+            for (i in 0 ..< entries.size) {
+                val id = entries.toList()[i]
+
+                append("{\"predicate\":{\"$ModId:type\":$i.0},\"model\":\"${id.namespace}:item/${
+                    if (i >= 1) "research_book/${id.path}" 
+                    else "research_book"
+                }\"}")
+
+                if (i < entries.size - 1) append(',')
+            }
+
+            append("]}")
+        }
+
+        HollowPack.addCustomItemModel("research_book".ecRL, sb.toString())
     }
 
     override fun fillItemCategory(category: CreativeModeTab, items: NonNullList<ItemStack>) {
@@ -120,7 +154,7 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
         val bookType = stack.bookTypes
         var moreEntries = 0
 
-        tooltipComponents.add(Component.translatable("tooltip.$ModId.book.knowledge_contains").withStyle(ChatFormatting.GOLD).append(":"))
+        tooltipComponents.add("tooltip.$ModId.book.knowledge_contains".mcTranslate.withStyle(ChatFormatting.GOLD).append(":"))
 
         for (i in 0 ..< bookType!!.size) {
             if (i <= 9)

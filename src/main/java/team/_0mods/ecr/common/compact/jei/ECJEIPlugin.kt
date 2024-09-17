@@ -1,7 +1,6 @@
 package team._0mods.ecr.common.compact.jei
 
-import mezz.jei.api.IModPlugin
-import mezz.jei.api.JeiPlugin
+import mezz.jei.api.*
 import mezz.jei.api.recipe.RecipeType
 import mezz.jei.api.registration.*
 import net.minecraft.client.Minecraft

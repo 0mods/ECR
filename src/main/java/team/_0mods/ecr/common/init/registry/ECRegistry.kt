@@ -1,17 +1,11 @@
 package team._0mods.ecr.common.init.registry
 
-import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.server.packs.resources.Resource
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.Material
-import net.minecraftforge.fml.loading.FMLLoader
-import net.minecraftforge.registries.ForgeRegistries
-import ru.hollowhorizon.hc.LOGGER
-import ru.hollowhorizon.hc.client.utils.HollowPack
 import ru.hollowhorizon.hc.client.utils.rl
 import ru.hollowhorizon.hc.common.registry.AutoModelType
 import ru.hollowhorizon.hc.common.registry.HollowRegistry
@@ -19,8 +13,6 @@ import ru.hollowhorizon.hc.common.registry.RegistryObject
 import team._0mods.ecr.ModId
 import team._0mods.ecr.api.block.PropertiedBlock
 import team._0mods.ecr.api.menu.simpleMenuFactory
-import team._0mods.ecr.api.registries.ECRegistries
-import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.blocks.*
 import team._0mods.ecr.common.blocks.entity.*
 import team._0mods.ecr.common.container.*
@@ -29,10 +21,6 @@ import team._0mods.ecr.common.items.*
 import team._0mods.ecr.common.items.tools.*
 import team._0mods.ecr.common.particle.ECParticleType
 import team._0mods.ecr.common.recipes.*
-import team._0mods.ecr.mixin.accessors.HollowPackAccessor
-import java.io.ByteArrayInputStream
-import java.io.InputStream
-import kotlin.collections.set
 
 object ECRegistry: HollowRegistry(ModId) {
     // items

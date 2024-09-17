@@ -8,7 +8,7 @@ import net.minecraft.world.entity.player.Player
 import team._0mods.ecr.common.init.registry.ECDamageSources
 import java.awt.Color
 
-class MRUCorruption: MobEffect(MobEffectCategory.HARMFUL, Color.magenta.rgb) {
+class  MRUCorruption: MobEffect(MobEffectCategory.HARMFUL, Color.magenta.rgb) {
     override fun applyEffectTick(livingEntity: LivingEntity, amplifier: Int) {
         if (!livingEntity.commandSenderWorld.isClientSide && livingEntity is Player) {
             if (livingEntity.hasEffect(MobEffects.REGENERATION))
