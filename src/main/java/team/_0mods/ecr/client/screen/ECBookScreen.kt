@@ -4,9 +4,9 @@ import imgui.flag.ImGuiWindowFlags
 import net.minecraft.client.Minecraft
 import ru.hollowhorizon.hc.client.imgui.setWindowSize
 import ru.hollowhorizon.hc.client.screens.ImGuiScreen
-import team._0mods.ecr.api.item.ECBookType
+import team._0mods.ecr.api.item.ResearchBookType
 
-class ECBookScreen(private val type: List<ECBookType>): ImGuiScreen({
+class ECBookScreen(private val type: List<ResearchBookType>): ImGuiScreen({
     val sc = Minecraft.getInstance().window.guiScale.toFloat()
 
     centredWindow("No Title?", args = ImGuiWindowFlags.AlwaysAutoResize or ImGuiWindowFlags.NoMove or ImGuiWindowFlags.NoCollapse) {

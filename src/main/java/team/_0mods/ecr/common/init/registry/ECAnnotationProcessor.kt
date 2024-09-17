@@ -10,6 +10,7 @@ import java.lang.annotation.ElementType
 import java.lang.reflect.Modifier
 
 object ECAnnotationProcessor {
+    // TODO("Need priority")
     fun init() {
         searchAnnotationWithAssigns<ECRPlugin, ECRModPlugin> {
             it.onMatrixTypeRegistry(InternalPlayerMatrixTypeRegistry(this.modId))

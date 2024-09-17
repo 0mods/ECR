@@ -41,7 +41,7 @@ tooltip.ecreimagined:
     bound: "Bound gem was bounded at pos: X: %s Y: %s Z: %s"
     unbound: Bound gem was unbounded
 
-bookType.ecreimagined:
+book_type.ecreimagined:
   basic: Basics
   mru: MRU Knowledge
   engineer: Engineer's

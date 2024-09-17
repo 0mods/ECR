@@ -3,12 +3,8 @@ package team._0mods.ecr.common.items
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.network.chat.ComponentUtils
-import net.minecraft.network.chat.MutableComponent
 import net.minecraft.world.item.Item
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.TooltipFlag
-import net.minecraft.world.level.Level
-import team._0mods.ecr.ModId
+import ru.hollowhorizon.hc.client.utils.mcTranslate
 import team._0mods.ecr.common.init.registry.ECTabs
 import java.awt.Color
 
@@ -23,21 +19,21 @@ class ECGem private constructor(private val type: Type): Item(Properties().tab(E
 
     override fun getDescription(): Component {
         return when(type) {
-            Type.ELEMENTAL -> (super.description as MutableComponent).withStyle(ChatFormatting.LIGHT_PURPLE)
+            Type.ELEMENTAL -> this.descriptionId.mcTranslate.withStyle(ChatFormatting.LIGHT_PURPLE)
             Type.FLAME -> {
-                val orig = (super.description as MutableComponent)
+                val orig = this.descriptionId.mcTranslate
                 val style = orig.style.withColor(Color.ORANGE.rgb)
 
                 ComponentUtils.mergeStyles(orig, style)
             }
-            Type.WATER -> (super.description as MutableComponent).withStyle(ChatFormatting.BLUE)
+            Type.WATER -> this.descriptionId.mcTranslate.withStyle(ChatFormatting.BLUE)
             Type.EARTH -> {
-                val orig = (super.description as MutableComponent)
+                val orig = this.descriptionId.mcTranslate
                 val style = orig.style.withColor(0x964b00)
 
                 ComponentUtils.mergeStyles(orig, style)
             }
-            Type.AIR -> (super.description as MutableComponent).withStyle(ChatFormatting.GRAY)
+            Type.AIR -> this.descriptionId.mcTranslate.withStyle(ChatFormatting.GRAY)
         }
     }
 

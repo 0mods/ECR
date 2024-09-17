@@ -18,7 +18,7 @@ import ru.hollowhorizon.hc.client.utils.rl
 import ru.hollowhorizon.hc.common.registry.AutoModelType
 import team._0mods.ecr.LOGGER
 import team._0mods.ecr.ModId
-import team._0mods.ecr.api.item.ECBookType
+import team._0mods.ecr.api.item.ResearchBookType
 import team._0mods.ecr.api.registries.ECRegistries
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.init.registry.ECBookTypes
@@ -27,12 +27,12 @@ import team._0mods.ecr.common.init.registry.ECTabs
 
 class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
     companion object {
-        var ItemStack.bookTypes: List<ECBookType>?
+        var ItemStack.bookTypes: List<ResearchBookType>?
             @NotNull
             get() {
                 if (this.item !is ECBook) throw IllegalStateException("Failed to get book type to none-book item")
                 val tag = this.orCreateTag
-                val list = mutableListOf<ECBookType>()
+                val list = mutableListOf<ResearchBookType>()
 
                 if (!tag.contains("ECBookTypes")) {
                     val tags = ListTag()

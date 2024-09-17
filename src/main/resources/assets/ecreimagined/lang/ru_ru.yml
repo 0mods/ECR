@@ -41,7 +41,7 @@ tooltip.ecreimagined:
     bound: "Кристалл привязки был привязан на позиции: X: %s Y: %s Z: %s"
     unbound: Кристал привязки отвязан
 
-bookType.ecreimagined:
+book_type.ecreimagined:
   basic: Основы
   mru: Знания об MRU
   engineer: Инженерию
