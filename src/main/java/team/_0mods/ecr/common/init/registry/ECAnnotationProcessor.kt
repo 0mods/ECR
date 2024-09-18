@@ -18,14 +18,14 @@ object ECAnnotationProcessor {
             if (!wasInitializedCorePlugin) {
                 if (!ECPlugin::class.java.isAssignableFrom(it::class.java)) {
                     needInitialization += this to it
-                } else reg(this, it)
+                } else {
+                    wasInitializedCorePlugin = true
+                    reg(this, it)
+                }
             } else reg(this, it)
         }
 
-        needInitialization.forEach {
-            reg(it.first, it.second)
-        }
-
+        needInitialization.forEach { reg(it.first, it.second) }
         needInitialization.clear()
     }
 
