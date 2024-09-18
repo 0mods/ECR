@@ -1,9 +1,8 @@
 package team._0mods.ecr.common.items
 
 import net.minecraft.ChatFormatting
-import net.minecraft.network.chat.Component
-import net.minecraft.network.chat.ComponentUtils
 import net.minecraft.world.item.Item
+import ru.hollowhorizon.hc.client.utils.colored
 import ru.hollowhorizon.hc.client.utils.mcTranslate
 import team._0mods.ecr.common.init.registry.ECTabs
 import java.awt.Color
@@ -17,23 +16,13 @@ class ECGem private constructor(private val type: Type): Item(Properties().tab(E
         val air = { ECGem(Type.AIR) }
     }
 
-    override fun getDescription(): Component {
+    override fun getDescriptionId(): String {
         return when(type) {
-            Type.ELEMENTAL -> this.descriptionId.mcTranslate.withStyle(ChatFormatting.LIGHT_PURPLE)
-            Type.FLAME -> {
-                val orig = this.descriptionId.mcTranslate
-                val style = orig.style.withColor(Color.ORANGE.rgb)
-
-                ComponentUtils.mergeStyles(orig, style)
-            }
-            Type.WATER -> this.descriptionId.mcTranslate.withStyle(ChatFormatting.BLUE)
-            Type.EARTH -> {
-                val orig = this.descriptionId.mcTranslate
-                val style = orig.style.withColor(0x964b00)
-
-                ComponentUtils.mergeStyles(orig, style)
-            }
-            Type.AIR -> this.descriptionId.mcTranslate.withStyle(ChatFormatting.GRAY)
+            Type.ELEMENTAL -> this.orCreateDescriptionId.mcTranslate.withStyle(ChatFormatting.LIGHT_PURPLE).string
+            Type.FLAME -> this.orCreateDescriptionId.mcTranslate.colored(Color.ORANGE.rgb).string
+            Type.WATER -> this.orCreateDescriptionId.mcTranslate.withStyle(ChatFormatting.BLUE).string
+            Type.EARTH -> this.orCreateDescriptionId.mcTranslate.colored(0x964b00).string
+            Type.AIR -> this.orCreateDescriptionId.mcTranslate.withStyle(ChatFormatting.GRAY).string
         }
     }
 

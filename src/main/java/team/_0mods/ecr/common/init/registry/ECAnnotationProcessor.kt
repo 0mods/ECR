@@ -10,12 +10,28 @@ import java.lang.annotation.ElementType
 import java.lang.reflect.Modifier
 
 object ECAnnotationProcessor {
-    // TODO("Need priority")
+    private var wasInitializedCorePlugin = false
+    private val needInitialization = mutableListOf<Pair<ECRPlugin, ECRModPlugin>>()
+
     fun init() {
         searchAnnotationWithAssigns<ECRPlugin, ECRModPlugin> {
-            it.onMatrixTypeRegistry(InternalPlayerMatrixTypeRegistry(this.modId))
-            it.onBookTypeRegistry(InternalBookTypeRegistry(this.modId))
+            if (!wasInitializedCorePlugin) {
+                if (!ECPlugin::class.java.isAssignableFrom(it::class.java)) {
+                    needInitialization += this to it
+                } else reg(this, it)
+            } else reg(this, it)
         }
+
+        needInitialization.forEach {
+            reg(it.first, it.second)
+        }
+
+        needInitialization.clear()
+    }
+
+    private fun reg(ann: ECRPlugin, plugin: ECRModPlugin) {
+        plugin.onMatrixTypeRegistry(InternalPlayerMatrixTypeRegistry(ann.modId))
+        plugin.onBookTypeRegistry(InternalBookTypeRegistry(ann.modId))
     }
 
     private inline fun <reified T: Annotation, reified V> searchAnnotationWithAssigns(noinline a: T.(V) -> Unit) {
