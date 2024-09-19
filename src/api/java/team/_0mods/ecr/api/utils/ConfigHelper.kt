@@ -5,10 +5,13 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
 import net.minecraftforge.fml.loading.FMLPaths
-import team._0mods.ecr.LOGGER
+import org.slf4j.LoggerFactory
+import team._0mods.ecr.api.LOGGER
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
+
+private val logger = LoggerFactory.getLogger("ECRAPI")
 
 @OptIn(ExperimentalSerializationApi::class)
 inline fun <reified T> T.loadConfig(fileName: String): T {
@@ -19,8 +22,6 @@ inline fun <reified T> T.loadConfig(fileName: String): T {
         allowComments = true
         allowTrailingComma = true
     }
-
-    LOGGER.debug("Loading config '$fileName'")
 
     val file = FMLPaths.GAMEDIR.get().resolve("config/").toFile().resolve("$fileName.json")
 

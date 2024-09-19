@@ -18,7 +18,17 @@ plugins {
 java.withSourcesJar()
 
 sourceSets {
-    main.get().resources.srcDir(file("src/generated"))
+    create("api") {
+        kotlin.srcDirs("src/api/java", "src/api/kotlin")
+        java.srcDirs("src/api/java")
+        compileClasspath += main.get().compileClasspath
+    }
+
+    main {
+        compileClasspath += sourceSets["api"].output
+        runtimeClasspath += sourceSets["api"].output
+        resources.srcDir(file("src/generated"))
+    }
 }
 
 loom {
@@ -121,6 +131,10 @@ dependencies {
 }
 
 tasks {
+    jar {
+        from(sourceSets["api"].output)
+    }
+
     compileKotlin {
         useDaemonFallbackStrategy = false
         compilerOptions.freeCompilerArgs.add("-Xjvm-default=all")
@@ -148,6 +162,17 @@ tasks {
         options.encoding = "UTF-8"
         options.release = 17
     }
+
+    val jt = task<Jar>("apiJar") {
+        archiveFileName = "${archiveFileName.get().removeSuffix(".jar")}-api.jar"
+        from(sourceSets["api"].output)
+    }
+
+    artifacts {
+        archives(jt)
+    }
+
+    build.get().dependsOn("apiJar")
 }
 
 kotlin {

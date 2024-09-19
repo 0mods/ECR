@@ -4,7 +4,7 @@ import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import ru.hollowhorizon.hc.client.utils.colored
 import ru.hollowhorizon.hc.client.utils.mcTranslate
-import team._0mods.ecr.ModId
+import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.mru.PlayerMatrixType
 
 enum class ECPlayerMatrices(

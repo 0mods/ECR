@@ -19,7 +19,7 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import team._0mods.ecr.api.block.Multipart
-import team._0mods.ecr.api.block.PropertiedBlock
+import team._0mods.ecr.common.api.PropertiedBlock
 import team._0mods.ecr.api.block.client.LowSizeBreakParticle
 import team._0mods.ecr.common.blocks.part.CrystalPart
 

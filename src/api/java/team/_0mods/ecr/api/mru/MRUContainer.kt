@@ -1,4 +1,4 @@
-package team._0mods.ecr.common.capability
+package team._0mods.ecr.api.mru
 
 import net.minecraft.network.chat.Component
 import net.minecraftforge.common.capabilities.AutoRegisterCapability

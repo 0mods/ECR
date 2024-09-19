@@ -7,7 +7,6 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import team._0mods.ecr.api.item.BoundGem
-import team._0mods.ecr.common.capability.MRUContainer
 
 interface MRUReceivable {
     /**

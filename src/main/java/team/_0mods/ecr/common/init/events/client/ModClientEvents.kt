@@ -12,8 +12,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent
 import ru.hollowhorizon.hc.common.events.registry.RegisterKeyBindingsEvent
-import team._0mods.ecr.LOGGER
-import team._0mods.ecr.client.keys.kbList
+import team._0mods.ecr.api.LOGGER
+import team._0mods.ecr.client.keys.ECKeys
 import team._0mods.ecr.client.particle.ECParticleFactory
 import team._0mods.ecr.client.renderer.MithrilineFurnaceRenderer
 import team._0mods.ecr.client.screen.container.EnvoyerScreen
@@ -57,5 +57,5 @@ fun onTexturesSwitch(e: TextureStitchEvent.Pre) {
 
 @HCSubscribe
 fun onKeyBindRegister(e: RegisterKeyBindingsEvent) {
-    kbList.forEach(e::registerKeyMapping)
+    ECKeys.kbList.forEach(e::registerKeyMapping)
 }

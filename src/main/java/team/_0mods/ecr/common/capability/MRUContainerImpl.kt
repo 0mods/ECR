@@ -1,9 +1,9 @@
-package team._0mods.ecr.common.capability.impl
+package team._0mods.ecr.common.capability
 
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.IntTag
 import net.minecraftforge.common.util.INBTSerializable
-import team._0mods.ecr.common.capability.MRUContainer
+import team._0mods.ecr.api.mru.MRUContainer
 import kotlin.math.max
 import kotlin.math.min
 

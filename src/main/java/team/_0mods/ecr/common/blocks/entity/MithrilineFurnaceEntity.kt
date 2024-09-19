@@ -26,12 +26,12 @@ import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
 import ru.hollowhorizon.hc.common.network.sendAllInDimension
-import team._0mods.ecr.ModId
+import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.block.StructuralPosition
 import team._0mods.ecr.api.block.inventory.WrappedInventory
+import team._0mods.ecr.api.mru.MRUContainer
 import team._0mods.ecr.api.utils.StackHelper
-import team._0mods.ecr.common.capability.MRUContainer
-import team._0mods.ecr.common.capability.impl.MRUContainerImpl
+import team._0mods.ecr.common.capability.MRUContainerImpl
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECCapabilities

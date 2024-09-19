@@ -11,7 +11,7 @@ import net.minecraftforge.event.TickEvent.ClientTickEvent
 import net.minecraftforge.event.entity.player.ItemTooltipEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
-import team._0mods.ecr.ModId
+import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.mru.MRUMultiplierWeapon
 
 @SubscribeEvent

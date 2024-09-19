@@ -1,4 +1,4 @@
-package team._0mods.ecr.api.plugin.registry.impl
+package team._0mods.ecr.common.api.registry
 
 import team._0mods.ecr.api.item.ResearchBookType
 import team._0mods.ecr.api.plugin.registry.BookTypeRegistry

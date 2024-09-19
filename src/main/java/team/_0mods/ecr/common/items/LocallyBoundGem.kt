@@ -13,7 +13,7 @@ import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.context.UseOnContext
 import net.minecraft.world.level.Level
-import team._0mods.ecr.ModId
+import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.mru.MRUGenerator
 import team._0mods.ecr.common.init.registry.ECTabs
 import team._0mods.ecr.api.item.BoundGem

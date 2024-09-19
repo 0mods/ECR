@@ -16,8 +16,8 @@ import ru.hollowhorizon.hc.client.utils.literal
 import ru.hollowhorizon.hc.client.utils.mcTranslate
 import ru.hollowhorizon.hc.client.utils.rl
 import ru.hollowhorizon.hc.common.registry.AutoModelType
-import team._0mods.ecr.LOGGER
-import team._0mods.ecr.ModId
+import team._0mods.ecr.api.LOGGER
+import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.item.ResearchBookType
 import team._0mods.ecr.api.registries.ECRegistries
 import team._0mods.ecr.api.utils.ecRL

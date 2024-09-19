@@ -21,7 +21,7 @@ import ru.hollowhorizon.hc.client.utils.get
 import ru.hollowhorizon.hc.client.utils.literal
 import ru.hollowhorizon.hc.client.utils.mcTranslate
 import ru.hollowhorizon.hc.client.utils.rl
-import team._0mods.ecr.ModId
+import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.mru.MRUMultiplierWeapon
 import team._0mods.ecr.api.mru.PlayerMatrixType
 import team._0mods.ecr.api.registries.ECRegistries

@@ -3,7 +3,7 @@ package team._0mods.ecr.common.compact.agriculture
 import com.blakebr0.mysticalagriculture.api.IMysticalAgriculturePlugin
 import com.blakebr0.mysticalagriculture.api.MysticalAgriculturePlugin
 import com.blakebr0.mysticalagriculture.api.lib.PluginConfig
-import team._0mods.ecr.ModId
+import team._0mods.ecr.api.ModId
 
 @MysticalAgriculturePlugin
 class ECMysticalAgriculturePlugin: IMysticalAgriculturePlugin {

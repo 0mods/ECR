@@ -1,4 +1,4 @@
-package team._0mods.ecr.api.block
+package team._0mods.ecr.common.api
 
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block

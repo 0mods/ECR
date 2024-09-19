@@ -1,6 +1,7 @@
 package team._0mods.ecr.api.plugin.registry.helper
 
 import net.minecraft.resources.ResourceLocation
+import org.jetbrains.annotations.ApiStatus
 
 interface ECRegistryObject<T> {
     /**
@@ -29,5 +30,6 @@ interface ECRegistryObject<T> {
      * @return [ResourceLocation] if [value] are registered else `null`
      */
     @Deprecated("Useless method. Use analog from ECRegistries.")
+    @ApiStatus.ScheduledForRemoval(inVersion = "1.0")
     fun getKey(value: T): ResourceLocation?
 }

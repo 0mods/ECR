@@ -3,7 +3,7 @@ package team._0mods.ecr.api.plugin.registry.helper
 import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.fml.ModList
 import ru.hollowhorizon.hc.client.utils.rl
-import team._0mods.ecr.LOGGER
+import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.api.registries.SomeRegistry
 
 open class RegistryImplementer<T>(val modId: String, val registry: SomeRegistry<T>): ECRegistryObject<T> {

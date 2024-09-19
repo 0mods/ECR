@@ -1,7 +1,7 @@
 package team._0mods.ecr.api.registries
 
 import net.minecraft.resources.ResourceLocation
-import team._0mods.ecr.LOGGER
+import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.api.item.ResearchBookType
 import team._0mods.ecr.api.mru.PlayerMatrixType
 import team._0mods.ecr.api.multiblock.IMultiblock

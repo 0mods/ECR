@@ -26,6 +26,6 @@ public class ECHeartTypeRegistry {
     }
 
     static {
-        PlayerHeartType.setReg$EC_Reimagined(ECHeartTypeRegistry::ecr$addVariant);
+        PlayerHeartType.setReg$EC_Reimagined_api(ECHeartTypeRegistry::ecr$addVariant);
     }
 }

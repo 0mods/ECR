@@ -1,16 +1,8 @@
-package team._0mods.ecr.api.block
+package team._0mods.ecr.common.api
 
-import net.minecraft.core.BlockPos
 import net.minecraft.world.item.Item
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.BaseEntityBlock
-import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraft.world.level.block.entity.BlockEntityTicker
-import net.minecraft.world.level.block.entity.BlockEntityType
-import net.minecraft.world.level.block.state.BlockState
 import ru.hollowhorizon.hc.common.objects.blocks.IBlockItemProperties
-import team._0mods.ecr.api.block.entity.BlockEntityExtensions
 import team._0mods.ecr.common.init.registry.ECTabs
 
 abstract class PropertiedEntityBlock(properties: Properties): BaseEntityBlock(properties), IBlockItemProperties {

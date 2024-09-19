@@ -10,8 +10,8 @@ import ru.hollowhorizon.hc.client.utils.rl
 import ru.hollowhorizon.hc.common.registry.AutoModelType
 import ru.hollowhorizon.hc.common.registry.HollowRegistry
 import ru.hollowhorizon.hc.common.registry.RegistryObject
-import team._0mods.ecr.ModId
-import team._0mods.ecr.api.block.PropertiedBlock
+import team._0mods.ecr.api.ModId
+import team._0mods.ecr.common.api.PropertiedBlock
 import team._0mods.ecr.api.menu.simpleMenuFactory
 import team._0mods.ecr.common.blocks.*
 import team._0mods.ecr.common.blocks.entity.*

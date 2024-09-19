@@ -7,7 +7,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import ru.hollowhorizon.hc.client.utils.rl
-import team._0mods.ecr.ModId
+import team._0mods.ecr.api.ModId
 import team._0mods.ecr.client.screen.container.MithrilineFurnaceScreen
 import team._0mods.ecr.common.compact.jei.categories.MithrilineFurnaceCategory
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer

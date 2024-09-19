@@ -18,10 +18,10 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
+import team._0mods.ecr.api.mru.MRUContainer
 import team._0mods.ecr.api.mru.MRUReceivable
 import team._0mods.ecr.api.mru.processReceive
-import team._0mods.ecr.common.capability.MRUContainer
-import team._0mods.ecr.common.capability.impl.MRUContainerImpl
+import team._0mods.ecr.common.capability.MRUContainerImpl
 import team._0mods.ecr.common.container.EnvoyerContainer
 import team._0mods.ecr.common.init.registry.ECRegistry
 

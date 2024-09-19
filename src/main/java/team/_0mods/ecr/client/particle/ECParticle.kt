@@ -14,14 +14,14 @@ import net.minecraft.client.renderer.LightTexture
 import net.minecraft.client.renderer.texture.TextureAtlas
 import net.minecraft.client.renderer.texture.TextureManager
 import org.lwjgl.opengl.GL11
-import team._0mods.ecr.ModId
+import team._0mods.ecr.api.ModId
 import java.awt.Color
 
 class ECParticle(
     level: ClientLevel, x: Double, y: Double, z: Double,
     xSpeed: Double, ySpeed: Double, zSpeed: Double,
     color: Color, alpha: Float, size: Float, lt: Int,
-    val resizeSpeed: Int, physical: Boolean, val removeOnGround: Boolean, val sprites: SpriteSet
+    val resizeSpeed: Int, physical: Boolean, val removeOnGround: Boolean, sprites: SpriteSet
 ): TextureSheetParticle(level, x, y, z, xSpeed, ySpeed, zSpeed) {
     init {
         this.setColor(color.red / 255f, color.green / 255f, color.blue / 255f)

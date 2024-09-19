@@ -1,6 +1,6 @@
 package team._0mods.ecr.common.init.registry
 
-import team._0mods.ecr.ModId
+import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.plugin.ECRModPlugin
 import team._0mods.ecr.api.plugin.ECRPlugin
 import team._0mods.ecr.api.plugin.registry.BookTypeRegistry

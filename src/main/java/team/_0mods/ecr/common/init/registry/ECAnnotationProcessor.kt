@@ -1,11 +1,11 @@
 package team._0mods.ecr.common.init.registry
 
 import net.minecraftforge.fml.ModList
-import team._0mods.ecr.LOGGER
+import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.api.plugin.ECRModPlugin
 import team._0mods.ecr.api.plugin.ECRPlugin
-import team._0mods.ecr.api.plugin.registry.impl.InternalBookTypeRegistry
-import team._0mods.ecr.api.plugin.registry.impl.InternalPlayerMatrixTypeRegistry
+import team._0mods.ecr.common.api.registry.InternalBookTypeRegistry
+import team._0mods.ecr.common.api.registry.InternalPlayerMatrixTypeRegistry
 import java.lang.annotation.ElementType
 import java.lang.reflect.Modifier
 

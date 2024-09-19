@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
-import team._0mods.ecr.api.block.PropertiedEntityBlock
+import team._0mods.ecr.common.api.PropertiedEntityBlock
 import team._0mods.ecr.api.block.checkAndOpenMenu
 import team._0mods.ecr.api.block.prepareDrops
 import team._0mods.ecr.api.block.simpleTicker

@@ -10,7 +10,7 @@ import net.minecraft.tags.TagKey
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraftforge.registries.ForgeRegistries
 import ru.hollowhorizon.hc.client.utils.rl
-import team._0mods.ecr.LOGGER
+import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.api.multiblock.IMultiblock
 import team._0mods.ecr.api.multiblock.Matcher
 import team._0mods.ecr.common.data.ECStructureData
