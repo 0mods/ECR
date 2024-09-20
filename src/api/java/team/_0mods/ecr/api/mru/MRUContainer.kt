@@ -23,8 +23,8 @@ interface MRUContainer {
 
     fun checkExtractAndReceive(receiver: MRUContainer, max: Int): Boolean {
         if (receiver.canReceive(max) && this.canExtract(max)) {
-            this.extractMru(100)
-            receiver.receiveMru(100)
+            this.extractMru(max)
+            receiver.receiveMru(max)
             return true
         }
 

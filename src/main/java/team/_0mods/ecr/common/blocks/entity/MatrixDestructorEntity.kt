@@ -38,9 +38,8 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity
         }
     }
 
-    val mruStorage = MRUContainerImpl(MRUContainer.MRUType.RADIATION_UNIT, 10000, 0) {
+    val mruContainer = MRUContainerImpl(MRUContainer.MRUType.RADIATION_UNIT, 10000, 0) {
         if (!level!!.isClientSide) {
-            /*MatrixDestructorS2CUpdatePacket(it.mruStorage, this.blockPos).sendToClient()*/
             ClientMatrixDestructorUpdate(it.mruStorage, this.blockPos).sendAllInDimension(level!!)
             setChanged()
         }
@@ -51,12 +50,12 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity
 
     var progress = 0
 
-    override val currentMRUContainer: MRUContainer get() = mruStorage
+    override val currentMRUContainer: MRUContainer get() = mruContainer
 
     override fun onLoad() {
         super.onLoad()
         itemHandlerLazy = LazyOptional.of(::itemHandler)
-        mruStorageLazy = LazyOptional.of(::mruStorage)
+        mruStorageLazy = LazyOptional.of(::mruContainer)
     }
 
     override fun invalidateCaps() {
@@ -67,14 +66,14 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity
 
     override fun saveAdditional(tag: CompoundTag) {
         tag.put("ItemStorage", itemHandler.serializeNBT())
-        tag.put("MRUStorage", mruStorage.serializeNBT())
+        tag.put("MRUStorage", mruContainer.serializeNBT())
         tag.putInt("InjectionProgress", progress)
         super.saveAdditional(tag)
     }
 
     override fun load(tag: CompoundTag) {
         itemHandler.deserializeNBT(tag.getCompound("ItemStorage"))
-        mruStorage.deserializeNBT(tag.getCompound("MRUStorage"))
+        mruContainer.deserializeNBT(tag.getCompound("MRUStorage"))
         progress = tag.getInt("InjectionProgress")
         super.load(tag)
     }
@@ -102,7 +101,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity
             val receiveCost = ECCommonConfig.instance.matrixResult
 
             if (!level.isClientSide) {
-                ClientMatrixDestructorUpdate(be.mruStorage.mruStorage, be.blockPos).sendAllInDimension(level)
+                ClientMatrixDestructorUpdate(be.mruContainer.mruStorage, pos).sendAllInDimension(level)
                 val stack = be.itemHandler.getStackInSlot(0)
 
                 if (!stack.isEmpty) {
@@ -111,7 +110,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity
                         val storage = i.getCapacity(stack)
 
                         if (storage - receiveCost >= 0) {
-                            if (be.mruStorage.mruStorage < be.mruStorage.maxMRUStorage) {
+                            if (be.mruContainer.mruStorage < be.mruContainer.maxMRUStorage) {
                                 if (storage >= convertCost) {
                                     i.remove(stack, convertCost)
                                     be.progress = convertCost
@@ -122,7 +121,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity
 
                                 if (be.progress >= convertCost) {
                                     be.progress = 0
-                                    be.mruStorage.receiveMru(receiveCost)
+                                    be.mruContainer.receiveMru(receiveCost)
                                     be.setChanged()
                                 }
                             }

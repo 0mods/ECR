@@ -54,6 +54,23 @@ loom {
                     programArgs("--uuid", lines[0], "--username", lines[1], /*"-XX:+AllowEnhancedClassRedefinition"*/)
                 }
             }
+
+            mods {
+                create(modId) {
+                    sourceSet(sourceSets["api"])
+                    sourceSet(sourceSets.main.get())
+                }
+            }
+        }
+
+        named("server") {
+            server()
+            mods {
+                create(modId) {
+                    sourceSet(sourceSets["api"])
+                    sourceSet(sourceSets.main.get())
+                }
+            }
         }
 
         create("data") {

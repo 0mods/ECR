@@ -5,10 +5,12 @@ import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
 import team._0mods.ecr.api.container.AbstractContainer
 import team._0mods.ecr.api.container.slot.SpecialSlot
+import team._0mods.ecr.common.blocks.entity.EnvoyerBlockEntity
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.items.LocallyBoundGem
 import team._0mods.ecr.common.items.LocallyBoundGem.Companion.boundPos
@@ -17,6 +19,7 @@ class EnvoyerContainer(
     containerId: Int,
     inv: Inventory,
     container: IItemHandler,
+    private val blockEntity: BlockEntity?,
     access: ContainerLevelAccess
 ) : AbstractContainer(
     ECRegistry.envoyerContainer.get(),
@@ -24,7 +27,13 @@ class EnvoyerContainer(
     access
 ) {
     constructor(containerId: Int, inv: Inventory, buf: FriendlyByteBuf):
-            this(containerId, inv, ItemStackHandler(7), ContainerLevelAccess.NULL)
+            this(containerId, inv, ItemStackHandler(7), inv.player.level.getBlockEntity(buf.readBlockPos()), ContainerLevelAccess.NULL)
+
+    val be: EnvoyerBlockEntity?
+        get() {
+            if (this.blockEntity is EnvoyerBlockEntity) return this.blockEntity
+            return null
+        }
 
     init {
         addSlot(SpecialSlot(container, 0, 26, 17, stackSize = 1))
@@ -32,7 +41,7 @@ class EnvoyerContainer(
         addSlot(SpecialSlot(container, 2, 44, 35, stackSize = 1))
         addSlot(SpecialSlot(container, 3, 26, 53, stackSize = 1))
         addSlot(SpecialSlot(container, 4, 62, 53, stackSize = 1))
-        addSlot(SpecialSlot(container, 5, 114, 35, { false }, stackSize = 1))
+        addSlot(SpecialSlot(container, 5, 116, 35, { false }, stackSize = 1))
 
         addSlot(SpecialSlot(container, 6, 152, 53, { it.item is LocallyBoundGem && it.boundPos != null }))
 
@@ -59,7 +68,8 @@ class EnvoyerContainer(
                     } else if (!this.moveItemStackTo(raw, 17, 43, false))
                         return ItemStack.EMPTY
                 }
-            }
+            } else if (!this.moveItemStackTo(raw, 7, 43, false))
+                return ItemStack.EMPTY
 
             if (raw.isEmpty) ms.set(ItemStack.EMPTY)
             else ms.setChanged()

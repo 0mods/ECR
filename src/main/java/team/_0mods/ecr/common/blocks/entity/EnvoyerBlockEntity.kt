@@ -18,14 +18,20 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
+import ru.hollowhorizon.hc.common.network.sendAllInDimension
 import team._0mods.ecr.api.mru.MRUContainer
 import team._0mods.ecr.api.mru.MRUReceivable
 import team._0mods.ecr.api.mru.processReceive
 import team._0mods.ecr.common.capability.MRUContainerImpl
 import team._0mods.ecr.common.container.EnvoyerContainer
 import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.network.ClientEnvoyerSync
 
-class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : BlockEntity(ECRegistry.envoyerEntity.get(), pos, blockState), MenuProvider, MRUReceivable {
+class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : BlockEntity(
+    ECRegistry.envoyerEntity.get(),
+    pos,
+    blockState
+), MenuProvider, MRUReceivable {
     private val itemHandler = object : ItemStackHandler(7) {
         override fun onContentsChanged(slot: Int) {
             super.onContentsChanged(slot)
@@ -37,7 +43,10 @@ class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : BlockEntity(EC
         }
     }
 
-    private val mruStorage = MRUContainerImpl(MRUContainer.MRUType.RADIATION_UNIT, 5000, 0)
+    private val mruStorage = MRUContainerImpl(MRUContainer.MRUType.RADIATION_UNIT, 5000, 0) {
+        ClientEnvoyerSync(it.mruStorage, this.blockPos).sendAllInDimension(level!!)
+        setChanged()
+    }
 
     private var itemHandlerLazy = LazyOptional.empty<IItemHandler>()
     private var mruStorageLazy = LazyOptional.empty<MRUContainer>()
@@ -80,7 +89,7 @@ class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : BlockEntity(EC
     }
 
     override fun createMenu(i: Int, arg: Inventory, arg2: Player): AbstractContainerMenu? {
-        return EnvoyerContainer(i, arg, this.itemHandler, ContainerLevelAccess.create(this.level ?: return null, this.blockPos))
+        return EnvoyerContainer(i, arg, this.itemHandler, this, ContainerLevelAccess.create(this.level ?: return null, this.blockPos))
     }
 
     override fun getDisplayName(): Component = Component.empty()
@@ -88,7 +97,10 @@ class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : BlockEntity(EC
     companion object {
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: EnvoyerBlockEntity) {
-            be.processReceive(level)
+            if (!level.isClientSide) {
+                ClientEnvoyerSync(be.mruContainer.mruStorage, pos).sendAllInDimension(level)
+                be.processReceive(level)
+            }
         }
     }
 

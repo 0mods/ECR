@@ -39,7 +39,7 @@ class MithrilineFurnaceScreen(
 
         val be = menu.blockEntity
         if (be is MithrilineFurnaceEntity) {
-            val mru = be.mruStorage
+            val mru = be.mruContainer
 
             if (isCursorAtPos(mouseX, mouseY, xPos(6), yPos(59), 18, 18))
                 this.renderTooltip(poseStack, Component.literal("${mru.mruType.display.string}: ${mru.mruStorage}/${mru.maxMRUStorage}"), mouseX, mouseY)

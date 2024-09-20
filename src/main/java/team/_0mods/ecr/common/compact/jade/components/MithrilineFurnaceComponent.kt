@@ -17,7 +17,7 @@ class MithrilineFurnaceComponent: IBlockComponentProvider {
 
     override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
         val be = accessor.blockEntity as MithrilineFurnaceEntity
-        val storage = be.mruStorage
+        val storage = be.mruContainer
         val collectors = be.getActiveCollectors(be.level!!, be.blockPos)
         val maxCollectors = ECCommonConfig.instance.mithrilineFurnaceConfig.crystalPositions.size
 

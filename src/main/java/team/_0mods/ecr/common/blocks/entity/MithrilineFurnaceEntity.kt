@@ -50,7 +50,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         }
     }
 
-    val mruStorage = MRUContainerImpl(MRUContainer.MRUType.ESPE, 10000, 0) {
+    val mruContainer = MRUContainerImpl(MRUContainer.MRUType.ESPE, 10000, 0) {
         if (!level!!.isClientSide) {
             ClientMithrilineFurnaceUpdate(it.mruStorage, this.blockPos).sendAllInDimension(level!!)
             setChanged()
@@ -92,7 +92,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     override fun onLoad() {
         super.onLoad()
         itemHandlerLazy = LazyOptional.of(::itemHandler)
-        mruStorageLazy = LazyOptional.of(::mruStorage)
+        mruStorageLazy = LazyOptional.of(::mruContainer)
         wrappedHandlerLazy = LazyOptional.of { WrappedInventory(itemHandler, { it == 1 && successfulStructure }) { i, s -> i == 0 && itemHandler.isItemValid(i, s) && successfulStructure } }
     }
 
@@ -105,7 +105,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
     override fun saveAdditional(tag: CompoundTag) {
         tag.put("ItemStorage", itemHandler.serializeNBT())
-        tag.put("ESPEStorage", mruStorage.serializeNBT())
+        tag.put("ESPEStorage", mruContainer.serializeNBT())
         tag.putBoolean("FullStructure", successfulStructure)
         tag.putBoolean("CanGenerate", canGenerate)
         tag.putInt("Progress", progress)
@@ -115,7 +115,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
     override fun load(tag: CompoundTag) {
         itemHandler.deserializeNBT(tag.getCompound("ItemStorage"))
-        mruStorage.deserializeNBT(tag.getCompound("ESPEStorage"))
+        mruContainer.deserializeNBT(tag.getCompound("ESPEStorage"))
         successfulStructure = tag.getBoolean("FullStructure")
         canGenerate = tag.getBoolean("CanGenerate")
         progress = tag.getInt("Progress")
@@ -124,7 +124,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     }
 
     override fun createMenu(id: Int, inv: Inventory, player: Player): AbstractContainerMenu? {
-        ClientMithrilineFurnaceUpdate(this.mruStorage.mruStorage, this.blockPos).sendAllInDimension(level!!)
+        ClientMithrilineFurnaceUpdate(this.mruContainer.mruStorage, this.blockPos).sendAllInDimension(level!!)
         return MithrilineFurnaceContainer(id, inv, itemHandler, this, ContainerLevelAccess.create(this.level ?: return null, this.blockPos), this.containerData)
     }
 
@@ -173,7 +173,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
             be.successfulStructure = ECMultiblocks.mithrilineFurnace.isComplete(level, pos)
 
             if (!level.isClientSide) {
-                ClientMithrilineFurnaceUpdate(be.mruStorage.mruStorage, be.blockPos).sendAllInDimension(level)
+                ClientMithrilineFurnaceUpdate(be.mruContainer.mruStorage, pos).sendAllInDimension(level)
                 if (complete) {
                     generateESPE(level, pos, be)
                     processRecipeIfPresent(be, level)
@@ -234,11 +234,11 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
                     be.maxProgress = mfr.espe
 
                     if (canCombine(result.copy(), be.itemHandler.getStackInSlot(1), inv.getItem(0).count, ingrCount)) {
-                        if (mfr.espe > be.mruStorage.mruStorage) {
+                        if (mfr.espe > be.mruContainer.mruStorage) {
                             /*be.progress++
                             be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(1, false) }*/
                             processTick(be, mfr.espe)
-                        } else if (be.mruStorage.mruStorage >= mfr.espe) {
+                        } else if (be.mruContainer.mruStorage >= mfr.espe) {
                             be.progress = mfr.espe
                             be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(mfr.espe, false) }
                         }
@@ -264,7 +264,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
         @JvmStatic
         private fun processTick(be: MithrilineFurnaceEntity, neededESPE: Int) {
-            val storage = be.mruStorage
+            val storage = be.mruContainer
 
             if (be.checkExtraction(neededESPE, 1000)) {
                 storage.extractMru(1000)
@@ -282,7 +282,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         }
 
         private fun MithrilineFurnaceEntity.checkExtraction(neededESPE: Int, max: Int): Boolean {
-            val storage = this.mruStorage
+            val storage = this.mruContainer
             return storage.canExtract(max) && (neededESPE >= (max + this.progress))
         }
 

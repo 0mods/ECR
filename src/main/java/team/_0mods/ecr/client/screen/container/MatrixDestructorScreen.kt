@@ -7,12 +7,9 @@ import net.minecraft.world.entity.player.Inventory
 import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.client.blit
-import team._0mods.ecr.api.client.isCursorAtPos
-import team._0mods.ecr.api.client.xPos
-import team._0mods.ecr.api.client.yPos
+import team._0mods.ecr.api.client.drawMRULine
 import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 import team._0mods.ecr.common.container.MatrixDestructorContainer
-import java.awt.Color
 
 class MatrixDestructorScreen(
     menu: MatrixDestructorContainer,
@@ -38,16 +35,8 @@ class MatrixDestructorScreen(
 
         val be = menu.blockEntity
         if (be is MatrixDestructorEntity) {
-            val mru = be.mruStorage
-            val startX = 38
-            val startY = 22
-            val width = 100
-            val height = 8
-            val m = ((mru.mruStorage.toFloat() / mru.maxMRUStorage) * width).toInt()
-
-            fillGradient(poseStack, xPos(startX), yPos(startY), xPos(startX + m), yPos(startY + height), Color(139, 0, 255).rgb, Color(50, 18, 122).rgb)
-            if (isCursorAtPos(mouseX, mouseY, xPos(startX), yPos(startY), width, height))
-                this.renderTooltip(poseStack, Component.literal("${mru.mruType.display.string}: ${mru.mruStorage}/${mru.maxMRUStorage}"), mouseX, mouseY)
+            val mru = be.mruContainer
+            this.drawMRULine(poseStack, mru, 38, 22, 100, 8, mouseX, mouseY)
         }
     }
 }
