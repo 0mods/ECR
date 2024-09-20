@@ -4,35 +4,30 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
-import net.minecraft.network.protocol.Packet
-import net.minecraft.network.protocol.game.ClientGamePacketListener
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
-import ru.hollowhorizon.hc.common.network.sendAllInDimension
 import team._0mods.ecr.api.mru.MRUContainer
 import team._0mods.ecr.api.mru.MRUGenerator
+import team._0mods.ecr.common.api.SyncedBlockEntity
 import team._0mods.ecr.common.capability.MRUContainerImpl
 import team._0mods.ecr.common.container.MatrixDestructorContainer
 import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.items.SoulStone
-import team._0mods.ecr.network.ClientMatrixDestructorUpdate
 
-class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity(ECRegistry.matrixDestructorEntity.get(), pos, blockState), MenuProvider, MRUGenerator {
-    private val itemHandler = object : ItemStackHandler(1) {
+class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): SyncedBlockEntity(ECRegistry.matrixDestructorEntity.get(), pos, blockState), MenuProvider, MRUGenerator {
+    val itemHandler = object : ItemStackHandler(1) {
         override fun onContentsChanged(slot: Int) {
             setChanged()
         }
@@ -40,7 +35,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity
 
     val mruContainer = MRUContainerImpl(MRUContainer.MRUType.RADIATION_UNIT, 10000, 0) {
         if (!level!!.isClientSide) {
-            ClientMatrixDestructorUpdate(it.mruStorage, this.blockPos).sendAllInDimension(level!!)
+//            ClientMatrixDestructorUpdate(it.mruStorage, this.blockPos).sendAllInDimension(level!!)
             setChanged()
         }
     }
@@ -86,8 +81,6 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity
         return super.getCapability(cap, side)
     }
 
-    override fun getUpdatePacket(): Packet<ClientGamePacketListener> = ClientboundBlockEntityDataPacket.create(this)
-
     override fun createMenu(id: Int, inv: Inventory, arg2: Player): AbstractContainerMenu? {
         return MatrixDestructorContainer(id, inv, this.itemHandler, this, ContainerLevelAccess.create(this.level ?: return null, this.blockPos))
     }
@@ -101,7 +94,6 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): BlockEntity
             val receiveCost = ECCommonConfig.instance.matrixResult
 
             if (!level.isClientSide) {
-                ClientMatrixDestructorUpdate(be.mruContainer.mruStorage, pos).sendAllInDimension(level)
                 val stack = be.itemHandler.getStackInSlot(0)
 
                 if (!stack.isEmpty) {

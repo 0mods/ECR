@@ -11,23 +11,21 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
-import ru.hollowhorizon.hc.common.network.sendAllInDimension
 import team._0mods.ecr.api.mru.MRUContainer
 import team._0mods.ecr.api.mru.MRUReceivable
 import team._0mods.ecr.api.mru.processReceive
+import team._0mods.ecr.common.api.SyncedBlockEntity
 import team._0mods.ecr.common.capability.MRUContainerImpl
 import team._0mods.ecr.common.container.EnvoyerContainer
 import team._0mods.ecr.common.init.registry.ECRegistry
-import team._0mods.ecr.network.ClientEnvoyerSync
 
-class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : BlockEntity(
+class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : SyncedBlockEntity(
     ECRegistry.envoyerEntity.get(),
     pos,
     blockState
@@ -43,10 +41,7 @@ class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : BlockEntity(
         }
     }
 
-    private val mruStorage = MRUContainerImpl(MRUContainer.MRUType.RADIATION_UNIT, 5000, 0) {
-        ClientEnvoyerSync(it.mruStorage, this.blockPos).sendAllInDimension(level!!)
-        setChanged()
-    }
+    private val mruStorage = MRUContainerImpl(MRUContainer.MRUType.RADIATION_UNIT, 5000, 0) { setChanged() }
 
     private var itemHandlerLazy = LazyOptional.empty<IItemHandler>()
     private var mruStorageLazy = LazyOptional.empty<MRUContainer>()
@@ -98,7 +93,6 @@ class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : BlockEntity(
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: EnvoyerBlockEntity) {
             if (!level.isClientSide) {
-                ClientEnvoyerSync(be.mruContainer.mruStorage, pos).sendAllInDimension(level)
                 be.processReceive(level)
             }
         }

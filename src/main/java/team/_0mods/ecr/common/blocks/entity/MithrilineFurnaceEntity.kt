@@ -4,9 +4,6 @@ import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
-import net.minecraft.network.protocol.Packet
-import net.minecraft.network.protocol.game.ClientGamePacketListener
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.SimpleContainer
 import net.minecraft.world.entity.player.Inventory
@@ -16,7 +13,6 @@ import net.minecraft.world.inventory.ContainerData
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.api.distmarker.OnlyIn
@@ -25,12 +21,12 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
-import ru.hollowhorizon.hc.common.network.sendAllInDimension
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.block.StructuralPosition
 import team._0mods.ecr.api.block.inventory.WrappedInventory
 import team._0mods.ecr.api.mru.MRUContainer
 import team._0mods.ecr.api.utils.StackHelper
+import team._0mods.ecr.common.api.SyncedBlockEntity
 import team._0mods.ecr.common.capability.MRUContainerImpl
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 import team._0mods.ecr.common.init.config.ECCommonConfig
@@ -38,24 +34,18 @@ import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECMultiblocks
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.particle.ECParticleOptions
-import team._0mods.ecr.network.ClientMithrilineFurnaceUpdate
 import java.awt.Color
 import kotlin.math.floor
 
 class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
-    BlockEntity(ECRegistry.mithrilineFurnaceEntity.get(), pos, blockState), MenuProvider {
+    SyncedBlockEntity(ECRegistry.mithrilineFurnaceEntity.get(), pos, blockState), MenuProvider {
     private val itemHandler = object : ItemStackHandler(2) {
         override fun onContentsChanged(slot: Int) {
             setChanged()
         }
     }
 
-    val mruContainer = MRUContainerImpl(MRUContainer.MRUType.ESPE, 10000, 0) {
-        if (!level!!.isClientSide) {
-            ClientMithrilineFurnaceUpdate(it.mruStorage, this.blockPos).sendAllInDimension(level!!)
-            setChanged()
-        }
-    }
+    val mruContainer = MRUContainerImpl(MRUContainer.MRUType.ESPE, 10000, 0) { setChanged() }
 
     private val containerData: ContainerData = object : ContainerData {
         override fun get(index: Int): Int = when(index) {
@@ -124,7 +114,6 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     }
 
     override fun createMenu(id: Int, inv: Inventory, player: Player): AbstractContainerMenu? {
-        ClientMithrilineFurnaceUpdate(this.mruContainer.mruStorage, this.blockPos).sendAllInDimension(level!!)
         return MithrilineFurnaceContainer(id, inv, itemHandler, this, ContainerLevelAccess.create(this.level ?: return null, this.blockPos), this.containerData)
     }
 
@@ -140,8 +129,6 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
         return super.getCapability(cap, side)
     }
-
-    override fun getUpdatePacket(): Packet<ClientGamePacketListener> = ClientboundBlockEntityDataPacket.create(this)
 
     fun getActiveCollectors(level: Level, pos: BlockPos): Int {
         val collectors = CRYSTAL_POSITION?.get(pos)?.filter { level.getBlockState(it).block == ECRegistry.mithrilineCrystal.get() }
@@ -173,7 +160,6 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
             be.successfulStructure = ECMultiblocks.mithrilineFurnace.isComplete(level, pos)
 
             if (!level.isClientSide) {
-                ClientMithrilineFurnaceUpdate(be.mruContainer.mruStorage, pos).sendAllInDimension(level)
                 if (complete) {
                     generateESPE(level, pos, be)
                     processRecipeIfPresent(be, level)

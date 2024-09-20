@@ -15,6 +15,7 @@ import ru.hollowhorizon.hc.common.events.registry.RegisterKeyBindingsEvent
 import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.client.keys.ECKeys
 import team._0mods.ecr.client.particle.ECParticleFactory
+import team._0mods.ecr.client.renderer.MatrixDestructorRenderer
 import team._0mods.ecr.client.renderer.MithrilineFurnaceRenderer
 import team._0mods.ecr.client.screen.container.EnvoyerScreen
 import team._0mods.ecr.client.screen.container.MatrixDestructorScreen
@@ -36,6 +37,7 @@ fun onClientStartup(e: FMLClientSetupEvent) {
 @SubscribeEvent
 fun onRenderRegister(e: EntityRenderersEvent.RegisterRenderers) {
     e.registerBlockEntityRenderer(ECRegistry.mithrilineFurnaceEntity.get(), ::MithrilineFurnaceRenderer)
+    e.registerBlockEntityRenderer(ECRegistry.matrixDestructorEntity.get(), ::MatrixDestructorRenderer)
 }
 
 @SubscribeEvent
