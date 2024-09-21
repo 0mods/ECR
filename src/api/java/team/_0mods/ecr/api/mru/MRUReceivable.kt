@@ -3,9 +3,9 @@ package team._0mods.ecr.api.mru
 
 import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceKey
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
+import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.api.item.BoundGem
 
 interface MRUReceivable {
@@ -28,10 +28,11 @@ fun MRUReceivable.processReceive(level: Level) {
     if (level.isClientSide) return
     val item = this.positionCrystal.item
     if (item !is BoundGem) return
-    val pos = item.getBlockPos(this.positionCrystal) ?: return
+    val pos = item.getBoundPos(this.positionCrystal) ?: return
     val server = level.server ?: return
-    val dimensionalLevel = if (item.world != null)
-        server.getLevel(ResourceKey.create(Registry.DIMENSION_REGISTRY, ResourceLocation(item.world!!)))
+    val world = item.getBoundedWorld(this.positionCrystal)
+    val dimensionalLevel = if (world != null)
+        server.getLevel(ResourceKey.create(Registry.DIMENSION_REGISTRY, world.rl))
     else null
 
     val blockEntity = if (dimensionalLevel != null) dimensionalLevel.getBlockEntity(pos) else level.getBlockEntity(pos)

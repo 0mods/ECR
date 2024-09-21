@@ -2,7 +2,6 @@ package team._0mods.ecr.client.renderer
 
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Vector3f
-import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.MultiBufferSource
 import net.minecraft.client.renderer.block.model.ItemTransforms
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
@@ -29,7 +28,7 @@ class MatrixDestructorRenderer(private val ctx: BlockEntityRendererProvider.Cont
                 scale(scale, scale, scale)
                 val time = System.currentTimeMillis() / 800.0
                 mulPose(Vector3f.YP.rotationDegrees(((time * 12.5) % 360).toFloat()))
-                Minecraft.getInstance().itemRenderer.renderStatic(stack, ItemTransforms.TransformType.GROUND, packedLight, packedOverlay, poseStack, bufferSource, 0)
+                ctx.itemRenderer.renderStatic(stack, ItemTransforms.TransformType.GROUND, packedLight, packedOverlay, poseStack, bufferSource, 0)
                 popPose()
             }
         }

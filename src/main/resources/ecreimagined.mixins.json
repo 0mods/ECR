@@ -11,6 +11,7 @@
   ],
   "mixins": [
     "GameRemapperMixin",
+    "ItemMixin",
     "ItemStackMixin",
     "LivingEntityMixin"
   ],

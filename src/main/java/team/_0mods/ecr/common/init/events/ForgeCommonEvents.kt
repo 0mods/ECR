@@ -42,18 +42,6 @@ fun onBookUsed(e: PlayerInteractEvent.RightClickItem) {
         if (level.isClientSide) {
             if (player.isCreative && player.isShiftKeyDown) return
             Minecraft.getInstance().setScreen(ECBookScreen(type!!))
-        } else {
-            if (player.isCreative && player.isShiftKeyDown) {
-                type?.forEachIndexed { i, type ->
-                    var bt = stack.bookTypes!!
-                    if (i != bt.lastIndex) {
-                        bt += type
-                        stack.bookTypes = bt
-                    } else {
-                        stack.bookTypes = null
-                    }
-                }
-            }
         }
     }
 }

@@ -10,10 +10,9 @@ import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
 import team._0mods.ecr.api.container.AbstractContainer
 import team._0mods.ecr.api.container.slot.SpecialSlot
+import team._0mods.ecr.api.item.BoundGem
 import team._0mods.ecr.common.blocks.entity.EnvoyerBlockEntity
 import team._0mods.ecr.common.init.registry.ECRegistry
-import team._0mods.ecr.common.items.LocallyBoundGem
-import team._0mods.ecr.common.items.LocallyBoundGem.Companion.boundPos
 
 class EnvoyerContainer(
     containerId: Int,
@@ -43,7 +42,14 @@ class EnvoyerContainer(
         addSlot(SpecialSlot(container, 4, 62, 53, stackSize = 1))
         addSlot(SpecialSlot(container, 5, 116, 35, { false }, stackSize = 1))
 
-        addSlot(SpecialSlot(container, 6, 152, 53, { it.item is LocallyBoundGem && it.boundPos != null }))
+        addSlot(
+            SpecialSlot(
+                container, 6, 152, 53, {
+                    val item = it.item
+                    item is BoundGem && item.getBoundPos(it) != null
+                }
+            )
+        )
 
         makeInv(inv, 8, 84)
     }

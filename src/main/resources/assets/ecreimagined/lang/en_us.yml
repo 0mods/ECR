@@ -40,6 +40,10 @@ tooltip.ecreimagined:
   bound_gem:
     bound: "Bound gem was bounded at pos: X: %s Y: %s Z: %s"
     unbound: Bound gem was unbounded
+    at: Currently bound to position at
+    dimension:
+      .: Dimension
+      unsupported: Current Bound Gem is not supports the dimension bounds
 
 book_type.ecreimagined:
   basic: Basics

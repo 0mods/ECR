@@ -11,7 +11,7 @@ abstract class AbstractContainer(
     containerId: Int,
     val access: ContainerLevelAccess
 ) : AbstractContainerMenu(menuType, containerId) {
-    private fun addSlotRange(playerInventory: Container, index: Int, x: Int, y: Int, amount: Int, dx: Int): Int {
+    protected fun addSlotRange(playerInventory: Container, index: Int, x: Int, y: Int, amount: Int, dx: Int): Int {
         var index0 = index
         var x0 = x
         for (i in 0 ..< amount) {
@@ -22,7 +22,7 @@ abstract class AbstractContainer(
         return index0
     }
 
-    private fun addSlotBox(
+    protected fun addSlotBox(
         playerInventory: Container,
         index: Int,
         x: Int,

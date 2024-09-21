@@ -40,6 +40,10 @@ tooltip.ecreimagined:
   bound_gem:
     bound: "Кристалл привязки был привязан на позиции: X: %s Y: %s Z: %s"
     unbound: Кристал привязки отвязан
+    at: Привязан к позиции
+    dimension:
+      .: Измерение
+      unsupported: Данный кристалл привязки не поддерживает привязывания между измерениями
 
 book_type.ecreimagined:
   basic: Основы
