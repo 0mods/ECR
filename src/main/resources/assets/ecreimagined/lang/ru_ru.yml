@@ -33,7 +33,7 @@ tooltip.ecreimagined:
   soul_stone:
     tracking: Отслеживается MRU матрица %s
     detected_ubmru: Обнаружено %s UBMRU энергии
-    matrix: this tooltip is not writed
+    matrix: Матрица MRU пульсирует %s энергией
     bounded: Камень души привязан к %s
     can_not_unbound: Вы не можете отвязать этот камень души
     unbounded: Камень души отвязан

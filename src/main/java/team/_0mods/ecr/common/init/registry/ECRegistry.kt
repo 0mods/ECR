@@ -11,8 +11,8 @@ import ru.hollowhorizon.hc.common.registry.AutoModelType
 import ru.hollowhorizon.hc.common.registry.HollowRegistry
 import ru.hollowhorizon.hc.common.registry.RegistryObject
 import team._0mods.ecr.api.ModId
-import team._0mods.ecr.common.api.PropertiedBlock
 import team._0mods.ecr.api.menu.simpleMenuFactory
+import team._0mods.ecr.common.api.PropertiedBlock
 import team._0mods.ecr.common.blocks.*
 import team._0mods.ecr.common.blocks.entity.*
 import team._0mods.ecr.common.container.*
@@ -53,7 +53,7 @@ object ECRegistry: HollowRegistry(ModId) {
     val matrixDestructor by register("matrix_destructor", null) {
         MatrixDestructor(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops())
     }
-    val envoyer by register("envoyer", null) { Envoyer(BlockBehaviour.Properties.of(Material.METAL)) }
+    val envoyer by register("envoyer", null) { Envoyer(BlockBehaviour.Properties.of(Material.METAL).noOcclusion().requiresCorrectToolForDrops()) }
     val mithrilineCrystal by register("mithriline_crystal", null) {
         CrystalBlock(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops())
     }

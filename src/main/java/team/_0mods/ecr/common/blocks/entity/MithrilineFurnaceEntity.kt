@@ -25,6 +25,7 @@ import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.block.StructuralPosition
 import team._0mods.ecr.api.block.inventory.WrappedInventory
 import team._0mods.ecr.api.mru.MRUContainer
+import team._0mods.ecr.api.mru.MRUReceivable
 import team._0mods.ecr.api.utils.StackHelper
 import team._0mods.ecr.common.api.SyncedBlockEntity
 import team._0mods.ecr.common.capability.MRUContainerImpl
@@ -38,14 +39,14 @@ import java.awt.Color
 import kotlin.math.floor
 
 class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
-    SyncedBlockEntity(ECRegistry.mithrilineFurnaceEntity.get(), pos, blockState), MenuProvider {
+    SyncedBlockEntity(ECRegistry.mithrilineFurnaceEntity.get(), pos, blockState), MenuProvider, MRUReceivable {
     private val itemHandler = object : ItemStackHandler(2) {
         override fun onContentsChanged(slot: Int) {
             setChanged()
         }
     }
 
-    val mruContainer = MRUContainerImpl(MRUContainer.MRUType.ESPE, 10000, 0) { setChanged() }
+    override val mruContainer = MRUContainerImpl(MRUContainer.MRUType.ESPE, 10000, 0) { setChanged() }
 
     private val containerData: ContainerData = object : ContainerData {
         override fun get(index: Int): Int = when(index) {

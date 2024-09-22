@@ -10,11 +10,13 @@ import team._0mods.ecr.api.item.BoundGem
 
 interface MRUReceivable {
     /**
-     * Gets [ItemStack] in Container that's item is instanceof [BoundGem]
+     * Gets [ItemStack] in Container that's item is instanceof [BoundGem].
      *
-     * @return [ItemStack]
+     * If null, MRU cannot be received from the generator
+     *
+     * @return [ItemStack] if present else `null` by default
      */
-    val positionCrystal: ItemStack
+    val positionCrystal: ItemStack? get() = null
 
     /**
      * Gets the current [MRUContainer]
@@ -26,11 +28,13 @@ interface MRUReceivable {
 
 fun MRUReceivable.processReceive(level: Level) {
     if (level.isClientSide) return
-    val item = this.positionCrystal.item
+    val stack = this.positionCrystal
+    if (stack == null) return
+    val item = stack.item
     if (item !is BoundGem) return
-    val pos = item.getBoundPos(this.positionCrystal) ?: return
+    val pos = item.getBoundPos(stack) ?: return
     val server = level.server ?: return
-    val world = item.getBoundedWorld(this.positionCrystal)
+    val world = item.getBoundedWorld(stack)
     val dimensionalLevel = if (world != null)
         server.getLevel(ResourceKey.create(Registry.DIMENSION_REGISTRY, world.rl))
     else null
