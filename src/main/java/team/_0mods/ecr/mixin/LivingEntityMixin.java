@@ -28,8 +28,8 @@ public abstract class LivingEntityMixin {
         if (((LivingEntity) (Object) this) instanceof Player player && food.getItem() instanceof UnConsumeBreakItem) {
             if (food.getMaxDamage() > 0) {
                 food.hurtAndBreak(1, player, (p) -> {});
-                this.addEatEffect(food, level, (LivingEntity) (Object) this);
-                ((LivingEntity) (Object) this).gameEvent(GameEvent.EAT);
+                this.addEatEffect(food, level, player);
+                player.gameEvent(GameEvent.EAT);
                 cir.setReturnValue(food);
             }
         }
