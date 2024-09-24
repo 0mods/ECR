@@ -5,14 +5,13 @@ import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.network.chat.Component
 import net.minecraft.util.Mth
-import ru.hollowhorizon.hc.client.utils.rl
-import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.client.blit
+import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 
 class MithrilineFurnaceProgressArrow(x: Int, y: Int, private val menu: MithrilineFurnaceContainer) : AbstractWidget(x, y, 16, 8, Component.empty()) {
     companion object {
-        private val texture = "$ModId:textures/gui/widget/mithriline_furnace_arrow.png".rl
+        private val texture = "textures/gui/widget/mithriline_furnace_arrow.png".ecRL
     }
 
     override fun render(poseStack: PoseStack, mouseX: Int, mouseY: Int, partialTick: Float) {

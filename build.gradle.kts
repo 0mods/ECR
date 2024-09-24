@@ -215,6 +215,7 @@ fun DependencyHandlerScope.prepareHCDeps() {
     minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding:$imguiVersion")) {}
     minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-lwjgl3:$imguiVersion")) {}
     minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding-natives:$imguiVersion")) {}
+    minecraftRuntimeLibraries("effekseer.swig:Swig:1.0")
     minecraftRuntimeLibraries("com.tianscar.imageio:imageio-apng:1.0.1")
     minecraftRuntimeLibraries("org.joml:joml:1.10.8")
 

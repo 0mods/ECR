@@ -16,11 +16,11 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
-import team._0mods.ecr.common.api.PropertiedEntityBlock
 import team._0mods.ecr.api.block.checkAndOpenMenu
 import team._0mods.ecr.api.block.client.LowSizeBreakParticle
 import team._0mods.ecr.api.block.prepareDrops
 import team._0mods.ecr.api.block.simpleTicker
+import team._0mods.ecr.common.api.PropertiedEntityBlock
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.init.registry.ECMultiblocks
 
@@ -42,7 +42,7 @@ class MithrilineFurnace(properties: Properties) : PropertiedEntityBlock(properti
         hand: InteractionHand,
         hit: BlockHitResult
     ): InteractionResult {
-        return if (ECMultiblocks.mithrilineFurnace.isComplete(level, pos)) {
+        return if (ECMultiblocks.mithrilineFurnace.isValid(level, pos)) {
             checkAndOpenMenu<MithrilineFurnaceEntity>(player, level, pos)
         } else InteractionResult.FAIL
     }

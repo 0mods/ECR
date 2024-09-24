@@ -11,7 +11,6 @@ import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraftforge.registries.ForgeRegistries
 import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.api.LOGGER
-import team._0mods.ecr.api.multiblock.IMultiblock
 import team._0mods.ecr.api.multiblock.Matcher
 import team._0mods.ecr.common.data.ECStructureData
 
@@ -20,6 +19,7 @@ class ECStructureReloadListener(private val json: Json): SimplePreparableReloadL
 
     @OptIn(ExperimentalSerializationApi::class)
     override fun apply(`object`: Unit, resourceManager: ResourceManager, profiler: ProfilerFiller) {
+        // TODO("Not work with new Multiblock System")
         resourceManager.listResources("multiblock") { it.path.endsWith(".json") }.forEach {
             var startChar = '0'
             var id = "${it.key.namespace}:${it.key.path.split("/")[1].removeSuffix(".json")}".rl
@@ -99,13 +99,14 @@ class ECStructureReloadListener(private val json: Json): SimplePreparableReloadL
             if (data.replaces.isNotEmpty())
                 id = data.replaces.rl
 
-            IMultiblock.createMultiBlock(
+            // TODO("Do not registrate!")
+            /*IMultiblock.createMultiBlock(
                 id,
                 data.pattern,
                 startChar,
                 data.replaces.isNotEmpty(),
                 *symbols
-            )
+            )*/
         }
     }
 }

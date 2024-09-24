@@ -158,7 +158,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MithrilineFurnaceEntity) {
             val complete = be.successfulStructure
-            be.successfulStructure = ECMultiblocks.mithrilineFurnace.isComplete(level, pos)
+            be.successfulStructure = ECMultiblocks.mithrilineFurnace.isValid(level, pos)
 
             if (!level.isClientSide) {
                 if (complete) {
