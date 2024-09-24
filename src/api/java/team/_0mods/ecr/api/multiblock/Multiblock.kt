@@ -5,8 +5,6 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockState
-import team._0mods.ecr.api.registries.ECRegistries
-import team._0mods.ecr.api.utils.ecRL
 
 class Multiblock internal constructor(
     private val name: ResourceLocation,
@@ -100,7 +98,7 @@ class Multiblock internal constructor(
             if (matcher.check != null) this.match[BlockPos(x, y, z)] = matcher
         }
 
-        if (!replaces) {
+        /*if (!replaces) {
             (ECRegistries.MULTIBLOCKS.registries as LinkedHashMap) += this.name to this
             ECRegistries.MULTIBLOCKS.logReg("Registered: $name")
         } else {
@@ -108,7 +106,7 @@ class Multiblock internal constructor(
                 (ECRegistries.MULTIBLOCKS.registries as LinkedHashMap)[this.name] = this
                 ECRegistries.MULTIBLOCKS.logReg("Replaced: $name")
             }
-        }
+        }*/
     }
 
     override fun isComplete(level: Level, center: BlockPos): Boolean {

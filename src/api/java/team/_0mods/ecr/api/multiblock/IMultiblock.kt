@@ -3,19 +3,17 @@ package team._0mods.ecr.api.multiblock
 import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.Level
-import ru.hollowhorizon.hc.client.utils.rl
-import team._0mods.ecr.api.registries.ECRegistries
 
 interface IMultiblock {
     companion object {
-        @JvmStatic
+        /*@JvmStatic
         fun getFromJson(id: String) = getFromJson(id.rl)
 
         @JvmStatic
         fun getFromJson(id: ResourceLocation): IMultiblock {
             val mb = ECRegistries.MULTIBLOCKS.registries[id] ?: throw NullPointerException("Failed to get multiblock from json with id $id")
             return mb
-        }
+        }*/
 
         @JvmStatic
         fun createMultiBlock(id: ResourceLocation, pattern: Array<Array<String>>, replacesExists: Boolean, vararg rawMatchers: Pair<Char, Any>): IMultiblock =

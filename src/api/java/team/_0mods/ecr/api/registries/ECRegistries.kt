@@ -1,15 +1,25 @@
 package team._0mods.ecr.api.registries
 
 import net.minecraft.resources.ResourceLocation
+import ru.hollowhorizon.hc.common.multiblock.Multiblock
 import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.api.item.ResearchBookType
 import team._0mods.ecr.api.mru.PlayerMatrixType
-import team._0mods.ecr.api.multiblock.IMultiblock
+import team._0mods.ecr.api.utils.ecRL
+import java.util.LinkedHashMap
 
 object ECRegistries {
-    @JvmField val MULTIBLOCKS = SomeRegistry.createRegistry<IMultiblock>("Multiblock Registry")
+//    @JvmField val MULTIBLOCKS = SomeRegistry.createRegistry<IMultiblock>("Multiblock Registry")
+    @JvmField val MULTIBLOCKS = SomeRegistry.createRegistry<Multiblock>("Multiblock Registry")
     @JvmField val PLAYER_MATRICES = SomeRegistry.createRegistry<PlayerMatrixType>("Player Matrices")
     @JvmField val BOOK_TYPES = SomeRegistry.createRegistry<ResearchBookType>("Book Types")
+}
+
+fun Multiblock.register(id: String) = this.register(id.ecRL)
+
+fun Multiblock.register(id: ResourceLocation): Multiblock {
+    (ECRegistries.MULTIBLOCKS.registries as LinkedHashMap)[id] = this
+    return this
 }
 
 class SomeRegistry<T> private constructor(val registryName: String) {

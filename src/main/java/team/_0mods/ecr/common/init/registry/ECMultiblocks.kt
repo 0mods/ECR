@@ -3,6 +3,7 @@ package team._0mods.ecr.common.init.registry
 import net.minecraft.tags.BlockTags
 import net.minecraft.world.level.block.Blocks
 import ru.hollowhorizon.hc.common.multiblock.Multiblock
+import team._0mods.ecr.api.registries.register
 
 object ECMultiblocks {
     //val mithrilineFurnace: IMultiblock = IMultiblock.getFromJson("mithriline_furnace".ecRL)
@@ -44,5 +45,10 @@ object ECMultiblocks {
             a, b, a,
             null, a, null
         )
+    }
+
+    fun init() {
+        mithrilineFurnace.register("mithriline_furnace")
+        soulStone.register("soul_stone")
     }
 }
