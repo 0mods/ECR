@@ -31,5 +31,5 @@ interface ECRegistryObject<T> {
      */
     @Deprecated("Useless method. Use analog from ECRegistries.")
     @ApiStatus.ScheduledForRemoval(inVersion = "1.0")
-    fun getKey(value: T): ResourceLocation?
+    fun getKey(value: T): ResourceLocation? = null
 }

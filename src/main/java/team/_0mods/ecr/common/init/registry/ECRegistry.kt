@@ -23,6 +23,8 @@ import team._0mods.ecr.common.particle.ECParticleType
 import team._0mods.ecr.common.recipes.*
 
 object ECRegistry: HollowRegistry(ModId) {
+    private val defaultBlockProperties = BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).requiresCorrectToolForDrops()
+
     // items
     val flameGem by register("flame_gem", registryEntry = ECGem.flame)
     val waterGem by register("water_gem", registryEntry = ECGem.water)
@@ -44,19 +46,16 @@ object ECRegistry: HollowRegistry(ModId) {
     val weakSword by register("weakness_elemental_sword", AutoModelType.HANDHELD) { WeakSword() }
 
     // blocks
-    val mithrilinePlating by register("mithriline_plating") {
-        PropertiedBlock(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).requiresCorrectToolForDrops())
-    }
-    val mithrilineFurnace by register("mithriline_furnace", null) {
-        MithrilineFurnace(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops())
-    }
-    val matrixDestructor by register("matrix_destructor", null) {
-        MatrixDestructor(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops())
-    }
-    val envoyer by register("envoyer", null) { Envoyer(BlockBehaviour.Properties.of(Material.METAL).noOcclusion().requiresCorrectToolForDrops()) }
-    val mithrilineCrystal by register("mithriline_crystal", null) {
-        CrystalBlock(BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).noOcclusion().requiresCorrectToolForDrops())
-    }
+    val mithrilinePlating by register("mithriline_plating") { PropertiedBlock(defaultBlockProperties) }
+    val mithrilineFurnace by register("mithriline_furnace", null) { MithrilineFurnace(defaultBlockProperties.noOcclusion()) }
+    val matrixDestructor by register("matrix_destructor", null) { MatrixDestructor(defaultBlockProperties.noOcclusion()) }
+    val envoyer by register("envoyer", null) { Envoyer(defaultBlockProperties.noOcclusion()) }
+    val mithrilineCrystal by register("mithriline_crystal", null) { CrystalBlock(defaultBlockProperties.noOcclusion()) }
+    val voidStone by register("void_stone") { PropertiedBlock(defaultBlockProperties) }
+    val paleBlock by register("pale_block") { PropertiedBlock(defaultBlockProperties) }
+    val palePlating by register("pale_plating") { PropertiedBlock(defaultBlockProperties) }
+    val magicPlating by register("magic_plating") { PropertiedBlock(defaultBlockProperties) }
+    val demonicPlating by register("demonic_plating") { PropertiedBlock(defaultBlockProperties) }
 
     // blockEntity
     val mithrilineFurnaceEntity by register("mithriline_furnace") {

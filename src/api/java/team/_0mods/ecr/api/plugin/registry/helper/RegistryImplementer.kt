@@ -26,8 +26,5 @@ open class RegistryImplementer<T>(val modId: String, val registry: SomeRegistry<
         return { type }
     }
 
-    @Deprecated("Read reason from parent class.")
-    override fun getKey(value: T): ResourceLocation? = registered.filter { it.value == value }.keys.toList().getOrNull(0)
-
     override fun getValue(id: String): T? = registered["$modId:$id".rl]
 }

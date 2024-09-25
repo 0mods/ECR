@@ -31,7 +31,6 @@ class Multiblock internal constructor(
         var zOff = 0
         var raw: Array<Array<CharArray>> = arrayOf()
 
-
         for (i in pattern.indices) {
             val row = pattern[i]
 

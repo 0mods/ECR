@@ -165,7 +165,7 @@ tasks {
             "modCredits" to "modCredits".fromProperties, "modAuthors" to "modAuthors".fromProperties,
             "modDesc" to "modDesc".fromProperties, "forgeVersionRange" to "forgeVersionRange".fromProperties,
             "minecraftVersionRange" to "minecraftVersionRange".fromProperties, "loaderVersionRange" to "loaderVersionRange".fromProperties,
-            "modLicense" to "modLicense".fromProperties, "hcVersionRange" to "[$minecraftVersion-${"hcVersion".fromProperties},)"
+            "modLicense" to "modLicense".fromProperties, "hcVersionRange" to "[${"hc_version".fromProperties},)"
         )
 
         filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta", "*.mixins.json")) {
