@@ -185,11 +185,19 @@ tasks {
         from(sourceSets["api"].output)
     }
 
-    artifacts {
-        archives(jt)
+    val sourcesAPI = task<Jar>("apiSources") {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        archiveFileName = "${archiveFileName.get().removeSuffix(".jar")}-api-sources.jar"
+        from(sourceSets["api"].allSource)
+        dependsOn("apiJar")
     }
 
-    build.get().dependsOn("apiJar")
+    named("sourcesJar").get().dependsOn("apiSources")
+
+    artifacts {
+        archives(jt)
+        archives(sourcesAPI)
+    }
 }
 
 kotlin {
