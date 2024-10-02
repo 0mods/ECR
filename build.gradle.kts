@@ -181,13 +181,13 @@ tasks {
     }
 
     val jt = task<Jar>("apiJar") {
-        archiveFileName = "${archiveFileName.get().removeSuffix(".jar")}-api.jar"
+        archiveClassifier = "api"
         from(sourceSets["api"].output)
     }
 
     val sourcesAPI = task<Jar>("apiSources") {
+        archiveClassifier = "api-sources"
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        archiveFileName = "${archiveFileName.get().removeSuffix(".jar")}-api-sources.jar"
         from(sourceSets["api"].allSource)
         dependsOn("apiJar")
     }
