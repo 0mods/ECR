@@ -3,6 +3,8 @@ package team._0mods.ecr.common.init.config
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
+import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KProperty
 
 @Serializable
 class ECCommonConfig(
@@ -23,12 +25,12 @@ class ECCommonConfig(
             internal set
     }
 
-    val matrixConsuming: Int by lazy {
+    val matrixConsuming: Int by SomeDelegate {
         val generation = matrixConfig["generation"]!!
         generation.jsonObject["umbru_get"]!!.jsonPrimitive.int
     }
 
-    val matrixResult: Int by lazy {
+    val matrixResult: Int by SomeDelegate {
         val generation = matrixConfig["generation"]!!
         generation.jsonObject["mru_exit"]!!.jsonPrimitive.int
     }
@@ -60,6 +62,13 @@ class ECCommonConfig(
 
         override fun hashCode(): Int {
             return crystalPositions.contentHashCode()
+        }
+    }
+
+    private class SomeDelegate<T>(private val g: () -> T): ReadOnlyProperty<Any?, T> {
+        override fun getValue(thisRef: Any?, property: KProperty<*>): T {
+            val l by lazy(g::invoke)
+            return l
         }
     }
 }
