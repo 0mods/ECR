@@ -8,7 +8,5 @@ import team._0mods.ecr.common.init.initCommon
 class ECReimagined {
     init {
         initCommon()
-
-        //HollowSoundHandler.MODS.add(ModId)
     }
 }

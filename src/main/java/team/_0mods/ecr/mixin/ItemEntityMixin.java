@@ -7,14 +7,13 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import team._0mods.ecr.common.init.registry.ECMultiblocks;
+import team._0mods.ecr.common.init.registry.ECRMultiblocks;
 import team._0mods.ecr.common.init.registry.ECRegistry;
 
 import java.util.Random;
@@ -33,7 +32,7 @@ public abstract class ItemEntityMixin extends Entity {
     public void tick(CallbackInfo ci) {
         if (this.getItem().is(Items.EMERALD)) {
             var bl = new BlockPos(this.position().x(), this.position().y() - 1, this. position().z());
-            if (ECMultiblocks.INSTANCE.getSoulStone().isValid(this.level, bl)) {
+            if (ECRMultiblocks.INSTANCE.getSoulStone().get().isValid(this.level, bl)) {
                 var rand = new Random();
 
                 if (ecr$tickCount++ >= 40) {

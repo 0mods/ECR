@@ -32,7 +32,7 @@ import team._0mods.ecr.common.capability.MRUContainerImpl
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECCapabilities
-import team._0mods.ecr.common.init.registry.ECMultiblocks
+import team._0mods.ecr.common.init.registry.ECRMultiblocks
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.particle.ECParticleOptions
 import java.awt.Color
@@ -49,14 +49,14 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     override val mruContainer = MRUContainerImpl(MRUContainer.MRUType.ESPE, 10000, 0) { setChanged() }
 
     private val containerData: ContainerData = object : ContainerData {
-        override fun get(index: Int): Int = when(index) {
+        override fun get(index: Int): Int = when (index) {
             0 -> this@MithrilineFurnaceEntity.progress
             1 -> this@MithrilineFurnaceEntity.maxProgress
             else -> 0
         }
 
         override fun set(index: Int, value: Int) {
-            when(index) {
+            when (index) {
                 0 -> this@MithrilineFurnaceEntity.progress = value
                 1 -> this@MithrilineFurnaceEntity.maxProgress = value
             }
@@ -76,15 +76,26 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     var canGenerate = true
 
     // Calculates only on a client
-    @OnlyIn(Dist.CLIENT) var previousRot = 0f
-    @OnlyIn(Dist.CLIENT) var rotAngle = 0f
+    @OnlyIn(Dist.CLIENT)
+    var previousRot = 0f
+    @OnlyIn(Dist.CLIENT)
+    var rotAngle = 0f
     // end
 
     override fun onLoad() {
         super.onLoad()
         itemHandlerLazy = LazyOptional.of(::itemHandler)
         mruStorageLazy = LazyOptional.of(::mruContainer)
-        wrappedHandlerLazy = LazyOptional.of { WrappedInventory(itemHandler, { it == 1 && successfulStructure }) { i, s -> i == 0 && itemHandler.isItemValid(i, s) && successfulStructure } }
+        wrappedHandlerLazy = LazyOptional.of {
+            WrappedInventory(
+                itemHandler,
+                { it == 1 && successfulStructure }) { i, s ->
+                i == 0 && itemHandler.isItemValid(
+                    i,
+                    s
+                ) && successfulStructure
+            }
+        }
     }
 
     override fun invalidateCaps() {
@@ -115,7 +126,14 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     }
 
     override fun createMenu(id: Int, inv: Inventory, player: Player): AbstractContainerMenu? {
-        return MithrilineFurnaceContainer(id, inv, itemHandler, this, ContainerLevelAccess.create(this.level ?: return null, this.blockPos), this.containerData)
+        return MithrilineFurnaceContainer(
+            id,
+            inv,
+            itemHandler,
+            this,
+            ContainerLevelAccess.create(this.level ?: return null, this.blockPos),
+            this.containerData
+        )
     }
 
     override fun getDisplayName(): Component = Component.translatable("container.$ModId.mithriline_furnace")
@@ -132,7 +150,8 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     }
 
     fun getActiveCollectors(level: Level, pos: BlockPos): Int {
-        val collectors = CRYSTAL_POSITION?.get(pos)?.filter { level.getBlockState(it).block == ECRegistry.mithrilineCrystal.get() }
+        val collectors =
+            CRYSTAL_POSITION?.get(pos)?.filter { level.getBlockState(it).block == ECRegistry.mithrilineCrystal.get() }
         if (collectors.isNullOrEmpty()) return 0
         return collectors.size
     }
@@ -157,25 +176,22 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MithrilineFurnaceEntity) {
-            val complete = be.successfulStructure
-            be.successfulStructure = ECMultiblocks.mithrilineFurnace.isValid(level, pos)
+            be.successfulStructure = ECRMultiblocks.mithrilineFurnace.get().isValid(level, pos)
 
-            if (!level.isClientSide) {
-                if (complete) {
-                    generateESPE(level, pos, be)
-                    processRecipeIfPresent(be, level)
-                } else {
-                    resetProgress(be)
-                }
-            } else {
+            if (level.isClientSide) {
                 processRot(be)
+                return
             }
 
-            if (complete) {
+            if (be.successfulStructure) {
+                generateESPE(level, pos, be)
+                processRecipeIfPresent(be, level)
                 level.addParticle(
                     ECParticleOptions(Color.GREEN, 0.5f, 10, 0.1f, true, false),
                     pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, 1.0, 1.0, 1.0
                 )
+            } else {
+                resetProgress(be)
             }
         }
 
@@ -183,11 +199,9 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         private fun generateESPE(level: Level, pos: BlockPos, be: MithrilineFurnaceEntity) {
             val collectors = be.getActiveCollectors(level, pos)
 
-            if (collectors != 0 && (be.tickCount++ % (160 / collectors) == 0)) {
+            if (collectors > 0 && (be.tickCount++ % (160 / collectors) == 0)) {
                 var collect = collectors * 4 - 3 + 1
-
                 if (!be.canGenerate) collect /= 4
-
                 be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.receiveMru(collect) }
             } else if (CRYSTAL_POSITION == null && (be.tickCount++ % 160 == 0)) {
                 be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.receiveMru(10) }
@@ -198,9 +212,10 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         private fun hasRecipe(be: MithrilineFurnaceEntity, level: Level): Boolean {
             if (!be.itemHandler.getStackInSlot(0).isEmpty) {
                 val inv = SimpleContainer(1).apply { this.setItem(0, be.itemHandler.getStackInSlot(0)) }
-                val recipe = level.recipeManager.getRecipeFor(ECRegistry.mithrilineFurnaceRecipe.get(), inv, level)
 
-                return recipe.isPresent
+                return level.recipeManager
+                    .getRecipeFor(ECRegistry.mithrilineFurnaceRecipe.get(), inv, level)
+                    .isPresent
             }
 
             return false
@@ -208,43 +223,34 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
         @JvmStatic
         private fun processRecipeIfPresent(be: MithrilineFurnaceEntity, level: Level) {
-            if (!be.itemHandler.getStackInSlot(0).isEmpty) {
-                val inv = SimpleContainer(1).apply { this.setItem(0, be.itemHandler.getStackInSlot(0)) }
-                if (hasRecipe(be, level)) {
-                    val recipe = level.recipeManager.getRecipeFor(ECRegistry.mithrilineFurnaceRecipe.get(), inv, level)
+            val inputStack = be.itemHandler.getStackInSlot(0)
+            if (inputStack.isEmpty) {
+                resetProgress(be)
+                return
+            }
 
-                    val mfr = recipe.get()
-                    val result = mfr.resultItem
-                    val ingrCount = mfr.ingredients[0].items[0].count
+            val inv = SimpleContainer(1).apply { this.setItem(0, inputStack) }
+            val recipe = level.recipeManager.getRecipeFor(ECRegistry.mithrilineFurnaceRecipe.get(), inv, level)
 
-                    be.canGenerate = false
-                    be.maxProgress = mfr.espe
+            if(recipe.isPresent) {
+                val mfr = recipe.get()
+                val result = mfr.resultItem
+                val ingrCount = mfr.ingredients[0].items[0].count
 
-                    if (canCombine(result.copy(), be.itemHandler.getStackInSlot(1), inv.getItem(0).count, ingrCount)) {
-                        if (mfr.espe > be.mruContainer.mruStorage) {
-                            /*be.progress++
-                            be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(1, false) }*/
-                            processTick(be, mfr.espe)
-                        } else if (be.mruContainer.mruStorage >= mfr.espe) {
-                            be.progress = mfr.espe
-                            be.getCapability(ECCapabilities.MRU_CONTAINER).ifPresent { it.extractMru(mfr.espe, false) }
-                        }
+                be.canGenerate = false
+                be.maxProgress = mfr.espe
 
-                        if (be.progress >= mfr.espe) {
-                            inv.clearContent()
-                            be.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent {
-                                it.extractItem(0, ingrCount, false)
-                                it.insertItem(1, result.copy(), false)
-                            }
-
-                            resetProgress(be)
-                        }
+                if (canCombine(result.copy(), be.itemHandler.getStackInSlot(1), inputStack.count, ingrCount)) {
+                    processTick(be, mfr.espe)
+                    if (be.progress >= mfr.espe) {
+                        inv.clearContent()
+                        be.itemHandler.extractItem(0, ingrCount, false)
+                        be.itemHandler.insertItem(1, result.copy(), false)
+                        resetProgress(be)
                     }
-                } else {
-                    inv.clearContent()
-                    resetProgress(be)
                 }
             } else {
+                inv.clearContent()
                 resetProgress(be)
             }
         }
@@ -252,20 +258,9 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         @JvmStatic
         private fun processTick(be: MithrilineFurnaceEntity, neededESPE: Int) {
             val storage = be.mruContainer
-
-            if (be.checkExtraction(neededESPE, 1000)) {
-                storage.extractMru(1000)
-                be.progress += 1000
-            } else if (be.checkExtraction(neededESPE, 100)) {
-                storage.extractMru(100)
-                be.progress += 100
-            } else if (be.checkExtraction(neededESPE, 10)) {
-                storage.extractMru(10)
-                be.progress += 10
-            } else {
-                storage.extractMru(1)
-                be.progress++
-            }
+            val extractionStep = listOf(1000, 100, 10, 1).firstOrNull { be.checkExtraction(neededESPE, it) } ?: 1
+            storage.extractMru(extractionStep)
+            be.progress += extractionStep
         }
 
         private fun MithrilineFurnaceEntity.checkExtraction(neededESPE: Int, max: Int): Boolean {

@@ -22,7 +22,7 @@ import team._0mods.ecr.api.block.prepareDrops
 import team._0mods.ecr.api.block.simpleTicker
 import team._0mods.ecr.common.api.PropertiedEntityBlock
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
-import team._0mods.ecr.common.init.registry.ECMultiblocks
+import team._0mods.ecr.common.init.registry.ECRMultiblocks
 
 class MithrilineFurnace(properties: Properties) : PropertiedEntityBlock(properties), LowSizeBreakParticle {
     override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = MithrilineFurnaceEntity(pos, state)
@@ -42,7 +42,7 @@ class MithrilineFurnace(properties: Properties) : PropertiedEntityBlock(properti
         hand: InteractionHand,
         hit: BlockHitResult
     ): InteractionResult {
-        return if (ECMultiblocks.mithrilineFurnace.isValid(level, pos)) {
+        return if (ECRMultiblocks.mithrilineFurnace.get().isValid(level, pos)) {
             checkAndOpenMenu<MithrilineFurnaceEntity>(player, level, pos)
         } else InteractionResult.FAIL
     }
@@ -55,9 +55,9 @@ class MithrilineFurnace(properties: Properties) : PropertiedEntityBlock(properti
     }
 
     @Suppress("OVERRIDE_DEPRECATION")
-    override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape = makeShape()
+    override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape = shape
 
-    private fun makeShape(): VoxelShape {
+    val shape by lazy {
         var shape = Shapes.empty()
         shape = Shapes.join(shape, Shapes.box(0.125, 0.875, 0.125, 0.875, 0.9375, 0.875), BooleanOp.OR)
         shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.0, 1.0, 0.125, 0.125), BooleanOp.OR)
@@ -74,8 +74,7 @@ class MithrilineFurnace(properties: Properties) : PropertiedEntityBlock(properti
         shape = Shapes.join(shape, Shapes.box(0.875, 0.125, 0.875, 1.0, 0.875, 1.0), BooleanOp.OR)
         shape = Shapes.join(shape, Shapes.box(0.125, 0.0625, 0.125, 0.875, 0.125, 0.875), BooleanOp.OR)
         shape = Shapes.join(shape, Shapes.box(0.0, 0.375, 0.0, 1.0, 0.625, 1.0), BooleanOp.OR)
-
-        return shape
+        shape
     }
 
     override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL

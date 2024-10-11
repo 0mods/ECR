@@ -97,7 +97,6 @@ class CrystalBlock(properties: Properties) : PropertiedBlock(properties), Multip
         shape = Shapes.join(shape, Shapes.box(0.375, 0.1875, 0.375, 0.625, 1.0625, 0.625), BooleanOp.OR)
         shape = Shapes.join(shape, Shapes.box(0.3125, 0.4375, 0.3125, 0.6875, 1.0625, 0.6875), BooleanOp.OR)
         shape = Shapes.join(shape, Shapes.box(0.25, 0.75, 0.25, 0.75, 1.0625, 0.75), BooleanOp.OR)
-
         return shape
     }
 

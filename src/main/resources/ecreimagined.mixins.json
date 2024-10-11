@@ -10,7 +10,6 @@
     "client.ParticleEngineMixin"
   ],
   "mixins": [
-    "GameRemapperMixin",
     "ItemEntityMixin",
     "ItemMixin",
     "ItemStackMixin",

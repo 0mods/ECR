@@ -17,11 +17,11 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
-import team._0mods.ecr.common.api.PropertiedEntityBlock
 import team._0mods.ecr.api.block.checkAndOpenMenu
 import team._0mods.ecr.api.block.client.LowSizeBreakParticle
 import team._0mods.ecr.api.block.prepareDrops
 import team._0mods.ecr.api.block.simpleTicker
+import team._0mods.ecr.common.api.PropertiedEntityBlock
 import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 
 @Suppress("OVERRIDE_DEPRECATION")
@@ -31,7 +31,7 @@ class MatrixDestructor(properties: Properties) : PropertiedEntityBlock(propertie
     override fun <T : BlockEntity?> getTicker(
         level: Level,
         state: BlockState,
-        blockEntityType: BlockEntityType<T>
+        blockEntityType: BlockEntityType<T>,
     ): BlockEntityTicker<T> = simpleTicker<T, MatrixDestructorEntity>(MatrixDestructorEntity::onTick)
 
     override fun use(
@@ -40,7 +40,7 @@ class MatrixDestructor(properties: Properties) : PropertiedEntityBlock(propertie
         pos: BlockPos,
         player: Player,
         hand: InteractionHand,
-        hit: BlockHitResult
+        hit: BlockHitResult,
     ): InteractionResult {
         Minecraft.getInstance()
         return checkAndOpenMenu<MatrixDestructorEntity>(player, level, pos)
@@ -55,9 +55,9 @@ class MatrixDestructor(properties: Properties) : PropertiedEntityBlock(propertie
     override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
 
     override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape =
-        makeShape()
+        shape
 
-    private fun makeShape(): VoxelShape {
+    val shape by lazy {
         var shape = Shapes.empty()
         shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.0, 0.125, 0.9375, 0.125), BooleanOp.OR)
         shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.875, 0.125, 0.9375, 1.0), BooleanOp.OR)
@@ -79,6 +79,6 @@ class MatrixDestructor(properties: Properties) : PropertiedEntityBlock(propertie
         shape = Shapes.join(shape, Shapes.box(0.625, 0.5625, 0.875, 0.75, 0.8125, 1.0), BooleanOp.OR)
         shape = Shapes.join(shape, Shapes.box(0.25, 0.5625, 0.875, 0.375, 0.8125, 1.0), BooleanOp.OR)
 
-        return shape
+        shape
     }
 }

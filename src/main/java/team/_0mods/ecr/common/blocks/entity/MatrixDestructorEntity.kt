@@ -26,7 +26,8 @@ import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.items.SoulStone
 
-class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): SyncedBlockEntity(ECRegistry.matrixDestructorEntity.get(), pos, blockState), MenuProvider, MRUGenerator {
+class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
+    SyncedBlockEntity(ECRegistry.matrixDestructorEntity.get(), pos, blockState), MenuProvider, MRUGenerator {
     val itemHandler = object : ItemStackHandler(1) {
         override fun onContentsChanged(slot: Int) {
             setChanged()
@@ -82,7 +83,13 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): SyncedBlock
     }
 
     override fun createMenu(id: Int, inv: Inventory, arg2: Player): AbstractContainerMenu? {
-        return MatrixDestructorContainer(id, inv, this.itemHandler, this, ContainerLevelAccess.create(this.level ?: return null, this.blockPos))
+        return MatrixDestructorContainer(
+            id,
+            inv,
+            this.itemHandler,
+            this,
+            ContainerLevelAccess.create(this.level ?: return null, this.blockPos)
+        )
     }
 
     override fun getDisplayName(): Component = Component.empty()
@@ -90,36 +97,25 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState): SyncedBlock
     companion object {
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MatrixDestructorEntity) {
+            if (level.isClientSide || be.mruContainer.mruStorage >= be.mruContainer.maxMRUStorage) return
+
             val convertCost = ECCommonConfig.instance.matrixConsuming
             val receiveCost = ECCommonConfig.instance.matrixResult
+            val stack = be.itemHandler.getStackInSlot(0)
 
-            if (!level.isClientSide) {
-                val stack = be.itemHandler.getStackInSlot(0)
+            val soulStone = stack.item as? SoulStone ?: return
+            val storage = soulStone.getCapacity(stack)
 
-                if (!stack.isEmpty) {
-                    if (stack.item is SoulStone) {
-                        val i = stack.item as SoulStone
-                        val storage = i.getCapacity(stack)
+            if (stack.isEmpty || storage < receiveCost) return
 
-                        if (storage - receiveCost >= 0) {
-                            if (be.mruContainer.mruStorage < be.mruContainer.maxMRUStorage) {
-                                if (storage >= convertCost) {
-                                    i.remove(stack, convertCost)
-                                    be.progress = convertCost
-                                } else {
-                                    i.remove(stack, 1)
-                                    be.progress++
-                                }
+            val convertAmount = if (storage >= convertCost) convertCost else 1
+            soulStone.remove(stack, convertAmount)
+            be.progress += convertAmount
 
-                                if (be.progress >= convertCost) {
-                                    be.progress = 0
-                                    be.mruContainer.receiveMru(receiveCost)
-                                    be.setChanged()
-                                }
-                            }
-                        }
-                    }
-                }
+            if (be.progress >= convertCost) {
+                be.progress = 0
+                be.mruContainer.receiveMru(receiveCost)
+                be.setChanged()
             }
         }
     }
