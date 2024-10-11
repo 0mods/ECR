@@ -131,7 +131,6 @@ dependencies {
     implementation(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-serialization-core:+")) {}
     implementation(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-serialization-json:+")) {}
 
-    // Mod compact libraries
     modImplementation("mezz.jei:jei-${minecraftVersion}-forge:${"jei_version".fromProperties}")
     modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:${"ct_version".fromProperties}")
     modImplementation("maven.modrinth:jade:${"jade_version".fromProperties}")
@@ -227,14 +226,4 @@ fun DependencyHandlerScope.prepareHCDeps() {
     minecraftRuntimeLibraries("org.joml:joml:1.10.8")
 
     minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-reflect:2.0.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-jvm:2.0.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-jvm-host:2.0.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-script-runtime:2.0.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-compiler-embeddable-mcfriendly:2.0.0")  { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-compiler-embeddable:2.0.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-compiler-impl-embeddable:2.0.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-metadata-jvm:2.0.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-stdlib-jdk7:2.0.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-datetime-jvm:0.4.0") { exclude("org.jetbrains.kotlin") }
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-scripting-common:2.0.0") { exclude("org.jetbrains.kotlin") }
 }

@@ -1,6 +1,9 @@
 @file:JvmName("MRUReceiveUtils")
 package team._0mods.ecr.api.mru
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.ItemStack
@@ -27,6 +30,7 @@ interface MRUReceivable {
 }
 
 fun MRUReceivable.processReceive(level: Level) {
+    val scope = CoroutineScope(Dispatchers.Default)
     if (level.isClientSide) return
     val stack = this.positionCrystal
     if (stack == null) return
@@ -46,10 +50,12 @@ fun MRUReceivable.processReceive(level: Level) {
     val currentContainer = this.mruContainer
     val generator = blockEntity.currentMRUContainer
 
-    if (!generator.checkExtractAndReceive(currentContainer, 100)) {
-        if (!generator.checkExtractAndReceive(currentContainer, 50)) {
-            if (!generator.checkExtractAndReceive(currentContainer, 10))
-                generator.checkExtractAndReceive(currentContainer, 1)
+    scope.launch {
+        if (!generator.checkExtractAndReceive(currentContainer, 100)) {
+            if (!generator.checkExtractAndReceive(currentContainer, 50)) {
+                if (!generator.checkExtractAndReceive(currentContainer, 10))
+                    generator.checkExtractAndReceive(currentContainer, 1)
+            }
         }
     }
 }
