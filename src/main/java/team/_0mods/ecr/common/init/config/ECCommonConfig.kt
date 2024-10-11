@@ -23,17 +23,14 @@ class ECCommonConfig(
             internal set
     }
 
-    /**
-     * TODO: Алго блять, каждый тик декодировать из конфига данные - ужасно. Переделай)
-      */
-    val matrixConsuming: Int get() {
+    val matrixConsuming: Int by lazy {
         val generation = matrixConfig["generation"]!!
-        return generation.jsonObject["umbru_get"]!!.jsonPrimitive.int
+        generation.jsonObject["umbru_get"]!!.jsonPrimitive.int
     }
 
-    val matrixResult: Int get() {
+    val matrixResult: Int by lazy {
         val generation = matrixConfig["generation"]!!
-        return generation.jsonObject["mru_exit"]!!.jsonPrimitive.int
+        generation.jsonObject["mru_exit"]!!.jsonPrimitive.int
     }
 
     @Serializable
