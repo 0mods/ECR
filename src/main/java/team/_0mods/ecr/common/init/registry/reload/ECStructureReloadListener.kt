@@ -2,17 +2,9 @@ package team._0mods.ecr.common.init.registry.reload
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
-import net.minecraft.core.Registry
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener
-import net.minecraft.tags.TagKey
 import net.minecraft.util.profiling.ProfilerFiller
-import net.minecraftforge.registries.ForgeRegistries
-import ru.hollowhorizon.hc.client.utils.rl
-import team._0mods.ecr.api.LOGGER
-import team._0mods.ecr.api.multiblock.Matcher
-import team._0mods.ecr.common.data.ECStructureData
 
 class ECStructureReloadListener(private val json: Json): SimplePreparableReloadListener<Unit>() {
     override fun prepare(resourceManager: ResourceManager, profiler: ProfilerFiller) {}
@@ -20,7 +12,7 @@ class ECStructureReloadListener(private val json: Json): SimplePreparableReloadL
     @OptIn(ExperimentalSerializationApi::class)
     override fun apply(`object`: Unit, resourceManager: ResourceManager, profiler: ProfilerFiller) {
         // TODO("Not work with new Multiblock System")
-        resourceManager.listResources("multiblock") { it.path.endsWith(".json") }.forEach {
+        /*resourceManager.listResources("multiblock") { it.path.endsWith(".json") }.forEach {
             var startChar = '0'
             var id = "${it.key.namespace}:${it.key.path.split("/")[1].removeSuffix(".json")}".rl
             val data = json.decodeFromStream(ECStructureData.serializer(), it.value.open())
@@ -100,13 +92,13 @@ class ECStructureReloadListener(private val json: Json): SimplePreparableReloadL
                 id = data.replaces.rl
 
             // TODO("Do not registrate!")
-            /*IMultiblock.createMultiBlock(
+            *//*IMultiblock.createMultiBlock(
                 id,
                 data.pattern,
                 startChar,
                 data.replaces.isNotEmpty(),
                 *symbols
-            )*/
-        }
+            )*//*
+        }*/
     }
 }

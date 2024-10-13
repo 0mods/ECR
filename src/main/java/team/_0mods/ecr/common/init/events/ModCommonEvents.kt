@@ -12,7 +12,6 @@ import team._0mods.ecr.common.init.config.ECCommonConfig
 @OptIn(ExperimentalSerializationApi::class)
 @SubscribeEvent
 fun onModSetup(e: FMLCommonSetupEvent) {
-
     ECCommonConfig.instance = ECCommonConfig().loadConfig("essential-craft/common")
 }
 

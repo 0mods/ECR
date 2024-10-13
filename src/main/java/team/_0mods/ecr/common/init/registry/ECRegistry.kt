@@ -38,6 +38,26 @@ object ECRegistry: HollowRegistry(ModId) {
     val boundGem by register("bound_gem") { LocallyBoundGem() }
 
     val elementalCore = basicItem("elemental_core")
+    val combinedMagicAlloys = basicItem("combined_magic_alloys")
+    val demonicCore = basicItem("demonic_core")
+    val diamondPlate = basicItem("diamond_plate")
+    val emeraldPlate = basicItem("emerald_plate")
+    val enderScalePlating = basicItem("ender_scale_plating")
+    val forceFieldCore = basicItem("forcefield_core")
+    val forceFieldPlating = basicItem("forcefield_plating")
+    val fortifiedFrame = basicItem("fortified_frame")
+    val magicFortifiedPlating = basicItem("magic_fortified_plating")
+    val magicPlate = basicItem("magic_plate")
+    val magicPurifiedBlazeAlloy = basicItem("magic_purified_blaze_alloy")
+    val magicPurifiedEnderScaleAlloy = basicItem("magic_purified_ender_scale_alloy")
+    val magicPurifiedGlassAlloy = basicItem("magic_purified_glass_alloy")
+    val obsidianPlate = basicItem("obsidian_plate")
+    val paleCore = basicItem("pale_core")
+    val palePlate = basicItem("pale_plate")
+    val particleCatcher = basicItem("particle_catcher")
+    val particleEmitter = basicItem("particle_emitter")
+    val sunImbuedGlass = basicItem("sun_imbued_glass")
+    val voidPlating = basicItem("void_plating")
 
     val weakAxe by register("weakness_elemental_axe", AutoModelType.HANDHELD) { WeakAxe() }
     val weakHoe by register("weakness_elemental_hoe", AutoModelType.HANDHELD) { WeakHoe() }
@@ -87,7 +107,7 @@ object ECRegistry: HollowRegistry(ModId) {
     // effects
     val mruCorruption by register("mru_corruption", registryEntry = ::MRUCorruption)
 
-    private fun basicItem(id: String, autoModel: AutoModelType? = AutoModelType.DEFAULT, props: Item.Properties.() -> Unit = {}): RegistryObject<Item> {
+    private fun basicItem(id: String, autoModel: AutoModelType? = AutoModelType.DEFAULT, props: Item.Properties.() -> Unit = { this.tab(ECTabs.tabItems) }): RegistryObject<Item> {
         val p = Item.Properties().apply(props)
         val reg by register(id, autoModel) { Item(p) }
         return reg

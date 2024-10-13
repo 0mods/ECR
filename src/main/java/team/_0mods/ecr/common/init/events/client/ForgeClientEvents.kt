@@ -43,12 +43,12 @@ fun onBoundGemTooltip(e: ItemTooltipEvent) {
             tooltip.add("tooltip.ecreimagined.bound_gem.at".mcTranslate.append(":").withStyle(ChatFormatting.GOLD))
             tooltip.add(
                 "X".literal.withStyle(ChatFormatting.RED).append(": ")
-                    .append("${pos.x}".literal/*.withStyle(ChatFormatting.WHITE)*/).append(" ")
+                    .append("${pos.x}".literal).append(" ")
                     .append("Y".literal.withStyle(ChatFormatting.GREEN).append(": ")
-                        .append("${pos.y}".literal/*.withStyle(ChatFormatting.WHITE)*/).append(" "))
+                        .append("${pos.y}".literal).append(" "))
                     .append(
                         "Z".literal.withStyle(ChatFormatting.BLUE).append(": ")
-                            .append("${pos.z}".literal/*.withStyle(ChatFormatting.WHITE)*/))
+                            .append("${pos.z}".literal))
             )
 
             if (!item.dimensionalBounds) {

@@ -35,10 +35,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
     }
 
     val mruContainer = MRUContainerImpl(MRUContainer.MRUType.RADIATION_UNIT, 10000, 0) {
-        if (!level!!.isClientSide) {
-//            ClientMatrixDestructorUpdate(it.mruStorage, this.blockPos).sendAllInDimension(level!!)
-            setChanged()
-        }
+        if (!level!!.isClientSide) setChanged()
     }
 
     private var itemHandlerLazy = LazyOptional.empty<IItemHandler>()

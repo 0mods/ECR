@@ -12,7 +12,7 @@ import net.minecraft.world.item.crafting.*
 import net.minecraft.world.level.Level
 import team._0mods.ecr.common.init.registry.ECRegistry
 
-class EnvoyerRecipe(
+class  EnvoyerRecipe(
     private val id: ResourceLocation,
     private val inputs: NonNullList<Ingredient>,
     private val catalyzer: NonNullList<Ingredient>,
