@@ -15,14 +15,18 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import team._0mods.ecr.common.init.registry.ECRMultiblocks;
 import team._0mods.ecr.common.init.registry.ECRegistry;
+import team._0mods.ecr.common.particle.ECParticleOptions;
 
+import java.awt.*;
 import java.util.Random;
 
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin extends Entity {
-    @Shadow public abstract ItemStack getItem();
+    @Shadow
+    public abstract ItemStack getItem();
 
-    @Unique private int ecr$tickCount = 0;
+    @Unique
+    private int ecr$tickCount = 0;
 
     public ItemEntityMixin(EntityType<?> entityType, Level level) {
         super(entityType, level);
@@ -31,9 +35,14 @@ public abstract class ItemEntityMixin extends Entity {
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))
     public void tick(CallbackInfo ci) {
         if (this.getItem().is(Items.EMERALD)) {
-            var bl = new BlockPos(this.position().x(), this.position().y() - 1, this. position().z());
+            var bl = new BlockPos(this.position().x(), this.position().y() - 1, this.position().z());
             if (ECRMultiblocks.INSTANCE.getSoulStone().get().isValid(this.level, bl)) {
                 var rand = new Random();
+
+                var pos = position();
+                level.addParticle(new ECParticleOptions(Color.GREEN, 0.5f, 40, 0.05f, false, false),
+                        pos.x, pos.y + 0.5, pos.z, 1.0, 1.0, 1.0);
+
 
                 if (ecr$tickCount++ >= 40) {
                     ecr$tickCount = 0;
