@@ -66,16 +66,16 @@ object ECRegistry: HollowRegistry(ModId) {
     val weakSword by register("weakness_elemental_sword", AutoModelType.HANDHELD) { WeakSword() }
 
     // blocks
-    val mithrilinePlating by register("mithriline_plating") { PropertiedBlock(defaultBlockProperties) }
+    val mithrilinePlating by register("mithriline_plating", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
     val mithrilineFurnace by register("mithriline_furnace", null) { MithrilineFurnace(defaultBlockProperties.noOcclusion()) }
     val matrixDestructor by register("matrix_destructor", null) { MatrixDestructor(defaultBlockProperties.noOcclusion()) }
     val envoyer by register("envoyer", null) { Envoyer(defaultBlockProperties.noOcclusion()) }
     val mithrilineCrystal by register("mithriline_crystal", null) { CrystalBlock(defaultBlockProperties.noOcclusion()) }
-    val voidStone by register("void_stone") { PropertiedBlock(defaultBlockProperties) }
-    val paleBlock by register("pale_block") { PropertiedBlock(defaultBlockProperties) }
-    val palePlating by register("pale_plating") { PropertiedBlock(defaultBlockProperties) }
-    val magicPlating by register("magic_plating") { PropertiedBlock(defaultBlockProperties) }
-    val demonicPlating by register("demonic_plating") { PropertiedBlock(defaultBlockProperties) }
+    val voidStone by register("void_stone", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
+    val paleBlock by register("pale_block", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
+    val palePlating by register("pale_plating", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
+    val magicPlating by register("magic_plating", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
+    val demonicPlating by register("demonic_plating", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
 
     // blockEntity
     val mithrilineFurnaceEntity by register("mithriline_furnace") {
