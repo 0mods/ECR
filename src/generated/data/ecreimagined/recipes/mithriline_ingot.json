@@ -1,0 +1,10 @@
+{
+  "type": "ecreimagined:mithriline_furnace",
+  "espe": 60,
+  "ingredient": {
+    "item": "ecreimagined:mithriline_dust"
+  },
+  "result": {
+    "item": "ecreimagined:mithriline_ingot"
+  }
+}
