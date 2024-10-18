@@ -59,6 +59,15 @@ object ECRegistry: HollowRegistry(ModId) {
     val sunImbuedGlass = basicItem("sun_imbued_glass")
     val voidPlating = basicItem("void_plating")
 
+    val mithrilineIngot = basicItem("mithriline_ingot")
+    val magicalIngot = basicItem("magical_ingot")
+
+    val mithrilineDust = basicItem("mithriline_dust")
+
+    val heatCore = basicItem("heat_core")
+
+    val mithrilineCrystalGem = basicItem("mithriline_crystal_gem")
+
     val weakAxe by register("weakness_elemental_axe", AutoModelType.HANDHELD) { WeakAxe() }
     val weakHoe by register("weakness_elemental_hoe", AutoModelType.HANDHELD) { WeakHoe() }
     val weakPickaxe by register("weakness_elemental_pickaxe", AutoModelType.HANDHELD) { WeakPickaxe() }
