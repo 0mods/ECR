@@ -10,12 +10,42 @@ item.ecreimagined:
   earth_gem: Земляной кристалл
   air_gem: Воздушный кристалл
   soul_stone: Камень души
+  bound_gem: Кристалл привязки
+  elemental_core: Элементальное ядро
+  combined_magic_alloys: Комбинированный магический сплав
+  demonic_core: Демоническое ядро
+  diamond_plate: Алмазная пластина
+  emerald_plate: Изумрудная пластина
+  ender_scale_alloy: Сплав чешуи края
+  forcefield_core: Ядро силового поля
+  forcefield_plating: Покрытие силового поля
+  fortified_frame: Укрепленная рамка
+  magic_fortified_plating: Укрепленная магическая пластина
+  magic_plate: Магическая пластина
+  magic_purified_blaze_alloy: Магически очищенный блейзовый сплав
+  # idk how translate blaze, lol.
+  # FIXME: algorithmlx, learn english and russian and how to translate it, lol.
+  magic_purified_ender_scale_alloy: Магически очищенный сплав чешуи края
+  magic_purified_glass_alloy: Магически очищенный стеклянный сплав
+  obsidian_plate: Обсидиановая пластина
+  pale_core: Тусклое ядро
+  pale_plate: Туская пластина
+  particle_catcher: Улавливатель частиц
+  particle_emitter: Излучатель частиц
+  sun_imbued_glass: Стекло укреплённое солнцем
+  void_plating: Пустотная пластина
+  mithriline_ingot: Мифрилиновый слиток
+  magical_ingot: Магический слиток
+  mithriline_dust: Мифрилиновая пыль
+  heating_rod: Тепловой стержень
+  mithriline_crystal_gem: Мифрилиновый кристалл
+  mru_resonating_crystal: Резонирующий MRU кристалл
+  fading_crystal: Уведающий кристалл
   weakness_elemental_axe: Ослабленный элементальный топор
   weakness_elemental_hoe: Ослабленная элементальная мотыга
   weakness_elemental_pickaxe: Ослабленная элементальная кирка
   weakness_elemental_shovel: Ослабленная элементальная лопата
   weakness_elemental_sword: Ослабленный элементальный меч
-  bound_gem: Кристалл привязки
 
 block.ecreimagined:
   mithriline_furnace: Мифрилиновая печь
@@ -38,7 +68,7 @@ tooltip.ecreimagined:
     can_not_unbound: Вы не можете отвязать этот камень души
     unbounded: Камень души отвязан
   bound_gem:
-    bound: "Кристалл привязки был привязан на позиции: X: %s Y: %s Z: %s"
+    bound: "Кристалл привязки был привязан к позиции: %s"
     unbound: Кристал привязки отвязан
     at: Привязан к позиции
     dimension:

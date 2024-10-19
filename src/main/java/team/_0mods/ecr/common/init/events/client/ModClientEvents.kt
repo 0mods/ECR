@@ -1,8 +1,10 @@
-@file:Mod.EventBusSubscriber(Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+ @file:Mod.EventBusSubscriber(Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 
 package team._0mods.ecr.common.init.events.client
 
 import net.minecraft.client.gui.screens.MenuScreens
+import net.minecraft.client.renderer.ItemBlockRenderTypes
+import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.texture.TextureAtlas
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.EntityRenderersEvent
@@ -23,14 +25,20 @@ import team._0mods.ecr.client.screen.container.MithrilineFurnaceScreen
 import team._0mods.ecr.common.init.registry.ECRegistry
 import ru.hollowhorizon.hc.common.events.SubscribeEvent as HCSubscribe
 
-@SubscribeEvent
+ @SubscribeEvent
 fun onClientStartup(e: FMLClientSetupEvent) {
     LOGGER.info("Initializing client")
+    @Suppress("REMOVAL", "DEPRECATION")
     e.enqueueWork {
         LOGGER.info("Registering screens")
         MenuScreens.register(ECRegistry.mithrilineFurnaceContainer.get(), ::MithrilineFurnaceScreen)
         MenuScreens.register(ECRegistry.matrixDestructorContainer.get(), ::MatrixDestructorScreen)
         MenuScreens.register(ECRegistry.envoyerContainer.get(), ::EnvoyerScreen)
+
+        ItemBlockRenderTypes.setRenderLayer(ECRegistry.airCluster.get(), RenderType.cutout())
+        ItemBlockRenderTypes.setRenderLayer(ECRegistry.earthCluster.get(), RenderType.cutout())
+        ItemBlockRenderTypes.setRenderLayer(ECRegistry.waterCluster.get(), RenderType.cutout())
+        ItemBlockRenderTypes.setRenderLayer(ECRegistry.flameCluster.get(), RenderType.cutout())
     }
 }
 

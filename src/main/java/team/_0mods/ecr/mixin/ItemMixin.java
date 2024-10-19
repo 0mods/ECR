@@ -24,15 +24,14 @@ public class ItemMixin {
     @Inject(method = "use", at = @At("HEAD"), cancellable = true)
     public void use(Level level, Player player, InteractionHand usedHand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> cir) {
         var item = player.getItemInHand(usedHand);
-        if (item.getItem() instanceof BoundGem bg) {
-            if (player.isShiftKeyDown()) {
-                if (bg.getBoundPos(item) != null) {
-                    player.displayClientMessage(mcTranslate(String.format("tooltip.%s.bound_gem.unbound", ECConstantsKt.ModId)), true);
-                    bg.setBoundPos(item, null);
-                    cir.setReturnValue(InteractionResultHolder.success(item));
-                }
-            }
-        }
+
+        if (!(item.getItem() instanceof BoundGem bg)) return;
+        if (!player.isShiftKeyDown()) return;
+        if (bg.getBoundPos(item) == null) return;
+
+        player.displayClientMessage(mcTranslate(String.format("tooltip.%s.bound_gem.unbound", ECConstantsKt.ModId)), true);
+        bg.setBoundPos(item, null);
+        cir.setReturnValue(InteractionResultHolder.success(item));
     }
 
     @Inject(method = "useOn", at = @At("HEAD"), cancellable = true)
@@ -44,26 +43,27 @@ public class ItemMixin {
         var pos = context.getClickedPos();
 
         var blockEntity = level.getBlockEntity(pos);
-        if (stack.getItem() instanceof BoundGem bg) {
-            if (blockEntity instanceof MRUGenerator) {
-                if (bg.getBoundPos(stack) == null) {
-                    player.displayClientMessage(mcTranslate(String.format("tooltip.%s.bound_gem.bound", ECConstantsKt.ModId), pos.getX(), pos.getY(), pos.getZ()), true);
-                    if (stack.getCount() > 1) {
-                        var copiedStack = stack.copy();
-                        copiedStack.setCount(1);
-                        bg.setBoundPos(copiedStack, pos);
 
-                        stack.shrink(1);
+        if (!(stack.getItem() instanceof BoundGem bg)) return;
+        if (!(blockEntity instanceof MRUGenerator)) return;
+        if (bg.getBoundPos(stack) != null) return;
 
-                        var ent = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), copiedStack);
-                        ent.setNoPickUpDelay();
-                        ent.setOwner(player.getUUID());
-                        level.addFreshEntity(ent);
-                    } else bg.setBoundPos(stack, pos);
+        var builder = "X:" + ' ' + pos.getX() + ' ' +
+                "Y:" + ' ' + pos.getY() + ' ' +
+                "Z:" + ' ' + pos.getZ();
 
-                    cir.setReturnValue(InteractionResult.SUCCESS);
-                }
-            }
-        }
+        player.displayClientMessage(mcTranslate(String.format("tooltip.%s.bound_gem.bound", ECConstantsKt.ModId), builder), true);
+        if (stack.getCount() > 1) {
+            var copiedStack = stack.copy();
+            copiedStack.setCount(1);
+            bg.setBoundPos(copiedStack, pos);
+            stack.shrink(1);
+            var ent = new ItemEntity(level, player.getX(), player.getY(), player.getZ(), copiedStack);
+            ent.setNoPickUpDelay();
+            ent.setOwner(player.getUUID());
+            level.addFreshEntity(ent);
+        } else bg.setBoundPos(stack, pos);
+
+        cir.setReturnValue(InteractionResult.SUCCESS);
     }
 }

@@ -24,6 +24,9 @@ import team._0mods.ecr.common.recipes.*
 
 object ECRegistry: HollowRegistry(ModId) {
     private val defaultBlockProperties = BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).requiresCorrectToolForDrops()
+    private val clusterProperties = BlockBehaviour.Properties.of(Material.AMETHYST).noOcclusion()
+        .isViewBlocking { _, _, _ -> false }
+        .isSuffocating { _, _, _ -> false }
 
     // items
     val flameGem by register("flame_gem", registryEntry = ECGem.flame)
@@ -42,7 +45,7 @@ object ECRegistry: HollowRegistry(ModId) {
     val demonicCore = basicItem("demonic_core")
     val diamondPlate = basicItem("diamond_plate")
     val emeraldPlate = basicItem("emerald_plate")
-    val enderScalePlating = basicItem("ender_scale_plating")
+    val enderScalePlating = basicItem("ender_scale_alloy")
     val forceFieldCore = basicItem("forcefield_core")
     val forceFieldPlating = basicItem("forcefield_plating")
     val fortifiedFrame = basicItem("fortified_frame")
@@ -64,9 +67,11 @@ object ECRegistry: HollowRegistry(ModId) {
 
     val mithrilineDust = basicItem("mithriline_dust")
 
-    val heatCore = basicItem("heat_core")
+    val heatingRod = basicItem("heating_rod")
 
     val mithrilineCrystalGem = basicItem("mithriline_crystal_gem")
+    val mruResonatingCrystal = basicItem("mru_resonating_crystal")
+    val fadingCrystal = basicItem("fading_crystal")
 
     val weakAxe by register("weakness_elemental_axe", AutoModelType.HANDHELD) { WeakAxe() }
     val weakHoe by register("weakness_elemental_hoe", AutoModelType.HANDHELD) { WeakHoe() }
@@ -85,6 +90,10 @@ object ECRegistry: HollowRegistry(ModId) {
     val palePlating by register("pale_plating", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
     val magicPlating by register("magic_plating", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
     val demonicPlating by register("demonic_plating", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
+    val flameCluster by register("flame_cluster", null) { PropertiedBlock(clusterProperties) }
+    val waterCluster by register("water_cluster", null) { PropertiedBlock(clusterProperties) }
+    val earthCluster by register("earth_cluster", null) { PropertiedBlock(clusterProperties) }
+    val airCluster by register("air_cluster", null) { PropertiedBlock(clusterProperties) }
 
     // blockEntity
     val mithrilineFurnaceEntity by register("mithriline_furnace") {

@@ -16,7 +16,7 @@ item.ecreimagined:
   demonic_core: Demonic Core
   diamond_plate: Diamond Plate
   emerald_plate: Emerald Plate
-  ender_scale_plating: Ender Scale Plating
+  ender_scale_alloy: Ender Scale Alloy
   forcefield_core: Force Field Core
   forcefield_plating: Force Field Plating
   fortified_frame: Fortified Frame
@@ -32,6 +32,13 @@ item.ecreimagined:
   particle_emitter: Particle Emitter
   sun_imbued_glass: Sun Imbued Glass
   void_plating: Void Plating
+  mithriline_ingot: Mithriline Ingot
+  magical_ingot: Magical Ingot
+  mithriline_dust: Mithriline Dust
+  heating_rod: Heat Rod
+  mithriline_crystal_gem: Mithriline Crystal
+  mru_resonating_crystal: MRU Resonating Crystal
+  fading_crystal: Fading Crystal
   weakness_elemental_axe: Weakness Elemental Axe
   weakness_elemental_hoe: Weakness Elemental Hoe
   weakness_elemental_pickaxe: Weakness Elemental Pickaxe
@@ -49,6 +56,10 @@ block.ecreimagined:
   pale_plating: Pale Plating
   magic_plating: Magic Plating
   demonic_plating: Demonic Plating
+  flame_cluster: Flame Cluster
+  water_cluster: Water Cluster
+  earth_cluster: Earth Cluster
+  air_cluster: Air Cluster
 
 tooltip.ecreimagined:
   sword_multiplier: MRU Gain Bonus
@@ -66,7 +77,7 @@ tooltip.ecreimagined:
     can_not_unbound: You can't unbound this soul stone
     unbounded: The soul stone is unbounded
   bound_gem:
-    bound: "Bound gem was bounded at pos: X: %s Y: %s Z: %s"
+    bound: "Bound gem was bounded at pos: %s"
     unbound: Bound gem was unbounded
     at: Currently bound to position at
     dimension:
