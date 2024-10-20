@@ -24,9 +24,7 @@ import team._0mods.ecr.common.recipes.*
 
 object ECRegistry: HollowRegistry(ModId) {
     private val defaultBlockProperties = BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).requiresCorrectToolForDrops()
-    private val clusterProperties = BlockBehaviour.Properties.of(Material.AMETHYST).noOcclusion()
-        .isViewBlocking { _, _, _ -> false }
-        .isSuffocating { _, _, _ -> false }
+    private val clusterProperties = BlockBehaviour.Properties.of(Material.AMETHYST).noOcclusion().strength(1.5F).requiresCorrectToolForDrops()
 
     // items
     val flameGem by register("flame_gem", registryEntry = ECGem.flame)
@@ -90,10 +88,10 @@ object ECRegistry: HollowRegistry(ModId) {
     val palePlating by register("pale_plating", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
     val magicPlating by register("magic_plating", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
     val demonicPlating by register("demonic_plating", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
-    val flameCluster by register("flame_cluster", null) { PropertiedBlock(clusterProperties) }
-    val waterCluster by register("water_cluster", null) { PropertiedBlock(clusterProperties) }
-    val earthCluster by register("earth_cluster", null) { PropertiedBlock(clusterProperties) }
-    val airCluster by register("air_cluster", null) { PropertiedBlock(clusterProperties) }
+    val flameCluster by register("flame_cluster", null) { ClusterBlock(clusterProperties) }
+    val waterCluster by register("water_cluster", null) { ClusterBlock(clusterProperties) }
+    val earthCluster by register("earth_cluster", null) { ClusterBlock(clusterProperties) }
+    val airCluster by register("air_cluster", null) { ClusterBlock(clusterProperties) }
 
     // blockEntity
     val mithrilineFurnaceEntity by register("mithriline_furnace") {

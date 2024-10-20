@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:block/cross",
   "textures": {
-    "cross": "ecreimagined:item/earth_gem"
+    "cross": "ecreimagined:block/earth_cluster"
   }
 }

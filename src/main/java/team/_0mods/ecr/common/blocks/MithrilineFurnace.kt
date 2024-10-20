@@ -6,7 +6,6 @@ import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -76,6 +75,4 @@ class MithrilineFurnace(properties: Properties) : PropertiedEntityBlock(properti
         shape = Shapes.join(shape, Shapes.box(0.0, 0.375, 0.0, 1.0, 0.625, 1.0), BooleanOp.OR)
         shape
     }
-
-    override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
 }

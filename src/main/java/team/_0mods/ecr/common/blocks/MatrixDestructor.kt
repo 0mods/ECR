@@ -7,7 +7,6 @@ import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.BlockGetter
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.RenderShape
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
@@ -51,8 +50,6 @@ class MatrixDestructor(properties: Properties) : PropertiedEntityBlock(propertie
 
         super.onRemove(state, level, pos, newState, isMoving)
     }
-
-    override fun getRenderShape(state: BlockState): RenderShape = RenderShape.MODEL
 
     override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape =
         shape

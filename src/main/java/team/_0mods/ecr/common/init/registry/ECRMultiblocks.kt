@@ -37,16 +37,41 @@ object ECRMultiblocks : HollowRegistry(ModId) {
 
     val soulStone by register("soul_stone") {
         Multiblock {
-            size(3, 3, 1)
-
-            val a = tag(BlockTags.SOUL_SPEED_BLOCKS)
-            val b = block(Blocks.EMERALD_BLOCK.defaultBlockState())
-
-            pattern(
-                null, a, null,
-                a, b, a,
-                null, a, null
-            )
+            this.makeRecipeMB(this.tag(BlockTags.SOUL_SPEED_BLOCKS), this.block(Blocks.EMERALD_BLOCK.defaultBlockState()))
         }
+    }
+
+    val flameCrystal by register("flame_crystal") {
+        Multiblock {
+            this.makeRecipeMB(this.block(Blocks.LAVA.defaultBlockState()), this.tag(BlockTags.INFINIBURN_NETHER))
+        }
+    }
+
+    val waterCrystal by register("water_crystal") {
+        Multiblock {
+            this.makeRecipeMB(this.block(Blocks.WATER.defaultBlockState()), this.tag(BlockTags.ICE))
+        }
+    }
+
+    val earthCrystal by register("earth_crystal") {
+        Multiblock {
+            this.makeRecipeMB(this.block(Blocks.MOSSY_COBBLESTONE.defaultBlockState()), this.block(Blocks.MOSS_BLOCK.defaultBlockState()))
+        }
+    }
+
+    val airCrystal by register("air_crystal") {
+        Multiblock {
+            this.makeRecipeMB(this.block(Blocks.END_STONE_BRICKS.defaultBlockState()), this.block(Blocks.PURPUR_BLOCK.defaultBlockState()))
+        }
+    }
+
+    private fun Multiblock.makeRecipeMB(left: Multiblock.Matcher, center: Multiblock.Matcher) {
+        this.size(3, 3, 1)
+
+        pattern(
+            null, left, null,
+            left, center, left,
+            null, left, null
+        )
     }
 }
