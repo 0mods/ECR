@@ -81,7 +81,7 @@ loom {
     }
 }
 
-version = modVersion
+version = "$minecraftVersion-$modVersion"
 
 base {
     archivesName = "archivesName".fromProperties

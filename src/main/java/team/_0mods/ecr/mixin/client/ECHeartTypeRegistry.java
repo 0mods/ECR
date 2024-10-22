@@ -8,7 +8,6 @@ import team._0mods.ecr.api.PlayerHeartType;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-@SuppressWarnings("MixinAnnotationTarget")
 @Mixin(Gui.HeartType.class)
 public class ECHeartTypeRegistry {
     @Shadow(remap = false) @Final @Mutable private static Gui.HeartType[] $VALUES;

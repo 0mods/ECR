@@ -1,6 +1,11 @@
 @file:JvmName("MixinHelper")
 package team._0mods.ecr.common.helper
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import net.minecraft.client.Minecraft
 import net.minecraft.core.BlockPos
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.core.particles.SimpleParticleType
@@ -18,6 +23,7 @@ import team._0mods.ecr.common.init.registry.ECRMultiblocks
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.particle.ECParticleOptions
 import java.awt.Color
+import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -84,7 +90,7 @@ private fun makeStructureCraft(stack: ItemStack, result: Block, level: Level, po
         return
     }
 
-    addSpawnParticles(pt, level, pos.above(), 0.0, 0.0, 0.0, 0.5, 0.5, 0.5)
+//    addSpawnParticles(pt, level, pos.above(), 0.0, 0.0, 0.0, 0.5, 0.5, 0.5)
 
     timer[0] = timer[0] + 1
 
@@ -95,8 +101,8 @@ private fun makeStructureCraft(stack: ItemStack, result: Block, level: Level, po
 
     if (level.random.nextInt(5) < 3) return
 
-    addSpawnParticles(ParticleTypes.POOF, level, pos.above(), 2.0, 2.0, 2.0, 5.5, 5.5, 5.5)
-    level.setBlock(pos.above(), result.defaultBlockState(), 3)
+    level.setBlock(pos.above(), result.defaultBlockState(), Block.UPDATE_NEIGHBORS or Block.UPDATE_CLIENTS or Block.UPDATE_SUPPRESS_DROPS)
+    addFinalParticle(level, pos.above().x + 0.0, pos.above().y + 0.5, pos.above().z + 0.0, 80)
 }
 
 private fun addSpawnParticles(type: SimpleParticleType, level: Level, pos: BlockPos, minX: Double, minY: Double, minZ: Double, maxX: Double, maxY: Double, maxZ: Double) {
@@ -117,6 +123,28 @@ private fun addSpawnParticles(type: SimpleParticleType, level: Level, pos: Block
                 val d5 = d2 * minYMth + minY
                 val d6 = d3 * minZMth + minZ
                 level.addParticle(type, d4 + pos.x, d5 + pos.y, d6 + pos.z, d4 - 0.5, d5 - 0.5, d6 - 0.5)
+            }
+        }
+    }
+}
+
+private fun addFinalParticle(level: Level, x: Double, y: Double, z: Double, particleCount: Int = 1) {
+    if (!level.isClientSide) return
+    val rand = ThreadLocalRandom.current()
+    val sc = CoroutineScope(Dispatchers.Default)
+
+    sc.launch {
+        async {
+            for (i in 0 ..< particleCount) {
+                level.addParticle(
+                    ParticleTypes.POOF,
+                    x,
+                    y + rand.nextDouble(0.15, 0.6),
+                    z,
+                    rand.nextDouble(-0.06, 0.06),
+                    rand.nextDouble(-0.0, 0.15),
+                    rand.nextDouble(-0.06, 0.06)
+                )
             }
         }
     }

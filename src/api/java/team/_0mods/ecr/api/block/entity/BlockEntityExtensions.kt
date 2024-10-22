@@ -14,7 +14,7 @@ interface BlockEntityExtensions<T: BlockEntity> {
 
     fun onPlacedBy(level: Level, state: BlockState, placer: LivingEntity?, stack: ItemStack)
 
-    fun onTick(level: Level, pos: BlockPos, state: BlockState, blockEntity: T) {}
+    fun <K: T> onTick(level: Level, pos: BlockPos, state: BlockState, blockEntity: K) {}
 
-    fun onClientTick(level: Level, pos: BlockPos, state: BlockState, blockEntity: T) {}
+    fun <K: T> onClientTick(level: Level, pos: BlockPos, state: BlockState, blockEntity: K) {}
 }

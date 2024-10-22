@@ -35,21 +35,16 @@ inline fun <reified T: BlockEntity> prepareDrops(state: BlockState, level: Level
 }
 
 inline fun <reified T> checkAndOpenMenu(player: Player, level: Level, blockPos: BlockPos): InteractionResult where T: BlockEntity, T: MenuProvider {
-    var menuIsOpened = false
     if (!level.isClientSide) {
         val be = level.getBlockEntity(blockPos)
         if (be != null && be is T) {
             NetworkHooks.openScreen(player as ServerPlayer, be, be.blockPos)
-            menuIsOpened = true
         } else if (be != null) {
             throw IllegalStateException("Can not open any block entity that is not instanceof ${T::class.java}")
         } else return InteractionResult.FAIL
     }
 
-    return if (menuIsOpened) {
-        menuIsOpened = false
-        InteractionResult.SUCCESS
-    } else InteractionResult.PASS
+    return InteractionResult.SUCCESS
 }
 
 // Don't change T value, use default in "getTicker". V - any block entity.

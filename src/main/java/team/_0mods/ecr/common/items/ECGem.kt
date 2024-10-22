@@ -7,10 +7,10 @@ import ru.hollowhorizon.hc.client.utils.mcTranslate
 import team._0mods.ecr.common.init.registry.ECTabs
 import java.awt.Color
 
-class ECGem private constructor(private val type: Type): Item(Properties().tab(ECTabs.tabItems)) {
+class ECGem private constructor(private val type: Type, properties: Properties.() -> Unit = {}): Item(Properties().tab(ECTabs.tabItems).apply(properties)) {
     companion object {
         val elemental = { ECGem(Type.ELEMENTAL) }
-        val flame = { ECGem(Type.FLAME) }
+        val flame = { ECGem(Type.FLAME) { this.fireResistant() } }
         val water = { ECGem(Type.WATER) }
         val earth = { ECGem(Type.EARTH) }
         val air = { ECGem(Type.AIR) }

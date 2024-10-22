@@ -65,7 +65,7 @@ class CrystalBlock(properties: Properties) : PropertiedBlock(properties), Multip
         val otherState = level.getBlockState(otherPos)
 
         if (otherState.`is`(this) && otherState.getValue(PART) != part) {
-            level.setBlock(otherPos, Blocks.AIR.defaultBlockState(), 35)
+            level.setBlock(otherPos, Blocks.AIR.defaultBlockState(), UPDATE_NEIGHBORS or UPDATE_CLIENTS or UPDATE_SUPPRESS_DROPS)
             level.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, otherPos, getId(otherState))
         }
 
