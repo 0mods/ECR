@@ -22,6 +22,7 @@ class ECParticleFactory(private val sprite: SpriteSet): ParticleProvider<ECParti
         xSpeed, ySpeed, zSpeed,
         type.color, 1f, type.size,
         type.lifeTime, type.resizeSpeed.roundToInt(),
+        0F, 0.97f,
         type.physical, type.removeOnGround, this.sprite
     )
 }

@@ -11,7 +11,16 @@ import net.minecraftforge.registries.ForgeRegistries
 import team._0mods.ecr.common.init.registry.ECRegistry
 import java.awt.Color
 
-class ECParticleOptions(val color: Color, size: Float, val lifeTime: Int, val resizeSpeed: Float, val physical: Boolean, val removeOnGround: Boolean): ParticleOptions {
+class ECParticleOptions(
+    val color: Color,
+    size: Float,
+    val lifeTime: Int,
+    val resizeSpeed: Float,
+    val gravity: Float = 0f,
+    val friction: Float = 0.97f,
+    val physical: Boolean,
+    val removeOnGround: Boolean
+): ParticleOptions {
     companion object {
         @JvmField
         val CODEC: Codec<ECParticleOptions> = RecordCodecBuilder.create {
@@ -20,6 +29,8 @@ class ECParticleOptions(val color: Color, size: Float, val lifeTime: Int, val re
                 Codec.FLOAT.fieldOf("size").forGetter { t -> t.size },
                 Codec.INT.fieldOf("lifetime").forGetter { t -> t.lifeTime },
                 Codec.FLOAT.fieldOf("resize_speed").forGetter { t -> t.resizeSpeed },
+                Codec.FLOAT.fieldOf("gravity").orElse(0f).forGetter { t -> t.gravity },
+                Codec.FLOAT.fieldOf("friction").orElse(0.97f).forGetter { t -> t.friction },
                 Codec.BOOL.fieldOf("has_physics").forGetter { t -> t.physical },
                 Codec.BOOL.fieldOf("remove_on_ground").forGetter { t -> t.removeOnGround }
             ).apply(it, ::ECParticleOptions)
@@ -31,16 +42,30 @@ class ECParticleOptions(val color: Color, size: Float, val lifeTime: Int, val re
                 particleType: ParticleType<ECParticleOptions>,
                 reader: StringReader
             ): ECParticleOptions {
-                reader.expect(' '); val r = Mth.clamp(reader.readInt(), 0, 255)
-                reader.expect(' '); val g = Mth.clamp(reader.readInt(), 0, 255)
-                reader.expect(' '); val b = Mth.clamp(reader.readInt(), 0, 255)
-                reader.expect(' '); val size = Mth.clamp(reader.readFloat(), 0.05f, 5f)
-                reader.expect(' '); val lifeTime = reader.readInt()
-                reader.expect(' '); val resizeSpeed = reader.readFloat()
-                reader.expect(' '); val hasPhysics = reader.readBoolean()
-                reader.expect(' '); val removeOnGround = reader.readBoolean()
+                return try {
+                    reader.expect(' '); val r = Mth.clamp(reader.readInt(), 0, 255)
+                    reader.expect(' '); val g = Mth.clamp(reader.readInt(), 0, 255)
+                    reader.expect(' '); val b = Mth.clamp(reader.readInt(), 0, 255)
+                    reader.expect(' '); val size = Mth.clamp(reader.readFloat(), 0.05f, 5f)
+                    reader.expect(' '); val lifeTime = reader.readInt()
+                    reader.expect(' '); val resizeSpeed = reader.readFloat()
+                    reader.expect(' '); val gravity = reader.readFloat()
+                    reader.expect(' '); val friction = reader.readFloat()
+                    reader.expect(' '); val hasPhysics = reader.readBoolean()
+                    reader.expect(' '); val removeOnGround = reader.readBoolean()
 
-                return ECParticleOptions(Color(r, g, b), size, lifeTime, resizeSpeed, hasPhysics, removeOnGround)
+                    ECParticleOptions(Color(r, g, b), size, lifeTime, resizeSpeed, gravity, friction, hasPhysics, removeOnGround)
+                } catch (e: Exception) {
+                    reader.expect(' '); val r = Mth.clamp(reader.readInt(), 0, 255)
+                    reader.expect(' '); val g = Mth.clamp(reader.readInt(), 0, 255)
+                    reader.expect(' '); val b = Mth.clamp(reader.readInt(), 0, 255)
+                    reader.expect(' '); val size = Mth.clamp(reader.readFloat(), 0.05f, 5f)
+                    reader.expect(' '); val lifeTime = reader.readInt()
+                    reader.expect(' '); val resizeSpeed = reader.readFloat()
+                    reader.expect(' '); val hasPhysics = reader.readBoolean()
+                    reader.expect(' '); val removeOnGround = reader.readBoolean()
+                    ECParticleOptions(Color(r, g, b), size, lifeTime, resizeSpeed, physical = hasPhysics, removeOnGround = removeOnGround)
+                }
             }
 
             override fun fromNetwork(
@@ -55,16 +80,35 @@ class ECParticleOptions(val color: Color, size: Float, val lifeTime: Int, val re
                 val size = Mth.clamp(buffer.readFloat(), 0.05f, 5f)
                 val lifeTime = buffer.readInt()
                 val speed = buffer.readFloat()
+                val gravity = buffer.readFloat()
+                val friction = buffer.readFloat()
                 val hasPhysics = buffer.readBoolean()
                 val removeOnGround = buffer.readBoolean()
 
-                return ECParticleOptions(color, size, lifeTime, speed, hasPhysics, removeOnGround)
+                return ECParticleOptions(color, size, lifeTime, speed, gravity, friction, hasPhysics, removeOnGround)
             }
         }
     }
 
-    private constructor(rgb: Int, size: Float, lifeTime: Int, resizeSpeed: Float, physical: Boolean, removeOnGround: Boolean):
-            this(Color(rgb), Mth.clamp(size, 0.05f, 5f), lifeTime, resizeSpeed, physical, removeOnGround)
+    constructor(
+        color: Color,
+        size: Float,
+        lifeTime: Int,
+        resizeSpeed: Float,
+        physical: Boolean,
+        removeOnGround: Boolean
+    ): this(color, size, lifeTime, resizeSpeed, 0f, 0.97f, physical = physical, removeOnGround = removeOnGround)
+
+    private constructor(
+        rgb: Int,
+        size: Float,
+        lifeTime: Int,
+        resizeSpeed: Float,
+        gravity: Float,
+        friction: Float,
+        physical: Boolean,
+        removeOnGround: Boolean
+    ): this(Color(rgb), Mth.clamp(size, 0.05f, 5f), lifeTime, resizeSpeed, gravity, friction, physical, removeOnGround)
 
     val size = Mth.clamp(size, 0.05f, 5f)
 
@@ -77,10 +121,12 @@ class ECParticleOptions(val color: Color, size: Float, val lifeTime: Int, val re
         buffer.writeFloat(size)
         buffer.writeInt(lifeTime)
         buffer.writeFloat(resizeSpeed)
+        buffer.writeFloat(gravity)
+        buffer.writeFloat(friction)
         buffer.writeBoolean(physical)
         buffer.writeBoolean(removeOnGround)
     }
 
     override fun writeToString(): String =
-        "${ForgeRegistries.PARTICLE_TYPES.getKey(this.type)} ${color.red} ${color.green} ${color.blue} $size $lifeTime $resizeSpeed $physical $removeOnGround"
+        "${ForgeRegistries.PARTICLE_TYPES.getKey(this.type)} ${color.red} ${color.green} ${color.blue} $size $lifeTime $gravity $friction $resizeSpeed $physical $removeOnGround"
 }

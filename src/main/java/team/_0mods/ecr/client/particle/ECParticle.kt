@@ -18,10 +18,23 @@ import team._0mods.ecr.api.ModId
 import java.awt.Color
 
 class ECParticle(
-    level: ClientLevel, x: Double, y: Double, z: Double,
-    xSpeed: Double, ySpeed: Double, zSpeed: Double,
-    color: Color, alpha: Float, size: Float, lt: Int,
-    val resizeSpeed: Int, physical: Boolean, val removeOnGround: Boolean, sprites: SpriteSet
+    level: ClientLevel,
+    x: Double,
+    y: Double,
+    z: Double,
+    xSpeed: Double,
+    ySpeed: Double,
+    zSpeed: Double,
+    color: Color,
+    alpha: Float,
+    size: Float,
+    lt: Int,
+    val resizeSpeed: Int,
+    gravity: Float = 0f,
+    friction: Float = 0.97f,
+    physical: Boolean,
+    val removeOnGround: Boolean,
+    sprites: SpriteSet
 ): TextureSheetParticle(level, x, y, z, xSpeed, ySpeed, zSpeed) {
     init {
         this.setColor(color.red / 255f, color.green / 255f, color.blue / 255f)
@@ -32,6 +45,8 @@ class ECParticle(
         this.xd = xSpeed
         this.yd = ySpeed
         this.zd = zSpeed
+        if (gravity != 0F) this.gravity = gravity
+        this.friction = friction
         this.hasPhysics = physical
 
         this.pickSprite(sprites)

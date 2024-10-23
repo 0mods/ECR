@@ -3,7 +3,6 @@ package team._0mods.ecr.common.helper
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.particles.ParticleTypes
-import net.minecraft.core.particles.SimpleParticleType
 import net.minecraft.tags.BlockTags
 import net.minecraft.tags.TagKey
 import net.minecraft.world.entity.item.ItemEntity
@@ -18,9 +17,6 @@ import team._0mods.ecr.common.init.registry.ECRMultiblocks
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.particle.ECParticleOptions
 import java.awt.Color
-import kotlin.math.ceil
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
@@ -57,35 +53,36 @@ fun checkCraft(stack: ItemStack, pos: Vec3, level: Level, timer: IntArray) {
             }
         }
 
-        Items.MAGMA_CREAM -> makeStructureCraft(stack, BlockTags.INFINIBURN_NETHER, ECRegistry.flameCluster.get(), level, center, ECRMultiblocks.flameCrystal.get(), timer, ParticleTypes.POOF)
+        Items.MAGMA_CREAM -> makeStructureCraft(stack, BlockTags.INFINIBURN_NETHER, ECRegistry.flameCluster.get(), level, center, ECRMultiblocks.flameCrystal.get(), timer, Color.ORANGE)
 
-        Items.CLAY_BALL -> makeStructureCraft(stack, BlockTags.ICE, ECRegistry.waterCluster.get(), level, center, ECRMultiblocks.waterCrystal.get(), timer, ParticleTypes.POOF)
+        Items.CLAY_BALL -> makeStructureCraft(stack, BlockTags.ICE, ECRegistry.waterCluster.get(), level, center, ECRMultiblocks.waterCrystal.get(), timer, Color.BLUE)
 
-        Items.SLIME_BALL -> makeStructureCraft(stack, Blocks.MOSS_BLOCK, ECRegistry.earthCluster.get(), level, center, ECRMultiblocks.earthCrystal.get(), timer, ParticleTypes.POOF)
+        Items.SLIME_BALL -> makeStructureCraft(stack, Blocks.MOSS_BLOCK, ECRegistry.earthCluster.get(), level, center, ECRMultiblocks.earthCrystal.get(), timer, Color.GREEN)
 
         // TODO("Deprecated! In 1.21 it will changed to Wind Charge")
-        Items.GUNPOWDER -> makeStructureCraft(stack, Blocks.PURPUR_BLOCK, ECRegistry.airCluster.get(), level, center, ECRMultiblocks.airCrystal.get(), timer, ParticleTypes.POOF)
+        Items.GUNPOWDER -> makeStructureCraft(stack, Blocks.PURPUR_BLOCK, ECRegistry.airCluster.get(), level, center, ECRMultiblocks.airCrystal.get(), timer, Color.WHITE)
     }
 }
 
-private fun makeStructureCraft(stack: ItemStack, center: TagKey<Block>, result: Block, level: Level, pos: BlockPos, structure: Multiblock, timer: IntArray, pt: SimpleParticleType) {
+private fun makeStructureCraft(stack: ItemStack, center: TagKey<Block>, result: Block, level: Level, pos: BlockPos, structure: Multiblock, timer: IntArray, color: Color) {
     if (!level.getBlockState(pos).`is`(center)) return
-    makeStructureCraft(stack, result, level, pos, structure, timer, pt)
+    makeStructureCraft(stack, result, level, pos, structure, timer, color)
 }
 
-private fun makeStructureCraft(stack: ItemStack, center: Block, result: Block, level: Level, pos: BlockPos, structure: Multiblock, timer: IntArray, pt: SimpleParticleType) {
+private fun makeStructureCraft(stack: ItemStack, center: Block, result: Block, level: Level, pos: BlockPos, structure: Multiblock, timer: IntArray, color: Color) {
     if (!level.getBlockState(pos).`is`(center)) return
-    makeStructureCraft(stack, result, level, pos, structure, timer, pt)
+    makeStructureCraft(stack, result, level, pos, structure, timer, color)
 }
 
-private fun makeStructureCraft(stack: ItemStack, result: Block, level: Level, pos: BlockPos, structure: Multiblock, timer: IntArray, pt: SimpleParticleType) {
+private fun makeStructureCraft(stack: ItemStack, result: Block, level: Level, pos: BlockPos, structure: Multiblock, timer: IntArray, color: Color) {
     if (!level.getBlockState(pos.above()).`is`(Blocks.AIR)) return
     if (!structure.isValid(level, pos)) {
         timer[0] = 0
         return
     }
 
-    addSpawnParticles(pt, level, pos.above(), 0.0, 0.0, 0.0, 0.5, 0.5, 0.5)
+    val v = pos.above()
+    addSpawnParticles(color, level, Vec3(v.x + 0.0, v.y + 0.5, v.z + 0.0))
 
     timer[0] = timer[0] + 1
 
@@ -100,26 +97,31 @@ private fun makeStructureCraft(stack: ItemStack, result: Block, level: Level, po
     addFinalParticle(level, pos.above().x + 0.0, pos.above().y + 0.5, pos.above().z + 0.0, 80)
 }
 
-private fun addSpawnParticles(type: SimpleParticleType, level: Level, pos: BlockPos, minX: Double, minY: Double, minZ: Double, maxX: Double, maxY: Double, maxZ: Double) {
+private fun addSpawnParticles(color: Color, level: Level, pos: Vec3) {
     if (!level.isClientSide) return
-    val minXMth = min(1.0, maxX - minX)
-    val minYMth = min(1.0, maxY - minY)
-    val minZMth = min(1.0, maxZ - minZ)
-    val i = max(2.0, ceil(minXMth / 0.25)).roundToInt()
-    val j = max(2.0, ceil(minYMth / 0.25)).roundToInt()
-    val k = max(2.0, ceil(minZMth / 0.25)).roundToInt()
-    for (l in 0 ..< i) {
-        for (i1 in 0 ..< j) {
-            for (j1 in 0 ..< k) {
-                val d1 = (l + 0.5) / i
-                val d2 = (i1 + 0.5) / j
-                val d3 = (j1 + 0.5) / k
-                val d4 = d1 * minXMth + minX
-                val d5 = d2 * minYMth + minY
-                val d6 = d3 * minZMth + minZ
-                level.addParticle(type, d4 + pos.x, d5 + pos.y, d6 + pos.z, d4 - 0.5, d5 - 0.5, d6 - 0.5)
-            }
-        }
+    val rand = Random
+
+    val xd = rand.nextDouble(-0.06, 0.06) + (Math.random() * 2.0 - 1.0) * 0.05F
+    val yd = rand.nextDouble(-0.0, 0.15) + (Math.random() * 2.0 - 1.0) * 0.05F
+    val zd = rand.nextDouble(-0.06, 0.06) + (Math.random() * 2.0 - 1.0) * 0.05F
+    val fric = 0.9F
+    val grav = -0.1F
+
+    for (i in 0 ..< 15) {
+        level.addParticle(
+            ECParticleOptions(
+                color,
+                0.1F * level.random.nextFloat() * level.random.nextFloat() * 6.0F + 1F,
+                (16.0 / (level.random.nextFloat() * 0.8 + 0.2)).roundToInt() + 2,
+                0f,
+                grav,
+                fric,
+                false,
+                false
+            ),
+            pos.x, pos.y + rand.nextDouble(0.15, 0.6), pos.z,
+            xd, yd, zd
+        )
     }
 }
 
