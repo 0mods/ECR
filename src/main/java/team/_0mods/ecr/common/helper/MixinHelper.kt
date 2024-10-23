@@ -1,11 +1,6 @@
 @file:JvmName("MixinHelper")
 package team._0mods.ecr.common.helper
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import net.minecraft.client.Minecraft
 import net.minecraft.core.BlockPos
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.core.particles.SimpleParticleType
@@ -23,11 +18,11 @@ import team._0mods.ecr.common.init.registry.ECRMultiblocks
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.particle.ECParticleOptions
 import java.awt.Color
-import java.util.concurrent.ThreadLocalRandom
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 fun makeIntArray(value: Int = 0) = intArrayOf(value)
 
@@ -90,7 +85,7 @@ private fun makeStructureCraft(stack: ItemStack, result: Block, level: Level, po
         return
     }
 
-//    addSpawnParticles(pt, level, pos.above(), 0.0, 0.0, 0.0, 0.5, 0.5, 0.5)
+    addSpawnParticles(pt, level, pos.above(), 0.0, 0.0, 0.0, 0.5, 0.5, 0.5)
 
     timer[0] = timer[0] + 1
 
@@ -128,24 +123,19 @@ private fun addSpawnParticles(type: SimpleParticleType, level: Level, pos: Block
     }
 }
 
-private fun addFinalParticle(level: Level, x: Double, y: Double, z: Double, particleCount: Int = 1) {
+fun addFinalParticle(level: Level, x: Double, y: Double, z: Double, particleCount: Int = 1) {
     if (!level.isClientSide) return
-    val rand = ThreadLocalRandom.current()
-    val sc = CoroutineScope(Dispatchers.Default)
+    val rand = Random
 
-    sc.launch {
-        async {
-            for (i in 0 ..< particleCount) {
-                level.addParticle(
-                    ParticleTypes.POOF,
-                    x,
-                    y + rand.nextDouble(0.15, 0.6),
-                    z,
-                    rand.nextDouble(-0.06, 0.06),
-                    rand.nextDouble(-0.0, 0.15),
-                    rand.nextDouble(-0.06, 0.06)
-                )
-            }
-        }
+    for (i in 0 ..< particleCount) {
+        level.addParticle(
+            ParticleTypes.POOF,
+            x,
+            y + rand.nextDouble(0.15, 0.6),
+            z,
+            rand.nextDouble(-0.06, 0.06),
+            rand.nextDouble(-0.0, 0.15),
+            rand.nextDouble(-0.06, 0.06)
+        )
     }
 }
