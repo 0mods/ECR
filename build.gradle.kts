@@ -132,7 +132,7 @@ dependencies {
     implementation(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-serialization-json:+")) {}
 
     modImplementation("mezz.jei:jei-${minecraftVersion}-forge:${"jei_version".fromProperties}")
-    modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:${"ct_version".fromProperties}")
+    modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-${minecraftVersion}:${"ct_version".fromProperties}")
     modImplementation("maven.modrinth:jade:${"jade_version".fromProperties}")
     modImplementation("maven.modrinth:mystical-agriculture:${"ma_version".fromProperties}")
     modCompileOnly("dev.latvian.mods:kubejs-forge:${"kubejs_version".fromProperties}")

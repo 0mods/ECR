@@ -20,7 +20,9 @@ import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.particle.ECParticleOptions
 import team._0mods.ecr.network.FinishCraftParticle
 import java.awt.Color
-import kotlin.math.roundToInt
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.random.Random
 
 fun makeIntArray(value: Int = 0) = intArrayOf(value)
@@ -36,10 +38,14 @@ fun checkCraft(stack: ItemStack, pos: Vec3, level: Level, timer: IntArray) {
                 return
             }
 
-            level.addParticle(
-                ECParticleOptions(Color.GREEN, 0.5f, 40, 0.05f, false, false),
-                pos.x, pos.y + 0.5, pos.z, 1.0, 1.0, 1.0
-            )
+            for (i in 0 ..< 80) {
+                level.addParticle(
+                    ECParticleOptions(Color.GREEN, 0.5f, 40, 0.05f, false, false),
+                    pos.x, pos.y + 0.5, pos.z, Random.nextDouble(-0.06, 0.06) + (Math.random() * 2.0 - 1.0) * 0.05F,
+                    Random.nextDouble(-0.0, 0.15) + (Math.random() * 2.0 - 1.0) * 0.05F,
+                    Random.nextDouble(-0.06, 0.06) + (Math.random() * 2.0 - 1.0) * 0.05F
+                )
+            }
 
             timer[0] = timer[0] + 1
             if (timer[0] < 40) return
@@ -104,26 +110,24 @@ private fun addSpawnParticles(color: Color, level: Level, pos: Vec3) {
     if (!level.isClientSide) return
     val rand = Random
 
-    val xd = rand.nextDouble(-0.06, 0.06) + (Math.random() * 2.0 - 1.0) * 0.05F
-    val yd = rand.nextDouble(-0.0, 0.15) + (Math.random() * 2.0 - 1.0) * 0.05F
-    val zd = rand.nextDouble(-0.06, 0.06) + (Math.random() * 2.0 - 1.0) * 0.05F
-    val fric = 0.9F
-    val grav = -0.1F
-
     for (i in 0 ..< 15) {
+        val angle = rand.nextDouble() * PI * 2
+
+        val xSpeed = cos(angle) * 0.1
+        val ySpeed = 0.1 + rand.nextDouble() * 0.1
+        val zSpeed = sin(angle) * 0.1
+
         level.addParticle(
             ECParticleOptions(
                 color,
                 0.1F,
-                (16.0 / (level.random.nextFloat() * 0.8 + 0.2)).roundToInt() + 2,
+                20 + rand.nextInt(20),
                 0f,
-                grav,
-                fric,
                 true,
                 false
             ),
-            pos.x + 0.5, pos.y + rand.nextDouble(0.15, 0.6), pos.z + 0.5,
-            xd, yd, zd
+            pos.x + 0.5, pos.y, pos.z + 0.5,
+            xSpeed, ySpeed, zSpeed
         )
     }
 }
