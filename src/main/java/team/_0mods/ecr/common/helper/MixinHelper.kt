@@ -1,6 +1,7 @@
 @file:JvmName("MixinHelper")
 package team._0mods.ecr.common.helper
 
+import net.minecraft.client.Minecraft
 import net.minecraft.core.BlockPos
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.tags.BlockTags
@@ -13,9 +14,11 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
 import ru.hollowhorizon.hc.common.multiblock.Multiblock
+import ru.hollowhorizon.hc.common.network.sendAllInDimension
 import team._0mods.ecr.common.init.registry.ECRMultiblocks
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.particle.ECParticleOptions
+import team._0mods.ecr.network.FinishCraftParticle
 import java.awt.Color
 import kotlin.math.roundToInt
 import kotlin.random.Random
@@ -94,7 +97,7 @@ private fun makeStructureCraft(stack: ItemStack, result: Block, level: Level, po
     if (level.random.nextInt(5) < 3) return
 
     level.setBlock(pos.above(), result.defaultBlockState(), Block.UPDATE_NEIGHBORS or Block.UPDATE_CLIENTS or Block.UPDATE_SUPPRESS_DROPS)
-    addFinalParticle(level, pos.above().x + 0.0, pos.above().y + 0.5, pos.above().z + 0.0, 80)
+    FinishCraftParticle(pos.above().x + 0.5, pos.above().y + 0.5, pos.above().z + 0.5, 80).sendAllInDimension(level)
 }
 
 private fun addSpawnParticles(color: Color, level: Level, pos: Vec3) {
@@ -111,22 +114,22 @@ private fun addSpawnParticles(color: Color, level: Level, pos: Vec3) {
         level.addParticle(
             ECParticleOptions(
                 color,
-                0.1F * level.random.nextFloat() * level.random.nextFloat() * 6.0F + 1F,
+                0.1F,
                 (16.0 / (level.random.nextFloat() * 0.8 + 0.2)).roundToInt() + 2,
                 0f,
                 grav,
                 fric,
-                false,
+                true,
                 false
             ),
-            pos.x, pos.y + rand.nextDouble(0.15, 0.6), pos.z,
+            pos.x + 0.5, pos.y + rand.nextDouble(0.15, 0.6), pos.z + 0.5,
             xd, yd, zd
         )
     }
 }
 
-fun addFinalParticle(level: Level, x: Double, y: Double, z: Double, particleCount: Int = 1) {
-    if (!level.isClientSide) return
+fun addFinalParticle(x: Double, y: Double, z: Double, particleCount: Int = 1) {
+    val level = Minecraft.getInstance().level ?: return
     val rand = Random
 
     for (i in 0 ..< particleCount) {
