@@ -10,8 +10,4 @@ class WeakPickaxe: PickaxeItem(
     -3,
     -2.8f,
     Properties()
-) {
-    init {
-        this.tab(ECRegistry.tabItems.get())
-    }
-}
+)

@@ -10,8 +10,4 @@ class WeakShovel: ShovelItem(
     -2.5f,
     -3f,
     Properties()
-) {
-    init {
-        this.tab(ECRegistry.tabItems.get())
-    }
-}
+)

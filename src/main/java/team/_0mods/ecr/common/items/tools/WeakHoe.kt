@@ -10,8 +10,4 @@ class WeakHoe: HoeItem(
     -6,
     -2f,
     Properties()
-) {
-    init {
-        this.tab(ECRegistry.tabItems.get())
-    }
-}
+)

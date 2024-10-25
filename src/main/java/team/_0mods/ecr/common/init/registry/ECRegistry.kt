@@ -9,13 +9,13 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockBehaviour
 import ru.hollowhorizon.hc.client.utils.JavaHacks
 import ru.hollowhorizon.hc.client.utils.rl
+import ru.hollowhorizon.hc.common.handlers.tab
 import ru.hollowhorizon.hc.common.registry.AutoModelType
 import ru.hollowhorizon.hc.common.registry.HollowRegistry
 import ru.hollowhorizon.hc.common.registry.RegistryObject
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.menu.simpleMenuFactory
 import team._0mods.ecr.api.utils.ecRL
-import team._0mods.ecr.common.api.ItemTab
 import team._0mods.ecr.common.api.PropertiedBlock
 import team._0mods.ecr.common.blocks.*
 import team._0mods.ecr.common.blocks.entity.*
@@ -143,7 +143,7 @@ object ECRegistry: HollowRegistry(ModId) {
 
     private fun basicItem(id: String, autoModel: AutoModelType? = AutoModelType.DEFAULT, props: Item.Properties.() -> Unit = {}, noTab: Boolean = false): RegistryObject<Item> {
         val p = Item.Properties().apply(props)
-        val reg by register(id, autoModel) { if (!noTab) ItemTab(p) else ItemTab(p, null) }
+        val reg by register(id, autoModel) { Item(p).tab(tabItems.get()) }
         return JavaHacks.forceCast(reg)
     }
 
