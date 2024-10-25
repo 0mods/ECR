@@ -1,12 +1,17 @@
 package team._0mods.ecr.common.items.tools
 
 import net.minecraft.world.item.AxeItem
-import team._0mods.ecr.common.init.registry.ECTabs
+import ru.hollowhorizon.hc.common.handlers.tab
+import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.items.ECToolMaterials
 
 class WeakAxe: AxeItem(
     ECToolMaterials.WEAK,
     5f,
     -3.2f,
-    Properties().tab(ECTabs.tabItems)
-)
+    Properties()
+) {
+    init {
+        this.tab(ECRegistry.tabItems.get())
+    }
+}

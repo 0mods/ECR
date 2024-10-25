@@ -7,8 +7,9 @@ import net.minecraft.world.item.Items
 import team._0mods.ecr.datagen.builder.MithrilineFurnaceRecipeBuilder
 import java.util.function.Consumer
 
-class ECRecipeProvider(generator: DataGenerator) : RecipeProvider(generator) {
-    override fun buildCraftingRecipes(c: Consumer<FinishedRecipe>) {
+class ECRecipeProvider(generator: DataGenerator) : RecipeProvider(generator.packOutput) {
+
+    override fun buildRecipes(c: Consumer<FinishedRecipe>) {
         MithrilineFurnaceRecipeBuilder.make(Items.GOLD_INGOT).requires(Items.IRON_INGOT, 8).espe(64).save(c)
         MithrilineFurnaceRecipeBuilder.make(Items.IRON_INGOT, 8).requires(Items.GOLD_INGOT).espe(64).save(c)
 

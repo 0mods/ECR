@@ -4,16 +4,21 @@ import net.minecraft.ChatFormatting
 import net.minecraft.world.item.Item
 import ru.hollowhorizon.hc.client.utils.colored
 import ru.hollowhorizon.hc.client.utils.mcTranslate
-import team._0mods.ecr.common.init.registry.ECTabs
+import ru.hollowhorizon.hc.common.handlers.tab
+import team._0mods.ecr.common.init.registry.ECRegistry
 import java.awt.Color
 
-class ECGem private constructor(private val type: Type, properties: Properties.() -> Unit = {}): Item(Properties().tab(ECTabs.tabItems).apply(properties)) {
+class ECGem private constructor(private val type: Type, properties: Properties.() -> Unit = {}): Item(Properties().apply(properties)) {
     companion object {
         val elemental = { ECGem(Type.ELEMENTAL) }
         val flame = { ECGem(Type.FLAME) { this.fireResistant() } }
         val water = { ECGem(Type.WATER) }
         val earth = { ECGem(Type.EARTH) }
         val air = { ECGem(Type.AIR) }
+    }
+
+    init {
+        this.tab(ECRegistry.tabItems.get())
     }
 
     override fun getDescriptionId(): String {

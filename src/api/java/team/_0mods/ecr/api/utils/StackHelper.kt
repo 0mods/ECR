@@ -6,7 +6,7 @@ object StackHelper {
     @JvmStatic
     fun areItemsEqual(stack1: ItemStack, stack2: ItemStack): Boolean {
         if (stack1.isEmpty && stack2.isEmpty) return true
-        return !stack1.isEmpty && ItemStack.isSame(stack1, stack2)
+        return !stack1.isEmpty && ItemStack.isSameItem(stack1, stack2)
     }
 
     @JvmStatic

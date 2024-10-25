@@ -21,16 +21,17 @@ import ru.hollowhorizon.hc.client.utils.get
 import ru.hollowhorizon.hc.client.utils.literal
 import ru.hollowhorizon.hc.client.utils.mcTranslate
 import ru.hollowhorizon.hc.client.utils.rl
+import ru.hollowhorizon.hc.common.handlers.tab
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.mru.MRUMultiplierWeapon
 import team._0mods.ecr.api.mru.PlayerMatrixType
 import team._0mods.ecr.api.registries.ECRegistries
 import team._0mods.ecr.common.capability.PlayerMRU
-import team._0mods.ecr.common.init.registry.ECTabs
+import team._0mods.ecr.common.init.registry.ECRegistry
 import java.util.*
 import kotlin.math.roundToInt
 
-class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
+class SoulStone: Item(Properties()) {
     companion object {
         @get:JvmStatic
         val entityCapacityAdd = mutableMapOf<EntityType<*>, IntRange>()
@@ -46,6 +47,8 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
 
     init {
         MinecraftForge.EVENT_BUS.addListener(this::onEntityKill)
+
+        this.tab(ECRegistry.tabItems.get())
     }
 
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
@@ -63,7 +66,7 @@ class SoulStone: Item(Properties().tab(ECTabs.tabItems)) {
 
                         val ent = ItemEntity(level, player.x, player.y, player.z, copiedStack).apply {
                             setNoPickUpDelay()
-                            this.owner = player.uuid
+                            this.setThrower(player.uuid)
                         }
 
                         level.addFreshEntity(ent)

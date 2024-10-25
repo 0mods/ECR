@@ -23,7 +23,7 @@ public class LevelRendererMixin {
             method = "addParticleInternal(Lnet/minecraft/core/particles/ParticleOptions;ZZDDDDDD)Lnet/minecraft/client/particle/Particle;",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/client/Camera;isInitialized()Z"
+                    target = "Lnet/minecraft/client/renderer/LevelRenderer;calculateParticleLevel(Z)Lnet/minecraft/client/ParticleStatus;"
             ),
             cancellable = true)
     public void addParticleInternalInject(ParticleOptions options, boolean force, boolean decreased, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, CallbackInfoReturnable<Particle> cir, @Local Camera camera) {

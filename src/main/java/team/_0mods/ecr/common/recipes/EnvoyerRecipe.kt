@@ -3,6 +3,7 @@ package team._0mods.ecr.common.recipes
 import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
 import net.minecraft.core.NonNullList
+import net.minecraft.core.RegistryAccess
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.GsonHelper
@@ -12,7 +13,7 @@ import net.minecraft.world.item.crafting.*
 import net.minecraft.world.level.Level
 import team._0mods.ecr.common.init.registry.ECRegistry
 
-class  EnvoyerRecipe(
+class EnvoyerRecipe(
     private val id: ResourceLocation,
     private val inputs: NonNullList<Ingredient>,
     private val catalyzer: NonNullList<Ingredient>,
@@ -33,11 +34,14 @@ class  EnvoyerRecipe(
         return true
     }
 
-    override fun assemble(container: SimpleContainer): ItemStack = result.copy()
+    override fun assemble(
+        container: SimpleContainer,
+        registryAccess: RegistryAccess
+    ): ItemStack = result.copy()
 
     override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
 
-    override fun getResultItem(): ItemStack = result
+    override fun getResultItem(registryAccess: RegistryAccess): ItemStack = result
 
     override fun getId(): ResourceLocation = id
 

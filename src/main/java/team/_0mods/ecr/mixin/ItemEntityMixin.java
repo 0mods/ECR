@@ -27,6 +27,6 @@ public abstract class ItemEntityMixin extends Entity {
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))
     public void tick(CallbackInfo ci) {
-        MixinHelper.checkCraft(this.getItem(), this.position(), this.level, this.ecr$ticker);
+        MixinHelper.checkCraft(this.getItem(), this.position(), this.level(), this.ecr$ticker);
     }
 }

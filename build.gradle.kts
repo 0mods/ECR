@@ -101,14 +101,18 @@ repositories {
     maven("https://maven.saps.dev/releases") // Kubejs
     maven("https://api.modrinth.com/maven") // Modrinth maven for some mods
     maven("https://maven.terraformersmc.com/") // Mixin Extras
+    maven("https://jitpack.io")
     flatDir { dir("libs") }
 }
 
 dependencies {
+    val pv = "parchmentVersion".fromProperties
     minecraft("com.mojang:minecraft:${minecraftVersion}")
     mappings(loom.layered {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${"parchmentVersion".fromProperties}@zip")
+        parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${
+            if (pv.isEmpty()) minecraftVersion else pv
+        }@zip")
     })
 
     compileOnly("org.spongepowered:mixin:0.8")
@@ -117,11 +121,12 @@ dependencies {
     forge("net.minecraftforge:forge:${minecraftVersion}-${forgeVersion}")
 
     // required library
-    modImplementation("ru.hollowhorizon:HollowCore-forge-$minecraftVersion:${"hc_version".fromProperties}")
+//    modImplementation("ru.hollowhorizon:HollowCore-forge-$minecraftVersion:${"hc_version".fromProperties}")
+    modImplementation("com.github.HollowHorizon.HollowCore:HollowCore-forge-$minecraftVersion:${"hc_version".fromProperties}")
 
     // Include libs
     //ModInclude
-    minecraftRuntimeLibraries(include("team.chisel.ctm:CTM:${minecraftVersion}-${"ctm_version".fromProperties}")) {}
+//    minecraftRuntimeLibraries(include("team.chisel.ctm:CTM:${minecraftVersion}-${"ctm_version".fromProperties}")) {}
     implementation(include("io.github.llamalad7:mixinextras-forge:0.4.1")) {}
 
     // kotlin runtime & compile
@@ -133,7 +138,7 @@ dependencies {
 
     modImplementation("mezz.jei:jei-${minecraftVersion}-forge:${"jei_version".fromProperties}")
     modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-${minecraftVersion}:${"ct_version".fromProperties}")
-    modImplementation("maven.modrinth:jade:${"jade_version".fromProperties}")
+    modImplementation("maven.modrinth:jade:${"jade_version".fromProperties}+forge")
     modImplementation("maven.modrinth:mystical-agriculture:${"ma_version".fromProperties}")
     modCompileOnly("dev.latvian.mods:kubejs-forge:${"kubejs_version".fromProperties}")
 

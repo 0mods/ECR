@@ -1,11 +1,11 @@
 package team._0mods.ecr.client.screen.container.widget
 
-import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.network.chat.Component
 import net.minecraft.util.Mth
-import team._0mods.ecr.api.client.blit
+import team._0mods.ecr.api.client.defaultBlit
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 
@@ -14,12 +14,12 @@ class MithrilineFurnaceProgressArrow(x: Int, y: Int, private val menu: Mithrilin
         private val texture = "textures/gui/widget/mithriline_furnace_arrow.png".ecRL
     }
 
-    override fun render(poseStack: PoseStack, mouseX: Int, mouseY: Int, partialTick: Float) {
-        poseStack.blit(texture, this.x, this.y, width = 8, height = 16, textureWidth = 16, textureHeight = 16)
-        renderProgressArrow(poseStack)
+    override fun renderWidget(gg: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
+        gg.defaultBlit(texture, this.x, this.y, width = 8, height = 16, textureWidth = 16, textureHeight = 16)
+        renderProgressArrow(gg)
     }
 
-    private fun renderProgressArrow(poseStack: PoseStack) {
+    private fun renderProgressArrow(gg: GuiGraphics) {
         val progress = this.menu.data.get(0)
         val maxProgress = this.menu.data.get(1)
 
@@ -27,9 +27,9 @@ class MithrilineFurnaceProgressArrow(x: Int, y: Int, private val menu: Mithrilin
             val calc = progress.toFloat() / maxProgress.toFloat()
             val fl = Mth.floor(calc * 16)
 
-            poseStack.blit(texture, this.x, this.y + (16 - fl), 8f, 16f - fl, 8, fl, 16, 16)
+            gg.defaultBlit(texture, this.x, this.y + (16 - fl), 8f, 16f - fl, 8, fl, 16, 16)
         }
     }
 
-    override fun updateNarration(narrationElementOutput: NarrationElementOutput) {}
+    override fun updateWidgetNarration(narrationElementOutput: NarrationElementOutput) {}
 }

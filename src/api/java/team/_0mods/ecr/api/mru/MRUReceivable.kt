@@ -4,7 +4,7 @@ package team._0mods.ecr.api.mru
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import net.minecraft.core.Registry
+import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
@@ -40,7 +40,7 @@ fun MRUReceivable.processReceive(level: Level) {
     val server = level.server ?: return
     val world = item.getBoundedWorld(stack)
     val dimensionalLevel = if (world != null)
-        server.getLevel(ResourceKey.create(Registry.DIMENSION_REGISTRY, world.rl))
+        server.getLevel(ResourceKey.create(Registries.DIMENSION, world.rl))
     else null
 
     val blockEntity = if (dimensionalLevel != null) dimensionalLevel.getBlockEntity(pos) else level.getBlockEntity(pos)

@@ -26,7 +26,7 @@ class EnvoyerContainer(
     access
 ) {
     constructor(containerId: Int, inv: Inventory, buf: FriendlyByteBuf):
-            this(containerId, inv, ItemStackHandler(7), inv.player.level.getBlockEntity(buf.readBlockPos()), ContainerLevelAccess.NULL)
+            this(containerId, inv, ItemStackHandler(7), inv.player.commandSenderWorld.getBlockEntity(buf.readBlockPos()), ContainerLevelAccess.NULL)
 
     val be: EnvoyerBlockEntity?
         get() {

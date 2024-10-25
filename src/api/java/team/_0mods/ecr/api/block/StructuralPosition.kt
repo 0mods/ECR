@@ -23,15 +23,9 @@ class StructuralPosition private constructor(private val positions: List<BlockPo
             return this
         }
 
-        fun pos(x: Double, y: Double, z: Double): Builder {
-            positions += BlockPos(x, y, z)
-            return this
-        }
+        fun pos(x: Double, y: Double, z: Double): Builder = this.pos(x.toInt(), y.toInt(), z.toInt())
 
-        fun pos(vec: Vec3): Builder {
-            positions += BlockPos(vec)
-            return this
-        }
+        fun pos(vec: Vec3): Builder = this.pos(vec.x, vec.y, vec.z)
 
         @get:JvmName("build")
         val build = StructuralPosition(positions)

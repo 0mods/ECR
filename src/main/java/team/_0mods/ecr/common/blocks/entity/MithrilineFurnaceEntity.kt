@@ -232,9 +232,9 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
             val inv = SimpleContainer(1).apply { this.setItem(0, inputStack) }
             val recipe = level.recipeManager.getRecipeFor(ECRegistry.mithrilineFurnaceRecipe.get(), inv, level)
 
-            if(recipe.isPresent) {
+            if (recipe.isPresent) {
                 val mfr = recipe.get()
-                val result = mfr.resultItem
+                val result = mfr.result
                 val ingrCount = mfr.ingredients[0].items[0].count
 
                 be.canGenerate = false

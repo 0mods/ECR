@@ -30,10 +30,10 @@ public abstract class ItemStackMixin {
     public <T extends LivingEntity> void hurtAndBreak(int amount, T entity, Consumer<T> onBroken, CallbackInfo ci, @Local Item item) {
         if (item instanceof UnConsumeBreakItem i) {
             var result = i.getResult();
-            var ent = new ItemEntity(entity.level, entity.getX(), entity.getY(), entity.getZ(), result);
+            var ent = new ItemEntity(entity.level(), entity.getX(), entity.getY(), entity.getZ(), result);
             ent.setNoPickUpDelay();
-            ent.setOwner(entity.getUUID());
-            entity.level.addFreshEntity(ent);
+            ent.setThrower(entity.getUUID());
+            entity.level().addFreshEntity(ent);
         }
     }
 

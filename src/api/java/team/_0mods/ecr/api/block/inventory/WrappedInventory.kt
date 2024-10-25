@@ -3,7 +3,7 @@ package team._0mods.ecr.api.block.inventory
 import net.minecraft.world.item.ItemStack
 import net.minecraftforge.items.IItemHandlerModifiable
 
-class  WrappedInventory(
+class WrappedInventory(
     private val handler: IItemHandlerModifiable,
     private val extract: (Int) -> Boolean,
     private val insert: (Int, ItemStack) -> Boolean

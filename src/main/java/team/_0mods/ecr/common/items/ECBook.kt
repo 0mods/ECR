@@ -2,7 +2,6 @@ package team._0mods.ecr.common.items
 
 import net.minecraft.ChatFormatting
 import net.minecraft.client.renderer.item.ItemProperties
-import net.minecraft.core.NonNullList
 import net.minecraft.nbt.ListTag
 import net.minecraft.nbt.StringTag
 import net.minecraft.network.chat.Component
@@ -22,8 +21,6 @@ import team._0mods.ecr.api.item.ResearchBookType
 import team._0mods.ecr.api.registries.ECRegistries
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.init.registry.ECBookTypes
-import team._0mods.ecr.common.init.registry.ECRegistry
-import team._0mods.ecr.common.init.registry.ECTabs
 
 class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
     companion object {
@@ -123,7 +120,7 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
         HollowPack.addCustomItemModel("research_book".ecRL, sb.toString())
     }
 
-    override fun fillItemCategory(category: CreativeModeTab, items: NonNullList<ItemStack>) {
+    /*override fun fillItemCategory(category: CreativeModeTab, items: NonNullList<ItemStack>) {
         if (category == CreativeModeTab.TAB_SEARCH || category == ECTabs.tabItems) {
             val values = ECRegistries.BOOK_TYPES.registries.values
 
@@ -141,7 +138,7 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
                 items += stack
             }
         }
-    }
+    }*/
 
     override fun getDescriptionId(): String = "item.${ModId}.book"
 

@@ -1,6 +1,5 @@
 package team._0mods.ecr.common.compact.jei.categories
 
-import com.mojang.blaze3d.vertex.PoseStack
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder
 import mezz.jei.api.gui.drawable.IDrawable
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView
@@ -11,6 +10,7 @@ import mezz.jei.api.recipe.RecipeType
 import mezz.jei.api.recipe.category.IRecipeCategory
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import ru.hollowhorizon.hc.client.utils.rl
@@ -32,17 +32,28 @@ class MithrilineFurnaceCategory(guiHelper: IGuiHelper): IRecipeCategory<Mithrili
 
     override fun getTitle(): Component = ECRegistry.mithrilineFurnace.get().name.withStyle(ChatFormatting.RESET)
 
-    override fun getBackground(): IDrawable = bg
-
     override fun getIcon(): IDrawable = icon
 
     override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: MithrilineFurnaceRecipe, focuses: IFocusGroup) {
         builder.addSlot(RecipeIngredientRole.INPUT, 77, 8).addIngredients(recipe.ingredients[0])
 
-        builder.addSlot(RecipeIngredientRole.OUTPUT, 77, 46).addItemStack(recipe.resultItem)
+        builder.addSlot(RecipeIngredientRole.OUTPUT, 77, 46).addItemStack(recipe.result)
     }
 
     override fun draw(
+        recipe: MithrilineFurnaceRecipe,
+        recipeSlotsView: IRecipeSlotsView,
+        guiGraphics: GuiGraphics,
+        mouseX: Double,
+        mouseY: Double
+    ) {
+        val font = Minecraft.getInstance().font
+        val text = Component.literal("${recipe.espe} ESPE")
+        guiGraphics.drawString(font, text, 85 - font.width(text) / 2, 68, 0x000000,)
+        super.draw(recipe, recipeSlotsView, guiGraphics, mouseX, mouseY)
+    }
+
+    /*override fun draw(
         recipe: MithrilineFurnaceRecipe,
         recipeSlotsView: IRecipeSlotsView,
         stack: PoseStack,
@@ -52,5 +63,5 @@ class MithrilineFurnaceCategory(guiHelper: IGuiHelper): IRecipeCategory<Mithrili
         val font = Minecraft.getInstance().font
         val text = Component.literal("${recipe.espe} ESPE")
         font.draw(stack, text, 85 - font.width(text) / 2f, 68f, 0x000000)
-    }
+    }*/
 }

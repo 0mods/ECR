@@ -3,6 +3,7 @@ package team._0mods.ecr.common.recipes
 import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
 import net.minecraft.core.NonNullList
+import net.minecraft.core.RegistryAccess
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.GsonHelper
@@ -16,7 +17,7 @@ class MithrilineFurnaceRecipe(
     private val recipeId: ResourceLocation,
     private val inputs: NonNullList<Ingredient>,
     val espe: Int,
-    private val result: ItemStack
+    val result: ItemStack
 ): Recipe<SimpleContainer> {
     override fun matches(container: SimpleContainer, level: Level): Boolean {
         if (level.isClientSide) return false
@@ -24,11 +25,11 @@ class MithrilineFurnaceRecipe(
         return ingredients[0].test(container.getItem(0))
     }
 
-    override fun assemble(inv: SimpleContainer): ItemStack = result.copy()
+    override fun assemble(inv: SimpleContainer, registryAccess: RegistryAccess): ItemStack = result.copy()
 
     override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
 
-    override fun getResultItem(): ItemStack = this.result
+    override fun getResultItem(registryAccess: RegistryAccess): ItemStack = this.result
 
     override fun getId(): ResourceLocation = this.recipeId
 
@@ -78,7 +79,7 @@ class MithrilineFurnaceRecipe(
                 it.toNetwork(buffer)
             }
 
-            buffer.writeItem(recipe.resultItem)
+            buffer.writeItem(recipe.result)
         }
     }
 }

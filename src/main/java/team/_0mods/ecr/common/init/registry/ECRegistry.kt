@@ -1,17 +1,21 @@
 package team._0mods.ecr.common.init.registry
 
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockBehaviour
-import net.minecraft.world.level.material.Material
+import ru.hollowhorizon.hc.client.utils.JavaHacks
 import ru.hollowhorizon.hc.client.utils.rl
 import ru.hollowhorizon.hc.common.registry.AutoModelType
 import ru.hollowhorizon.hc.common.registry.HollowRegistry
 import ru.hollowhorizon.hc.common.registry.RegistryObject
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.menu.simpleMenuFactory
+import team._0mods.ecr.api.utils.ecRL
+import team._0mods.ecr.common.api.ItemTab
 import team._0mods.ecr.common.api.PropertiedBlock
 import team._0mods.ecr.common.blocks.*
 import team._0mods.ecr.common.blocks.entity.*
@@ -23,8 +27,22 @@ import team._0mods.ecr.common.particle.ECParticleType
 import team._0mods.ecr.common.recipes.*
 
 object ECRegistry: HollowRegistry(ModId) {
-    private val defaultBlockProperties = BlockBehaviour.Properties.of(Material.METAL).strength(3f, 3f).requiresCorrectToolForDrops()
-    private val clusterProperties = BlockBehaviour.Properties.of(Material.AMETHYST).noOcclusion().strength(1.5F).requiresCorrectToolForDrops()
+    private val defaultBlockProperties = BlockBehaviour.Properties.of().strength(3f, 3f).requiresCorrectToolForDrops()
+    private val clusterProperties = BlockBehaviour.Properties.of().noOcclusion().strength(1.5F).requiresCorrectToolForDrops()
+
+    // Item tabs
+    val tabItems by register("tab_items") {
+        CreativeModeTab.builder()
+            .title(Component.translatable("itemGroup.$ModId.items"))
+            .build()
+    }
+
+    val tabBlocks by register("tab_blocks") {
+        CreativeModeTab.builder()
+            .title(Component.translatable("itemGroup.$ModId.blocks"))
+            .withTabsAfter("tab_items".ecRL)
+            .build()
+    }
 
     // items
     val flameGem by register("flame_gem", registryEntry = ECGem.flame)
@@ -123,10 +141,10 @@ object ECRegistry: HollowRegistry(ModId) {
     // effects
     val mruCorruption by register("mru_corruption", registryEntry = ::MRUCorruption)
 
-    private fun basicItem(id: String, autoModel: AutoModelType? = AutoModelType.DEFAULT, props: Item.Properties.() -> Unit = { this.tab(ECTabs.tabItems) }): RegistryObject<Item> {
+    private fun basicItem(id: String, autoModel: AutoModelType? = AutoModelType.DEFAULT, props: Item.Properties.() -> Unit = {}, noTab: Boolean = false): RegistryObject<Item> {
         val p = Item.Properties().apply(props)
-        val reg by register(id, autoModel) { Item(p) }
-        return reg
+        val reg by register(id, autoModel) { if (!noTab) ItemTab(p) else ItemTab(p, null) }
+        return JavaHacks.forceCast(reg)
     }
 
     private val String.id: ResourceLocation
