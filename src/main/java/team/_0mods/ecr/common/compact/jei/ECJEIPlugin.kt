@@ -47,11 +47,7 @@ class ECJEIPlugin: IModPlugin {
         registration.addRecipeTransferHandler(
             MithrilineFurnaceContainer::class.java,
             ECRegistry.mithrilineFurnaceContainer.get(),
-            MITHRILINE_FURNACE,
-            0,
-            1,
-            2,
-            36
+            MITHRILINE_FURNACE, 0, 1, 2, 36
         )
     }
 }

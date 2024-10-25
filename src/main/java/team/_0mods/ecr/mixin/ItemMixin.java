@@ -5,12 +5,10 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import team._0mods.ecr.api.ECConstantsKt;
 import team._0mods.ecr.api.item.BoundGem;
 import team._0mods.ecr.api.mru.MRUGenerator;
-import team._0mods.ecr.common.api.CustomTab;
 
 import static ru.hollowhorizon.hc.client.utils.ForgeKotlinKt.mcTranslate;
 

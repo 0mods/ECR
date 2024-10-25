@@ -32,6 +32,8 @@ class MithrilineFurnaceCategory(guiHelper: IGuiHelper): IRecipeCategory<Mithrili
 
     override fun getTitle(): Component = ECRegistry.mithrilineFurnace.get().name.withStyle(ChatFormatting.RESET)
 
+    override fun getBackground(): IDrawable? = bg
+
     override fun getIcon(): IDrawable = icon
 
     override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: MithrilineFurnaceRecipe, focuses: IFocusGroup) {
@@ -52,16 +54,4 @@ class MithrilineFurnaceCategory(guiHelper: IGuiHelper): IRecipeCategory<Mithrili
         guiGraphics.drawString(font, text, 85 - font.width(text) / 2, 68, 0x000000,)
         super.draw(recipe, recipeSlotsView, guiGraphics, mouseX, mouseY)
     }
-
-    /*override fun draw(
-        recipe: MithrilineFurnaceRecipe,
-        recipeSlotsView: IRecipeSlotsView,
-        stack: PoseStack,
-        mouseX: Double,
-        mouseY: Double
-    ) {
-        val font = Minecraft.getInstance().font
-        val text = Component.literal("${recipe.espe} ESPE")
-        font.draw(stack, text, 85 - font.width(text) / 2f, 68f, 0x000000)
-    }*/
 }

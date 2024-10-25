@@ -4,12 +4,12 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockBehaviour
 import ru.hollowhorizon.hc.client.utils.JavaHacks
 import ru.hollowhorizon.hc.client.utils.rl
-import ru.hollowhorizon.hc.common.handlers.tab
 import ru.hollowhorizon.hc.common.registry.AutoModelType
 import ru.hollowhorizon.hc.common.registry.HollowRegistry
 import ru.hollowhorizon.hc.common.registry.RegistryObject
@@ -33,6 +33,7 @@ object ECRegistry: HollowRegistry(ModId) {
     // Item tabs
     val tabItems by register("tab_items") {
         CreativeModeTab.builder()
+            .icon { ItemStack(elementalGem.get()) }
             .title(Component.translatable("itemGroup.$ModId.items"))
             .build()
     }
@@ -40,7 +41,8 @@ object ECRegistry: HollowRegistry(ModId) {
     val tabBlocks by register("tab_blocks") {
         CreativeModeTab.builder()
             .title(Component.translatable("itemGroup.$ModId.blocks"))
-            .withTabsAfter("tab_items".ecRL)
+            .icon { ItemStack(mithrilineFurnace.get()) }
+            .withTabsBefore("tab_items".ecRL)
             .build()
     }
 
@@ -143,7 +145,7 @@ object ECRegistry: HollowRegistry(ModId) {
 
     private fun basicItem(id: String, autoModel: AutoModelType? = AutoModelType.DEFAULT, props: Item.Properties.() -> Unit = {}, noTab: Boolean = false): RegistryObject<Item> {
         val p = Item.Properties().apply(props)
-        val reg by register(id, autoModel) { Item(p).tab(tabItems.get()) }
+        val reg by register(id, autoModel) { Item(p) }
         return JavaHacks.forceCast(reg)
     }
 
