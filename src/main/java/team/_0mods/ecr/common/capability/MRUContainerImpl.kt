@@ -4,12 +4,13 @@ import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.IntTag
 import net.minecraftforge.common.util.INBTSerializable
 import team._0mods.ecr.api.mru.MRUContainer
+import team._0mods.ecr.api.mru.MRUTypes
 import kotlin.math.max
 import kotlin.math.min
 
 open class MRUContainerImpl(
-    override val mruType: MRUContainer.MRUType,
-    private var capacity: Int,
+    override val mruType: MRUTypes,
+    private val capacity: Int,
     private var mru: Int,
     private val onContextChanged: (MRUContainer) -> Unit = {}
 ): MRUContainer, INBTSerializable<CompoundTag> {

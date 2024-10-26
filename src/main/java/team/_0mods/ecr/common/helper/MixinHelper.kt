@@ -28,7 +28,8 @@ import kotlin.random.Random
 fun makeIntArray(value: Int = 0) = intArrayOf(value)
 
 fun checkCraft(stack: ItemStack, pos: Vec3, level: Level, timer: IntArray) {
-    val center = BlockPos(pos.x.toInt(), pos.y.toInt(), pos.z.toInt()).below()
+    val center = BlockPos.containing(pos).below()
+
     when (stack.item) {
         Items.EMERALD -> {
             if (!level.getBlockState(center).`is`(Blocks.EMERALD_BLOCK)) return

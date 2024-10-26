@@ -18,6 +18,7 @@ import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
 import team._0mods.ecr.api.mru.MRUContainer
 import team._0mods.ecr.api.mru.MRUGenerator
+import team._0mods.ecr.api.mru.MRUTypes
 import team._0mods.ecr.common.api.SyncedBlockEntity
 import team._0mods.ecr.common.capability.MRUContainerImpl
 import team._0mods.ecr.common.container.MatrixDestructorContainer
@@ -34,7 +35,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
         }
     }
 
-    val mruContainer = MRUContainerImpl(MRUContainer.MRUType.RADIATION_UNIT, 10000, 0) {
+    val mruContainer = MRUContainerImpl(MRUTypes.RADIATION_UNIT, 10000, 0) {
         if (!level!!.isClientSide) setChanged()
     }
 

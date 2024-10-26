@@ -19,6 +19,7 @@ import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
 import team._0mods.ecr.api.mru.MRUContainer
 import team._0mods.ecr.api.mru.MRUReceivable
+import team._0mods.ecr.api.mru.MRUTypes
 import team._0mods.ecr.api.mru.processReceive
 import team._0mods.ecr.common.api.SyncedBlockEntity
 import team._0mods.ecr.common.capability.MRUContainerImpl
@@ -41,7 +42,7 @@ class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : SyncedBlockEnt
         }
     }
 
-    private val mruStorage = MRUContainerImpl(MRUContainer.MRUType.RADIATION_UNIT, 5000, 0) { setChanged() }
+    private val mruStorage = MRUContainerImpl(MRUTypes.RADIATION_UNIT, 5000, 0) { setChanged() }
 
     private var itemHandlerLazy = LazyOptional.empty<IItemHandler>()
     private var mruStorageLazy = LazyOptional.empty<MRUContainer>()

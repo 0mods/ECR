@@ -59,7 +59,7 @@ fun AbstractContainerScreen<*>.drawMRULine(
     if (isCursorAtPos(mouseX, mouseY, xPos(x), yPos(y), width, height)) {
         gg.renderTooltip(
             Minecraft.getInstance().font,
-            Component.literal("${container.mruType.display.string}: ${container.mruStorage}/${container.maxMRUStorage}"),
+            Component.literal("${container.mruType.displayName.string}: ${container.mruStorage}/${container.maxMRUStorage}"),
             mouseX,
             mouseY
         )

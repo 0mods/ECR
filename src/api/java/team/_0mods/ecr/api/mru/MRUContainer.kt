@@ -1,6 +1,5 @@
 package team._0mods.ecr.api.mru
 
-import net.minecraft.network.chat.Component
 import net.minecraftforge.common.capabilities.AutoRegisterCapability
 
 @AutoRegisterCapability
@@ -15,7 +14,7 @@ interface MRUContainer {
 
     fun setMru(value: Int)
 
-    val mruType: MRUType
+    val mruType: MRUTypes
 
     fun canExtract(max: Int): Boolean = mruStorage - max >= 0
 
@@ -29,10 +28,5 @@ interface MRUContainer {
         }
 
         return false
-    }
-
-    enum class MRUType(val display: Component) {
-        RADIATION_UNIT(Component.literal("MRU")),
-        ESPE(Component.literal("ESPE"))
     }
 }

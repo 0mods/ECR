@@ -43,7 +43,7 @@ class MithrilineFurnaceScreen(
             val mru = be.mruContainer
 
             if (isCursorAtPos(mouseX, mouseY, xPos(6), yPos(59), 18, 18))
-                gg.renderTooltip(Minecraft.getInstance().font, Component.literal("${mru.mruType.display.string}: ${mru.mruStorage}/${mru.maxMRUStorage}"), mouseX, mouseY)
+                gg.renderTooltip(Minecraft.getInstance().font, Component.literal("${mru.mruType.displayName.string}: ${mru.mruStorage}/${mru.maxMRUStorage}"), mouseX, mouseY)
         }
     }
 

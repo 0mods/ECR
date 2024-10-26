@@ -23,7 +23,7 @@ class MithrilineFurnaceComponent: IBlockComponentProvider {
 
         if (be.successfulStructure) {
             tooltip.add(Component.translatable("mithriline_furnace.espe_collector".withJade, collectors, maxCollectors))
-            tooltip.add(Component.literal("${storage.mruType.display.string}: ${storage.mruStorage}/${storage.maxMRUStorage}"))
+            tooltip.add(Component.literal("${storage.mruType.displayName.string}: ${storage.mruStorage}/${storage.maxMRUStorage}"))
         }
     }
 }
