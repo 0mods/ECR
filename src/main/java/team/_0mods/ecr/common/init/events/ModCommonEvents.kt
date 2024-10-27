@@ -4,7 +4,9 @@ package team._0mods.ecr.common.init.events
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import net.minecraft.world.item.BlockItem
+import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.ItemLike
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
@@ -28,34 +30,38 @@ fun onModSetup(e: FMLCommonSetupEvent) {
 
 @SubscribeEvent
 fun onBuildCreativeTabs(e: BuildCreativeModeTabContentsEvent) {
-    val items = ForgeRegistries.ITEMS.filter { ForgeRegistries.ITEMS.getKey(it)!!.namespace.contains(ModId) }
-
-    items.forEach { it ->
+    val items = ForgeRegistries.ITEMS.filter { ForgeRegistries.ITEMS.getKey(it)!!.namespace.contains(ModId) }.forEach { it ->
         if (it is NoTab && it !is ECBook) return@forEach
 
-        if (it !is BlockItem) {
-            if (e.tab == ECRegistry.tabItems.get()) {
-                if (it is ECBook) {
-                    val values = ECRegistries.BOOK_TYPES.registries.values
+        if (it is ECBook) {
+            val values = ECRegistries.BOOK_TYPES.registries.values
 
-                    for (i in 0 ..< values.size) {
-                        val stack = ItemStack(it).apply {
-                            for (j in 0 .. i) {
-                                var bt = this.bookTypes!!
-                                values.toList()[j].let { bt += it }
-                                this.bookTypes = bt
-                            }
-                        }
-
-                        e.accept(stack)
+            for (i in 0 ..< values.size) {
+                val stack = ItemStack(it).apply {
+                    for (j in 0 .. i) {
+                        var bt = this.bookTypes!!
+                        values.toList()[j].let { bt += it }
+                        this.bookTypes = bt
                     }
-
-                    return@forEach
                 }
-                e.accept(it)
+
+                e.accept(ECRegistry.tabItems.get(), stack)
             }
-        } else {
-            if (e.tab == ECRegistry.tabBlocks.get()) e.accept(it)
+
+            return@forEach
         }
+
+        e.accept(if (it is BlockItem) ECRegistry.tabBlocks.get() else ECRegistry.tabItems.get(), it)
     }
+}
+
+private fun BuildCreativeModeTabContentsEvent.accept(tab: CreativeModeTab, stack: ItemStack) {
+    val t = this.tab
+    if (tab == t) {
+        this.accept(stack)
+    }
+}
+
+private fun BuildCreativeModeTabContentsEvent.accept(tab: CreativeModeTab, item: ItemLike) {
+    this.accept(tab, ItemStack(item))
 }
