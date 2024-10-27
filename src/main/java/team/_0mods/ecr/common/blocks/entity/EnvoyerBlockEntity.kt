@@ -24,6 +24,7 @@ import team._0mods.ecr.api.mru.processReceive
 import team._0mods.ecr.common.api.SyncedBlockEntity
 import team._0mods.ecr.common.capability.MRUContainerImpl
 import team._0mods.ecr.common.container.EnvoyerContainer
+import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECRegistry
 
 class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : SyncedBlockEntity(
@@ -80,6 +81,8 @@ class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : SyncedBlockEnt
 
     override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> {
         if (cap == ForgeCapabilities.ITEM_HANDLER) return itemHandlerLazy.cast()
+
+        if (cap == ECCapabilities.MRU_CONTAINER) return mruStorageLazy.cast()
 
         return super.getCapability(cap, side)
     }

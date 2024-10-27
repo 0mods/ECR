@@ -95,6 +95,7 @@ matrix.ecreimagined:
   neutral: Neutral
 
 config.jade.plugin_ecreimagined:
+  mru_component: MRU Devices
   mithriline_furnace:
     .: Mithriline Furnace
     espe_collector: "Active ESPE collectors: %s/%s"
