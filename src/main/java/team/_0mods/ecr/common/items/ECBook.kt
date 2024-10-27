@@ -20,14 +20,15 @@ import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.item.ResearchBookType
 import team._0mods.ecr.api.registries.ECRegistries
 import team._0mods.ecr.api.utils.ecRL
+import team._0mods.ecr.common.api.NoTab
 import team._0mods.ecr.common.init.registry.ECBookTypes
 
-class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
+class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), NoTab {
     companion object {
         var ItemStack.bookTypes: List<ResearchBookType>?
             @NotNull
             get() {
-                if (this.item !is ECBook) throw IllegalStateException("Failed to get book type to none-book item")
+                if (this.item !is ECBook) return null
                 val tag = this.orCreateTag
                 val list = mutableListOf<ResearchBookType>()
 
@@ -58,7 +59,7 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
                 return list
             }
             set(v) {
-                if (this.item !is ECBook) throw IllegalStateException("Failed to add book type to none-book item")
+                if (this.item !is ECBook) return
                 val tag = this.orCreateTag
                 if (v == null) {
                     tag.remove("ECBookTypes")
@@ -119,26 +120,6 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)) {
 
         HollowPack.addCustomItemModel("research_book".ecRL, sb.toString())
     }
-
-    /*override fun fillItemCategory(category: CreativeModeTab, items: NonNullList<ItemStack>) {
-        if (category == CreativeModeTab.TAB_SEARCH || category == ECTabs.tabItems) {
-            val values = ECRegistries.BOOK_TYPES.registries.values
-
-            for (i in 0 ..< values.size) {
-                val stack = ItemStack(ECRegistry.researchBook.get()).apply {
-                    for (j in 0 .. i) {
-                        var bt = this.bookTypes!!
-                        values.toList()[j].let {
-                            bt += it
-                        }
-                        this.bookTypes = bt
-                    }
-                }
-
-                items += stack
-            }
-        }
-    }*/
 
     override fun getDescriptionId(): String = "item.${ModId}.book"
 
