@@ -30,7 +30,7 @@ fun onModSetup(e: FMLCommonSetupEvent) {
 
 @SubscribeEvent
 fun onBuildCreativeTabs(e: BuildCreativeModeTabContentsEvent) {
-    val items = ForgeRegistries.ITEMS.filter { ForgeRegistries.ITEMS.getKey(it)!!.namespace.contains(ModId) }.forEach { it ->
+    ForgeRegistries.ITEMS.filter { ForgeRegistries.ITEMS.getKey(it)!!.namespace.contains(ModId) }.forEach { it ->
         if (it is NoTab && it !is ECBook) return@forEach
 
         if (it is ECBook) {
