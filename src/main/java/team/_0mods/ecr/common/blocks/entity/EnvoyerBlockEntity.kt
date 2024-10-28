@@ -3,6 +3,7 @@ package team._0mods.ecr.common.blocks.entity
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.IntTag
 import net.minecraft.network.chat.Component
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.entity.player.Inventory
@@ -17,12 +18,12 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
-import team._0mods.ecr.api.mru.MRUContainer
+import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUReceivable
 import team._0mods.ecr.api.mru.MRUTypes
 import team._0mods.ecr.api.mru.processReceive
 import team._0mods.ecr.common.api.SyncedBlockEntity
-import team._0mods.ecr.common.capability.MRUContainerImpl
+import team._0mods.ecr.common.capability.MRUStorageImpl
 import team._0mods.ecr.common.container.EnvoyerContainer
 import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECRegistry
@@ -43,10 +44,10 @@ class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : SyncedBlockEnt
         }
     }
 
-    private val mruStorage = MRUContainerImpl(MRUTypes.RADIATION_UNIT, 5000, 0) { setChanged() }
+    private val mruStorage = MRUStorageImpl(MRUTypes.RADIATION_UNIT, 5000, 0) { setChanged() }
 
     private var itemHandlerLazy = LazyOptional.empty<IItemHandler>()
-    private var mruStorageLazy = LazyOptional.empty<MRUContainer>()
+    private var mruStorageLazy = LazyOptional.empty<MRUStorage>()
 
     var progress = 0
     var maxProgress = 0
@@ -75,7 +76,7 @@ class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : SyncedBlockEnt
         progress = tag.getInt("Progress")
         maxProgress = tag.getInt("MaxProgress")
         itemHandler.deserializeNBT(tag.getCompound("Items"))
-        mruStorage.deserializeNBT(tag.getCompound("MRU"))
+        mruStorage.deserializeNBT(IntTag.valueOf(tag.getInt("MRU")))
         super.load(tag)
     }
 
@@ -105,6 +106,6 @@ class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : SyncedBlockEnt
     override val positionCrystal: ItemStack
         get() = this.itemHandler.getStackInSlot(6)
 
-    override val mruContainer: MRUContainer
+    override val mruContainer: MRUStorage
         get() = this.mruStorage
 }

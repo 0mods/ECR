@@ -22,11 +22,11 @@ interface MRUReceivable {
     val positionCrystal: ItemStack? get() = null
 
     /**
-     * Gets the current [MRUContainer]
+     * Gets the current [MRUStorage]
      *
-     * @return [MRUContainer]
+     * @return [MRUStorage]
      */
-    val mruContainer: MRUContainer
+    val mruContainer: MRUStorage
 }
 
 fun MRUReceivable.processReceive(level: Level) {
@@ -48,7 +48,7 @@ fun MRUReceivable.processReceive(level: Level) {
     if (blockEntity !is MRUGenerator) return
 
     val currentContainer = this.mruContainer
-    val generator = blockEntity.currentMRUContainer
+    val generator = blockEntity.currentMRUStorage
 
     scope.launch {
         if (!generator.checkExtractAndReceive(currentContainer, 100)) {

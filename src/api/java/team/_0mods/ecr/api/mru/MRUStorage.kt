@@ -3,7 +3,7 @@ package team._0mods.ecr.api.mru
 import net.minecraftforge.common.capabilities.AutoRegisterCapability
 
 @AutoRegisterCapability
-interface MRUContainer {
+interface MRUStorage {
     val mruStorage: Int
 
     val maxMRUStorage: Int
@@ -20,7 +20,7 @@ interface MRUContainer {
 
     fun canReceive(receive: Int): Boolean = mruStorage + receive <= maxMRUStorage
 
-    fun checkExtractAndReceive(receiver: MRUContainer, max: Int): Boolean {
+    fun checkExtractAndReceive(receiver: MRUStorage, max: Int): Boolean {
         if (receiver.canReceive(max) && this.canExtract(max)) {
             this.extractMru(max)
             receiver.receiveMru(max)

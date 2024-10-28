@@ -3,6 +3,7 @@ package team._0mods.ecr.common.blocks.entity
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
+import net.minecraft.nbt.IntTag
 import net.minecraft.network.chat.Component
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.entity.player.Inventory
@@ -16,11 +17,11 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
-import team._0mods.ecr.api.mru.MRUContainer
 import team._0mods.ecr.api.mru.MRUGenerator
+import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUTypes
 import team._0mods.ecr.common.api.SyncedBlockEntity
-import team._0mods.ecr.common.capability.MRUContainerImpl
+import team._0mods.ecr.common.capability.MRUStorageImpl
 import team._0mods.ecr.common.container.MatrixDestructorContainer
 import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECCapabilities
@@ -35,16 +36,16 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
         }
     }
 
-    val mruContainer = MRUContainerImpl(MRUTypes.RADIATION_UNIT, 10000, 0) {
+    val mruContainer = MRUStorageImpl(MRUTypes.RADIATION_UNIT, 10000, 0) {
         if (!level!!.isClientSide) setChanged()
     }
 
     private var itemHandlerLazy = LazyOptional.empty<IItemHandler>()
-    private var mruStorageLazy = LazyOptional.empty<MRUContainer>()
+    private var mruStorageLazy = LazyOptional.empty<MRUStorage>()
 
     var progress = 0
 
-    override val currentMRUContainer: MRUContainer get() = mruContainer
+    override val currentMRUStorage: MRUStorage get() = mruContainer
 
     override fun onLoad() {
         super.onLoad()
@@ -67,7 +68,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
 
     override fun load(tag: CompoundTag) {
         itemHandler.deserializeNBT(tag.getCompound("ItemStorage"))
-        mruContainer.deserializeNBT(tag.getCompound("MRUStorage"))
+        mruContainer.deserializeNBT(IntTag.valueOf(tag.getInt("MRUStorage")))
         progress = tag.getInt("InjectionProgress")
         super.load(tag)
     }

@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
-import team._0mods.ecr.api.mru.MRUContainer
+import team._0mods.ecr.api.mru.MRUStorage
 import java.awt.Color
 
 fun isCursorAtPos(cursorX: Int, cursorY: Int, x: Int, y: Int, width: Int, height: Int) : Boolean =
@@ -45,7 +45,7 @@ fun AbstractContainerScreen<*>.yPos(y: Float): Float {
 
 fun AbstractContainerScreen<*>.drawMRULine(
     gg: GuiGraphics,
-    container: MRUContainer,
+    container: MRUStorage,
     x: Int,
     y: Int,
     width: Int,
@@ -68,7 +68,7 @@ fun AbstractContainerScreen<*>.drawMRULine(
 
 fun AbstractContainerScreen<*>.drawMRUGradientLine(
     gg: GuiGraphics,
-    container: MRUContainer,
+    container: MRUStorage,
     x: Int,
     y: Int,
     height: Int,
