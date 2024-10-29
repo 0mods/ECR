@@ -24,13 +24,31 @@ object EnvoyerCTRecipe: IRecipeManager<EnvoyerRecipe> {
 
     @JvmStatic
     @ZenCodeType.Method
-    fun addRecipe(name: String, output: IItemStack, catalyst: IIngredient, ingredients: Array<IIngredient>, time: Int, mru: Int) {
+    fun addRecipe(
+        name: String,
+        output: IItemStack,
+        catalyst: IIngredient,
+        @ZenCodeType.OptionalInt(100) time: Int,
+        @ZenCodeType.OptionalInt(10) mru: Int
+    ) = addRecipe(name, output, catalyst, arrayOf(), time, mru)
+
+    @JvmStatic
+    @ZenCodeType.Method
+    fun addRecipe(
+        name: String,
+        output: IItemStack,
+        catalyst: IIngredient,
+        ingredients: Array<IIngredient>,
+        @ZenCodeType.OptionalInt(100) time: Int,
+        @ZenCodeType.OptionalInt(10) mru: Int
+    ) {
         val fixedName = fixRecipeName(name)
         val inputs = NonNullList.withSize(4, Ingredient.EMPTY)
         val catal = NonNullList.withSize(1, Ingredient.EMPTY)
         catal[0] = catalyst.asVanillaIngredient()
-        ingredients.forEachIndexed { index, ingredient ->
-            inputs[index] = ingredient.asVanillaIngredient()
+
+        (0 ..< ingredients.size).forEach { i ->
+            inputs[i] = ingredients[i].asVanillaIngredient()
         }
 
         CraftTweakerAPI.apply(

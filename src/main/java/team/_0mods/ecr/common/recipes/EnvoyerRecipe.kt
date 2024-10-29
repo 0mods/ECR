@@ -55,14 +55,16 @@ class EnvoyerRecipe(
         val serial: (ResourceLocation, NonNullList<Ingredient>, NonNullList<Ingredient>, Int, Int, ItemStack) -> EnvoyerRecipe
     ): RecipeSerializer<EnvoyerRecipe> {
         override fun fromJson(recipeId: ResourceLocation, serializedRecipe: JsonObject): EnvoyerRecipe {
-            if (!serializedRecipe.has("ingredients")) throw JsonSyntaxException("Recipe cannot be created, because argument \"ingredients\" is missing.")
-            if (!serializedRecipe.get("ingredients").isJsonArray) throw JsonSyntaxException("Recipe cannot be created, \"ingredients\" may be only as JsonArray.")
-            val input = GsonHelper.getAsJsonArray(serializedRecipe, "ingredients")
             val inputs = NonNullList.withSize(4, Ingredient.EMPTY)
 
-            input.forEachIndexed { index, it ->
-                val i = Ingredient.fromJson(it)
-                inputs[index] = i
+            if (serializedRecipe.has("ingredients")) {
+                if (!serializedRecipe.get("ingredients").isJsonArray) throw JsonSyntaxException("Recipe cannot be created, \"ingredients\" may be only as JsonArray.")
+                val input = GsonHelper.getAsJsonArray(serializedRecipe, "ingredients")
+
+                (0 ..< input.size()).forEach { i ->
+                    val ingr = Ingredient.fromJson(input[i])
+                    inputs[i] = ingr
+                }
             }
 
             if (!serializedRecipe.has("catalyst")) throw JsonSyntaxException("Recipe cannot be created, because argument \"catalyst\" is missing.")
