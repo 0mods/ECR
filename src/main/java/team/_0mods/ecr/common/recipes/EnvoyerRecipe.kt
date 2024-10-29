@@ -15,19 +15,19 @@ import team._0mods.ecr.common.init.registry.ECRegistry
 
 class EnvoyerRecipe(
     private val id: ResourceLocation,
-    private val inputs: NonNullList<Ingredient>,
-    private val catalyzer: NonNullList<Ingredient>,
+    val inputs: NonNullList<Ingredient>,
+    val catalyst: NonNullList<Ingredient>,
     val time: Int,
     val mruPerTick: Int,
     private val result: ItemStack
 ): Recipe<SimpleContainer> {
     override fun matches(container: SimpleContainer, level: Level): Boolean {
         for (i in 0 ..< container.containerSize) {
-            if (i < 5) {
+            if (i < 4) {
                 val item = container.getItem(i)
                 if (!inputs[i].test(item)) return false
-            } else if (i == 5) {
-                return catalyzer[0].test(container.getItem(i))
+            } else if (i == 4) {
+                return catalyst[0].test(container.getItem(i))
             }
         }
 
@@ -65,10 +65,10 @@ class EnvoyerRecipe(
                 inputs[index] = i
             }
 
-            if (!serializedRecipe.has("catalyzer"))  throw JsonSyntaxException("Recipe cannot be created, because argument \"catalyzer\" is missing.")
-            val catalyzer = GsonHelper.getAsJsonObject(serializedRecipe, "catalyzer")
+            if (!serializedRecipe.has("catalyst")) throw JsonSyntaxException("Recipe cannot be created, because argument \"catalyst\" is missing.")
+            val catalyst = GsonHelper.getAsJsonObject(serializedRecipe, "catalyst")
             val catal = NonNullList.withSize(1, Ingredient.EMPTY)
-            catal[0] = Ingredient.fromJson(catalyzer)
+            catal[0] = Ingredient.fromJson(catalyst)
 
             if (!serializedRecipe.has("result")) throw JsonSyntaxException("Recipe cannot be created, because argument \"result\" is missing.")
             val result = ShapedRecipe.itemStackFromJson(serializedRecipe.getAsJsonObject("result"))
@@ -97,7 +97,7 @@ class EnvoyerRecipe(
 
         override fun toNetwork(buffer: FriendlyByteBuf, recipe: EnvoyerRecipe) {
             recipe.inputs.forEach { it.toNetwork(buffer) }
-            recipe.catalyzer.forEach { it.toNetwork(buffer) }
+            recipe.catalyst.forEach { it.toNetwork(buffer) }
             buffer.writeItem(recipe.result)
             buffer.writeInt(recipe.time)
             buffer.writeInt(recipe.mruPerTick)

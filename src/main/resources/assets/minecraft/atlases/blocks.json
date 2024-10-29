@@ -3,6 +3,10 @@
     {
       "type": "single",
       "resource": "ecreimagined:block/mithriline_furnace"
+    },
+    {
+      "type": "single",
+      "resource": "ecreimagined:particle/mithriline_furnace"
     }
   ]
 }

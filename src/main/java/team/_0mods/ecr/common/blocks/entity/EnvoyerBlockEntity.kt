@@ -2,10 +2,12 @@ package team._0mods.ecr.common.blocks.entity
 
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.core.NonNullList
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.nbt.IntTag
 import net.minecraft.network.chat.Component
 import net.minecraft.world.MenuProvider
+import net.minecraft.world.SimpleContainer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
@@ -18,8 +20,8 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
-import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUReceivable
+import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUTypes
 import team._0mods.ecr.api.mru.processReceive
 import team._0mods.ecr.common.api.SyncedBlockEntity
@@ -99,7 +101,57 @@ class EnvoyerBlockEntity(pos: BlockPos, blockState: BlockState) : SyncedBlockEnt
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: EnvoyerBlockEntity) {
             if (!level.isClientSide) {
                 be.processReceive(level)
+                be.processRecipeIfPresent(level)
             }
+        }
+
+        @JvmStatic
+        private fun EnvoyerBlockEntity.processRecipeIfPresent(level: Level) {
+            val list = NonNullList.withSize(5, ItemStack.EMPTY)
+            (0 ..< 5).forEach {
+                if (!this.itemHandler.getStackInSlot(it).isEmpty)
+                    list[it] = this.itemHandler.getStackInSlot(it)
+            }
+
+            val inv = SimpleContainer(5).apply { (0 ..< this.containerSize).forEach { this.setItem(it, list[it]) } }
+            val recipeOptional = level.recipeManager.getRecipeFor(ECRegistry.envoyerRecipe.get(), inv, level)
+
+            if (recipeOptional.isPresent) {
+                val recipe = recipeOptional.get()
+                val time = recipe.time
+                val mru = recipe.mruPerTick
+                val result = recipe.getResultItem(level.registryAccess())
+
+                if (this.itemHandler.getStackInSlot(5).isEmpty) {
+                    this.processTick(time, mru)
+                    if (this.progress >= time) {
+                        inv.clearContent()
+                        (0 ..< 5).forEach { this.itemHandler.extractItem(it, 1, false) }
+                        this.itemHandler.insertItem(5, result.copy(), false)
+                        this.resetProgress()
+                    }
+                }
+            } else {
+                inv.clearContent()
+                this.resetProgress()
+            }
+        }
+
+        private fun EnvoyerBlockEntity.processTick(time: Int, mru: Int) {
+            val storage = this.mruStorage
+            if (this.progress >= time) return
+            if (!storage.canExtract(mru)) return
+
+            storage.extractMru(mru)
+            this.progress++
+            this.setChanged()
+        }
+
+        @JvmStatic
+        private fun EnvoyerBlockEntity.resetProgress() {
+            this.progress = 0
+            this.maxProgress = 0
+            this.setChanged()
         }
     }
 

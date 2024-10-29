@@ -35,13 +35,18 @@ class EnvoyerContainer(
         }
 
     init {
+        // Recipe slots
         addSlot(SpecialSlot(container, 0, 26, 17, stackSize = 1))
         addSlot(SpecialSlot(container, 1, 62, 17, stackSize = 1))
-        addSlot(SpecialSlot(container, 2, 44, 35, stackSize = 1))
-        addSlot(SpecialSlot(container, 3, 26, 53, stackSize = 1))
-        addSlot(SpecialSlot(container, 4, 62, 53, stackSize = 1))
+        addSlot(SpecialSlot(container, 2, 26, 53, stackSize = 1))
+        addSlot(SpecialSlot(container, 3, 62, 53, stackSize = 1))
+
+        // Catalyst
+        addSlot(SpecialSlot(container, 4, 44, 35, stackSize = 1))
+        // Result
         addSlot(SpecialSlot(container, 5, 116, 35, { false }, stackSize = 1))
 
+        // Bound gem
         addSlot(
             SpecialSlot(
                 container, 6, 152, 53, {

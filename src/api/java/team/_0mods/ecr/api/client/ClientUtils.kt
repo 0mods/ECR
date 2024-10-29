@@ -9,7 +9,10 @@ import team._0mods.ecr.api.mru.MRUStorage
 import java.awt.Color
 
 fun isCursorAtPos(cursorX: Int, cursorY: Int, x: Int, y: Int, width: Int, height: Int) : Boolean =
-    cursorX >= x && cursorY >=y && cursorX <= x + width && cursorY <= y + height
+    cursorX >= x && cursorY >= y && cursorX <= x + width && cursorY <= y + height
+
+fun isCursorAtPos(cursorX: Double, cursorY: Double, x: Int, y: Int, width: Int, height: Int) : Boolean =
+    cursorX >= x && cursorY >= y && cursorX <= x + width && cursorY <= y + height
 
 fun GuiGraphics.defaultBlit(
     id: ResourceLocation,

@@ -13,26 +13,23 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
-import ru.hollowhorizon.hc.client.utils.rl
-import team._0mods.ecr.api.ModId
+import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.compact.jei.ECJEIPlugin
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
+import java.awt.Color
 
 class MithrilineFurnaceCategory(guiHelper: IGuiHelper): IRecipeCategory<MithrilineFurnaceRecipe> {
-    companion object {
-        @JvmField
-        val RL_ID = "$ModId:mithriline_furnace".rl
-    }
-
     private val icon = guiHelper.createDrawableItemStack(ItemStack(ECRegistry.mithrilineFurnace.get()))
-    private val bg = guiHelper.createDrawable("$ModId:textures/gui/jei/${RL_ID.path}.png".rl, 0, 0, 170, 80)
+    private val bg = guiHelper.createDrawable("textures/gui/jei/${RL_ID.path}.png".ecRL, 0, 0, 170, 80)
 
     override fun getRecipeType(): RecipeType<MithrilineFurnaceRecipe> = ECJEIPlugin.MITHRILINE_FURNACE
 
     override fun getTitle(): Component = ECRegistry.mithrilineFurnace.get().name.withStyle(ChatFormatting.RESET)
 
-    override fun getBackground(): IDrawable? = bg
+    override fun getWidth(): Int = bg.width
+
+    override fun getHeight(): Int = bg.height
 
     override fun getIcon(): IDrawable = icon
 
@@ -49,9 +46,16 @@ class MithrilineFurnaceCategory(guiHelper: IGuiHelper): IRecipeCategory<Mithrili
         mouseX: Double,
         mouseY: Double
     ) {
+        bg.draw(guiGraphics)
+
         val font = Minecraft.getInstance().font
         val text = Component.literal("${recipe.espe} ESPE")
-        guiGraphics.drawString(font, text, 85 - font.width(text) / 2, 68, 0x000000,)
+        guiGraphics.drawString(font, text, 85 - font.width(text) / 2, 68, Color.WHITE.rgb)
         super.draw(recipe, recipeSlotsView, guiGraphics, mouseX, mouseY)
+    }
+
+    companion object {
+        @JvmField
+        val RL_ID = "mithriline_furnace".ecRL
     }
 }

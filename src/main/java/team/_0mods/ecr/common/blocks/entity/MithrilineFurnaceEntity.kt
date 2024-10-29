@@ -186,8 +186,8 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
             }
 
             if (be.successfulStructure) {
-                generateESPE(level, pos, be)
-                processRecipeIfPresent(be, level)
+                be.generateESPE(level, pos)
+                be.processRecipeIfPresent(level)
                 level.addParticle(
                     ECParticleOptions(Color.GREEN, 0.5f, 10, 0.1f, true, false),
                     pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, 1.0, 1.0, 1.0
@@ -198,23 +198,23 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         }
 
         @JvmStatic
-        private fun generateESPE(level: Level, pos: BlockPos, be: MithrilineFurnaceEntity) {
-            val collectors = be.getActiveCollectors(level, pos)
+        private fun MithrilineFurnaceEntity.generateESPE(level: Level, pos: BlockPos) {
+            val collectors = this.getActiveCollectors(level, pos)
 
-            if (collectors > 0 && (be.tickCount++ % (160 / collectors) == 0)) {
+            if (collectors > 0 && (this.tickCount++ % (160 / collectors) == 0)) {
                 var collect = collectors * 4 - 3 + 1
-                if (!be.decreaseGeneration) collect /= 4
-                be.mruContainer.receiveMru(collect)
-            } else if (CRYSTAL_POSITION == null && (be.tickCount++ % 160 == 0)) {
-                be.mruContainer.receiveMru(10)
+                if (!this.decreaseGeneration) collect /= 4
+                this.mruContainer.receiveMru(collect)
+            } else if (CRYSTAL_POSITION == null && (this.tickCount++ % 160 == 0)) {
+                this.mruContainer.receiveMru(10)
             }
         }
 
         @JvmStatic
-        private fun processRecipeIfPresent(be: MithrilineFurnaceEntity, level: Level) {
-            val inputStack = be.itemHandler.getStackInSlot(0)
+        private fun MithrilineFurnaceEntity.processRecipeIfPresent(level: Level) {
+            val inputStack = this.itemHandler.getStackInSlot(0)
             if (inputStack.isEmpty) {
-                resetProgress(be)
+                resetProgress(this)
                 return
             }
 
@@ -223,33 +223,34 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
             if (recipe.isPresent) {
                 val mfr = recipe.get()
-                val result = mfr.result
+                val result = mfr.getResultItem(level.registryAccess())
                 val ingrCount = mfr.ingredients[0].items[0].count
 
-                be.decreaseGeneration = false
-                be.maxProgress = mfr.espe
+                this.decreaseGeneration = false
+                this.maxProgress = mfr.espe
 
-                if (canCombine(result.copy(), be.itemHandler.getStackInSlot(1), inputStack.count, ingrCount)) {
-                    processTick(be, mfr.espe)
-                    if (be.progress >= mfr.espe) {
+                if (canCombine(result.copy(), this.itemHandler.getStackInSlot(1), inputStack.count, ingrCount)) {
+                    this.processTick(mfr.espe)
+                    if (this.progress >= mfr.espe) {
                         inv.clearContent()
-                        be.itemHandler.extractItem(0, ingrCount, false)
-                        be.itemHandler.insertItem(1, result.copy(), false)
-                        resetProgress(be)
+                        this.itemHandler.extractItem(0, ingrCount, false)
+                        this.itemHandler.insertItem(1, result.copy(), false)
+                        resetProgress(this)
                     }
                 }
             } else {
                 inv.clearContent()
-                resetProgress(be)
+                resetProgress(this)
             }
         }
 
         @JvmStatic
-        private fun processTick(be: MithrilineFurnaceEntity, neededESPE: Int) {
-            val storage = be.mruContainer
-            val extractionStep = listOf(1000, 100, 10, 1).firstOrNull { be.checkExtraction(neededESPE, it) } ?: 1
+        private fun MithrilineFurnaceEntity.processTick(neededESPE: Int) {
+            val storage = this.mruContainer
+            val extractionStep = listOf(1000, 100, 10, 1).firstOrNull { this.checkExtraction(neededESPE, it) } ?: 1
             storage.extractMru(extractionStep)
-            be.progress += extractionStep
+            this.progress += extractionStep
+            this.setChanged()
         }
 
         private fun MithrilineFurnaceEntity.checkExtraction(neededESPE: Int, max: Int): Boolean {
@@ -266,6 +267,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
             if (!be.decreaseGeneration) be.decreaseGeneration = true
             be.progress = 0
             be.maxProgress = 0
+            be.setChanged()
         }
 
         @OnlyIn(Dist.CLIENT)

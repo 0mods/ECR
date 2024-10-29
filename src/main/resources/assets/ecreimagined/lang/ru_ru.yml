@@ -86,3 +86,7 @@ config.jade.plugin_ecreimagined:
   mithriline_furnace:
     .: Мифрилиновая печь
     espe_collector: "Активные сборщики ESPE: %s/%s"
+
+jei.ecreimagined:
+  need_mru: "Требуемый MRU: %s"
+  time: "Время: %s тик(ов)"
