@@ -17,13 +17,11 @@ class MithrilineFurnaceComponent: IBlockComponentProvider {
 
     override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
         val be = accessor.blockEntity as MithrilineFurnaceEntity
-        val storage = be.mruContainer
         val collectors = be.getActiveCollectors(be.level!!, be.blockPos)
         val maxCollectors = ECCommonConfig.instance.mithrilineFurnaceConfig.crystalPositions.size
 
         if (be.successfulStructure) {
             tooltip.add(Component.translatable("mithriline_furnace.espe_collector".withJade, collectors, maxCollectors))
-            tooltip.add(Component.literal("${storage.mruType.displayName.string}: ${storage.mruStorage}/${storage.maxMRUStorage}"))
         }
     }
 }
