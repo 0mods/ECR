@@ -20,7 +20,7 @@ class MatrixDestructorContainer(
     val blockEntity: BlockEntity?,
     access: ContainerLevelAccess
 ) : AbstractContainer(
-    ECRegistry.matrixDestructorContainer.get(), containerId, access
+    ECRegistry.matrixDestructorMenu.get(), containerId, access
 ) {
     constructor(containerId: Int, inv: Inventory, buf: FriendlyByteBuf): this(
         containerId, inv, ItemStackHandler(1), inv.player.commandSenderWorld.getBlockEntity(buf.readBlockPos()), ContainerLevelAccess.NULL

@@ -20,16 +20,16 @@ import team._0mods.ecr.api.block.client.LowSizeBreakParticle
 import team._0mods.ecr.api.block.prepareDrops
 import team._0mods.ecr.api.block.simpleTicker
 import team._0mods.ecr.common.api.PropertiedEntityBlock
-import team._0mods.ecr.common.blocks.entity.EnvoyerBlockEntity
+import team._0mods.ecr.common.blocks.entity.XLikeBlockEntity
 
 class Envoyer(properties: Properties) : PropertiedEntityBlock(properties), LowSizeBreakParticle {
-    override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = EnvoyerBlockEntity(pos, state)
+    override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = XLikeBlockEntity.Envoyer(pos, state)
 
     override fun <T : BlockEntity?> getTicker(
         level: Level,
         state: BlockState,
         blockEntityType: BlockEntityType<T>
-    ): BlockEntityTicker<T> = simpleTicker<T, EnvoyerBlockEntity>(EnvoyerBlockEntity::onTick)
+    ): BlockEntityTicker<T> = simpleTicker<T, XLikeBlockEntity.Envoyer>(XLikeBlockEntity.Envoyer::onTick)
 
     override fun use(
         state: BlockState,
@@ -39,11 +39,11 @@ class Envoyer(properties: Properties) : PropertiedEntityBlock(properties), LowSi
         hand: InteractionHand,
         hit: BlockHitResult
     ): InteractionResult {
-        return checkAndOpenMenu<EnvoyerBlockEntity>(player, level, pos)
+        return checkAndOpenMenu<XLikeBlockEntity.Envoyer>(player, level, pos)
     }
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
-        prepareDrops<EnvoyerBlockEntity>(state, level, pos, newState)
+        prepareDrops<XLikeBlockEntity.Envoyer>(state, level, pos, newState)
 
         super.onRemove(state, level, pos, newState, isMoving)
     }

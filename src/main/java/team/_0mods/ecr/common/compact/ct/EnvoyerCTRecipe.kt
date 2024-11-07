@@ -15,12 +15,32 @@ import org.openzen.zencode.java.ZenCodeType
 import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.api.SHORT_ID
 import team._0mods.ecr.common.init.registry.ECRegistry
-import team._0mods.ecr.common.recipes.EnvoyerRecipe
+import team._0mods.ecr.common.recipes.XLikeRecipe
+import java.util.UUID
 
 @ZenRegister
 @ZenCodeType.Name("mods.$SHORT_ID.Envoyer")
-object EnvoyerCTRecipe: IRecipeManager<EnvoyerRecipe> {
-    override fun getRecipeType(): RecipeType<EnvoyerRecipe> = ECRegistry.envoyerRecipe.get()
+object EnvoyerCTRecipe: IRecipeManager<XLikeRecipe.Envoyer> {
+    override fun getRecipeType(): RecipeType<XLikeRecipe.Envoyer> = ECRegistry.envoyerRecipe.get()
+
+    @JvmStatic
+    @ZenCodeType.Method
+    fun addRecipe(
+        output: IItemStack,
+        catalyst: IIngredient,
+        @ZenCodeType.OptionalInt(100) time: Int,
+        @ZenCodeType.OptionalInt(10) mru: Int
+    ) = addRecipe(output, catalyst, arrayOf(), time, mru)
+
+    @JvmStatic
+    @ZenCodeType.Method
+    fun addRecipe(
+        output: IItemStack,
+        catalyst: IIngredient,
+        ingredients: Array<IIngredient>,
+        @ZenCodeType.OptionalInt(100) time: Int,
+        @ZenCodeType.OptionalInt(10) mru: Int
+    ) = addRecipe(UUID.randomUUID().toString(), output, catalyst, ingredients, time, mru)
 
     @JvmStatic
     @ZenCodeType.Method
@@ -54,7 +74,7 @@ object EnvoyerCTRecipe: IRecipeManager<EnvoyerRecipe> {
         CraftTweakerAPI.apply(
             ActionAddRecipe(
                 EnvoyerCTRecipe,
-                EnvoyerRecipe(CraftTweakerConstants.rl(fixedName), inputs, catal, time, mru, output.internal)
+                XLikeRecipe.Envoyer(CraftTweakerConstants.rl(fixedName), inputs, catal, time, mru, output.internal)
             )
         )
     }

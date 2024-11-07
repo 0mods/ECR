@@ -6,6 +6,7 @@ import net.minecraftforge.registries.ForgeRegistries
 import snownee.jade.api.BlockAccessor
 import snownee.jade.api.IBlockComponentProvider
 import snownee.jade.api.ITooltip
+import snownee.jade.api.TooltipPosition
 import snownee.jade.api.config.IPluginConfig
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.compact.jade.ECJadePlugin.Companion.withJade
@@ -24,4 +25,6 @@ class MithrilineFurnaceComponent: IBlockComponentProvider {
             tooltip.add(Component.translatable("mithriline_furnace.espe_collector".withJade, collectors, maxCollectors))
         }
     }
+
+    override fun getDefaultPriority(): Int = TooltipPosition.BODY + 500
 }

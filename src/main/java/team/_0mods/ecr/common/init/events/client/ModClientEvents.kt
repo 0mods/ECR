@@ -17,9 +17,9 @@ import team._0mods.ecr.client.keys.ECKeys
 import team._0mods.ecr.client.particle.ECParticleFactory
 import team._0mods.ecr.client.renderer.MatrixDestructorRenderer
 import team._0mods.ecr.client.renderer.MithrilineFurnaceRenderer
-import team._0mods.ecr.client.screen.container.EnvoyerScreen
 import team._0mods.ecr.client.screen.container.MatrixDestructorScreen
 import team._0mods.ecr.client.screen.container.MithrilineFurnaceScreen
+import team._0mods.ecr.client.screen.container.XLikeScreen
 import team._0mods.ecr.common.init.registry.ECRegistry
 import ru.hollowhorizon.hc.common.events.SubscribeEvent as HCSubscribe
 
@@ -29,9 +29,14 @@ fun onClientStartup(e: FMLClientSetupEvent) {
     @Suppress("REMOVAL", "DEPRECATION")
     e.enqueueWork {
         LOGGER.info("Registering screens")
-        MenuScreens.register(ECRegistry.mithrilineFurnaceContainer.get(), ::MithrilineFurnaceScreen)
-        MenuScreens.register(ECRegistry.matrixDestructorContainer.get(), ::MatrixDestructorScreen)
-        MenuScreens.register(ECRegistry.envoyerContainer.get(), ::EnvoyerScreen)
+        MenuScreens.register(ECRegistry.mithrilineFurnaceMenu.get(), ::MithrilineFurnaceScreen)
+        MenuScreens.register(ECRegistry.matrixDestructorMenu.get(), ::MatrixDestructorScreen)
+        MenuScreens.register(ECRegistry.envoyerMenu.get()) { menu, inv, title ->
+            XLikeScreen.Envoyer(menu, inv, title)
+        }
+        MenuScreens.register(ECRegistry.magicTableMenu.get()) { menu, inv, title ->
+            XLikeScreen.MagicTable(menu, inv, title)
+        }
 
         ItemBlockRenderTypes.setRenderLayer(ECRegistry.airCluster.get(), RenderType.cutout())
         ItemBlockRenderTypes.setRenderLayer(ECRegistry.earthCluster.get(), RenderType.cutout())

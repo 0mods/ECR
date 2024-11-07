@@ -102,6 +102,7 @@ object ECRegistry: HollowRegistry(ModId) {
     val mithrilineFurnace by register("mithriline_furnace", null) { MithrilineFurnace(defaultBlockProperties.noOcclusion()) }
     val matrixDestructor by register("matrix_destructor", null) { MatrixDestructor(defaultBlockProperties.noOcclusion()) }
     val envoyer by register("envoyer", null) { Envoyer(defaultBlockProperties.noOcclusion()) }
+    val magicTable by register("magic_table", null) { MagicTable(defaultBlockProperties.noOcclusion()) }
     val mithrilineCrystal by register("mithriline_crystal", null) { CrystalBlock(defaultBlockProperties.noOcclusion()) }
     val voidStone by register("void_stone", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
     val paleBlock by register("pale_block", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
@@ -121,21 +122,27 @@ object ECRegistry: HollowRegistry(ModId) {
         BlockEntityType.Builder.of(::MatrixDestructorEntity, matrixDestructor.get()).build(promise())
     }
     val envoyerEntity by register("envoyer") {
-        BlockEntityType.Builder.of(::EnvoyerBlockEntity, envoyer.get()).build(promise())
+        BlockEntityType.Builder.of(XLikeBlockEntity::Envoyer, envoyer.get()).build(promise())
+    }
+    val magicTableEntity by register("magic_table") {
+        BlockEntityType.Builder.of(XLikeBlockEntity::MagicTable, magicTable.get()).build(promise())
     }
 
     // menu types
-    val mithrilineFurnaceContainer by register("mithriline_furnace") { simpleMenuFactory(::MithrilineFurnaceContainer) }
-    val matrixDestructorContainer by register("matrix_destructor") { simpleMenuFactory(::MatrixDestructorContainer) }
-    val envoyerContainer by register("envoyer") { simpleMenuFactory(::EnvoyerContainer) }
+    val mithrilineFurnaceMenu by register("mithriline_furnace") { simpleMenuFactory(::MithrilineFurnaceContainer) }
+    val matrixDestructorMenu by register("matrix_destructor") { simpleMenuFactory(::MatrixDestructorContainer) }
+    val envoyerMenu by register("envoyer") { simpleMenuFactory(XLikeMenu::Envoyer) }
+    val magicTableMenu by register("magic_table") { simpleMenuFactory(XLikeMenu::MagicTable) }
 
     // recipe types
     val mithrilineFurnaceRecipe by register("mithriline_furnace") { RecipeType.simple<MithrilineFurnaceRecipe>("mithriline_furnace".id) }
-    val envoyerRecipe by register("envoyer") { RecipeType.simple<EnvoyerRecipe>("envoyer".id) }
+    val envoyerRecipe by register("envoyer") { RecipeType.simple<XLikeRecipe.Envoyer>("envoyer".id) }
+    val magicTableRecipe by register("magic_table") { RecipeType.simple<XLikeRecipe.MagicTable>("magic_table".id) }
 
     // recipe serializers
     val mithrilineFurnaceRecipeSerial by register("mithriline_furnace") { MithrilineFurnaceRecipe.Serializer(::MithrilineFurnaceRecipe) }
-    val envoyerRecipeSerial by register("envoyer") { EnvoyerRecipe.Serializer(::EnvoyerRecipe) }
+    val envoyerRecipeSerial by register("envoyer") { XLikeRecipe.Serializer(XLikeRecipe::Envoyer) }
+    val magicTableRecipeSerial by register("magic_table") { XLikeRecipe.Serializer(XLikeRecipe::MagicTable) }
 
     // particles
     val ecParticle by register("ec_part") { ECParticleType() }

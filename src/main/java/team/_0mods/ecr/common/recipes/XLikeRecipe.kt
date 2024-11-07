@@ -9,25 +9,34 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.GsonHelper
 import net.minecraft.world.SimpleContainer
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.crafting.*
+import net.minecraft.world.item.crafting.Ingredient
+import net.minecraft.world.item.crafting.Recipe
+import net.minecraft.world.item.crafting.RecipeSerializer
+import net.minecraft.world.item.crafting.RecipeType
+import net.minecraft.world.item.crafting.ShapedRecipe
 import net.minecraft.world.level.Level
 import team._0mods.ecr.common.init.registry.ECRegistry
 
-class EnvoyerRecipe(
+open class XLikeRecipe(
+    private val type: RecipeType<*>,
+    private val serial: Serializer,
     private val id: ResourceLocation,
-    val inputs: NonNullList<Ingredient>,
-    val catalyst: NonNullList<Ingredient>,
+    private val inputs: NonNullList<Ingredient>,
+    private val catalyst: NonNullList<Ingredient>,
     val time: Int,
     val mruPerTick: Int,
     private val result: ItemStack
 ): Recipe<SimpleContainer> {
-    override fun matches(container: SimpleContainer, level: Level): Boolean {
-        for (i in 0 ..< container.containerSize) {
-            if (i < 4) {
-                val item = container.getItem(i)
-                if (!inputs[i].test(item)) return false
-            } else if (i == 4) {
-                return catalyst[0].test(container.getItem(i))
+    override fun matches(
+        container: SimpleContainer,
+        level: Level
+    ): Boolean {
+        (0 ..< container.containerSize).forEach {
+            if (it < 4) {
+                val item = container.getItem(it)
+                if (!this.inputs[it].test(item)) return false
+            } else if (it == 4) {
+                return this.catalyst[0].test(container.getItem(it))
             }
         }
 
@@ -37,24 +46,34 @@ class EnvoyerRecipe(
     override fun assemble(
         container: SimpleContainer,
         registryAccess: RegistryAccess
-    ): ItemStack = result.copy()
+    ): ItemStack = this.result.copy()
 
     override fun canCraftInDimensions(width: Int, height: Int): Boolean = true
 
-    override fun getResultItem(registryAccess: RegistryAccess): ItemStack = result
+    override fun getResultItem(registryAccess: RegistryAccess): ItemStack = this.result
 
-    override fun getId(): ResourceLocation = id
+    override fun getId(): ResourceLocation = this.id
 
-    override fun getSerializer(): RecipeSerializer<*> = ECRegistry.envoyerRecipeSerial.get()
+    override fun getIngredients(): NonNullList<Ingredient?> {
+        val list = NonNullList.withSize(5, Ingredient.EMPTY)
 
-    override fun getType(): RecipeType<*> = ECRegistry.envoyerRecipe.get()
+        (0 ..< 4).forEach { list[it] = inputs[it] }
+
+        list[4] = catalyst[0]
+
+        return list
+    }
 
     override fun isSpecial(): Boolean = true
 
+    override fun getSerializer(): RecipeSerializer<*> = serial
+
+    override fun getType(): RecipeType<*> = type
+
     class Serializer(
-        val serial: (ResourceLocation, NonNullList<Ingredient>, NonNullList<Ingredient>, Int, Int, ItemStack) -> EnvoyerRecipe
-    ): RecipeSerializer<EnvoyerRecipe> {
-        override fun fromJson(recipeId: ResourceLocation, serializedRecipe: JsonObject): EnvoyerRecipe {
+        val serial: (ResourceLocation, NonNullList<Ingredient>, NonNullList<Ingredient>, Int, Int, ItemStack) -> XLikeRecipe
+    ): RecipeSerializer<XLikeRecipe> {
+        override fun fromJson(recipeId: ResourceLocation, serializedRecipe: JsonObject): XLikeRecipe {
             val inputs = NonNullList.withSize(4, Ingredient.EMPTY)
 
             if (serializedRecipe.has("ingredients")) {
@@ -81,7 +100,7 @@ class EnvoyerRecipe(
             return serial(recipeId, inputs, catal, time, pseudoEnergy, result)
         }
 
-        override fun fromNetwork(recipeId: ResourceLocation, buffer: FriendlyByteBuf): EnvoyerRecipe {
+        override fun fromNetwork(recipeId: ResourceLocation, buffer: FriendlyByteBuf): XLikeRecipe {
             val inputs = NonNullList.withSize(4, Ingredient.EMPTY)
             for (i in 0 ..< inputs.size) {
                 inputs[i] = Ingredient.fromNetwork(buffer)
@@ -97,12 +116,29 @@ class EnvoyerRecipe(
             return serial(recipeId, inputs, catalyzer, time, mru, result)
         }
 
-        override fun toNetwork(buffer: FriendlyByteBuf, recipe: EnvoyerRecipe) {
-            recipe.inputs.forEach { it.toNetwork(buffer) }
-            recipe.catalyst.forEach { it.toNetwork(buffer) }
+        override fun toNetwork(buffer: FriendlyByteBuf, recipe: XLikeRecipe) {
+            recipe.ingredients.forEach { it?.toNetwork(buffer) }
             buffer.writeItem(recipe.result)
             buffer.writeInt(recipe.time)
             buffer.writeInt(recipe.mruPerTick)
         }
     }
+
+    class Envoyer(
+        id: ResourceLocation,
+        inputs: NonNullList<Ingredient>,
+        catalyst: NonNullList<Ingredient>,
+        time: Int,
+        mruPerTick: Int,
+        result: ItemStack
+    ): XLikeRecipe(ECRegistry.envoyerRecipe.get(), ECRegistry.envoyerRecipeSerial.get(), id, inputs, catalyst, time, mruPerTick, result)
+
+    class MagicTable(
+        id: ResourceLocation,
+        inputs: NonNullList<Ingredient>,
+        catalyst: NonNullList<Ingredient>,
+        time: Int,
+        mruPerTick: Int,
+        result: ItemStack
+    ): XLikeRecipe(ECRegistry.magicTableRecipe.get(), ECRegistry.magicTableRecipeSerial.get(), id, inputs, catalyst, time, mruPerTick, result)
 }

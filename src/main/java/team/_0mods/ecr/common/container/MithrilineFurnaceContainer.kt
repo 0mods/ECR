@@ -21,7 +21,7 @@ class MithrilineFurnaceContainer(
     val blockEntity: BlockEntity?,
     access: ContainerLevelAccess,
     val data: ContainerData
-) : AbstractContainer(ECRegistry.mithrilineFurnaceContainer.get(), containerId, access) {
+) : AbstractContainer(ECRegistry.mithrilineFurnaceMenu.get(), containerId, access) {
     constructor(containerId: Int, inv: Inventory, buf: FriendlyByteBuf):
             this(containerId, inv, ItemStackHandler(2), inv.player.commandSenderWorld.getBlockEntity(buf.readBlockPos()), ContainerLevelAccess.NULL, SimpleContainerData(2))
 

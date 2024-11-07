@@ -7,7 +7,7 @@ import team._0mods.ecr.api.mru.MRUTypes
 import kotlin.math.max
 import kotlin.math.min
 
-open class MRUStorageImpl(
+open class MRUContainer(
     override val mruType: MRUTypes,
     private val maxStorage: Int,
     private var currentMru: Int,

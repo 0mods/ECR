@@ -30,7 +30,7 @@ import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUTypes
 import team._0mods.ecr.api.utils.StackHelper
 import team._0mods.ecr.common.api.SyncedBlockEntity
-import team._0mods.ecr.common.capability.MRUStorageImpl
+import team._0mods.ecr.common.capability.MRUContainer
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
 import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECCapabilities
@@ -48,7 +48,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         }
     }
 
-    override val mruContainer = MRUStorageImpl(MRUTypes.ESPE, 10000, 0) { setChanged() }
+    override val mruContainer = MRUContainer(MRUTypes.ESPE, 10000, 0) { setChanged() }
 
     private val containerData: ContainerData = object : ContainerData {
         override fun get(index: Int): Int = when (index) {

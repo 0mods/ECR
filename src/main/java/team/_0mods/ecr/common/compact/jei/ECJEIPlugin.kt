@@ -6,8 +6,7 @@ import mezz.jei.api.registration.*
 import net.minecraft.client.Minecraft
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.ItemStack
-import ru.hollowhorizon.hc.client.utils.rl
-import team._0mods.ecr.api.ModId
+import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.client.screen.container.MithrilineFurnaceScreen
 import team._0mods.ecr.common.compact.jei.categories.*
 import team._0mods.ecr.common.container.MithrilineFurnaceContainer
@@ -18,10 +17,10 @@ import team._0mods.ecr.common.recipes.*
 class ECJEIPlugin: IModPlugin {
     companion object {
         @JvmField val MITHRILINE_FURNACE = RecipeType(MithrilineFurnaceCategory.RL_ID, MithrilineFurnaceRecipe::class.java)
-        @JvmField val ENVOYER = RecipeType(EnvoyerCategory.RL_ID, EnvoyerRecipe::class.java)
+        @JvmField val ENVOYER = RecipeType(EnvoyerCategory.RL_ID, XLikeRecipe.Envoyer::class.java)
     }
 
-    override fun getPluginUid(): ResourceLocation = "$ModId:jei_plugin".rl
+    override fun getPluginUid(): ResourceLocation = "jei_plugin".ecRL
 
     override fun registerCategories(registration: IRecipeCategoryRegistration) {
         val gh = registration.jeiHelpers.guiHelper
@@ -49,10 +48,12 @@ class ECJEIPlugin: IModPlugin {
     }
 
     override fun registerRecipeTransferHandlers(registration: IRecipeTransferRegistration) {
+        // TODO need fix
         registration.addRecipeTransferHandler(
             MithrilineFurnaceContainer::class.java,
-            ECRegistry.mithrilineFurnaceContainer.get(),
-            MITHRILINE_FURNACE, 0, 1, 2, 36
+            ECRegistry.mithrilineFurnaceMenu.get(),
+            MITHRILINE_FURNACE,
+            0, 1, 2, 36
         )
     }
 }

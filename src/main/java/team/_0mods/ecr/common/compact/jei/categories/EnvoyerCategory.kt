@@ -19,15 +19,15 @@ import team._0mods.ecr.api.client.isCursorAtPos
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.compact.jei.ECJEIPlugin
 import team._0mods.ecr.common.init.registry.ECRegistry
-import team._0mods.ecr.common.recipes.EnvoyerRecipe
+import team._0mods.ecr.common.recipes.XLikeRecipe
 import java.awt.Color
 
-class EnvoyerCategory(guiHelper: IGuiHelper): IRecipeCategory<EnvoyerRecipe> {
+class EnvoyerCategory(guiHelper: IGuiHelper): IRecipeCategory<XLikeRecipe.Envoyer> {
     private val icon = guiHelper.createDrawableItemStack(ItemStack(ECRegistry.envoyer.get()))
     private val bg = guiHelper.drawableBuilder("textures/gui/jei/${RL_ID.path}.png".ecRL, 0, 0, 126, 54)
         .setTextureSize(126, 54).build()
 
-    override fun getRecipeType(): RecipeType<EnvoyerRecipe> = ECJEIPlugin.ENVOYER
+    override fun getRecipeType(): RecipeType<XLikeRecipe.Envoyer> = ECJEIPlugin.ENVOYER
 
     override fun getTitle(): Component = ECRegistry.envoyer.get().name.withStyle(ChatFormatting.RESET)
 
@@ -39,24 +39,26 @@ class EnvoyerCategory(guiHelper: IGuiHelper): IRecipeCategory<EnvoyerRecipe> {
 
     override fun setRecipe(
         builder: IRecipeLayoutBuilder,
-        recipe: EnvoyerRecipe,
+        recipe: XLikeRecipe.Envoyer,
         focuses: IFocusGroup
     ) {
         val level = Minecraft.getInstance().level
         if (level == null) return
 
-        builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addIngredients(recipe.inputs[0])
-        builder.addSlot(RecipeIngredientRole.INPUT, 37, 1).addIngredients(recipe.inputs[1])
-        builder.addSlot(RecipeIngredientRole.INPUT, 1, 37).addIngredients(recipe.inputs[2])
-        builder.addSlot(RecipeIngredientRole.INPUT, 37, 37).addIngredients(recipe.inputs[3])
+        val inp = recipe.ingredients
 
-        builder.addSlot(RecipeIngredientRole.CATALYST, 19, 19).addIngredients(recipe.catalyst[0])
+        builder.addSlot(RecipeIngredientRole.INPUT, 1, 1).addIngredients(inp[0])
+        builder.addSlot(RecipeIngredientRole.INPUT, 37, 1).addIngredients(inp[1])
+        builder.addSlot(RecipeIngredientRole.INPUT, 1, 37).addIngredients(inp[2])
+        builder.addSlot(RecipeIngredientRole.INPUT, 37, 37).addIngredients(inp[3])
+
+        builder.addSlot(RecipeIngredientRole.CATALYST, 19, 19).addIngredients(inp[4])
 
         builder.addSlot(RecipeIngredientRole.OUTPUT, 91, 19).addItemStack(recipe.getResultItem(level.registryAccess()))
     }
 
     override fun draw(
-        recipe: EnvoyerRecipe,
+        recipe: XLikeRecipe.Envoyer,
         recipeSlotsView: IRecipeSlotsView,
         guiGraphics: GuiGraphics,
         mouseX: Double,

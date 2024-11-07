@@ -21,7 +21,7 @@ import team._0mods.ecr.api.mru.MRUGenerator
 import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUTypes
 import team._0mods.ecr.common.api.SyncedBlockEntity
-import team._0mods.ecr.common.capability.MRUStorageImpl
+import team._0mods.ecr.common.capability.MRUContainer
 import team._0mods.ecr.common.container.MatrixDestructorContainer
 import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECCapabilities
@@ -36,7 +36,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
         }
     }
 
-    val mruContainer = MRUStorageImpl(MRUTypes.RADIATION_UNIT, 10000, 0) {
+    val mruContainer = MRUContainer(MRUTypes.RADIATION_UNIT, 10000, 0) {
         if (!level!!.isClientSide) setChanged()
     }
 
@@ -45,7 +45,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
 
     var progress = 0
 
-    override val currentMRUStorage: MRUStorage get() = mruContainer
+    override val currentMRUStorage = mruContainer
 
     override fun onLoad() {
         super.onLoad()
@@ -61,7 +61,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
 
     override fun saveAdditional(tag: CompoundTag) {
         tag.put("ItemStorage", itemHandler.serializeNBT())
-        tag.put("MRUStorage", mruContainer.serializeNBT())
+        tag.put("MRU", mruContainer.serializeNBT())
         tag.putInt("InjectionProgress", progress)
         super.saveAdditional(tag)
     }
