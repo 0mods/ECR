@@ -121,8 +121,7 @@ dependencies {
     forge("net.minecraftforge:forge:${minecraftVersion}-${forgeVersion}")
 
     // required library
-//    modImplementation("ru.hollowhorizon:HollowCore-forge-$minecraftVersion:${"hc_version".fromProperties}")
-    modImplementation("com.github.HollowHorizon.HollowCore:HollowCore-forge-$minecraftVersion:${"hc_version".fromProperties}")
+    modImplementation("ru.hollowhorizon:HollowCore-forge-$minecraftVersion:${"hc_version".fromProperties}")
 
     // Include libs
     //ModInclude
@@ -130,11 +129,12 @@ dependencies {
     implementation(include("io.github.llamalad7:mixinextras-forge:0.4.1")) {}
 
     // kotlin runtime & compile
-    implementation(minecraftRuntimeLibraries(kotlin("stdlib", "2.0.10"))) {}
-    implementation(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-coroutines-core:+")) {}
-    implementation(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:+")) {}
-    implementation(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-serialization-core:+")) {}
-    implementation(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-serialization-json:+")) {}
+    compileOnly(minecraftRuntimeLibraries(kotlin("stdlib", "2.0.10"))) {}
+
+    compileOnly(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-coroutines-core:+")) {}
+    compileOnly(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:+")) {}
+    compileOnly(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-serialization-core:+")) {}
+    compileOnly(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-serialization-json:+")) {}
 
     modImplementation("mezz.jei:jei-${minecraftVersion}-forge:${"jei_version".fromProperties}")
     modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-${minecraftVersion}:${"ct_version".fromProperties}")

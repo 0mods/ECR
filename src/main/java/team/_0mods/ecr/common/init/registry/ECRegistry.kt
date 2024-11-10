@@ -2,6 +2,8 @@ package team._0mods.ecr.common.init.registry
 
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.sounds.SoundEvent
+import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -149,6 +151,9 @@ object ECRegistry: HollowRegistry(ModId) {
 
     // effects
     val mruCorruption by register("mru_corruption", registryEntry = ::MRUCorruption)
+
+    // sounds
+    val calm4 by register("calm4") { SoundEvent.createVariableRangeEvent("calm4".ecRL) }
 
     private fun basicItem(id: String, autoModel: AutoModelType? = AutoModelType.DEFAULT, props: Item.Properties.() -> Unit = {}, noTab: Boolean = false): RegistryObject<Item> {
         val p = Item.Properties().apply(props)
