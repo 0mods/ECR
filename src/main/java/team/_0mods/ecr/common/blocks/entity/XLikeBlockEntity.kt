@@ -21,6 +21,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
+import net.minecraftforge.registries.ForgeRegistries
 import ru.hollowhorizon.hc.client.utils.JavaHacks
 import team._0mods.ecr.api.mru.MRUReceivable
 import team._0mods.ecr.api.mru.MRUStorage
@@ -99,14 +100,14 @@ abstract class XLikeBlockEntity(
 
     override val positionCrystal: ItemStack = this.itemHandler.getStackInSlot(6)
 
-    fun tick(level: Level, recipeType: RecipeType<XLikeRecipe>) {
-        if (!level.isClientSide) {
-            this.processReceive(level)
-            this.processRecipeIfPresent(level, recipeType)
-        }
+    fun <T: XLikeRecipe> tick(level: Level, recipeType: RecipeType<T>) {
+        team._0mods.ecr.api.LOGGER.info("Item in crystal slot: ${ForgeRegistries.ITEMS.getKey(this.itemHandler.getStackInSlot(6).item)}")
+        this.processReceive(level)
+        this.processRecipeIfPresent(level, recipeType)
     }
 
-    private fun XLikeBlockEntity.processRecipeIfPresent(level: Level, recipeType: RecipeType<XLikeRecipe>) {
+    private fun <T: XLikeRecipe> XLikeBlockEntity.processRecipeIfPresent(level: Level, recipeType: RecipeType<T>) {
+        if (level.isClientSide) return
         val list = NonNullList.withSize(5, ItemStack.EMPTY)
         (0 ..< 5).forEach {
             if (!this.itemHandler.getStackInSlot(it).isEmpty)
@@ -165,7 +166,7 @@ abstract class XLikeBlockEntity(
         companion object {
             @JvmStatic
             fun onTick(level: Level, pos: BlockPos, state: BlockState, be: Envoyer) {
-                be.tick(level, JavaHacks.forceCast(ECRegistry.envoyerRecipe.get()))
+                be.tick(level, ECRegistry.envoyerRecipe.get())
             }
         }
     }
@@ -182,7 +183,7 @@ abstract class XLikeBlockEntity(
         companion object {
             @JvmStatic
             fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MagicTable) {
-                be.tick(level, JavaHacks.forceCast(ECRegistry.magicTableRecipe.get()))
+                be.tick(level, ECRegistry.magicTableRecipe.get())
             }
         }
     }

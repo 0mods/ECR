@@ -68,7 +68,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
 
     override fun load(tag: CompoundTag) {
         itemHandler.deserializeNBT(tag.getCompound("ItemStorage"))
-        mruContainer.deserializeNBT(IntTag.valueOf(tag.getInt("MRUStorage")))
+        mruContainer.deserializeNBT(IntTag.valueOf(tag.getInt("MRU")))
         progress = tag.getInt("InjectionProgress")
         super.load(tag)
     }

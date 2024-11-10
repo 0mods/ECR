@@ -9,6 +9,7 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import ru.hollowhorizon.hc.client.utils.rl
+import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.api.item.BoundGem
 
 interface MRUReceivable {
@@ -32,8 +33,7 @@ interface MRUReceivable {
 fun MRUReceivable.processReceive(level: Level) {
     val scope = CoroutineScope(Dispatchers.Default)
     if (level.isClientSide) return
-    val stack = this.positionCrystal
-    if (stack == null) return
+    val stack = this.positionCrystal ?: return
     val item = stack.item
     if (item !is BoundGem) return
     val pos = item.getBoundPos(stack) ?: return
