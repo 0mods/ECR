@@ -229,6 +229,7 @@ fun DependencyHandlerScope.prepareHCDeps() {
     minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding-natives:$imguiVersion")) {}
     minecraftRuntimeLibraries("com.tianscar.imageio:imageio-apng:1.0.1")
     minecraftRuntimeLibraries("org.joml:joml:1.10.8")
+    minecraftRuntimeLibraries("dev.folomeev.kotgl:kotgl-matrix:0.0.1-beta")
 
     minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-reflect:2.0.0") { exclude("org.jetbrains.kotlin") }
 }

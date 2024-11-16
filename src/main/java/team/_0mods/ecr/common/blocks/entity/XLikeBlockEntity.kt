@@ -51,6 +51,8 @@ abstract class XLikeBlockEntity(
         }
     }
 
+    private val mru = MRUContainer(MRUTypes.RADIATION_UNIT, 5000, 0) { setChanged() }
+
     private var itemHandlerLazy = LazyOptional.empty<IItemHandler>()
     private var mruStorageLazy = LazyOptional.empty<MRUStorage>()
 
@@ -73,7 +75,7 @@ abstract class XLikeBlockEntity(
         tag.putInt("Progress", progress)
         tag.putInt("MaxProgress", maxProgress)
         tag.put("Items", itemHandler.serializeNBT())
-        tag.put("MRU", (mruContainer as MRUContainer).serializeNBT())
+        tag.put("MRU", mru.serializeNBT())
         super.saveAdditional(tag)
     }
 
@@ -81,7 +83,7 @@ abstract class XLikeBlockEntity(
         progress = tag.getInt("Progress")
         maxProgress = tag.getInt("MaxProgress")
         itemHandler.deserializeNBT(tag.getCompound("Items"))
-        (mruContainer as MRUContainer).deserializeNBT(IntTag.valueOf(tag.getInt("MRU")))
+        mru.deserializeNBT(IntTag.valueOf(tag.getInt("MRU")))
         super.load(tag)
     }
 
@@ -95,18 +97,11 @@ abstract class XLikeBlockEntity(
 
     override fun getDisplayName(): Component = Component.empty()
 
-    override val mruContainer: MRUStorage
-        get() = MRUContainer(MRUTypes.RADIATION_UNIT, 5000, 0) { setChanged() }
+    override val mruContainer: MRUStorage = mru
 
-    override val positionCrystal: ItemStack = this.itemHandler.getStackInSlot(6)
+    abstract override val positionCrystal: ItemStack
 
-    fun <T: XLikeRecipe> tick(level: Level, recipeType: RecipeType<T>) {
-        team._0mods.ecr.api.LOGGER.info("Item in crystal slot: ${ForgeRegistries.ITEMS.getKey(this.itemHandler.getStackInSlot(6).item)}")
-        this.processReceive(level)
-        this.processRecipeIfPresent(level, recipeType)
-    }
-
-    private fun <T: XLikeRecipe> XLikeBlockEntity.processRecipeIfPresent(level: Level, recipeType: RecipeType<T>) {
+    fun <T: XLikeRecipe, X: XLikeBlockEntity> processRecipeIfPresent(level: Level, recipeType: RecipeType<T>, be: X) {
         if (level.isClientSide) return
         val list = NonNullList.withSize(5, ItemStack.EMPTY)
         (0 ..< 5).forEach {
@@ -166,9 +161,13 @@ abstract class XLikeBlockEntity(
         companion object {
             @JvmStatic
             fun onTick(level: Level, pos: BlockPos, state: BlockState, be: Envoyer) {
-                be.tick(level, ECRegistry.envoyerRecipe.get())
+                be.processReceive(level)
+                be.processRecipeIfPresent(level, ECRegistry.envoyerRecipe.get(), be)
             }
         }
+
+        override val positionCrystal: ItemStack
+            get() = this.itemHandler.getStackInSlot(6)
     }
 
     class MagicTable(pos: BlockPos, state: BlockState): XLikeBlockEntity(ECRegistry.magicTableEntity.get(), pos, state) {
@@ -183,8 +182,12 @@ abstract class XLikeBlockEntity(
         companion object {
             @JvmStatic
             fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MagicTable) {
-                be.tick(level, ECRegistry.magicTableRecipe.get())
+                be.processReceive(level)
+                be.processRecipeIfPresent(level, ECRegistry.magicTableRecipe.get(), be)
             }
         }
+
+        override val positionCrystal: ItemStack
+            get() = this.itemHandler.getStackInSlot(6)
     }
 }

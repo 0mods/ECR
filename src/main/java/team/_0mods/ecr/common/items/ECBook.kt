@@ -38,10 +38,11 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), NoTab {
                     tags.add(StringTag.valueOf(ECRegistries.BOOK_TYPES.getKey(ECBookTypes.BASIC).toString()))
                     tag.put("ECBookTypes", tags)
                 } else {
-                    val t = tag.get("ECBookTypes") as? ListTag
+                    val t = tag.get("ECBookTypes")
 
-                    if (t == null) {
+                    if (t == null || t !is ListTag) {
                         val fixed = ListTag()
+                        tag.remove("ECBookType")
                         LOGGER.info("ECBookTypes is not list tag... Stop, what? Correcting...")
 
                         fixed.add(StringTag.valueOf(ECRegistries.BOOK_TYPES.getKey(ECBookTypes.BASIC).toString()))

@@ -1,6 +1,7 @@
 package team._0mods.ecr.common.items
 
 import net.minecraft.ChatFormatting
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.item.Item
 import ru.hollowhorizon.hc.client.utils.colored
 import ru.hollowhorizon.hc.client.utils.mcTranslate
@@ -8,11 +9,11 @@ import java.awt.Color
 
 class ECGem private constructor(private val type: Type, properties: Properties.() -> Unit = {}): Item(Properties().apply(properties)) {
     companion object {
-        val elemental = { ECGem(Type.ELEMENTAL) }
-        val flame = { ECGem(Type.FLAME) { this.fireResistant() } }
-        val water = { ECGem(Type.WATER) }
-        val earth = { ECGem(Type.EARTH) }
-        val air = { ECGem(Type.AIR) }
+        val elemental: (ResourceLocation) -> ECGem = { ECGem(Type.ELEMENTAL) }
+        val flame: (ResourceLocation) -> ECGem = { ECGem(Type.FLAME) { this.fireResistant() } }
+        val water: (ResourceLocation) -> ECGem = { ECGem(Type.WATER) }
+        val earth: (ResourceLocation) -> ECGem = { ECGem(Type.EARTH) }
+        val air: (ResourceLocation) -> ECGem = { ECGem(Type.AIR) }
     }
 
     override fun getDescriptionId(): String {

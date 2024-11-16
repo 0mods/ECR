@@ -16,7 +16,7 @@ import team._0mods.ecr.api.item.BoundGem
 import team._0mods.ecr.common.blocks.entity.XLikeBlockEntity
 import team._0mods.ecr.common.init.registry.ECRegistry
 
-open class XLikeMenu(
+abstract class XLikeMenu(
     type: MenuType<*>,
     containerId: Int,
     inv: Inventory,
@@ -94,8 +94,6 @@ open class XLikeMenu(
         return qms
     }
 
-    override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.envoyer.get())
-
     class Settings {
         var stackSize: Int = 64
         var place: SpecialSlot.(ItemStack) -> Boolean = { true }
@@ -122,6 +120,8 @@ open class XLikeMenu(
             be(inv.player.commandSenderWorld, buf.readBlockPos()),
             ContainerLevelAccess.NULL,
         )
+
+        override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.envoyer.get())
     }
 
     class MagicTable(
@@ -142,5 +142,7 @@ open class XLikeMenu(
             be(inv.player.commandSenderWorld, buf.readBlockPos()),
             ContainerLevelAccess.NULL,
         )
+
+        override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.magicTable.get())
     }
 }

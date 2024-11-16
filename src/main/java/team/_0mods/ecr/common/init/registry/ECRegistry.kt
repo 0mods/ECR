@@ -150,7 +150,7 @@ object ECRegistry: HollowRegistry(ModId) {
     val ecParticle by register("ec_part") { ECParticleType() }
 
     // effects
-    val mruCorruption by register("mru_corruption", registryEntry = ::MRUCorruption)
+    val mruCorruption by register("mru_corruption") { MRUCorruption() }
 
     // sounds
     val calm4 by register("calm4") { SoundEvent.createVariableRangeEvent("calm4".ecRL) }
