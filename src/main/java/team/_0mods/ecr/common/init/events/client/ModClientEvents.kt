@@ -5,6 +5,7 @@ package team._0mods.ecr.common.init.events.client
 import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.client.renderer.ItemBlockRenderTypes
 import net.minecraft.client.renderer.RenderType
+import net.minecraft.world.level.block.Block
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.EntityRenderersEvent
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent
@@ -23,7 +24,22 @@ import team._0mods.ecr.client.screen.container.XLikeScreen
 import team._0mods.ecr.common.init.registry.ECRegistry
 import ru.hollowhorizon.hc.common.events.SubscribeEvent as HCSubscribe
 
- @SubscribeEvent
+private val cutoutTextures by lazy {
+    listOf<Block>(
+        ECRegistry.airCluster.get(),
+        ECRegistry.earthCluster.get(),
+        ECRegistry.waterCluster.get(),
+        ECRegistry.flameCluster.get()
+    )
+}
+
+private val invisibleTextures by lazy {
+    listOf<Block>(
+        ECRegistry.magicTable.get()
+    )
+}
+
+@SubscribeEvent
 fun onClientStartup(e: FMLClientSetupEvent) {
     LOGGER.info("Initializing client")
     @Suppress("REMOVAL", "DEPRECATION")
@@ -38,10 +54,8 @@ fun onClientStartup(e: FMLClientSetupEvent) {
             XLikeScreen.MagicTable(menu, inv, title)
         }
 
-        ItemBlockRenderTypes.setRenderLayer(ECRegistry.airCluster.get(), RenderType.cutout())
-        ItemBlockRenderTypes.setRenderLayer(ECRegistry.earthCluster.get(), RenderType.cutout())
-        ItemBlockRenderTypes.setRenderLayer(ECRegistry.waterCluster.get(), RenderType.cutout())
-        ItemBlockRenderTypes.setRenderLayer(ECRegistry.flameCluster.get(), RenderType.cutout())
+        cutoutTextures.forEach { ItemBlockRenderTypes.setRenderLayer(it, RenderType.cutout()) }
+        invisibleTextures.forEach { ItemBlockRenderTypes.setRenderLayer(it, RenderType.translucent()) }
     }
 }
 

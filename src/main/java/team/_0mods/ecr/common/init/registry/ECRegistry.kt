@@ -103,7 +103,7 @@ object ECRegistry: HollowRegistry(ModId) {
     val mithrilineFurnace by register("mithriline_furnace", null) { MithrilineFurnace(defaultBlockProperties.noOcclusion()) }
     val matrixDestructor by register("matrix_destructor", null) { MatrixDestructor(defaultBlockProperties.noOcclusion()) }
     val envoyer by register("envoyer", null) { Envoyer(defaultBlockProperties.noOcclusion()) }
-    val magicTable by register("magic_table", null) { MagicTable(defaultBlockProperties.noOcclusion()) }
+    val magicTable by register("magic_table", null) { MagicTable(defaultBlockProperties) }
     val mithrilineCrystal by register("mithriline_crystal", null) { CrystalBlock(defaultBlockProperties.noOcclusion()) }
     val voidStone by register("void_stone", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
     val paleBlock by register("pale_block", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
