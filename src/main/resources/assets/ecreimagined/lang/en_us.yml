@@ -102,4 +102,4 @@ config.jade.plugin_ecreimagined:
 
 jei.ecreimagined:
   need_mru: "Required MRU: %s"
-  time: "Time: %s ticks"
+  during: "Time: %s ticks"

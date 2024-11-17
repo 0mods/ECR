@@ -11,6 +11,7 @@ import net.minecraft.world.SimpleContainer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
+import net.minecraft.world.inventory.ContainerData
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
@@ -21,16 +22,15 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
-import net.minecraftforge.registries.ForgeRegistries
-import ru.hollowhorizon.hc.client.utils.JavaHacks
 import team._0mods.ecr.api.mru.MRUReceivable
 import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUTypes
 import team._0mods.ecr.api.mru.processReceive
+import team._0mods.ecr.api.utils.toTag
 import team._0mods.ecr.common.api.ContainerLevelAccess
 import team._0mods.ecr.common.api.SyncedBlockEntity
 import team._0mods.ecr.common.capability.MRUContainer
-import team._0mods.ecr.common.container.XLikeMenu
+import team._0mods.ecr.common.menu.XLikeMenu
 import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.recipes.XLikeRecipe
@@ -40,6 +40,8 @@ abstract class XLikeBlockEntity(
     pos: BlockPos,
     state: BlockState
 ): SyncedBlockEntity(bet, pos, state), MenuProvider, MRUReceivable {
+    protected var slotLimit: (Int) -> Int = { 64 }
+
     protected val itemHandler = object : ItemStackHandler(7) {
         override fun onContentsChanged(slot: Int) {
             super.onContentsChanged(slot)
@@ -47,8 +49,25 @@ abstract class XLikeBlockEntity(
         }
 
         override fun getSlotLimit(slot: Int): Int {
-            return if (slot != 6) 1 else super.getSlotLimit(slot)
+            return slotLimit(slot)
         }
+    }
+
+    protected val containerData: ContainerData = object : ContainerData {
+        override fun get(index: Int): Int  = when (index) {
+            0 -> this@XLikeBlockEntity.progress
+            1 -> this@XLikeBlockEntity.maxProgress
+            else -> 0
+        }
+
+        override fun set(index: Int, value: Int) {
+            when (index) {
+                0 -> this@XLikeBlockEntity.progress = value
+                1 -> this@XLikeBlockEntity.maxProgress = value
+            }
+        }
+
+        override fun getCount(): Int = 2
     }
 
     private val mru = MRUContainer(MRUTypes.RADIATION_UNIT, 5000, 0) { setChanged() }
@@ -83,7 +102,7 @@ abstract class XLikeBlockEntity(
         progress = tag.getInt("Progress")
         maxProgress = tag.getInt("MaxProgress")
         itemHandler.deserializeNBT(tag.getCompound("Items"))
-        mru.deserializeNBT(IntTag.valueOf(tag.getInt("MRU")))
+        mru.deserializeNBT(tag.getInt("MRU").toTag)
         super.load(tag)
     }
 
@@ -118,6 +137,8 @@ abstract class XLikeBlockEntity(
             val mru = recipe.mruPerTick
             val result = recipe.getResultItem(level.registryAccess())
 
+            be.maxProgress = time
+
             if (this.itemHandler.getStackInSlot(5).isEmpty) {
                 this.processTick(time, mru)
                 if (this.progress >= time) {
@@ -150,12 +171,16 @@ abstract class XLikeBlockEntity(
     }
 
     class Envoyer(pos: BlockPos, state: BlockState): XLikeBlockEntity(ECRegistry.envoyerEntity.get(), pos, state) {
+        init {
+            slotLimit = { if (it != 5) 1 else 64 }
+        }
+
         override fun createMenu(
             id: Int,
             inv: Inventory,
             player: Player
         ): AbstractContainerMenu? {
-            return XLikeMenu.Envoyer(id, inv, this.itemHandler, this, ContainerLevelAccess(this.level ?: return null, this.blockPos))
+            return XLikeMenu.Envoyer(id, inv, this.itemHandler, this, ContainerLevelAccess(this.level ?: return null, this.blockPos), containerData)
         }
 
         companion object {
@@ -176,7 +201,7 @@ abstract class XLikeBlockEntity(
             inv: Inventory,
             player: Player
         ): AbstractContainerMenu? {
-            return XLikeMenu.MagicTable(id, inv, this.itemHandler, this, ContainerLevelAccess(this.level ?: return null, this.blockPos))
+            return XLikeMenu.MagicTable(id, inv, this.itemHandler, this, ContainerLevelAccess(this.level ?: return null, this.blockPos), containerData)
         }
 
         companion object {

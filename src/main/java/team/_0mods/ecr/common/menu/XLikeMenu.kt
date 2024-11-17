@@ -1,11 +1,13 @@
-package team._0mods.ecr.common.container
+package team._0mods.ecr.common.menu
 
 import net.minecraft.core.BlockPos
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.inventory.ContainerData
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.inventory.MenuType
+import net.minecraft.world.inventory.SimpleContainerData
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraftforge.items.IItemHandler
@@ -23,7 +25,7 @@ abstract class XLikeMenu(
     container: IItemHandler,
     val blockEntity: XLikeBlockEntity?,
     access: ContainerLevelAccess,
-    settings: Settings.() -> Unit = {}
+    val data: ContainerData
 ): AbstractContainer(type, containerId, access) {
     companion object {
         protected val be = { l: Level, bp: BlockPos ->
@@ -33,19 +35,17 @@ abstract class XLikeMenu(
         }
     }
 
-    init {
-        val s = Settings().apply(settings)
-
+    protected fun buildSlots(container: IItemHandler, inv: Inventory, stackSize: Int = 64) {
         // Recipe slots
-        addSlot(SpecialSlot(container, 0, 26, 17, s.place, s.pickup, s.stackSize))
-        addSlot(SpecialSlot(container, 1, 62, 17, s.place, s.pickup, s.stackSize))
-        addSlot(SpecialSlot(container, 2, 26, 53, s.place, s.pickup, s.stackSize))
-        addSlot(SpecialSlot(container, 3, 62, 53, s.place, s.pickup, s.stackSize))
+        addSlot(SpecialSlot(container, 0, 26, 17, stackSize =  stackSize))
+        addSlot(SpecialSlot(container, 1, 62, 17, stackSize =  stackSize))
+        addSlot(SpecialSlot(container, 2, 26, 53, stackSize =  stackSize))
+        addSlot(SpecialSlot(container, 3, 62, 53, stackSize =  stackSize))
 
         // Catalyst
-        addSlot(SpecialSlot(container, 4, 44, 35, s.place, s.pickup, s.stackSize))
+        addSlot(SpecialSlot(container, 4, 44, 35, stackSize =  stackSize))
         // Result
-        addSlot(SpecialSlot(container, 5, 116, 35, { false }, stackSize = s.stackSize))
+        addSlot(SpecialSlot(container, 5, 116, 35, { false }))
 
         // Bound gem
         addSlot(
@@ -58,6 +58,8 @@ abstract class XLikeMenu(
         )
 
         makeInv(inv, 8, 84)
+
+        addDataSlots(data)
     }
 
     override fun quickMoveStack(player: Player, index: Int): ItemStack {
@@ -94,21 +96,18 @@ abstract class XLikeMenu(
         return qms
     }
 
-    class Settings {
-        var stackSize: Int = 64
-        var place: SpecialSlot.(ItemStack) -> Boolean = { true }
-        var pickup: SpecialSlot.(Player) -> Boolean = { !this.itemHandler.extractItem(indx, 1, true).isEmpty }
-    }
-
     class Envoyer(
         containerId: Int,
         inv: Inventory,
         container: IItemHandler,
         blockEntity: XLikeBlockEntity?,
         access: ContainerLevelAccess,
-    ): XLikeMenu(ECRegistry.envoyerMenu.get(), containerId, inv, container, blockEntity, access, {
-        this.stackSize = 1
-    }) {
+        data: ContainerData
+    ): XLikeMenu(ECRegistry.envoyerMenu.get(), containerId, inv, container, blockEntity, access, data) {
+        init {
+            buildSlots(container, inv, 1)
+        }
+
         constructor(
             id: Int,
             inv: Inventory,
@@ -119,6 +118,7 @@ abstract class XLikeMenu(
             ItemStackHandler(7),
             be(inv.player.commandSenderWorld, buf.readBlockPos()),
             ContainerLevelAccess.NULL,
+            SimpleContainerData(2)
         )
 
         override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.envoyer.get())
@@ -130,7 +130,12 @@ abstract class XLikeMenu(
         container: IItemHandler,
         blockEntity: XLikeBlockEntity?,
         access: ContainerLevelAccess,
-    ): XLikeMenu(ECRegistry.magicTableMenu.get(), containerId, inv, container, blockEntity, access) {
+        data: ContainerData
+    ): XLikeMenu(ECRegistry.magicTableMenu.get(), containerId, inv, container, blockEntity, access, data) {
+        init {
+            buildSlots(container, inv)
+        }
+
         constructor(
             id: Int,
             inv: Inventory,
@@ -141,6 +146,7 @@ abstract class XLikeMenu(
             ItemStackHandler(7),
             be(inv.player.commandSenderWorld, buf.readBlockPos()),
             ContainerLevelAccess.NULL,
+            SimpleContainerData(2)
         )
 
         override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.magicTable.get())

@@ -11,14 +11,14 @@ import team._0mods.ecr.api.client.yPos
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.client.screen.container.widget.MithrilineFurnaceProgressArrow
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
-import team._0mods.ecr.common.container.MithrilineFurnaceContainer
+import team._0mods.ecr.common.menu.MithrilineFurnaceMenu
 import java.awt.Color
 
 class MithrilineFurnaceScreen(
-    menu: MithrilineFurnaceContainer,
+    menu: MithrilineFurnaceMenu,
     playerInventory: Inventory,
     title: Component
-) : AbstractContainerScreen<MithrilineFurnaceContainer>(
+) : AbstractContainerScreen<MithrilineFurnaceMenu>(
     menu,
     playerInventory,
     title

@@ -3,7 +3,6 @@ package team._0mods.ecr.common.init.registry
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.sounds.SoundEvent
-import net.minecraft.sounds.SoundEvents
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -21,7 +20,7 @@ import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.api.PropertiedBlock
 import team._0mods.ecr.common.blocks.*
 import team._0mods.ecr.common.blocks.entity.*
-import team._0mods.ecr.common.container.*
+import team._0mods.ecr.common.menu.*
 import team._0mods.ecr.common.effects.*
 import team._0mods.ecr.common.items.*
 import team._0mods.ecr.common.items.tools.*
@@ -131,8 +130,8 @@ object ECRegistry: HollowRegistry(ModId) {
     }
 
     // menu types
-    val mithrilineFurnaceMenu by register("mithriline_furnace") { simpleMenuFactory(::MithrilineFurnaceContainer) }
-    val matrixDestructorMenu by register("matrix_destructor") { simpleMenuFactory(::MatrixDestructorContainer) }
+    val mithrilineFurnaceMenu by register("mithriline_furnace") { simpleMenuFactory(::MithrilineFurnaceMenu) }
+    val matrixDestructorMenu by register("matrix_destructor") { simpleMenuFactory(::MatrixDestructorMenu) }
     val envoyerMenu by register("envoyer") { simpleMenuFactory(XLikeMenu::Envoyer) }
     val magicTableMenu by register("magic_table") { simpleMenuFactory(XLikeMenu::MagicTable) }
 

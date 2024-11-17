@@ -49,11 +49,11 @@ open class MRUContainer(
         onContextChanged(this)
     }
 
-    override fun serializeNBT(): IntTag = IntTag.valueOf(mruStorage)
+    override fun serializeNBT(): IntTag = IntTag.valueOf(min(mruStorage, maxMRUStorage))
 
     override fun deserializeNBT(tag: IntTag?) {
         if (tag == null) throw NullPointerException("Failed to load nbt, because it is null")
 
-        currentMru = tag.asInt
+        currentMru = min(tag.asInt, maxMRUStorage)
     }
 }

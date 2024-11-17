@@ -20,9 +20,10 @@ import net.minecraftforge.items.ItemStackHandler
 import team._0mods.ecr.api.mru.MRUGenerator
 import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUTypes
+import team._0mods.ecr.api.utils.toTag
 import team._0mods.ecr.common.api.SyncedBlockEntity
 import team._0mods.ecr.common.capability.MRUContainer
-import team._0mods.ecr.common.container.MatrixDestructorContainer
+import team._0mods.ecr.common.menu.MatrixDestructorMenu
 import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECRegistry
@@ -68,7 +69,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
 
     override fun load(tag: CompoundTag) {
         itemHandler.deserializeNBT(tag.getCompound("ItemStorage"))
-        mruContainer.deserializeNBT(IntTag.valueOf(tag.getInt("MRU")))
+        mruContainer.deserializeNBT(tag.getInt("MRU").toTag)
         progress = tag.getInt("InjectionProgress")
         super.load(tag)
     }
@@ -82,7 +83,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
     }
 
     override fun createMenu(id: Int, inv: Inventory, arg2: Player): AbstractContainerMenu? {
-        return MatrixDestructorContainer(
+        return MatrixDestructorMenu(
             id,
             inv,
             this.itemHandler,

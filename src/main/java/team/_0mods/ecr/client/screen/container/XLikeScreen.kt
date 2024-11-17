@@ -6,8 +6,11 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import team._0mods.ecr.api.client.defaultBlit
 import team._0mods.ecr.api.client.drawMRULine
+import team._0mods.ecr.api.client.xPos
+import team._0mods.ecr.api.client.yPos
 import team._0mods.ecr.api.utils.ecRL
-import team._0mods.ecr.common.container.XLikeMenu
+import team._0mods.ecr.client.screen.container.widget.XLikeProgressArrow
+import team._0mods.ecr.common.menu.XLikeMenu
 
 open class XLikeScreen<T: XLikeMenu>(
     menu: T,
@@ -41,7 +44,17 @@ open class XLikeScreen<T: XLikeMenu>(
         }
     }
 
-    class Envoyer(menu: XLikeMenu.Envoyer, inv: Inventory, title: Component): XLikeScreen<XLikeMenu.Envoyer>(menu, inv, title, "envoyer")
+    class Envoyer(menu: XLikeMenu.Envoyer, inv: Inventory, title: Component): XLikeScreen<XLikeMenu.Envoyer>(menu, inv, title, "envoyer") {
+        override fun init() {
+            super.init()
+            addRenderableOnly(XLikeProgressArrow(xPos(85), yPos(39), menu, "envoyer"))
+        }
+    }
 
-    class MagicTable(menu: XLikeMenu.MagicTable, inv: Inventory, title: Component): XLikeScreen<XLikeMenu.MagicTable>(menu, inv, title, "envoyer")
+    class MagicTable(menu: XLikeMenu.MagicTable, inv: Inventory, title: Component): XLikeScreen<XLikeMenu.MagicTable>(menu, inv, title, "envoyer") {
+        override fun init() {
+            super.init()
+            addRenderableOnly(XLikeProgressArrow(xPos(85), yPos(39), menu, "envoyer"))
+        }
+    }
 }

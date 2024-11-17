@@ -9,13 +9,13 @@ import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.client.defaultBlit
 import team._0mods.ecr.api.client.drawMRULine
 import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
-import team._0mods.ecr.common.container.MatrixDestructorContainer
+import team._0mods.ecr.common.menu.MatrixDestructorMenu
 
 class MatrixDestructorScreen(
-    menu: MatrixDestructorContainer,
+    menu: MatrixDestructorMenu,
     playerInventory: Inventory,
     title: Component
-) : AbstractContainerScreen<MatrixDestructorContainer>(
+) : AbstractContainerScreen<MatrixDestructorMenu>(
     menu,
     playerInventory,
     title

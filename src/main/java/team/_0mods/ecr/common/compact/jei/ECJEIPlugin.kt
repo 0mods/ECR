@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.client.screen.container.MithrilineFurnaceScreen
 import team._0mods.ecr.common.compact.jei.categories.*
-import team._0mods.ecr.common.container.MithrilineFurnaceContainer
+import team._0mods.ecr.common.menu.MithrilineFurnaceMenu
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.recipes.*
 
@@ -50,7 +50,7 @@ class ECJEIPlugin: IModPlugin {
     override fun registerRecipeTransferHandlers(registration: IRecipeTransferRegistration) {
         // TODO need fix
         registration.addRecipeTransferHandler(
-            MithrilineFurnaceContainer::class.java,
+            MithrilineFurnaceMenu::class.java,
             ECRegistry.mithrilineFurnaceMenu.get(),
             MITHRILINE_FURNACE,
             0, 1, 2, 36

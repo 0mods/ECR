@@ -19,8 +19,6 @@ class SpecialSlot(
     xPosition,
     yPosition
 ) {
-    val indx = index
-
     override fun getMaxStackSize(): Int = stackSize
 
     override fun mayPickup(player: Player): Boolean {

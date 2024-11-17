@@ -29,9 +29,10 @@ import team._0mods.ecr.api.mru.MRUReceivable
 import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUTypes
 import team._0mods.ecr.api.utils.StackHelper
+import team._0mods.ecr.api.utils.toTag
 import team._0mods.ecr.common.api.SyncedBlockEntity
 import team._0mods.ecr.common.capability.MRUContainer
-import team._0mods.ecr.common.container.MithrilineFurnaceContainer
+import team._0mods.ecr.common.menu.MithrilineFurnaceMenu
 import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECRMultiblocks
@@ -119,7 +120,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
 
     override fun load(tag: CompoundTag) {
         itemHandler.deserializeNBT(tag.getCompound("ItemStorage"))
-        mruContainer.deserializeNBT(IntTag.valueOf(tag.getInt("ESPEStorage")))
+        mruContainer.deserializeNBT(tag.getInt("ESPEStorage").toTag)
         successfulStructure = tag.getBoolean("FullStructure")
         decreaseGeneration = tag.getBoolean("DecreaseGeneration")
         progress = tag.getInt("Progress")
@@ -128,7 +129,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
     }
 
     override fun createMenu(id: Int, inv: Inventory, player: Player): AbstractContainerMenu? {
-        return MithrilineFurnaceContainer(
+        return MithrilineFurnaceMenu(
             id,
             inv,
             itemHandler,
