@@ -22,14 +22,14 @@ import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.recipes.XLikeRecipe
 import java.awt.Color
 
-class EnvoyerCategory(guiHelper: IGuiHelper): IRecipeCategory<XLikeRecipe.Envoyer> {
-    private val icon = guiHelper.createDrawableItemStack(ItemStack(ECRegistry.envoyer.get()))
+class MagicTableCategory(guiHelper: IGuiHelper): IRecipeCategory<XLikeRecipe.MagicTable> {
+    private val icon = guiHelper.createDrawableItemStack(ItemStack(ECRegistry.magicTable.get()))
     private val bg = guiHelper.drawableBuilder("textures/gui/jei/x.png".ecRL, 0, 0, 126, 54)
         .setTextureSize(126, 54).build()
 
-    override fun getRecipeType(): RecipeType<XLikeRecipe.Envoyer> = ECJEIPlugin.ENVOYER
+    override fun getRecipeType(): RecipeType<XLikeRecipe.MagicTable> = ECJEIPlugin.MAGIC_TABLE
 
-    override fun getTitle(): Component = ECRegistry.envoyer.get().name.withStyle(ChatFormatting.RESET)
+    override fun getTitle(): Component = ECRegistry.magicTable.get().name.withStyle(ChatFormatting.RESET)
 
     override fun getIcon(): IDrawable? = icon
 
@@ -37,7 +37,7 @@ class EnvoyerCategory(guiHelper: IGuiHelper): IRecipeCategory<XLikeRecipe.Envoye
 
     override fun getHeight(): Int = bg.height
 
-    override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: XLikeRecipe.Envoyer, focuses: IFocusGroup) {
+    override fun setRecipe(builder: IRecipeLayoutBuilder, recipe: XLikeRecipe.MagicTable, focuses: IFocusGroup) {
         val level = Minecraft.getInstance().level ?: return
 
         val inp = recipe.ingredients
@@ -53,7 +53,7 @@ class EnvoyerCategory(guiHelper: IGuiHelper): IRecipeCategory<XLikeRecipe.Envoye
     }
 
     override fun draw(
-        recipe: XLikeRecipe.Envoyer,
+        recipe: XLikeRecipe.MagicTable,
         recipeSlotsView: IRecipeSlotsView,
         guiGraphics: GuiGraphics,
         mouseX: Double,
@@ -77,6 +77,6 @@ class EnvoyerCategory(guiHelper: IGuiHelper): IRecipeCategory<XLikeRecipe.Envoye
     }
 
     companion object {
-        @JvmField val RL_ID = "envoyer".ecRL
+        @JvmField val RL_ID = "magic_table".ecRL
     }
 }

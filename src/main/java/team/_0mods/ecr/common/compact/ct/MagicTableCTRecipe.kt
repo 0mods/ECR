@@ -17,12 +17,12 @@ import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.api.SHORT_ID
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.recipes.XLikeRecipe
-import java.util.UUID
+import java.util.*
 
 @ZenRegister
-@ZenCodeType.Name("mods.$SHORT_ID.Envoyer")
-object EnvoyerCTRecipe: IRecipeManager<XLikeRecipe.Envoyer> {
-    override fun getRecipeType(): RecipeType<XLikeRecipe.Envoyer> = ECRegistry.envoyerRecipe.get()
+@ZenCodeType.Name("mods.$SHORT_ID.MagicTable")
+object MagicTableCTRecipe: IRecipeManager<XLikeRecipe.MagicTable> {
+    override fun getRecipeType(): RecipeType<XLikeRecipe.MagicTable> = ECRegistry.magicTableRecipe.get()
 
     @JvmStatic
     @ZenCodeType.Method
@@ -82,7 +82,7 @@ object EnvoyerCTRecipe: IRecipeManager<XLikeRecipe.Envoyer> {
         @ZenCodeType.OptionalInt(100) time: Int,
         @ZenCodeType.OptionalInt(10) mru: Int
     ) {
-        val fixedName = fixRecipeName(name)
+        val fixedName = MagicTableCTRecipe.fixRecipeName(name)
         val inputs = NonNullList.withSize(4, Ingredient.EMPTY)
         val catal = NonNullList.withSize(1, Ingredient.EMPTY)
         catal[0] = catalyst.asVanillaIngredient()
@@ -93,8 +93,8 @@ object EnvoyerCTRecipe: IRecipeManager<XLikeRecipe.Envoyer> {
 
         CraftTweakerAPI.apply(
             ActionAddRecipe(
-                EnvoyerCTRecipe,
-                XLikeRecipe.Envoyer(CraftTweakerConstants.rl(fixedName), inputs, catal, time, mru, output.internal)
+                MagicTableCTRecipe,
+                XLikeRecipe.MagicTable(CraftTweakerConstants.rl(fixedName), inputs, catal, time, mru, output.internal)
             )
         )
     }
@@ -102,6 +102,6 @@ object EnvoyerCTRecipe: IRecipeManager<XLikeRecipe.Envoyer> {
     @JvmStatic
     @ZenCodeType.Method
     fun removeById(id: String) {
-        CraftTweakerAPI.apply(ActionRemoveRecipeByName(EnvoyerCTRecipe, id.rl))
+        CraftTweakerAPI.apply(ActionRemoveRecipeByName(MagicTableCTRecipe, id.rl))
     }
 }

@@ -120,7 +120,7 @@ abstract class XLikeBlockEntity(
 
     abstract override val positionCrystal: ItemStack
 
-    fun <T: XLikeRecipe, X: XLikeBlockEntity> processRecipeIfPresent(level: Level, recipeType: RecipeType<T>, be: X) {
+    fun <T: XLikeRecipe, X: XLikeBlockEntity> processRecipeIfPresent(level: Level, recipeType: RecipeType<T>, be: X, needEmptySlot: Boolean = false) {
         if (level.isClientSide) return
         val list = NonNullList.withSize(5, ItemStack.EMPTY)
         (0 ..< 5).forEach {
@@ -139,7 +139,9 @@ abstract class XLikeBlockEntity(
 
             be.maxProgress = time
 
-            if (this.itemHandler.getStackInSlot(5).isEmpty) {
+
+
+            if (!needEmptySlot || this.itemHandler.getStackInSlot(5).isEmpty) {
                 this.processTick(time, mru)
                 if (this.progress >= time) {
                     inv.clearContent()
@@ -187,7 +189,7 @@ abstract class XLikeBlockEntity(
             @JvmStatic
             fun onTick(level: Level, pos: BlockPos, state: BlockState, be: Envoyer) {
                 be.processReceive(level)
-                be.processRecipeIfPresent(level, ECRegistry.envoyerRecipe.get(), be)
+                be.processRecipeIfPresent(level, ECRegistry.envoyerRecipe.get(), be, true)
             }
         }
 

@@ -18,6 +18,7 @@ class ECJEIPlugin: IModPlugin {
     companion object {
         @JvmField val MITHRILINE_FURNACE = RecipeType(MithrilineFurnaceCategory.RL_ID, MithrilineFurnaceRecipe::class.java)
         @JvmField val ENVOYER = RecipeType(EnvoyerCategory.RL_ID, XLikeRecipe.Envoyer::class.java)
+        @JvmField val MAGIC_TABLE = RecipeType(MagicTableCategory.RL_ID, XLikeRecipe.MagicTable::class.java)
     }
 
     override fun getPluginUid(): ResourceLocation = "jei_plugin".ecRL
@@ -27,13 +28,15 @@ class ECJEIPlugin: IModPlugin {
 
         registration.addRecipeCategories(
             MithrilineFurnaceCategory(gh),
-            EnvoyerCategory(gh)
+            EnvoyerCategory(gh),
+            MagicTableCategory(gh)
         )
     }
 
     override fun registerRecipeCatalysts(registration: IRecipeCatalystRegistration) {
         registration.addRecipeCatalyst(ItemStack(ECRegistry.mithrilineFurnace.get()), MITHRILINE_FURNACE)
         registration.addRecipeCatalyst(ItemStack(ECRegistry.envoyer.get()), ENVOYER)
+        registration.addRecipeCatalyst(ItemStack(ECRegistry.magicTable.get()), MAGIC_TABLE)
     }
 
     override fun registerRecipes(registration: IRecipeRegistration) {
@@ -41,6 +44,7 @@ class ECJEIPlugin: IModPlugin {
 
         registration.addRecipes(MITHRILINE_FURNACE, mgr.getAllRecipesFor(ECRegistry.mithrilineFurnaceRecipe.get()))
         registration.addRecipes(ENVOYER, mgr.getAllRecipesFor(ECRegistry.envoyerRecipe.get()))
+        registration.addRecipes(MAGIC_TABLE, mgr.getAllRecipesFor(ECRegistry.magicTableRecipe.get()))
     }
 
     override fun registerGuiHandlers(registration: IGuiHandlerRegistration) {
