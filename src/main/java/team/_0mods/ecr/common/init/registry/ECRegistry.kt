@@ -136,14 +136,16 @@ object ECRegistry: HollowRegistry(ModId) {
     val magicTableMenu by register("magic_table") { simpleMenuFactory(XLikeMenu::MagicTable) }
 
     // recipe types
-    val mithrilineFurnaceRecipe by register("mithriline_furnace") { RecipeType.simple<MithrilineFurnaceRecipe>("mithriline_furnace".id) }
-    val envoyerRecipe by register("envoyer") { RecipeType.simple<XLikeRecipe.Envoyer>("envoyer".id) }
-    val magicTableRecipe by register("magic_table") { RecipeType.simple<XLikeRecipe.MagicTable>("magic_table".id) }
+    val mithrilineFurnaceRecipe by register("mithriline_furnace") { RecipeType.simple<MithrilineFurnaceRecipe>(it) }
+    val envoyerRecipe by register("envoyer") { RecipeType.simple<XLikeRecipe.Envoyer>(it) }
+    val magicTableRecipe by register("magic_table") { RecipeType.simple<XLikeRecipe.MagicTable>(it) }
+    val structureRecipe by register("structure") { RecipeType.simple<StructureRecipe>(it) }
 
     // recipe serializers
     val mithrilineFurnaceRecipeSerial by register("mithriline_furnace") { MithrilineFurnaceRecipe.Serializer(::MithrilineFurnaceRecipe) }
     val envoyerRecipeSerial by register("envoyer") { XLikeRecipe.Serializer(XLikeRecipe::Envoyer) }
     val magicTableRecipeSerial by register("magic_table") { XLikeRecipe.Serializer(XLikeRecipe::MagicTable) }
+    val structureRecipeSerial by register("structure") { StructureRecipe.Serializer(::StructureRecipe) }
 
     // particles
     val ecParticle by register("ec_part") { ECParticleType() }

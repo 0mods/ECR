@@ -44,6 +44,7 @@ class MithrilineFurnaceRecipe(
     class Serializer(val serial: (ResourceLocation, NonNullList<Ingredient>, Int, ItemStack) -> MithrilineFurnaceRecipe): RecipeSerializer<MithrilineFurnaceRecipe> {
         override fun fromJson(recipeId: ResourceLocation, serializedRecipe: JsonObject): MithrilineFurnaceRecipe {
             if (!serializedRecipe.has("ingredient")) throw JsonSyntaxException("Recipe cannot be created, because argument \"ingredient\" is missing.")
+            if (serializedRecipe.get("ingredient").isJsonArray) throw JsonSyntaxException("Recipe cannot be created, because argument \"ingredient\" is array.")
             val input = GsonHelper.getAsJsonObject(serializedRecipe, "ingredient")
             val i = Ingredient.fromJson(input)
 
