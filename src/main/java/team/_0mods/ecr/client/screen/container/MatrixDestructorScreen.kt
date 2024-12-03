@@ -36,7 +36,7 @@ class MatrixDestructorScreen(
         val be = menu.blockEntity
         if (be is MatrixDestructorEntity) {
             val mru = be.mruContainer
-            this.drawMRULine(gg, mru, 38, 22, 100, 8, mouseX, mouseY)
+            this.drawMRULine(gg, mru, 37, 17, 102, 10, mouseX, mouseY)
         }
     }
 }
