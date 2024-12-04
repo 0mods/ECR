@@ -234,7 +234,7 @@ fun DependencyHandlerScope.equalDepend(dependency: Any) {
     implementation(dependency)
     include(dependency)
 }
-
+//
 val String.range: String
     get() {
         val ver = this.split('.')[0]
