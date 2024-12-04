@@ -117,14 +117,10 @@ dependencies {
 
     forge("net.minecraftforge:forge:${minecraftVersion}-${forgeVersion}")
 
-    // required library
     modImplementation(libs.hollowcore.forge.mcReplace)
 
-    // Include libs
-    //ModInclude
     equalDepend(libs.mixinextras.forge)
 
-    // kotlin runtime & compile
     compileOnlyMinecraft(libs.kotlin.stdlib)
 
     compileOnlyMinecraft(libs.kotlin.coroutines)
@@ -138,11 +134,9 @@ dependencies {
     modImplementation(libs.mysticalAgriculture)
     modCompileOnly(libs.kubejs.forge)
 
-    // Runtime libs for test
     modRuntimeOnly(libs.cucumber)
     prepareHCDeps()
 
-    // Annotation processors
     annotationProcessor(libs.mixinextras.common)
     annotationProcessor(libs.crafttweaker.annotationProcessor)
 }
@@ -234,7 +228,7 @@ fun DependencyHandlerScope.equalDepend(dependency: Any) {
     implementation(dependency)
     include(dependency)
 }
-//
+
 val String.range: String
     get() {
         val ver = this.split('.')[0]
