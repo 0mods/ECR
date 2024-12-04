@@ -1,0 +1,57 @@
+[versions]
+kotlin = "2.1.0"
+loom = "1.7-SNAPSHOT"
+yamlang = "1.4.0"
+minecraft = "1.20.1"
+parchment = "2023.09.03"
+mixinextras = "0.4.1"
+kotlin-coroutines = "1.9.0"
+kotlin-serialization = "1.7.3"
+imgui = "1.87.3"
+ktoml = "0.5.1"
+imageio-apng = "1.0.1"
+joml = "1.10.8"
+kotgl-matrix = "0.0.1-beta"
+crafttweaker-annotationProcessor = "3.0.0.10"
+hc = "2.2.0-beta2"
+forge = "47.3.11"
+jei = "15.20.0.104"
+crafttweaker = "14.0.43"
+kubejs = "2001.6.5-build.14"
+jade-forge = "11.12.1+forge"
+mysticalAgriculture = "7.0.14"
+cucumber = "7.0.12"
+
+[libraries]
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+mixin = { module = "org.spongepowered:mixin", version = "0.8.2" }
+mixinextras-common = { module = "io.github.llamalad7:mixinextras-common", version.ref = "mixinextras" }
+mixinextras-forge = { module = "io.github.llamalad7:mixinextras-forge", version.ref = "mixinextras" }
+kotlin-coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+kotlin-coroutines-jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlin-coroutines" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlin-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlin-serialization" }
+kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+imgui-app = { module = "team.0mods:imgui-app", version.ref = "imgui" }
+imgui-binding = { module = "team.0mods:imgui-binding", version.ref = "imgui" }
+imgui-lwjgl = { module = "team.0mods:imgui-lwjgl3", version.ref = "imgui" }
+imgui-binding-natives = { module = "team.0mods:imgui-binding-natives", version.ref = "imgui" }
+ktoml-core-jvm = { module = "com.akuleshov7:ktoml-core-jvm", version.ref = "ktoml" }
+imageio-apng = { module = "com.tianscar.imageio:imageio-apng", version.ref = "imageio-apng" }
+joml = { module = "org.joml:joml", version.ref = "joml" }
+kotgl-matrix = { module = "dev.folomeev.kotgl:kotgl-matrix", version.ref = "kotgl-matrix" }
+crafttweaker-annotationProcessor = { module = "com.blamejared.crafttweaker:Crafttweaker_Annotation_Processors", version.ref = "crafttweaker-annotationProcessor" }
+jei = { module = "mezz.jei:jei-mc_version-forge", version.ref = "jei" }
+crafttweaker-forge = { module = "com.blamejared.crafttweaker:CraftTweaker-forge-mc_version", version.ref = "crafttweaker" }
+jade-forge = { module = "maven.modrinth:jade", version.ref = "jade-forge" }
+mysticalAgriculture = { module = "maven.modrinth:mystical-agriculture", version.ref = "mysticalAgriculture" }
+kubejs-forge = { module = "dev.latvian.mods:kubejs-forge", version.ref = "kubejs" }
+cucumber = { module = "maven.modrinth:cucumber", version.ref = "cucumber" }
+hollowcore-forge = { module = "ru.hollowhorizon:HollowCore-forge-mc_version", version.ref = "hc" }
+
+[plugins]
+architectury-loom = { id = "dev.architectury.loom", version.ref = "loom" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+yamlang = { id = "me.fallenbreath.yamlang", version.ref = "yamlang" }

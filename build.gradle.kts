@@ -1,18 +1,18 @@
 val modId: String by project
-val minecraftVersion: String by project
-val forgeVersion: String by project
 val modVersion: String by project
-val imguiVersion: String by project
+val minecraftVersion = libs.versions.minecraft.get()
+val forgeVersion = libs.versions.forge.get()
+val hcVersion = libs.versions.hc.get()
 
 val authData = if (project.file("auth.data").exists()) project.file("auth.data").readText().trim() else ""
 
 plugins {
     java
     idea
-    id("dev.architectury.loom") version "1.7-SNAPSHOT"
-    kotlin("jvm")
-    kotlin("plugin.serialization")
-    id("me.fallenbreath.yamlang") version "1.4.0"
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.architectury.loom)
+    alias(libs.plugins.yamlang)
 }
 
 java.withSourcesJar()
@@ -106,49 +106,45 @@ repositories {
 }
 
 dependencies {
-    val pv = "parchmentVersion".fromProperties
-    minecraft("com.mojang:minecraft:${minecraftVersion}")
+    minecraft(libs.minecraft)
     mappings(loom.layered {
         officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${
-            if (pv.isEmpty()) minecraftVersion else pv
-        }@zip")
+        parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${libs.versions.parchment.get()}@zip")
     })
 
-    compileOnly("org.spongepowered:mixin:0.8")
-    compileOnly("io.github.llamalad7:mixinextras-common:0.4.1")
+    compileOnly(libs.mixin)
+    compileOnly(libs.mixinextras.common)
 
     forge("net.minecraftforge:forge:${minecraftVersion}-${forgeVersion}")
 
     // required library
-    modImplementation("ru.hollowhorizon:HollowCore-forge-$minecraftVersion:${"hc_version".fromProperties}")
+    modImplementation(libs.hollowcore.forge.mcReplace)
 
     // Include libs
     //ModInclude
-//    minecraftRuntimeLibraries(include("team.chisel.ctm:CTM:${minecraftVersion}-${"ctm_version".fromProperties}")) {}
-    implementation(include("io.github.llamalad7:mixinextras-forge:0.4.1")) {}
+    equalDepend(libs.mixinextras.forge)
 
     // kotlin runtime & compile
-    compileOnly(minecraftRuntimeLibraries(kotlin("stdlib", "2.0.10"))) {}
+    compileOnlyMinecraft(libs.kotlin.stdlib)
 
-    compileOnly(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-coroutines-core:+")) {}
-    compileOnly(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:+")) {}
-    compileOnly(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-serialization-core:+")) {}
-    compileOnly(minecraftRuntimeLibraries("org.jetbrains.kotlinx:kotlinx-serialization-json:+")) {}
+    compileOnlyMinecraft(libs.kotlin.coroutines)
+    compileOnlyMinecraft(libs.kotlin.coroutines.jvm)
+    compileOnlyMinecraft(libs.kotlin.serialization)
+    compileOnlyMinecraft(libs.kotlin.serialization.json)
 
-    modImplementation("mezz.jei:jei-${minecraftVersion}-forge:${"jei_version".fromProperties}")
-    modImplementation("com.blamejared.crafttweaker:CraftTweaker-forge-${minecraftVersion}:${"ct_version".fromProperties}")
-    modImplementation("maven.modrinth:jade:${"jade_version".fromProperties}+forge")
-    modImplementation("maven.modrinth:mystical-agriculture:${"ma_version".fromProperties}")
-    modCompileOnly("dev.latvian.mods:kubejs-forge:${"kubejs_version".fromProperties}")
+    modImplementation(libs.jei.mcReplace)
+    modImplementation(libs.crafttweaker.forge.mcReplace)
+    modImplementation(libs.jade.forge)
+    modImplementation(libs.mysticalAgriculture)
+    modCompileOnly(libs.kubejs.forge)
 
     // Runtime libs for test
-    modRuntimeOnly("maven.modrinth:cucumber:${"cucumber_version".fromProperties}")
+    modRuntimeOnly(libs.cucumber)
     prepareHCDeps()
 
     // Annotation processors
-    annotationProcessor("io.github.llamalad7:mixinextras-common:0.4.1")
-    annotationProcessor("com.blamejared.crafttweaker:Crafttweaker_Annotation_Processors:${"ct_annot_version".fromProperties}")
+    annotationProcessor(libs.mixinextras.common)
+    annotationProcessor(libs.crafttweaker.annotationProcessor)
 }
 
 tasks {
@@ -167,9 +163,9 @@ tasks {
         val replacement = mapOf(
             "modId" to modId, "modVersion" to modVersion, "modName" to "modName".fromProperties,
             "modCredits" to "modCredits".fromProperties, "modAuthors" to "modAuthors".fromProperties,
-            "modDesc" to "modDesc".fromProperties, "forgeVersionRange" to "forgeVersionRange".fromProperties,
-            "minecraftVersionRange" to "minecraftVersionRange".fromProperties, "loaderVersionRange" to "loaderVersionRange".fromProperties,
-            "modLicense" to "modLicense".fromProperties, "hcVersionRange" to "[${"hc_version".fromProperties},)"
+            "modDesc" to "modDesc".fromProperties, "forgeVersionRange" to forgeVersion.range,
+            "minecraftVersionRange" to minecraftVersion.mcRange, "loaderVersionRange" to forgeVersion.range,
+            "modLicense" to "modLicense".fromProperties, "hcVersionRange" to "[$hcVersion,)"
         )
 
         filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta", "*.mixins.json")) {
@@ -217,19 +213,45 @@ val String.fromProperties
     get() = project.properties[this].toString()
 
 fun DependencyHandlerScope.prepareHCDeps() {
-    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-app:$imguiVersion")) {}
-    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding:$imguiVersion")) {}
-    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-lwjgl3:$imguiVersion")) {}
-    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding-natives:$imguiVersion")) {}
+    minecraftRuntimeLibraries(libs.ktoml.core.jvm)
+    compileOnlyMinecraft(libs.imgui.app)
+    compileOnlyMinecraft(libs.imgui.binding)
+    compileOnlyMinecraft(libs.imgui.lwjgl)
+    compileOnlyMinecraft(libs.imgui.binding.natives)
+    minecraftRuntimeLibraries(libs.imageio.apng)
+    minecraftRuntimeLibraries(libs.joml)
+    minecraftRuntimeLibraries(libs.kotgl.matrix)
 
-    minecraftRuntimeLibraries("com.akuleshov7:ktoml-core-jvm:0.5.1")
-    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-app:$imguiVersion")) {}
-    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding:$imguiVersion")) {}
-    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-lwjgl3:$imguiVersion")) {}
-    minecraftRuntimeLibraries(compileOnly("team.0mods:imgui-binding-natives:$imguiVersion")) {}
-    minecraftRuntimeLibraries("com.tianscar.imageio:imageio-apng:1.0.1")
-    minecraftRuntimeLibraries("org.joml:joml:1.10.8")
-    minecraftRuntimeLibraries("dev.folomeev.kotgl:kotgl-matrix:0.0.1-beta")
-
-    minecraftRuntimeLibraries("org.jetbrains.kotlin:kotlin-reflect:2.0.0") { exclude("org.jetbrains.kotlin") }
+    minecraftRuntimeLibraries(libs.kotlin.reflect) { exclude("org.jetbrains.kotlin") }
 }
+
+fun DependencyHandlerScope.compileOnlyMinecraft(dependency: Any) {
+    compileOnly(dependency)
+    minecraftRuntimeLibraries(dependency)
+}
+
+fun DependencyHandlerScope.equalDepend(dependency: Any) {
+    implementation(dependency)
+    include(dependency)
+}
+
+val String.range: String
+    get() {
+        val ver = this.split('.')[0]
+        return "[$ver,)"
+    }
+
+val String.mcRange: String
+    get() {
+        val ver = this.split('.').last()
+        val buildedVersion = "${this.split('.').first()}.${this.split('.')[1]}.${ver.toInt() + 1}"
+        return "[$this,$buildedVersion)"
+   }
+
+val Provider<MinimalExternalModuleDependency>.mcReplace: String
+    get() {
+        val group = this.get().module.group
+        val name = this.get().module.name
+        val version = this.get().version
+        return "${group}:${name.replace("mc_version", minecraftVersion)}:$version"
+    }

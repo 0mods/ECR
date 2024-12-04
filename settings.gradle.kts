@@ -7,13 +7,6 @@ pluginManagement {
         maven("https://maven.fabricmc.net/")
         maven("https://maven.parchmentmc.org")
     }
-
-    val kotlinVersion: String by settings
-
-    plugins {
-        kotlin("jvm") version kotlinVersion
-        kotlin("plugin.serialization") version kotlinVersion
-    }
 }
 
 plugins {
