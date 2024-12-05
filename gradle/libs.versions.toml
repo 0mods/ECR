@@ -21,6 +21,7 @@ kubejs = "2001.6.5-build.14"
 jade-forge = "11.12.1+forge"
 mysticalAgriculture = "7.0.14"
 cucumber = "7.0.12"
+kool = "0.16.0-SNAPSHOT"
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
@@ -49,6 +50,10 @@ mysticalAgriculture = { module = "maven.modrinth:mystical-agriculture", version.
 kubejs-forge = { module = "dev.latvian.mods:kubejs-forge", version.ref = "kubejs" }
 cucumber = { module = "maven.modrinth:cucumber", version.ref = "cucumber" }
 hollowcore-forge = { module = "ru.hollowhorizon:HollowCore-forge-mc_version", version.ref = "hc" }
+kool-editor = { module = "de.fabmax.kool:kool-editor-desktop", version.ref = "kool" }
+kool-editor-model = { module = "de.fabmax.kool:kool-editor-model-desktop", version.ref = "kool" }
+kool-core = { module = "de.fabmax.kool:kool-core-desktop", version.ref = "kool" }
+kool-physics = { module = "de.fabmax.kool:kool-physics-desktop", version.ref = "kool" }
 
 [plugins]
 architectury-loom = { id = "dev.architectury.loom", version.ref = "loom" }

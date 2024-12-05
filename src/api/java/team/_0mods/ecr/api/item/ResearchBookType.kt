@@ -1,7 +1,7 @@
 package team._0mods.ecr.api.item
 
+import de.fabmax.kool.scene.Scene
 import net.minecraft.network.chat.Component
-import ru.hollowhorizon.hc.client.imgui.Graphics
 import ru.hollowhorizon.hc.client.utils.mcTranslate
 import team._0mods.ecr.api.registries.ECRegistries
 
@@ -22,7 +22,7 @@ interface ResearchBookType {
      *
      * If empty, it can't be rendered
      *
-     * @return Function with [Graphics] parameter
+     * @return Function with [Scene] parameter
      */
-    val render: Graphics.() -> Unit get() = {}
+    val render: Scene.() -> Unit get() = {}
 }

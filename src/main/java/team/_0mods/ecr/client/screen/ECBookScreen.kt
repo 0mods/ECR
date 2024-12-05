@@ -1,20 +1,21 @@
 package team._0mods.ecr.client.screen
 
-import imgui.flag.ImGuiWindowFlags
-import net.minecraft.client.Minecraft
-import ru.hollowhorizon.hc.client.imgui.setWindowSize
-import ru.hollowhorizon.hc.client.screens.ImGuiScreen
+import de.fabmax.kool.modules.ui2.*
+import de.fabmax.kool.scene.Scene
+import ru.hollowhorizon.hc.client.kool.KoolScreen
 import team._0mods.ecr.api.item.ResearchBookType
 
-class ECBookScreen(private val type: List<ResearchBookType>): ImGuiScreen({
-    val sc = Minecraft.getInstance().window.guiScale.toFloat()
+class ECBookScreen(private val type: List<ResearchBookType>): KoolScreen({
+    setupUiScene(Scene.DEFAULT_CLEAR_COLOR)
 
-    centredWindow("No Title?", args = ImGuiWindowFlags.AlwaysAutoResize or ImGuiWindowFlags.NoMove or ImGuiWindowFlags.NoCollapse) {
-        setWindowSize(1200f * 6, 500f * sc)
+    addPanelSurface {
+        modifier.size(400.dp, 300.dp)
+            .align(AlignmentX.Center, AlignmentY.Center)
+            .background(RoundRectBackground(colors.background, 16.dp))
 
-        pushScreenCursor()
-        text(type.last().translate)
-        popScreenCursor()
+        Text(type.last().translate.string) {
+            modifier.align(AlignmentX.Center, AlignmentY.Center)
+        }
     }
 }) {
     override fun isPauseScreen(): Boolean = false
