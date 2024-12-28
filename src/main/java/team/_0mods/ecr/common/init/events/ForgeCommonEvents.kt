@@ -11,6 +11,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import team._0mods.ecr.client.screen.ECBookScreen
+import team._0mods.ecr.common.data.ResearchBookData
 import team._0mods.ecr.common.init.registry.ECCommands
 import team._0mods.ecr.common.init.registry.reload.ConfigReloadListener
 import team._0mods.ecr.common.init.registry.reload.ECStructureReloadListener
@@ -41,7 +42,7 @@ fun onBookUsed(e: PlayerInteractEvent.RightClickItem) {
         val type = stack.bookTypes
         if (level.isClientSide) {
             if (player.isCreative && player.isShiftKeyDown) return
-            Minecraft.getInstance().setScreen(ECBookScreen(type!!))
+            Minecraft.getInstance().setScreen(ECBookScreen(type!!, ResearchBookData()))
         }
     }
 }

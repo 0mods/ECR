@@ -17,7 +17,7 @@ import ru.hollowhorizon.hc.client.utils.rl
 import ru.hollowhorizon.hc.common.registry.AutoModelType
 import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.api.ModId
-import team._0mods.ecr.api.item.ResearchBookType
+import team._0mods.ecr.api.item.Research
 import team._0mods.ecr.api.registries.ECRegistries
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.api.NoTab
@@ -25,12 +25,12 @@ import team._0mods.ecr.common.init.registry.ECBookTypes
 
 class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), NoTab {
     companion object {
-        var ItemStack.bookTypes: List<ResearchBookType>?
+        var ItemStack.bookTypes: List<Research>?
             @NotNull
             get() {
                 if (this.item !is ECBook) return null
                 val tag = this.orCreateTag
-                val list = mutableListOf<ResearchBookType>()
+                val list = mutableListOf<Research>()
 
                 if (!tag.contains("ECBookTypes")) {
                     val tags = ListTag()

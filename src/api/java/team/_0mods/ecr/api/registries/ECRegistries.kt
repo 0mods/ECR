@@ -2,12 +2,12 @@ package team._0mods.ecr.api.registries
 
 import net.minecraft.resources.ResourceLocation
 import team._0mods.ecr.api.LOGGER
-import team._0mods.ecr.api.item.ResearchBookType
+import team._0mods.ecr.api.item.Research
 import team._0mods.ecr.api.mru.PlayerMatrixType
 
 object ECRegistries {
     @JvmField val PLAYER_MATRICES = SomeRegistry.createRegistry<PlayerMatrixType>("Player Matrices")
-    @JvmField val BOOK_TYPES = SomeRegistry.createRegistry<ResearchBookType>("Book Types")
+    @JvmField val BOOK_TYPES = SomeRegistry.createRegistry<Research>("Book Types")
 }
 
 class SomeRegistry<T> private constructor(val registryName: String) {
