@@ -50,10 +50,10 @@ mysticalAgriculture = { module = "maven.modrinth:mystical-agriculture", version.
 kubejs-forge = { module = "dev.latvian.mods:kubejs-forge", version.ref = "kubejs" }
 cucumber = { module = "maven.modrinth:cucumber", version.ref = "cucumber" }
 hollowcore-forge = { module = "ru.hollowhorizon:HollowCore-forge-mc_version", version.ref = "hc" }
-kool-editor = { module = "de.fabmax.kool:kool-editor-desktop", version.ref = "kool" }
-kool-editor-model = { module = "de.fabmax.kool:kool-editor-model-desktop", version.ref = "kool" }
-kool-core = { module = "de.fabmax.kool:kool-core-desktop", version.ref = "kool" }
-kool-physics = { module = "de.fabmax.kool:kool-physics-desktop", version.ref = "kool" }
+kool-editor = { module = "team.0mods:kool-editor-desktop", version.ref = "kool" }
+kool-editor-model = { module = "team.0mods:kool-editor-model-desktop", version.ref = "kool" }
+kool-core = { module = "team.0mods:kool-core-desktop", version.ref = "kool" }
+kool-physics = { module = "team.0mods:kool-physics-desktop", version.ref = "kool" }
 
 [plugins]
 architectury-loom = { id = "dev.architectury.loom", version.ref = "loom" }
