@@ -36,7 +36,7 @@ class MRUComponent: IBlockComponentProvider {
         ))
     }
 
-    override fun getUid(): ResourceLocation? = "mru_component".ecRL
+    override fun getUid(): ResourceLocation = "mru_component".ecRL
 
     override fun getDefaultPriority(): Int = TooltipPosition.BODY + 999
 }
