@@ -1,4 +1,4 @@
-package team._0mods.ecr.client.screen
+package team._0mods.ecr.client.screen.book
 
 import de.fabmax.kool.modules.ui2.*
 import de.fabmax.kool.pipeline.FullscreenShaderUtil.generateFullscreenQuad
@@ -12,11 +12,11 @@ import net.minecraft.resources.ResourceLocation
 import ru.hollowhorizon.hc.client.imgui.glTexture
 import ru.hollowhorizon.hc.client.kool.KoolScreen
 import ru.hollowhorizon.hc.client.utils.toTexture
-import team._0mods.ecr.api.item.Research
+import team._0mods.ecr.api.research.BookLevel
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.data.ResearchBookData
 
-class ECBookScreen(private val type: List<Research>, val data: ResearchBookData): KoolScreen({
+class ECBookScreen(private val type: List<BookLevel>, val data: ResearchBookData): KoolScreen({
     /*if (data.selectedResearch == null) {
         renderDefaultBG("textures/gui/book/book.png".ecRL)
     }*/

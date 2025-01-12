@@ -4,9 +4,9 @@ import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.fml.ModList
 import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.api.LOGGER
-import team._0mods.ecr.api.registries.SomeRegistry
+import team._0mods.ecr.api.registries.Registrar
 
-open class RegistryImplementer<T>(val modId: String, val registry: SomeRegistry<T>): ECRegistryObject<T> {
+open class RegistryImplementer<T>(val modId: String, val registry: Registrar<T>): ECRegistryObject<T> {
     override val registered: Map<ResourceLocation, T>
         get() = registry.registries.filter { it.key.namespace == this.modId }
 

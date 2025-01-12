@@ -2,17 +2,17 @@ package team._0mods.ecr.api.registries
 
 import net.minecraft.resources.ResourceLocation
 import team._0mods.ecr.api.LOGGER
-import team._0mods.ecr.api.item.Research
+import team._0mods.ecr.api.research.BookLevel
 import team._0mods.ecr.api.mru.PlayerMatrixType
 
 object ECRegistries {
-    @JvmField val PLAYER_MATRICES = SomeRegistry.createRegistry<PlayerMatrixType>("Player Matrices")
-    @JvmField val BOOK_TYPES = SomeRegistry.createRegistry<Research>("Book Types")
+    @JvmField val PLAYER_MATRICES = Registrar.createRegistry<PlayerMatrixType>("Player Matrices")
+    @JvmField val BOOK_TYPES = Registrar.createRegistry<BookLevel>("Book Types")
 }
 
-class SomeRegistry<T> private constructor(val registryName: String) {
+class Registrar<T> private constructor(val registryName: String) {
     companion object {
-        fun <T> createRegistry(registryName: String): SomeRegistry<T> = SomeRegistry(registryName)
+        fun <T> createRegistry(registryName: String): Registrar<T> = Registrar(registryName)
     }
 
     val registries: Map<ResourceLocation, T> = linkedMapOf()

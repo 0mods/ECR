@@ -10,7 +10,7 @@ import net.minecraftforge.event.RegisterCommandsEvent
 import net.minecraftforge.event.entity.player.PlayerInteractEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
-import team._0mods.ecr.client.screen.ECBookScreen
+import team._0mods.ecr.client.screen.book.ECBookScreen
 import team._0mods.ecr.common.data.ResearchBookData
 import team._0mods.ecr.common.init.registry.ECCommands
 import team._0mods.ecr.common.init.registry.reload.ConfigReloadListener
