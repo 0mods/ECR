@@ -7,9 +7,12 @@ import team._0mods.ecr.api.mru.MRUTypes
 import kotlin.math.max
 import kotlin.math.min
 
+@Deprecated(
+    message = "i'm too lazy to write description why it is deprecated"
+)
 open class MRUContainer(
     override val mruType: MRUTypes,
-    private val maxStorage: Int,
+    maxStorage: Int,
     private var currentMru: Int,
     private val onContextChanged: (MRUStorage) -> Unit = {}
 ): MRUStorage, INBTSerializable<IntTag> {
@@ -17,39 +20,21 @@ open class MRUContainer(
         currentMru = max(0, min(maxStorage, currentMru))
     }
 
-    override val mruStorage: Int
-        get() = currentMru
+    override var mru: Int = currentMru
 
-    override val maxMRUStorage: Int
-        get() = maxStorage
+    override val maxMRUStorage: Int = maxStorage
 
     override fun extractMru(max: Int, simulate: Boolean): Int {
-        val extracted = min(currentMru, max)
-
-        if (!simulate) currentMru -= extracted
-
         onContextChanged(this)
-
-        return extracted
+        return super.extractMru(max, simulate)
     }
 
     override fun receiveMru(max: Int, simulate: Boolean): Int {
-        val received = min(maxStorage - currentMru, max)
-
-        if (!simulate) currentMru += received
-
         onContextChanged(this)
-
-        return received
+        return super.receiveMru(max, simulate)
     }
 
-    override fun setMru(value: Int) {
-        this.currentMru = min(value, maxMRUStorage)
-
-        onContextChanged(this)
-    }
-
-    override fun serializeNBT(): IntTag = IntTag.valueOf(min(mruStorage, maxMRUStorage))
+    override fun serializeNBT(): IntTag = IntTag.valueOf(min(mru, maxMRUStorage))
 
     override fun deserializeNBT(tag: IntTag?) {
         if (tag == null) throw NullPointerException("Failed to load nbt, because it is null")

@@ -7,13 +7,12 @@ parchment = "2023.09.03"
 mixinextras = "0.4.1"
 kotlin-coroutines = "1.9.0"
 kotlin-serialization = "1.7.3"
-imgui = "1.87.3"
 ktoml = "0.5.1"
 imageio-apng = "1.0.1"
 joml = "1.10.8"
 kotgl-matrix = "0.0.1-beta"
 crafttweaker-annotationProcessor = "3.0.0.10"
-hc = "2.2.1"
+hc = "2.2.7"
 forge = "47.3.11"
 jei = "15.20.0.104"
 crafttweaker = "14.0.43"
@@ -21,7 +20,7 @@ kubejs = "2001.6.5-build.14"
 jade-forge = "11.12.1+forge"
 mysticalAgriculture = "7.0.14"
 cucumber = "7.0.12"
-kool = "0.16.0-SNAPSHOT"
+kool = "0.17.0-0mods-SNAPSHOT"
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
@@ -34,10 +33,6 @@ kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "
 kotlin-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlin-serialization" }
 kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
-imgui-app = { module = "team.0mods:imgui-app", version.ref = "imgui" }
-imgui-binding = { module = "team.0mods:imgui-binding", version.ref = "imgui" }
-imgui-lwjgl = { module = "team.0mods:imgui-lwjgl3", version.ref = "imgui" }
-imgui-binding-natives = { module = "team.0mods:imgui-binding-natives", version.ref = "imgui" }
 ktoml-core-jvm = { module = "com.akuleshov7:ktoml-core-jvm", version.ref = "ktoml" }
 imageio-apng = { module = "com.tianscar.imageio:imageio-apng", version.ref = "imageio-apng" }
 joml = { module = "org.joml:joml", version.ref = "joml" }
@@ -50,10 +45,10 @@ mysticalAgriculture = { module = "maven.modrinth:mystical-agriculture", version.
 kubejs-forge = { module = "dev.latvian.mods:kubejs-forge", version.ref = "kubejs" }
 cucumber = { module = "maven.modrinth:cucumber", version.ref = "cucumber" }
 hollowcore-forge = { module = "ru.hollowhorizon:HollowCore-forge-mc_version", version.ref = "hc" }
-kool-editor = { module = "team.0mods:kool-editor-desktop", version.ref = "kool" }
-kool-editor-model = { module = "team.0mods:kool-editor-model-desktop", version.ref = "kool" }
-kool-core = { module = "team.0mods:kool-core-desktop", version.ref = "kool" }
-kool-physics = { module = "team.0mods:kool-physics-desktop", version.ref = "kool" }
+kool-editor = { module = "de.fabmax.kool:kool-editor-desktop", version.ref = "kool" }
+kool-editor-model = { module = "de.fabmax.kool:kool-editor-model-desktop", version.ref = "kool" }
+kool-core = { module = "de.fabmax.kool:kool-core-desktop", version.ref = "kool" }
+kool-physics = { module = "de.fabmax.kool:kool-physics-desktop", version.ref = "kool" }
 
 [plugins]
 architectury-loom = { id = "dev.architectury.loom", version.ref = "loom" }

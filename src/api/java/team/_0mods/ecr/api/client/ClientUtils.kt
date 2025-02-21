@@ -62,7 +62,7 @@ fun AbstractContainerScreen<*>.drawMRULine(
     if (isCursorAtPos(mouseX, mouseY, xPos(x), yPos(y), width, height)) {
         gg.renderTooltip(
             Minecraft.getInstance().font,
-            Component.literal("${container.mruType.displayName.string}: ${container.mruStorage}/${container.maxMRUStorage}"),
+            Component.literal("${container.mruType.displayName.string}: ${container.mru}/${container.maxMRUStorage}"),
             mouseX,
             mouseY
         )
@@ -79,6 +79,6 @@ fun AbstractContainerScreen<*>.drawMRUGradientLine(
     colorIn: Int = Color(139, 0, 255).rgb,
     colorOut: Int = Color(50, 18, 122).rgb
 ) {
-    val m = ((container.mruStorage.toFloat() / container.maxMRUStorage) * width).toInt()
+    val m = ((container.mru.toFloat() / container.maxMRUStorage) * width).toInt()
     gg.fillGradient(xPos(x), yPos(y), xPos(x + m), yPos(y + height), colorIn, colorOut)
 }

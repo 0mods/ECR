@@ -3,7 +3,6 @@ package team._0mods.ecr.common.blocks.entity
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.IntTag
 import net.minecraft.network.chat.Component
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.entity.player.Inventory
@@ -97,7 +96,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
     companion object {
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MatrixDestructorEntity) {
-            if (level.isClientSide || be.mruContainer.mruStorage >= be.mruContainer.maxMRUStorage) return
+            if (level.isClientSide || be.mruContainer.mru >= be.mruContainer.maxMRUStorage) return
 
             val convertCost = ECCommonConfig.instance.matrixConsuming
             val receiveCost = ECCommonConfig.instance.matrixResult

@@ -1,9 +1,7 @@
 @file:JvmName("MRUReceiveUtils")
 package team._0mods.ecr.api.mru
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.ItemStack
@@ -29,32 +27,23 @@ interface MRUReceivable {
     val mruContainer: MRUStorage
 }
 
+@OptIn(DelicateCoroutinesApi::class)
 fun MRUReceivable.processReceive(level: Level) {
-    val scope = CoroutineScope(Dispatchers.Default)
     if (level.isClientSide) return
-    val stack = this.positionCrystal ?: return
-    val item = stack.item
-    if (item !is BoundGem) return
+
+    val stack = positionCrystal ?: return
+    val item = stack.item as? BoundGem ?: return
     val pos = item.getBoundPos(stack) ?: return
     val server = level.server ?: return
     val world = item.getBoundedWorld(stack)
-    val dimensionalLevel = if (world != null)
-        server.getLevel(ResourceKey.create(Registries.DIMENSION, world.rl))
-    else null
+    val dimensionalLevel = world?.let { server.getLevel(ResourceKey.create(Registries.DIMENSION, it.rl)) }
 
-    val blockEntity = if (dimensionalLevel != null) dimensionalLevel.getBlockEntity(pos) else level.getBlockEntity(pos)
-
-    if (blockEntity !is MRUGenerator) return
-
-    val currentContainer = this.mruContainer
+    val blockEntity = (dimensionalLevel ?: level).getBlockEntity(pos) as? MRUGenerator ?: return
+    val currentContainer = mruContainer
     val generator = blockEntity.currentMRUStorage
 
-    scope.launch {
-        if (!generator.checkExtractAndReceive(currentContainer, 100)) {
-            if (!generator.checkExtractAndReceive(currentContainer, 50)) {
-                if (!generator.checkExtractAndReceive(currentContainer, 10))
-                    generator.checkExtractAndReceive(currentContainer, 1)
-            }
-        }
+    GlobalScope.launch(Dispatchers.Default) {
+        val amounts = listOf(1000, 100, 50, 10, 1)
+        amounts.forEach { if (generator.checkExtractAndReceive(currentContainer, it)) return@forEach }
     }
 }

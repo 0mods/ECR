@@ -1,24 +1,33 @@
 package team._0mods.ecr.api.mru
 
 import net.minecraftforge.common.capabilities.AutoRegisterCapability
+import kotlin.math.min
 
 @AutoRegisterCapability
 interface MRUStorage {
-    val mruStorage: Int
+    var mru: Int
 
     val maxMRUStorage: Int
 
-    fun extractMru(max: Int, simulate: Boolean = false): Int
+    fun extractMru(max: Int, simulate: Boolean = false): Int {
+        val extracted = min(mru, max)
+        if (!simulate) mru -= extracted
 
-    fun receiveMru(max: Int, simulate: Boolean = false): Int
+        return extracted
+    }
 
-    fun setMru(value: Int)
+    fun receiveMru(max: Int, simulate: Boolean = false): Int {
+        val received = min(maxMRUStorage - mru, max)
+        if (!simulate) mru += received
+
+        return received
+    }
 
     val mruType: MRUTypes
 
-    fun canExtract(max: Int): Boolean = mruStorage - max >= 0
+    fun canExtract(max: Int): Boolean = mru - max >= 0
 
-    fun canReceive(receive: Int): Boolean = mruStorage + receive <= maxMRUStorage
+    fun canReceive(receive: Int): Boolean = mru + receive <= maxMRUStorage
 
     fun checkExtractAndReceive(receiver: MRUStorage, max: Int): Boolean {
         if (receiver.canReceive(max) && this.canExtract(max)) {

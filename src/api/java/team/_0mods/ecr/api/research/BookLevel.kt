@@ -4,7 +4,7 @@ import net.minecraft.network.chat.Component
 import ru.hollowhorizon.hc.client.utils.mcTranslate
 import team._0mods.ecr.api.registries.ECRegistries
 
-class BookLevel(val translateName: Component) {
+interface BookLevel {
     /**
      * Type display name in tooltip & GUI
      * @return [Component] of name

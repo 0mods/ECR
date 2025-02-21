@@ -9,8 +9,8 @@ import de.fabmax.kool.scene.addTextureMesh
 import de.fabmax.kool.util.Color
 import net.minecraft.client.Minecraft
 import net.minecraft.resources.ResourceLocation
-import ru.hollowhorizon.hc.client.imgui.glTexture
 import ru.hollowhorizon.hc.client.kool.KoolScreen
+import ru.hollowhorizon.hc.client.kool.glTexture
 import ru.hollowhorizon.hc.client.utils.toTexture
 import team._0mods.ecr.api.research.BookLevel
 import team._0mods.ecr.api.utils.ecRL

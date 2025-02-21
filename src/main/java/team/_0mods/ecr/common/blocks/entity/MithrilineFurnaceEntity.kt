@@ -230,7 +230,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
                 this.decreaseGeneration = false
                 this.maxProgress = mfr.espe
 
-                if (canCombine(result.copy(), this.itemHandler.getStackInSlot(1), inputStack.count, ingrCount)) {
+                if (StackHelper.canCombine(result.copy(), this.itemHandler.getStackInSlot(1), inputStack.count, ingrCount)) {
                     this.processTick(mfr.espe)
                     if (this.progress >= mfr.espe) {
                         inv.clearContent()
@@ -258,10 +258,6 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
             val storage = this.mruContainer
             return storage.canExtract(max) && (neededESPE >= (max + this.progress))
         }
-
-        @JvmStatic
-        private fun canCombine(result: ItemStack, hand: ItemStack, count: Int, ingredientCount: Int): Boolean =
-            StackHelper.canCombineStacks(result, hand) && count >= ingredientCount
 
         @JvmStatic
         private fun resetProgress(be: MithrilineFurnaceEntity) {

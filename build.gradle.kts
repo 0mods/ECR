@@ -215,7 +215,6 @@ fun DependencyHandlerScope.prepareHCDeps() {
     compileOnlyMinecraft(libs.kool.editor)
     compileOnlyMinecraft(libs.kool.editor.model)
     compileOnlyMinecraft(libs.kool.core)
-    compileOnlyMinecraft(libs.kool.physics)
 
     minecraftRuntimeLibraries(libs.kotlin.reflect) { exclude("org.jetbrains.kotlin") }
 }
