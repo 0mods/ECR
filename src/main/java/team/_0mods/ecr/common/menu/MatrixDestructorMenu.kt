@@ -8,10 +8,11 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
-import team._0mods.ecr.api.container.AbstractContainer
+import team._0mods.ecr.api.container.AbstractMenu
 import team._0mods.ecr.api.container.slot.SpecialSlot
+import team._0mods.ecr.api.item.SoulStoneLike
+import team._0mods.ecr.api.utils.SoulStoneUtils.owner
 import team._0mods.ecr.common.init.registry.ECRegistry
-import team._0mods.ecr.common.items.SoulStone
 
 class MatrixDestructorMenu(
     containerId: Int,
@@ -19,7 +20,7 @@ class MatrixDestructorMenu(
     container: IItemHandler,
     val blockEntity: BlockEntity?,
     access: ContainerLevelAccess
-) : AbstractContainer(
+) : AbstractMenu(
     ECRegistry.matrixDestructorMenu.get(), containerId, access
 ) {
     constructor(containerId: Int, inv: Inventory, buf: FriendlyByteBuf): this(
@@ -28,12 +29,10 @@ class MatrixDestructorMenu(
 
     init {
         addSlot(SpecialSlot(container, 0, 80, 60, {
-            if (it.item is SoulStone) {
-                val ss = it.item as SoulStone
-                ss.getOwner(it) != null
-            } else false
+            if (it.item is SoulStoneLike) it.owner != null
+            else false
         }))
-        makeInv(inv, 8, 84)
+        inv.make()
     }
 
     override fun quickMoveStack(player: Player, index: Int): ItemStack {

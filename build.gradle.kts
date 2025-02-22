@@ -174,9 +174,17 @@ tasks {
         options.release = 17
     }
 
+    task("removeOldJar") {
+        val f = file("build/libs")
+        if (f.exists() && f.isDirectory) {
+            f.listFiles()?.forEach { it.delete() }
+        }
+    }
+
     val jt = task<Jar>("apiJar") {
         archiveClassifier = "api"
         from(sourceSets["api"].output)
+        dependsOn("removeOldJar")
     }
 
     val sourcesAPI = task<Jar>("apiSources") {

@@ -6,7 +6,10 @@ import net.minecraft.nbt.ListTag
 import net.minecraft.nbt.StringTag
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.item.*
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Rarity
+import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import net.minecraftforge.fml.loading.FMLEnvironment
 import org.jetbrains.annotations.NotNull
@@ -17,13 +20,13 @@ import ru.hollowhorizon.hc.client.utils.rl
 import ru.hollowhorizon.hc.common.registry.AutoModelType
 import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.api.ModId
-import team._0mods.ecr.api.research.BookLevel
+import team._0mods.ecr.api.item.HasSubItem
 import team._0mods.ecr.api.registries.ECRegistries
+import team._0mods.ecr.api.research.BookLevel
 import team._0mods.ecr.api.utils.ecRL
-import team._0mods.ecr.common.api.NoTab
 import team._0mods.ecr.common.init.registry.ECBookTypes
 
-class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), NoTab {
+class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), HasSubItem {
     companion object {
         var ItemStack.bookTypes: List<BookLevel>?
             @NotNull
@@ -143,5 +146,24 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), NoTab {
 
         if (moreEntries > 0)
             tooltipComponents.add("- ".literal.append("tooltip.$ModId.book.more".mcTranslate(moreEntries)))
+    }
+
+    override fun addSubItems(original: ItemStack): List<ItemStack> {
+        val items = mutableListOf<ItemStack>()
+        val values = ECRegistries.BOOK_TYPES.registries.values
+
+        for (i in values.indices) {
+            val stack = original.copy().apply {
+                for (j in 0 .. i) {
+                    var bt = this.bookTypes!!
+                    values.toList()[j].let { bt += it }
+                    this.bookTypes = bt
+                }
+            }
+
+            items += stack
+        }
+
+        return items
     }
 }

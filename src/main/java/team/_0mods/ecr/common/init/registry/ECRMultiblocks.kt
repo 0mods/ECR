@@ -35,34 +35,6 @@ object ECRMultiblocks : HollowRegistry(ModId) {
         }
     }
 
-    val mithrilineFurnaceV2 by register("mithriline_furnace_v2") {
-        Multiblock {
-            size(5, 5, 3)
-            val a = block(ECRegistry.mithrilinePlating.get().defaultBlockState())
-            val b = block(ECRegistry.mithrilineFurnace.get().defaultBlockState())
-
-            pattern(
-                a, null, a, null, a,
-                null, a, a, a, null,
-                a, a, null, a, a,
-                null, a, a, a, null,
-                a, null, a, null, a,
-
-                a, null, a, null, a,
-                null, null, null, null, null,
-                a, null, b, null, a,
-                null, null, null, null, null,
-                a, null, a, null, a,
-
-                a, null, null, null, a,
-                null, null, null, null, null,
-                null, null, null, null, null,
-                null, null, null, null, null,
-                a, null, null, null, a,
-            )
-        }
-    }
-
     val soulStone by register("soul_stone") {
         Multiblock {
             this.makeRecipeMB(this.tag(BlockTags.SOUL_SPEED_BLOCKS), this.block(Blocks.EMERALD_BLOCK.defaultBlockState()))

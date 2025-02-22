@@ -16,67 +16,58 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities
 import net.minecraftforge.common.util.LazyOptional
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
+import ru.hollowhorizon.hc.client.utils.get
+import ru.hollowhorizon.hc.common.capabilities.CapabilityInstance
+import ru.hollowhorizon.hc.common.capabilities.HollowCapabilityV2
+import ru.hollowhorizon.hc.common.objects.blocks.HollowBlockEntity
 import team._0mods.ecr.api.mru.MRUGenerator
 import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUTypes
-import team._0mods.ecr.api.utils.toTag
-import team._0mods.ecr.common.api.SyncedBlockEntity
-import team._0mods.ecr.common.capability.MRUContainer
-import team._0mods.ecr.common.menu.MatrixDestructorMenu
+import team._0mods.ecr.api.utils.SoulStoneUtils.capacity
+import team._0mods.ecr.api.utils.SoulStoneUtils.consumeUBMRU
+import team._0mods.ecr.api.utils.SoulStoneUtils.isCreative
 import team._0mods.ecr.common.init.config.ECCommonConfig
-import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECRegistry
-import team._0mods.ecr.common.items.SoulStone
+import team._0mods.ecr.common.menu.MatrixDestructorMenu
 
 class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
-    SyncedBlockEntity(ECRegistry.matrixDestructorEntity.get(), pos, blockState), MenuProvider, MRUGenerator {
+    HollowBlockEntity(ECRegistry.matrixDestructorEntity.get(), pos, blockState), MenuProvider, MRUGenerator {
     val itemHandler = object : ItemStackHandler(1) {
         override fun onContentsChanged(slot: Int) {
             setChanged()
         }
     }
 
-    val mruContainer = MRUContainer(MRUTypes.RADIATION_UNIT, 10000, 0) {
-        if (!level!!.isClientSide) setChanged()
-    }
-
     private var itemHandlerLazy = LazyOptional.empty<IItemHandler>()
-    private var mruStorageLazy = LazyOptional.empty<MRUStorage>()
 
     var progress = 0
 
-    override val currentMRUStorage = mruContainer
+    override val mruContainer = this[MRUContainer::class]
 
     override fun onLoad() {
         super.onLoad()
         itemHandlerLazy = LazyOptional.of(::itemHandler)
-        mruStorageLazy = LazyOptional.of(::mruContainer)
     }
 
     override fun invalidateCaps() {
         super.invalidateCaps()
         itemHandlerLazy.invalidate()
-        mruStorageLazy.invalidate()
     }
 
     override fun saveAdditional(tag: CompoundTag) {
         tag.put("ItemStorage", itemHandler.serializeNBT())
-        tag.put("MRU", mruContainer.serializeNBT())
         tag.putInt("InjectionProgress", progress)
         super.saveAdditional(tag)
     }
 
     override fun load(tag: CompoundTag) {
         itemHandler.deserializeNBT(tag.getCompound("ItemStorage"))
-        mruContainer.deserializeNBT(tag.getInt("MRU").toTag)
         progress = tag.getInt("InjectionProgress")
         super.load(tag)
     }
 
     override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> {
         if (cap == ForgeCapabilities.ITEM_HANDLER) return itemHandlerLazy.cast()
-
-        if (cap == ECCapabilities.MRU_CONTAINER) return mruStorageLazy.cast()
 
         return super.getCapability(cap, side)
     }
@@ -93,22 +84,28 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
 
     override fun getDisplayName(): Component = Component.empty()
 
+    @HollowCapabilityV2(MatrixDestructorEntity::class)
+    class MRUContainer: CapabilityInstance(), MRUStorage {
+        override var mru: Int by syncable(0)
+        override val maxMRUStorage: Int = 10000
+
+        override val mruType: MRUTypes = MRUTypes.ESPE
+    }
+
     companion object {
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MatrixDestructorEntity) {
             if (level.isClientSide || be.mruContainer.mru >= be.mruContainer.maxMRUStorage) return
 
-            val convertCost = ECCommonConfig.instance.matrixConsuming
-            val receiveCost = ECCommonConfig.instance.matrixResult
+            val convertCost = ECCommonConfig.instance.soulStoneExtractCount
+            val receiveCost = ECCommonConfig.instance.soulStoneReceiveCount
             val stack = be.itemHandler.getStackInSlot(0)
-
-            val soulStone = stack.item as? SoulStone ?: return
-            val storage = soulStone.getCapacity(stack)
+            val storage = stack.capacity
 
             if (stack.isEmpty || storage < receiveCost) return
 
-            val convertAmount = if (storage >= convertCost) convertCost else 1
-            soulStone.remove(stack, convertAmount)
+            val convertAmount = if (storage >= convertCost || stack.isCreative) convertCost else 0
+            stack.consumeUBMRU(convertAmount)
             be.progress += convertAmount
 
             if (be.progress >= convertCost) {

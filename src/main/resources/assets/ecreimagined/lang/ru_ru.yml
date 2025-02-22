@@ -22,9 +22,7 @@ item.ecreimagined:
   fortified_frame: Укрепленная рамка
   magic_fortified_plating: Укрепленная магическая пластина
   magic_plate: Магическая пластина
-  magic_purified_blaze_alloy: Магически очищенный блейзовый сплав
-  # idk how translate blaze, lol.
-  # FIXME: algorithmlx, learn english and russian and how to translate it, lol.
+  magic_purified_blaze_alloy: Магически очищенный огненный сплав
   magic_purified_ender_scale_alloy: Магически очищенный сплав чешуи края
   magic_purified_glass_alloy: Магически очищенный стеклянный сплав
   obsidian_plate: Обсидиановая пластина
@@ -67,6 +65,7 @@ tooltip.ecreimagined:
     bounded: Камень души привязан к %s
     can_not_unbound: Вы не можете отвязать этот камень души
     unbounded: Камень души отвязан
+    creative: Творческий
   bound_gem:
     bound: "Кристалл привязки был привязан к позиции: %s"
     unbound: Кристал привязки отвязан

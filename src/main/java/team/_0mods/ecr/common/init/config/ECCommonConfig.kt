@@ -8,14 +8,17 @@ import kotlin.reflect.KProperty
 
 @Serializable
 class ECCommonConfig(
-    @SerialName("mithriline_furnace")
+    @SerialName("mithrilineFurnace")
     val mithrilineFurnaceConfig: MithrilineFurnace = MithrilineFurnace(),
-    @SerialName("matrix_destructor")
-    val matrixConfig: JsonObject = buildJsonObject {
-        put("_comment", "Sets the conversion value. Default: 10 for input; 1 for output")
-        put("generation", buildJsonObject {
-            put("umbru_get", 10)
-            put("mru_exit", 1)
+    @SerialName("soulStone")
+    val soulStoneConfig: JsonObject = buildJsonObject {
+        put("_comment", "Soul stones settings")
+        put("standardStone", buildJsonObject {
+            put("_comment", "Sets the conversion value. Default: 10 for input; 1 for output")
+            put("extracting", buildJsonObject {
+                put("input", 10)
+                put("output", 1)
+            })
         })
     }
 ) {
@@ -25,24 +28,27 @@ class ECCommonConfig(
             internal set
     }
 
-    val matrixConsuming: Int by SomeDelegate {
-        val generation = matrixConfig["generation"]!!
-        generation.jsonObject["umbru_get"]!!.jsonPrimitive.int
+    val soulStoneExtractCount: Int by SomeDelegate {
+        val generation = soulStoneConfig["standardStone"]!!.jsonObject["extracting"]!!
+        generation.jsonObject["input"]!!.jsonPrimitive.int
     }
 
-    val matrixResult: Int by SomeDelegate {
-        val generation = matrixConfig["generation"]!!
-        generation.jsonObject["mru_exit"]!!.jsonPrimitive.int
+    val soulStoneReceiveCount: Int by SomeDelegate {
+        val generation = soulStoneConfig["standardStone"]!!.jsonObject["extracting"]!!
+        generation.jsonObject["output"]!!.jsonPrimitive.int
     }
 
     @Serializable
     data class MithrilineFurnace(
-        @SerialName("crystal_positions") val crystalPositions: Array<Offset> = arrayOf(
+        val crystalPositions: Array<Offset> = arrayOf(
             Offset(2, 2, 2), Offset(-2, 2, -2),
             Offset(-2, 2, 2), Offset(2, 2, -2),
             Offset(2, 1, 0), Offset(0, 1, 2),
             Offset(-2, 1, 0), Offset(0, 1, -2)
-        )
+        ),
+        @SerialName("receivingIfCrystalDisabled")
+        val receiveESPEWhenCrystalsInUnavailable: Int = 0,
+        val generationReductionLevel: Int = 4
     ) {
         @Serializable
         data class Offset(

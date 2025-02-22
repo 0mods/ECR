@@ -16,23 +16,22 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import team._0mods.ecr.api.block.checkAndOpenMenu
-import team._0mods.ecr.api.block.client.LowSizeBreakParticle
 import team._0mods.ecr.api.block.prepareDrops
 import team._0mods.ecr.api.block.simpleTicker
 import team._0mods.ecr.common.api.PropertiedEntityBlock
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.init.registry.ECRMultiblocks
 
-class MithrilineFurnace(properties: Properties) : PropertiedEntityBlock(properties), LowSizeBreakParticle {
+@Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
+class MithrilineFurnace(properties: Properties) : PropertiedEntityBlock(properties) {
     override fun newBlockEntity(pos: BlockPos, state: BlockState): BlockEntity = MithrilineFurnaceEntity(pos, state)
 
     override fun <T : BlockEntity> getTicker(
         level: Level,
         state: BlockState,
         blockEntityType: BlockEntityType<T>
-    ): BlockEntityTicker<T> = simpleTicker<T, MithrilineFurnaceEntity>(MithrilineFurnaceEntity::onTick)
+    ): BlockEntityTicker<T> = simpleTicker(MithrilineFurnaceEntity::onTick)
 
-    @Suppress("OVERRIDE_DEPRECATION")
     override fun use(
         state: BlockState,
         level: Level,
@@ -46,14 +45,18 @@ class MithrilineFurnace(properties: Properties) : PropertiedEntityBlock(properti
         } else InteractionResult.FAIL
     }
 
-    @Suppress("OVERRIDE_DEPRECATION", "DEPRECATION")
-    override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
-        prepareDrops<MithrilineFurnaceEntity>(state, level, pos, newState)
+    override fun onRemove(
+        state: BlockState,
+        level: Level,
+        pos: BlockPos,
+        newState: BlockState,
+        movedByPiston: Boolean
+    ) {
+        prepareDrops<MithrilineFurnaceEntity>(state, level, pos, state)
 
-        super.onRemove(state, level, pos, newState, isMoving)
+        super.onRemove(state, level, pos, newState, movedByPiston)
     }
 
-    @Suppress("OVERRIDE_DEPRECATION")
     override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape = shape
 
     val shape by lazy {

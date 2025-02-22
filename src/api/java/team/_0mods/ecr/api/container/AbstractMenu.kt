@@ -6,7 +6,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.Slot
 
-abstract class AbstractContainer(
+abstract class AbstractMenu(
     menuType: MenuType<*>?,
     containerId: Int,
     val access: ContainerLevelAccess
@@ -41,11 +41,12 @@ abstract class AbstractContainer(
         return index0
     }
 
-    protected fun makeInv(playerInventory: Container, leftCol: Int, topRow: Int) {
+    @JvmName("makePlayerInventory")
+    protected fun Container.make(leftCol: Int = 8, topRow: Int = 84) {
         var topRow0 = topRow
-        addSlotBox(playerInventory, 9, leftCol, topRow0, 9, 18, 3, 18)
+        addSlotBox(this, 9, leftCol, topRow0, 9, 18, 3, 18)
 
         topRow0 += 58
-        addSlotRange(playerInventory, 0, leftCol, topRow0, 9, 18)
+        addSlotRange(this, 0, leftCol, topRow0, 9, 18)
     }
 }

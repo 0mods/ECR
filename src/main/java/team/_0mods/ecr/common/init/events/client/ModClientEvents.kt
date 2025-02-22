@@ -16,11 +16,8 @@ import ru.hollowhorizon.hc.common.events.registry.RegisterKeyBindingsEvent
 import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.client.keys.ECKeys
 import team._0mods.ecr.client.particle.ECParticleFactory
-import team._0mods.ecr.client.renderer.MatrixDestructorRenderer
-import team._0mods.ecr.client.renderer.MithrilineFurnaceRenderer
-import team._0mods.ecr.client.screen.container.MatrixDestructorScreen
-import team._0mods.ecr.client.screen.container.MithrilineFurnaceScreen
-import team._0mods.ecr.client.screen.container.XLikeScreen
+import team._0mods.ecr.client.renderer.*
+import team._0mods.ecr.client.screen.menu.*
 import team._0mods.ecr.common.init.registry.ECRegistry
 import ru.hollowhorizon.hc.common.events.SubscribeEvent as HCSubscribe
 
@@ -42,7 +39,7 @@ private val invisibleTextures by lazy {
 @SubscribeEvent
 fun onClientStartup(e: FMLClientSetupEvent) {
     LOGGER.info("Initializing client")
-    @Suppress("REMOVAL", "DEPRECATION")
+    @Suppress("DEPRECATION")
     e.enqueueWork {
         LOGGER.info("Registering screens")
         MenuScreens.register(ECRegistry.mithrilineFurnaceMenu.get(), ::MithrilineFurnaceScreen)

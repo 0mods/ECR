@@ -1,10 +1,9 @@
-package team._0mods.ecr.client.screen.container.widget
+package team._0mods.ecr.client.screen.menu.widget
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.network.chat.Component
-import net.minecraft.world.inventory.FurnaceMenu
 import team._0mods.ecr.api.client.defaultBlit
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.menu.XLikeMenu

@@ -1,6 +1,8 @@
 package team._0mods.ecr.common.menu
 
 import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.world.Container
+import net.minecraft.world.SimpleContainer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.ContainerData
@@ -8,28 +10,26 @@ import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.inventory.SimpleContainerData
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraftforge.items.IItemHandler
-import net.minecraftforge.items.ItemStackHandler
-import team._0mods.ecr.api.container.AbstractContainer
-import team._0mods.ecr.api.container.slot.SpecialSlot
+import team._0mods.ecr.api.container.AbstractMenu
+import team._0mods.ecr.api.container.slot.VanillaSpecialSlot
 import team._0mods.ecr.common.init.registry.ECRegistry
 
 class MithrilineFurnaceMenu(
     containerId: Int,
     inv: Inventory,
-    container: IItemHandler,
+    container: Container,
     val blockEntity: BlockEntity?,
     access: ContainerLevelAccess,
     val data: ContainerData
-) : AbstractContainer(ECRegistry.mithrilineFurnaceMenu.get(), containerId, access) {
-    constructor(containerId: Int, inv: Inventory, buf: FriendlyByteBuf):
-            this(containerId, inv, ItemStackHandler(2), inv.player.commandSenderWorld.getBlockEntity(buf.readBlockPos()), ContainerLevelAccess.NULL, SimpleContainerData(2))
+): AbstractMenu(ECRegistry.mithrilineFurnaceMenu.get(), containerId, access) {
+    constructor(containerId: Int, inventory: Inventory, buffer: FriendlyByteBuf):
+            this(containerId, inventory, SimpleContainer(2), inventory.player.commandSenderWorld.getBlockEntity(buffer.readBlockPos()), ContainerLevelAccess.NULL, SimpleContainerData(2))
 
     init {
-        addSlot(SpecialSlot(container, 0, 80, 60))
-        addSlot(SpecialSlot(container, 1, 80, 22, { false }))
+        addSlot(VanillaSpecialSlot(container, 0, 80, 60))
+        addSlot(VanillaSpecialSlot(container, 1, 80, 22, { false }))
 
-        makeInv(inv, 8, 84)
+        inv.make()
 
         addDataSlots(data)
     }
@@ -70,6 +70,5 @@ class MithrilineFurnaceMenu(
         return qms
     }
 
-    override fun stillValid(player: Player): Boolean =
-        stillValid(this.access, player, ECRegistry.mithrilineFurnace.get())
+    override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.mithrilineFurnace.get())
 }

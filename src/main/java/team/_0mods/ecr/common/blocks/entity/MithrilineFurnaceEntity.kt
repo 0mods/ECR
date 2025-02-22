@@ -1,9 +1,7 @@
 package team._0mods.ecr.common.blocks.entity
 
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
-import net.minecraft.nbt.IntTag
 import net.minecraft.network.chat.Component
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.SimpleContainer
@@ -11,120 +9,67 @@ import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerData
-import net.minecraft.world.inventory.ContainerLevelAccess
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.api.distmarker.OnlyIn
-import net.minecraftforge.common.capabilities.Capability
-import net.minecraftforge.common.capabilities.ForgeCapabilities
-import net.minecraftforge.common.util.LazyOptional
-import net.minecraftforge.items.IItemHandler
-import net.minecraftforge.items.ItemStackHandler
-import team._0mods.ecr.api.ModId
+import ru.hollowhorizon.hc.client.utils.get
+import ru.hollowhorizon.hc.common.capabilities.CapabilityInstance
+import ru.hollowhorizon.hc.common.capabilities.HollowCapabilityV2
+import ru.hollowhorizon.hc.common.capabilities.containers.HollowContainer
+import ru.hollowhorizon.hc.common.capabilities.containers.container
+import ru.hollowhorizon.hc.common.objects.blocks.HollowBlockEntity
 import team._0mods.ecr.api.block.StructuralPosition
-import team._0mods.ecr.api.block.inventory.WrappedInventory
+import team._0mods.ecr.api.block.inventory.WrappedHollowInventory
 import team._0mods.ecr.api.mru.MRUReceivable
 import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUTypes
 import team._0mods.ecr.api.utils.StackHelper
-import team._0mods.ecr.api.utils.toTag
-import team._0mods.ecr.common.api.SyncedBlockEntity
-import team._0mods.ecr.common.capability.MRUContainer
-import team._0mods.ecr.common.menu.MithrilineFurnaceMenu
+import team._0mods.ecr.common.api.ContainerLevelAccess
 import team._0mods.ecr.common.init.config.ECCommonConfig
-import team._0mods.ecr.common.init.registry.ECCapabilities
 import team._0mods.ecr.common.init.registry.ECRMultiblocks
 import team._0mods.ecr.common.init.registry.ECRegistry
-import team._0mods.ecr.common.particle.ECParticleOptions
-import java.awt.Color
+import team._0mods.ecr.common.menu.MithrilineFurnaceMenu
 import kotlin.math.floor
 
-class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
-    SyncedBlockEntity(ECRegistry.mithrilineFurnaceEntity.get(), pos, blockState), MenuProvider, MRUReceivable {
-    private val itemHandler = object : ItemStackHandler(2) {
-        override fun onContentsChanged(slot: Int) {
-            setChanged()
-        }
-    }
-
-    override val mruContainer = MRUContainer(MRUTypes.ESPE, 10000, 0) { setChanged() }
-
+class MithrilineFurnaceEntity(pos: BlockPos, state: BlockState) : HollowBlockEntity(ECRegistry.mithrilineFurnaceEntity.get(), pos, state), MenuProvider, MRUReceivable {
     private val containerData: ContainerData = object : ContainerData {
         override fun get(index: Int): Int = when (index) {
-            0 -> this@MithrilineFurnaceEntity.progress
-            1 -> this@MithrilineFurnaceEntity.maxProgress
+            0 -> this@MithrilineFurnaceEntity.craftProgress
+            1 -> this@MithrilineFurnaceEntity.maxCraftProgress
             else -> 0
         }
 
         override fun set(index: Int, value: Int) {
             when (index) {
-                0 -> this@MithrilineFurnaceEntity.progress = value
-                1 -> this@MithrilineFurnaceEntity.maxProgress = value
+                0 -> this@MithrilineFurnaceEntity.craftProgress = value
+                1 -> this@MithrilineFurnaceEntity.maxCraftProgress = value
             }
         }
 
         override fun getCount(): Int = 2
     }
 
-    private var itemHandlerLazy = LazyOptional.empty<IItemHandler>()
-    private var mruStorageLazy = LazyOptional.empty<MRUStorage>()
-    private var wrappedHandlerLazy = LazyOptional.empty<WrappedInventory>()
-
-    var successfulStructure = false
-    var tickCount = 0
-    var progress = 0
-    var maxProgress = 0
-    var decreaseGeneration = true
-
-    // Calculates only on a client
-    @OnlyIn(Dist.CLIENT)
-    var previousRot = 0f
-    @OnlyIn(Dist.CLIENT)
-    var rotAngle = 0f
-    // end
-
-    override fun onLoad() {
-        super.onLoad()
-        itemHandlerLazy = LazyOptional.of(::itemHandler)
-        mruStorageLazy = LazyOptional.of(::mruContainer)
-        wrappedHandlerLazy = LazyOptional.of {
-            WrappedInventory(
-                itemHandler,
-                { it == 1 && successfulStructure }) { i, s ->
-                i == 0 && itemHandler.isItemValid(
-                    i,
-                    s
-                ) && successfulStructure
-            }
-        }
-    }
-
-    override fun invalidateCaps() {
-        super.invalidateCaps()
-        itemHandlerLazy.invalidate()
-        mruStorageLazy.invalidate()
-        wrappedHandlerLazy.invalidate()
-    }
+    var structureIsValid = false
+    var receivingTicks = 0
+    var craftProgress = 0
+    var maxCraftProgress = 0
+    var slownessGeneration = false
+    // Client Only
+    var coreRotationPrevious = 0f
+    var coreRotationAngle = 0f
 
     override fun saveAdditional(tag: CompoundTag) {
-        tag.put("ItemStorage", itemHandler.serializeNBT())
-        tag.put("ESPEStorage", mruContainer.serializeNBT())
-        tag.putBoolean("FullStructure", successfulStructure)
-        tag.putBoolean("DecreaseGeneration", decreaseGeneration)
-        tag.putInt("Progress", progress)
-        tag.putInt("MaxProgress", maxProgress)
+        tag.putBoolean("FullStructure", this.structureIsValid)
+        tag.putBoolean("SlownessGeneration", this.slownessGeneration)
+        tag.putInt("Progress", this.craftProgress)
+        tag.putInt("MaxProgress", this.maxCraftProgress)
         super.saveAdditional(tag)
     }
 
     override fun load(tag: CompoundTag) {
-        itemHandler.deserializeNBT(tag.getCompound("ItemStorage"))
-        mruContainer.deserializeNBT(tag.getInt("ESPEStorage").toTag)
-        successfulStructure = tag.getBoolean("FullStructure")
-        decreaseGeneration = tag.getBoolean("DecreaseGeneration")
-        progress = tag.getInt("Progress")
-        maxProgress = tag.getInt("MaxProgress")
+        this.structureIsValid = tag.getBoolean("FullStructure")
+        this.slownessGeneration = tag.getBoolean("DecreaseGeneration")
+        this.craftProgress = tag.getInt("Progress")
+        this.maxCraftProgress = tag.getInt("MaxProgress")
         super.load(tag)
     }
 
@@ -132,36 +77,55 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         return MithrilineFurnaceMenu(
             id,
             inv,
-            itemHandler,
+            this[ItemContainer::class].items,
             this,
-            ContainerLevelAccess.create(this.level ?: return null, this.blockPos),
+            ContainerLevelAccess(this.level ?: return null, this.blockPos),
             this.containerData
         )
     }
 
-    override fun getDisplayName(): Component = Component.translatable("container.$ModId.mithriline_furnace")
+    override fun getDisplayName(): Component = Component.empty()
 
-    override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) {
-            if (side == null) return itemHandlerLazy.cast()
-            return wrappedHandlerLazy.cast()
-        }
+    override val mruContainer: MRUStorage = this[MRUContainer::class]
 
-        if (cap == ECCapabilities.MRU_CONTAINER) return mruStorageLazy.cast()
+    @HollowCapabilityV2(MithrilineFurnaceEntity::class)
+    class ItemContainer: CapabilityInstance() {
+        private val container = HollowContainer(this, 2) { slot, _ -> slot != 1 }
 
-        return super.getCapability(cap, side)
+        val items by container(WrappedHollowInventory(container, this, { it == 1 }) { i, _ -> i == 0 })
     }
 
-    fun getActiveCollectors(level: Level, pos: BlockPos): Int {
-        val collectors =
-            CRYSTAL_POSITION?.get(pos)?.filter { level.getBlockState(it).block == ECRegistry.mithrilineCrystal.get() }
-        if (collectors.isNullOrEmpty()) return 0
-        return collectors.size
+    @HollowCapabilityV2(MithrilineFurnaceEntity::class)
+    class MRUContainer: CapabilityInstance(), MRUStorage {
+        override var mru: Int by syncable(0)
+        override val maxMRUStorage: Int = 10000
+
+        override val mruType: MRUTypes = MRUTypes.ESPE
     }
 
     companion object {
         @JvmField
         val CRYSTAL_POSITION = makePositions()
+
+        @JvmStatic
+        fun getActiveCollectors(level: Level, pos: BlockPos): Int {
+            val coll = CRYSTAL_POSITION?.get(pos)?.filter { level.getBlockState(it).block == ECRegistry.mithrilineCrystal.get() }
+            return coll?.size ?: 0
+        }
+
+        @JvmStatic
+        fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MithrilineFurnaceEntity) {
+            be.structureIsValid = ECRMultiblocks.mithrilineFurnace.get().isValid(level, pos)
+            if (level.isClientSide) {
+                be.processRotation()
+                return
+            }
+
+            if (be.structureIsValid) {
+                be.generateESPE(level, pos)
+                be.processRecipeIfPresent(level)
+            } else be.resetProgress()
+        }
 
         @JvmStatic
         private fun makePositions(): StructuralPosition? {
@@ -178,106 +142,95 @@ class MithrilineFurnaceEntity(pos: BlockPos, blockState: BlockState) :
         }
 
         @JvmStatic
-        fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MithrilineFurnaceEntity) {
-            be.successfulStructure = ECRMultiblocks.mithrilineFurnace.get().isValid(level, pos)
-
-            if (level.isClientSide) {
-                processRot(be)
-                return
-            }
-
-            if (be.successfulStructure) {
-                be.generateESPE(level, pos)
-                be.processRecipeIfPresent(level)
-                level.addParticle(
-                    ECParticleOptions(Color.GREEN, 0.5f, 10, 0.1f, true, false),
-                    pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, 1.0, 1.0, 1.0
-                )
-            } else {
-                resetProgress(be)
-            }
-        }
-
-        @JvmStatic
         private fun MithrilineFurnaceEntity.generateESPE(level: Level, pos: BlockPos) {
-            val collectors = this.getActiveCollectors(level, pos)
+            val collectors = getActiveCollectors(level, pos)
+            val config = ECCommonConfig.instance.mithrilineFurnaceConfig
 
-            if (collectors > 0 && (this.tickCount++ % (160 / collectors) == 0)) {
-                var collect = collectors * 4 - 3 + 1
-                if (!this.decreaseGeneration) collect /= 4
+            if (collectors > 0 && (this.receivingTicks++ % (160 / collectors) == 0)) {
+                var collect = collectors * 2
+                if (this.slownessGeneration) collect /= config.generationReductionLevel
                 this.mruContainer.receiveMru(collect)
-            } else if (CRYSTAL_POSITION == null && (this.tickCount++ % 160 == 0)) {
-                this.mruContainer.receiveMru(10)
+            } else {
+                val c = config.receiveESPEWhenCrystalsInUnavailable
+                if (c > 0) {
+                    if (CRYSTAL_POSITION == null && (this.receivingTicks++ % 160 == 0)) {
+                        this.mruContainer.receiveMru(c)
+                    }
+                }
             }
         }
 
         @JvmStatic
         private fun MithrilineFurnaceEntity.processRecipeIfPresent(level: Level) {
-            val inputStack = this.itemHandler.getStackInSlot(0)
-            if (inputStack.isEmpty) {
-                resetProgress(this)
+            val container = this[ItemContainer::class].items
+            val input = container.getItem(0)
+            if (input.isEmpty) {
+                this.resetProgress()
                 return
             }
 
-            val inv = SimpleContainer(1).apply { this.setItem(0, inputStack) }
+            val inv = SimpleContainer(1).apply { this.setItem(0, input) }
             val recipe = level.recipeManager.getRecipeFor(ECRegistry.mithrilineFurnaceRecipe.get(), inv, level)
 
             if (recipe.isPresent) {
                 val mfr = recipe.get()
                 val result = mfr.getResultItem(level.registryAccess())
-                val ingrCount = mfr.ingredients[0].items[0].count
+                val ingredientCount = mfr.ingredients[0].items[0].count
 
-                this.decreaseGeneration = false
-                this.maxProgress = mfr.espe
+                this.slownessGeneration = true
+                this.maxCraftProgress = mfr.espe
 
-                if (StackHelper.canCombine(result.copy(), this.itemHandler.getStackInSlot(1), inputStack.count, ingrCount)) {
+                if (StackHelper.canCombine(result.copy(), container.getItem(1), input.count, ingredientCount)) {
                     this.processTick(mfr.espe)
-                    if (this.progress >= mfr.espe) {
+                    if (this.craftProgress >= mfr.espe) {
                         inv.clearContent()
-                        this.itemHandler.extractItem(0, ingrCount, false)
-                        this.itemHandler.insertItem(1, result.copy(), false)
-                        resetProgress(this)
+                        container.removeItem(0, ingredientCount)
+                        if (container.getItem(1).isEmpty)
+                            container.setItem(1, result.copy())
+                        else container.getItem(1).grow(result.count)
+                        resetProgress()
                     }
                 }
             } else {
                 inv.clearContent()
-                resetProgress(this)
+                resetProgress()
             }
         }
 
         @JvmStatic
-        private fun MithrilineFurnaceEntity.processTick(neededESPE: Int) {
+        private fun MithrilineFurnaceEntity.processTick(mru: Int) {
             val storage = this.mruContainer
-            val extractionStep = listOf(1000, 100, 10, 1).firstOrNull { this.checkExtraction(neededESPE, it) } ?: 1
+            val extractionStep = (1..1000).reversed().firstOrNull { this.checkExtract(mru, it) } ?: 0
             storage.extractMru(extractionStep)
-            this.progress += extractionStep
+            this.craftProgress += extractionStep
             this.setChanged()
         }
 
-        private fun MithrilineFurnaceEntity.checkExtraction(neededESPE: Int, max: Int): Boolean {
+        @JvmStatic
+        private fun MithrilineFurnaceEntity.checkExtract(mru: Int, max: Int): Boolean {
             val storage = this.mruContainer
-            return storage.canExtract(max) && (neededESPE >= (max + this.progress))
+            return storage.canExtract(max) && (mru >= (max + this.craftProgress))
         }
 
         @JvmStatic
-        private fun resetProgress(be: MithrilineFurnaceEntity) {
-            if (!be.decreaseGeneration) be.decreaseGeneration = true
-            be.progress = 0
-            be.maxProgress = 0
-            be.setChanged()
+        private fun MithrilineFurnaceEntity.resetProgress() {
+            if (this.slownessGeneration) this.slownessGeneration = false
+            this.craftProgress = 0
+            this.maxCraftProgress = 0
+            this.setChanged()
         }
 
-        @OnlyIn(Dist.CLIENT)
+        // Client only
         @JvmStatic
-        private fun processRot(be: MithrilineFurnaceEntity) {
-            be.previousRot = be.rotAngle
+        private fun MithrilineFurnaceEntity.processRotation() {
+            this.coreRotationPrevious = this.coreRotationAngle
 
-            if (be.successfulStructure) {
-                be.rotAngle += 45f * (1f / 20f)
-            } else if (be.rotAngle % 90 != 0f) {
-                be.rotAngle += 45f * (1f / 20f) / 2
+            if (this.structureIsValid) {
+                this.coreRotationAngle += 45f * (1f / 20)
+            } else if (this.coreRotationAngle % 90 != 0f) {
+                this.coreRotationAngle += 45f * (1f / 20) / 2
 
-                if (be.rotAngle % 90 == 0f) be.rotAngle = 90f * floor(be.rotAngle / 90)
+                if (this.coreRotationAngle % 90 == 0f) this.coreRotationAngle = 90f * floor(this.coreRotationAngle / 90)
             }
         }
     }

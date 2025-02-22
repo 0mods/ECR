@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import team._0mods.ecr.api.ECConstantsKt;
 import team._0mods.ecr.api.item.BoundGem;
-import team._0mods.ecr.api.mru.MRUGenerator;
+import team._0mods.ecr.api.mru.MRUHolder;
 
 import static ru.hollowhorizon.hc.client.utils.ForgeKotlinKt.mcTranslate;
 
@@ -45,7 +45,8 @@ public class ItemMixin {
         var blockEntity = level.getBlockEntity(pos);
 
         if (!(stack.getItem() instanceof BoundGem bg)) return;
-        if (!(blockEntity instanceof MRUGenerator)) return;
+        if (!(blockEntity instanceof MRUHolder holder)) return;
+        if (!holder.getHolderType().isExporter()) return;
         if (bg.getBoundPos(stack) != null) return;
 
         var builder = "X:" + ' ' + pos.getX() + ' ' +

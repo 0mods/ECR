@@ -1,6 +1,7 @@
 package team._0mods.ecr.api.mru
 
 import net.minecraftforge.common.capabilities.AutoRegisterCapability
+import team._0mods.ecr.api.LOGGER
 import kotlin.math.min
 
 @AutoRegisterCapability
@@ -29,10 +30,11 @@ interface MRUStorage {
 
     fun canReceive(receive: Int): Boolean = mru + receive <= maxMRUStorage
 
-    fun checkExtractAndReceive(receiver: MRUStorage, max: Int): Boolean {
+    fun canExtractAndReceive(receiver: MRUStorage, max: Int): Boolean {
         if (receiver.canReceive(max) && this.canExtract(max)) {
             this.extractMru(max)
             receiver.receiveMru(max)
+            LOGGER.info("receive ${max} success")
             return true
         }
 

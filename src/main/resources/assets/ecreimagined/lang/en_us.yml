@@ -76,6 +76,7 @@ tooltip.ecreimagined:
     bounded: The soul stone is bounded to %s
     can_not_unbound: You can't unbound this soul stone
     unbounded: The soul stone is unbounded
+    creative: Creative
   bound_gem:
     bound: "Bound gem was bounded at pos: %s"
     unbound: Bound gem was unbounded

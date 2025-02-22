@@ -26,7 +26,7 @@ class MRUComponent: IBlockComponentProvider {
 
         val helper = IElementHelper.get()
         val progbar = helper.progressStyle().color(Color(139, 0, 255).rgb, Color(50, 18, 122).rgb)
-        if (be is MithrilineFurnaceEntity && !be.successfulStructure) return
+        if (be is MithrilineFurnaceEntity && !be.structureIsValid) return
         tooltip.add(helper.progress(
             cap.mru.toFloat() / cap.maxMRUStorage.toFloat(),
             "${cap.mruType.displayName.string} ${cap.mru} / ${cap.maxMRUStorage}".literal.withStyle(ChatFormatting.GRAY),

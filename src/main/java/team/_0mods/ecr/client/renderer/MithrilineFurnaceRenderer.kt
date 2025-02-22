@@ -63,7 +63,7 @@ class MithrilineFurnaceRenderer(ctx: BlockEntityRendererProvider.Context): Block
         packedOverlay: Int
     ) {
         poseStack.apply {
-            val interpol = blockEntity.previousRot + (blockEntity.rotAngle - blockEntity.previousRot) * partialTick
+            val interpol = blockEntity.coreRotationPrevious + (blockEntity.coreRotationAngle - blockEntity.coreRotationPrevious) * partialTick
 
             pushPose()
             translate(0.5, 0.5, 0.5)

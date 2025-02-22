@@ -16,32 +16,28 @@ import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.entity.living.LivingDeathEvent
-import net.minecraftforge.server.ServerLifecycleHooks
 import ru.hollowhorizon.hc.client.utils.get
 import ru.hollowhorizon.hc.client.utils.literal
 import ru.hollowhorizon.hc.client.utils.mcTranslate
-import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.api.ModId
+import team._0mods.ecr.api.item.SoulStoneLike
 import team._0mods.ecr.api.mru.MRUMultiplierWeapon
-import team._0mods.ecr.api.mru.PlayerMatrixType
-import team._0mods.ecr.api.registries.ECRegistries
+import team._0mods.ecr.api.utils.SoulStoneUtils.addUBMRU
+import team._0mods.ecr.api.utils.SoulStoneUtils.capacity
+import team._0mods.ecr.api.utils.SoulStoneUtils.isCreative
+import team._0mods.ecr.api.utils.SoulStoneUtils.matrix
+import team._0mods.ecr.api.utils.SoulStoneUtils.owner
+import team._0mods.ecr.api.utils.SoulStoneUtils.ownerName
 import team._0mods.ecr.common.capability.PlayerMRU
-import java.util.*
-import kotlin.math.roundToInt
+import team._0mods.ecr.common.init.config.ECCommonConfig
 
-class SoulStone: Item(Properties()) {
+class SoulStone: Item(Properties()), SoulStoneLike {
     companion object {
         @get:JvmStatic
         val entityCapacityAdd = mutableMapOf<EntityType<*>, IntRange>()
         lateinit var defaultCapacityAdd: IntRange
         lateinit var defaultEnemyAdd: IntRange
     }
-
-    @get:JvmName("_getOwner")
-    @set:JvmName("_setOwner")
-    private var ItemStack.owner
-        get() = getOwner(this)
-        set(value) = setOwner(this, value)
 
     init {
         MinecraftForge.EVENT_BUS.addListener(this::onEntityKill)
@@ -86,7 +82,6 @@ class SoulStone: Item(Properties()) {
                         return InteractionResultHolder.fail(stack)
                     } else {
                         stack.owner = null
-                        setOwnerNick(stack, null)
                         player.displayClientMessage(Component.translatable("tooltip.$ModId.soul_stone.unbounded"), true)
                         return InteractionResultHolder.fail(stack)
                     }
@@ -110,19 +105,22 @@ class SoulStone: Item(Properties()) {
         isAdvanced: TooltipFlag
     ) {
         if (stack.owner != null) {
+            val name = stack.ownerName!!
             tooltipComponents.add(
                 "tooltip.$ModId.soul_stone.tracking".mcTranslate(
-                    getOwnerNick(stack).literal.withStyle(if (getOwnerNick(stack) == "Not Loaded") ChatFormatting.RED else ChatFormatting.GOLD)
+                    name.literal.withStyle(if (name == "Not Loaded") ChatFormatting.RED else ChatFormatting.GOLD)
                 ).withStyle(ChatFormatting.DARK_GRAY)
             )
 
-            tooltipComponents.add(
-                "tooltip.$ModId.soul_stone.detected_ubmru".mcTranslate(
-                    this.getCapacity(stack).toString().literal.withStyle(ChatFormatting.GREEN)
-                ).withStyle(ChatFormatting.DARK_GRAY)
-            )
+            if (!stack.isCreative)
+                tooltipComponents.add(
+                    "tooltip.$ModId.soul_stone.detected_ubmru"
+                        .mcTranslate(stack.capacity.toString().literal.withStyle(ChatFormatting.GREEN))
+                        .withStyle(ChatFormatting.DARK_GRAY)
+                )
+            else tooltipComponents.add("tooltip.${ModId}.soul_stone.creative".mcTranslate.withStyle(ChatFormatting.DARK_PURPLE))
 
-            this.getMatrix(stack)?.let {
+            stack.matrix?.let {
                 tooltipComponents.add("tooltip.$ModId.soul_stone.matrix".mcTranslate(it.displayName).withStyle(ChatFormatting.DARK_GRAY))
             }
         }
@@ -132,12 +130,12 @@ class SoulStone: Item(Properties()) {
         if (stack.item !is SoulStone) return
         if (!level.isClientSide) {
             val server = level.server!!
-            val uuid = this.getOwner(stack)
+            val uuid = stack.owner
             if (uuid != null) {
                 val player = server.playerList.getPlayer(uuid)
-                player?.let { this.setMatrix(stack, it[PlayerMRU::class].getMatrixType()) }
-            } else if (this.getMatrix(stack) != null) {
-                this.setMatrix(stack, null)
+                player?.let { stack.matrix = it[PlayerMRU::class].getMatrixType() }
+            } else if (stack.matrix != null) {
+                stack.matrix = null
             }
         }
     }
@@ -153,154 +151,24 @@ class SoulStone: Item(Properties()) {
 
         val item = items.random()
 
-        if (item.owner == null) return
+        item.owner ?: return
+
+        if (item.isCreative) return
         if (ent.isBaby && ent !is Enemy) return
 
         val weapon = source.getItemInHand(InteractionHand.MAIN_HAND).item
         val multiplier = if (weapon is MRUMultiplierWeapon && weapon is SwordItem) weapon.multiplier else 1f
 
-        if (entityCapacityAdd.contains(ent.type)) {
-            val a = entityCapacityAdd[ent.type]!!.random() * multiplier
-            this.add(item, a)
-        } else {
-            if (ent is Enemy) {
-                val a = defaultEnemyAdd.random() * multiplier
-                this.add(item, a)
-            } else {
-                val a = defaultCapacityAdd.random() * multiplier
-                this.add(item, a)
-            }
-        }
-    }
-
-    fun getOwner(stack: ItemStack): UUID? {
-        if (stack.item !is SoulStone) return null
-        val tag = stack.orCreateTag
-        return if (tag.contains("SoulStoneOwner")) {
-            try {
-                tag.getUUID("SoulStoneOwner")
-            } catch (e: Exception) {
-                null
-            }
-        } else null
-    }
-
-    fun setOwner(stack: ItemStack, newOwner: UUID?) {
-        if (stack.item !is SoulStone) return
-        val tag = stack.orCreateTag
-
-        if (!tag.contains("SoulStoneOwner")) {
-            if (newOwner != null) {
-                tag.putUUID("SoulStoneOwner", newOwner)
-                ServerLifecycleHooks.getCurrentServer()?.let { l ->
-                    l.playerList.getPlayer(newOwner)?.let {
-                        tag.putString("SoulStoneOwnerName", it.name.string)
-                    }
-                }
-            }
-        } else {
-            if (newOwner == null) {
-                tag.remove("SoulStoneOwner")
-                tag.remove("SoulStoneCapacity")
-                tag.remove("SoulStoneOwnerName")
-            }
-        }
-    }
-
-    fun getOwnerNick(stack: ItemStack): String {
-        if (stack.item !is SoulStone) return "Lol, why you try to load owner nick, if item is not soul stone? Bro, it is not work."
-        val tag = stack.orCreateTag
-        return if (tag.contains("SoulStoneOwnerName")) {
-            try {
-                tag.getString("SoulStoneOwnerName")
-            } catch (_: Exception) {
-                "Not Loaded"
-            }
-        } else "Not Loaded"
-    }
-
-    fun setOwnerNick(stack: ItemStack, name: String?) {
-        if (stack.item !is SoulStone) return
-        val tag = stack.orCreateTag
-
-        if (name != null) {
-            tag.putString("SoulStoneOwnerName", name)
-        } else {
-            tag.remove("SoulStoneOwnerName")
-        }
-    }
-
-    fun getCapacity(stack: ItemStack): Int {
-        if (stack.item !is SoulStone) return 0
-        val tag = stack.orCreateTag
-        if (stack.owner == null) {
-            tag.remove("SoulStoneCapacity")
-            return 0
+        val addCount = if (entityCapacityAdd.contains(ent.type))
+            entityCapacityAdd[ent.type]!!.random() * multiplier
+        else {
+            if (ent is Enemy) defaultEnemyAdd.random() * multiplier
+            else defaultCapacityAdd.random() * multiplier
         }
 
-        return tag.getInt("SoulStoneCapacity")
+        item.addUBMRU(addCount)
     }
 
-    fun setCapacity(stack: ItemStack, newCapacity: Int) {
-        if (stack.item !is SoulStone) return
-        val tag = stack.orCreateTag
-
-        if (stack.owner != null) tag.putInt("SoulStoneCapacity", newCapacity)
-    }
-
-    fun add(stack: ItemStack, count: Float) {
-        val conv = count.roundToInt()
-        if (stack.owner != null) {
-            val cap = getCapacity(stack)
-            setCapacity(stack, cap + conv)
-        }
-    }
-
-    fun add(stack: ItemStack, count: Double) {
-        val conv = count.roundToInt()
-        if (stack.owner != null) {
-            val cap = getCapacity(stack)
-            setCapacity(stack, cap + conv)
-        }
-    }
-
-    fun remove(stack: ItemStack, count: Int) {
-        val cap = getCapacity(stack)
-        if (stack.owner != null) {
-            if (cap - count > 0) {
-                setCapacity(stack, cap - count)
-            } else {
-                setCapacity(stack, 0)
-            }
-        }
-    }
-
-    fun getMatrix(stack: ItemStack): PlayerMatrixType? {
-        if (stack.item !is SoulStone) return null
-        val tag = stack.orCreateTag
-
-        return if (tag.contains("PlayerMatrixType")) {
-            val matrixId = tag.getString("PlayerMatrixType").rl
-            if (ECRegistries.PLAYER_MATRICES.isPresent(matrixId))
-                ECRegistries.PLAYER_MATRICES.getValue(matrixId)
-            else {
-                tag.remove("PlayerMatrixType")
-                null
-            }
-        } else null
-    }
-
-    fun setMatrix(stack: ItemStack, matrixType: PlayerMatrixType?) {
-        if (stack.item !is SoulStone) return
-        val tag = stack.orCreateTag
-
-        if (matrixType != null) {
-            ECRegistries.PLAYER_MATRICES.getKey(matrixType)?.let {
-                tag.putString("PlayerMatrixType", it.toString())
-            }
-        } else {
-            if (tag.contains("PlayerMatrixType"))
-                tag.remove("PlayerMatrixType")
-        }
-    }
+    override val receiveCount: Int = ECCommonConfig.instance.soulStoneReceiveCount
+    override val extractCount: Int = ECCommonConfig.instance.soulStoneExtractCount
 }

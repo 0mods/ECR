@@ -8,4 +8,4 @@ import net.minecraftforge.common.extensions.IForgeMenuType
 import net.minecraftforge.network.IContainerFactory
 
 inline fun <reified T: AbstractContainerMenu> simpleMenuFactory(crossinline factory: (Int, Inventory, FriendlyByteBuf) -> T): MenuType<T> =
-    IForgeMenuType.create(IContainerFactory {i, inv, fb -> factory(i, inv, fb) })
+    IForgeMenuType.create { i, inv, buf -> factory(i, inv, buf) }

@@ -55,6 +55,7 @@ fun AbstractContainerScreen<*>.drawMRULine(
     height: Int,
     mouseX: Int,
     mouseY: Int,
+    // Deprecated lol
     colorIn: Int = Color(139, 0, 255).rgb,
     colorOut: Int = Color(50, 18, 122).rgb
 ) {

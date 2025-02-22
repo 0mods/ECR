@@ -1,4 +1,4 @@
-package team._0mods.ecr.client.screen.container.widget
+package team._0mods.ecr.client.screen.menu.widget
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget

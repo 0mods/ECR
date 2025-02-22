@@ -7,7 +7,6 @@ import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.RecipeType
-import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockBehaviour
 import ru.hollowhorizon.hc.client.utils.JavaHacks
 import ru.hollowhorizon.hc.client.utils.rl
@@ -15,6 +14,7 @@ import ru.hollowhorizon.hc.common.registry.AutoModelType
 import ru.hollowhorizon.hc.common.registry.HollowRegistry
 import ru.hollowhorizon.hc.common.registry.RegistryObject
 import team._0mods.ecr.api.ModId
+import team._0mods.ecr.api.block.entity.simpleBlockEntityType
 import team._0mods.ecr.api.menu.simpleMenuFactory
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.api.PropertiedBlock
@@ -100,7 +100,7 @@ object ECRegistry: HollowRegistry(ModId) {
 
     // blocks
     val mithrilinePlating by register("mithriline_plating", AutoModelType.CUBE_ALL) { PropertiedBlock(defaultBlockProperties) }
-    val mithrilineFurnace by register("mithriline_furnace", null) { MithrilineFurnace(defaultBlockProperties.noOcclusion()) }
+    val mithrilineFurnace by register("mithriline_furnace", null) { MithrilineFurnace(defaultBlockProperties) }
     val matrixDestructor by register("matrix_destructor", null) { MatrixDestructor(defaultBlockProperties.noOcclusion()) }
     val envoyer by register("envoyer", null) { Envoyer(defaultBlockProperties.noOcclusion()) }
     val magicTable by register("magic_table", null) { MagicTable(defaultBlockProperties) }
@@ -116,18 +116,10 @@ object ECRegistry: HollowRegistry(ModId) {
     val airCluster by register("air_cluster", null) { ClusterBlock(clusterProperties) }
 
     // blockEntity
-    val mithrilineFurnaceEntity by register("mithriline_furnace") {
-        BlockEntityType.Builder.of(::MithrilineFurnaceEntity, mithrilineFurnace.get()).build(promise())
-    }
-    val matrixDestructorEntity by register("matrix_destructor") {
-        BlockEntityType.Builder.of(::MatrixDestructorEntity, matrixDestructor.get()).build(promise())
-    }
-    val envoyerEntity by register("envoyer") {
-        BlockEntityType.Builder.of(XLikeBlockEntity::Envoyer, envoyer.get()).build(promise())
-    }
-    val magicTableEntity by register("magic_table") {
-        BlockEntityType.Builder.of(XLikeBlockEntity::MagicTable, magicTable.get()).build(promise())
-    }
+    val mithrilineFurnaceEntity by register("mithriline_furnace") { simpleBlockEntityType(::MithrilineFurnaceEntity, mithrilineFurnace.get()) }
+    val matrixDestructorEntity by register("matrix_destructor") { simpleBlockEntityType(::MatrixDestructorEntity, matrixDestructor.get()) }
+    val envoyerEntity by register("envoyer") { simpleBlockEntityType(XLikeBlockEntity::Envoyer, envoyer.get()) }
+    val magicTableEntity by register("magic_table") { simpleBlockEntityType(XLikeBlockEntity::MagicTable, magicTable.get()) }
 
     // menu types
     val mithrilineFurnaceMenu by register("mithriline_furnace") { simpleMenuFactory(::MithrilineFurnaceMenu) }

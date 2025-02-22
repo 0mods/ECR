@@ -1,4 +1,4 @@
-package team._0mods.ecr.client.screen.container
+package team._0mods.ecr.client.screen.menu
 
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
@@ -9,7 +9,7 @@ import team._0mods.ecr.api.client.drawMRULine
 import team._0mods.ecr.api.client.xPos
 import team._0mods.ecr.api.client.yPos
 import team._0mods.ecr.api.utils.ecRL
-import team._0mods.ecr.client.screen.container.widget.XLikeProgressArrow
+import team._0mods.ecr.client.screen.menu.widget.XLikeProgressArrow
 import team._0mods.ecr.common.menu.XLikeMenu
 
 open class XLikeScreen<T: XLikeMenu>(

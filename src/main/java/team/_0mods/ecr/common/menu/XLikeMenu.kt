@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraftforge.items.IItemHandler
 import net.minecraftforge.items.ItemStackHandler
-import team._0mods.ecr.api.container.AbstractContainer
+import team._0mods.ecr.api.container.AbstractMenu
 import team._0mods.ecr.api.container.slot.SpecialSlot
 import team._0mods.ecr.api.item.BoundGem
 import team._0mods.ecr.common.blocks.entity.XLikeBlockEntity
@@ -26,7 +26,7 @@ abstract class XLikeMenu(
     val blockEntity: XLikeBlockEntity?,
     access: ContainerLevelAccess,
     val data: ContainerData
-): AbstractContainer(type, containerId, access) {
+): AbstractMenu(type, containerId, access) {
     companion object {
         protected val be = { l: Level, bp: BlockPos ->
             val be = l.getBlockEntity(bp)
@@ -57,7 +57,7 @@ abstract class XLikeMenu(
             )
         )
 
-        makeInv(inv, 8, 84)
+        inv.make()
 
         addDataSlots(data)
     }
