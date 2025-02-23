@@ -105,7 +105,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
         override var mru: Int by syncable(0)
         override val maxMRUStorage: Int = 10000
 
-        override val mruType: MRUTypes = MRUTypes.ESPE
+        override val mruType: MRUTypes = MRUTypes.RADIATION_UNIT
     }
 
     enum class MatrixDestructorStatus {
