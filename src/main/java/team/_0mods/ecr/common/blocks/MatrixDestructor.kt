@@ -1,6 +1,5 @@
 package team._0mods.ecr.common.blocks
 
-import net.minecraft.client.Minecraft
 import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
@@ -40,10 +39,8 @@ class MatrixDestructor(properties: Properties) : PropertiedEntityBlock(propertie
         player: Player,
         hand: InteractionHand,
         hit: BlockHitResult,
-    ): InteractionResult {
-        Minecraft.getInstance()
-        return checkAndOpenMenu<MatrixDestructorEntity>(player, level, pos)
-    }
+    ): InteractionResult = checkAndOpenMenu<MatrixDestructorEntity>(player, level, pos)
+
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
         prepareDrops<MatrixDestructorEntity>(state, level, pos, newState)

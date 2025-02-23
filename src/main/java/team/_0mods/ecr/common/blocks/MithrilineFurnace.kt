@@ -39,11 +39,9 @@ class MithrilineFurnace(properties: Properties) : PropertiedEntityBlock(properti
         player: Player,
         hand: InteractionHand,
         hit: BlockHitResult
-    ): InteractionResult {
-        return if (ECRMultiblocks.mithrilineFurnace.get().isValid(level, pos)) {
-            checkAndOpenMenu<MithrilineFurnaceEntity>(player, level, pos)
-        } else InteractionResult.FAIL
-    }
+    ): InteractionResult = if (ECRMultiblocks.mithrilineFurnace.get().isValid(level, pos)) {
+        checkAndOpenMenu<MithrilineFurnaceEntity>(player, level, pos)
+    } else InteractionResult.FAIL
 
     override fun onRemove(
         state: BlockState,

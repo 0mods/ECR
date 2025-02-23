@@ -3,6 +3,7 @@
 package team._0mods.ecr.common.init.events.client
 
 import net.minecraft.ChatFormatting
+import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.SwordItem
 import net.minecraftforge.api.distmarker.Dist
@@ -15,6 +16,7 @@ import ru.hollowhorizon.hc.client.utils.literal
 import ru.hollowhorizon.hc.client.utils.mcTranslate
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.item.BoundGem
+import team._0mods.ecr.api.mru.MRUHolder
 import team._0mods.ecr.api.mru.MRUMultiplierWeapon
 
 @SubscribeEvent
@@ -33,29 +35,31 @@ fun onItemTooltip(e: ItemTooltipEvent) {
 @SubscribeEvent
 fun onBoundGemTooltip(e: ItemTooltipEvent) {
     val stack = e.itemStack
-    val item = stack.item
+    val item = stack.item as? BoundGem ?: return
     val tooltip = e.toolTip
+    val level = Minecraft.getInstance().level ?: return
 
-    if (item is BoundGem) {
-        val pos = item.getBoundPos(stack)
+    val pos = item.getBoundPos(stack) ?: return
 
-        if (pos != null) {
-            tooltip.add("tooltip.ecreimagined.bound_gem.at".mcTranslate.append(":").withStyle(ChatFormatting.GOLD))
-            tooltip.add(
-                "X".literal.withStyle(ChatFormatting.RED).append(": ")
-                    .append("${pos.x}".literal).append(" ")
-                    .append("Y".literal.withStyle(ChatFormatting.GREEN).append(": ")
-                        .append("${pos.y}".literal).append(" "))
-                    .append(
-                        "Z".literal.withStyle(ChatFormatting.BLUE).append(": ")
-                            .append("${pos.z}".literal))
-            )
+    val entity = level.getBlockEntity(pos)
 
-            if (!item.dimensionalBounds) {
-                tooltip.add("tooltip.ecreimagined.bound_gem.dimension.unsupported".mcTranslate.withStyle(ChatFormatting.RED))
-            }
-        }
+    tooltip.add("tooltip.$ModId.bound_gem.linked.pos".mcTranslate.append(":").withStyle(ChatFormatting.GOLD))
+    tooltip.add(
+        "X".literal.withStyle(ChatFormatting.RED).append(": ")
+            .append("${pos.x}".literal).append(" ")
+            .append("Y".literal.withStyle(ChatFormatting.GREEN).append(": ")
+                .append("${pos.y}".literal).append(" "))
+            .append(
+                "Z".literal.withStyle(ChatFormatting.BLUE).append(": ")
+                    .append("${pos.z}".literal))
+    )
+
+    if (entity == null || entity !is MRUHolder || !entity.holderType.isExporter) {
+        tooltip.add("tooltip.$ModId.bound_gem.linked.not_mru".mcTranslate.withStyle(ChatFormatting.GOLD))
     }
+
+    if (!item.dimensionalBounds)
+        tooltip.add("tooltip.ecreimagined.bound_gem.dimension.disallowed".mcTranslate.withStyle(ChatFormatting.RED))
 }
 
 @SubscribeEvent

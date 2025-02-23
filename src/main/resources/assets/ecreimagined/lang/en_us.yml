@@ -78,12 +78,14 @@ tooltip.ecreimagined:
     unbounded: The soul stone is unbounded
     creative: Creative
   bound_gem:
-    bound: "Bound gem was bounded at pos: %s"
-    unbound: Bound gem was unbounded
-    at: Currently bound to position at
+    linked:
+      .: Bound gem was bounded at pos
+      revoked: Bound gem was unbounded
+      pos: Currently bound to position at
+      not_mru: Soul Stone is linked to a position where no MRU devices are detected #Камень души привязан к позиции, где не обнаружено MRU устройств
     dimension:
       .: Dimension
-      unsupported: Current Bound Gem is not supports the dimension bounds
+      disallowed: Current Bound Gem is not supports the dimension bounds
 
 book_type.ecreimagined:
   basic: Basics

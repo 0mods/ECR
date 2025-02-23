@@ -19,6 +19,7 @@ import ru.hollowhorizon.hc.common.capabilities.containers.container
 import ru.hollowhorizon.hc.common.objects.blocks.HollowBlockEntity
 import team._0mods.ecr.api.block.StructuralPosition
 import team._0mods.ecr.api.block.inventory.WrappedHollowInventory
+import team._0mods.ecr.api.item.ItemStorage
 import team._0mods.ecr.api.mru.MRUReceivable
 import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUTypes
@@ -89,10 +90,10 @@ class MithrilineFurnaceEntity(pos: BlockPos, state: BlockState) : HollowBlockEnt
     override val mruContainer: MRUStorage = this[MRUContainer::class]
 
     @HollowCapabilityV2(MithrilineFurnaceEntity::class)
-    class ItemContainer: CapabilityInstance() {
+    class ItemContainer: CapabilityInstance(), ItemStorage {
         private val container = HollowContainer(this, 2) { slot, _ -> slot != 1 }
 
-        val items by container(WrappedHollowInventory(container, this, { it == 1 }) { i, _ -> i == 0 })
+        override val items by container(WrappedHollowInventory(container, this, { it == 1 }) { i, _ -> i == 0 })
     }
 
     @HollowCapabilityV2(MithrilineFurnaceEntity::class)

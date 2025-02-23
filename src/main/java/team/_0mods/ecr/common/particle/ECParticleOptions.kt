@@ -5,9 +5,9 @@ import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.particles.ParticleOptions
 import net.minecraft.core.particles.ParticleType
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.util.Mth
-import net.minecraftforge.registries.ForgeRegistries
 import team._0mods.ecr.common.init.registry.ECRegistry
 import java.awt.Color
 
@@ -128,5 +128,5 @@ class ECParticleOptions(
     }
 
     override fun writeToString(): String =
-        "${ForgeRegistries.PARTICLE_TYPES.getKey(this.type)} ${color.red} ${color.green} ${color.blue} $size $lifeTime $gravity $friction $resizeSpeed $physical $removeOnGround"
+        "${BuiltInRegistries.PARTICLE_TYPE.getKey(this.type)} ${color.red} ${color.green} ${color.blue} $size $lifeTime $gravity $friction $resizeSpeed $physical $removeOnGround"
 }

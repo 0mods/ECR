@@ -2,6 +2,7 @@ package team._0mods.ecr.datagen.builder
 
 import com.google.gson.JsonObject
 import net.minecraft.advancements.CriterionTriggerInstance
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.data.recipes.FinishedRecipe
 import net.minecraft.data.recipes.RecipeBuilder
 import net.minecraft.resources.ResourceLocation
@@ -9,7 +10,6 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.level.ItemLike
-import net.minecraftforge.registries.ForgeRegistries
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.init.registry.ECRegistry
 import java.util.function.Consumer
@@ -49,7 +49,7 @@ class MithrilineFurnaceRecipeBuilder private constructor(private val result: Ite
     override fun getResult(): Item = this.result.asItem()
 
     override fun save(finishedRecipeConsumer: Consumer<FinishedRecipe>) {
-        this.save(finishedRecipeConsumer, ForgeRegistries.ITEMS.getKey(this.result.asItem())!!.path.ecRL)
+        this.save(finishedRecipeConsumer, BuiltInRegistries.ITEM.getKey(this.result.asItem()).path.ecRL)
     }
 
     override fun save(finishedRecipeConsumer: Consumer<FinishedRecipe>, recipeId: ResourceLocation) {
@@ -74,7 +74,7 @@ class MithrilineFurnaceRecipeBuilder private constructor(private val result: Ite
                     val item = i.items[0].item
                     this.addProperty("type", "forge:nbt")
                     this.addProperty("count", this@Finalized.ingredientCount)
-                    this.addProperty("item", ForgeRegistries.ITEMS.getKey(item).toString())
+                    this.addProperty("item", BuiltInRegistries.ITEM.getKey(item).toString())
                 }
 
                 json.add("ingredient", jo)
@@ -83,7 +83,7 @@ class MithrilineFurnaceRecipeBuilder private constructor(private val result: Ite
             json.addProperty("espe", this.espe)
 
             val jo = JsonObject().apply {
-                addProperty("item", ForgeRegistries.ITEMS.getKey(this@Finalized.result).toString())
+                addProperty("item", BuiltInRegistries.ITEM.getKey(this@Finalized.result).toString())
                 if (this@Finalized.count > 1) {
                     addProperty("count", this@Finalized.count)
                 }

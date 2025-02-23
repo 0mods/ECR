@@ -8,6 +8,9 @@ import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.client.defaultBlit
 import team._0mods.ecr.api.client.drawMRULine
+import team._0mods.ecr.api.client.xPos
+import team._0mods.ecr.api.client.yPos
+import team._0mods.ecr.client.screen.menu.widget.MatrixDestructorIndicator
 import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 import team._0mods.ecr.common.menu.MatrixDestructorMenu
 
@@ -22,6 +25,17 @@ class MatrixDestructorScreen(
 ) {
     companion object {
         private val texture = "$ModId:textures/gui/matrix_destructor.png".rl
+    }
+
+    override fun init() {
+        super.init()
+
+        val entity = this.menu.blockEntity as? MatrixDestructorEntity
+        if (entity != null) {
+            if (entity.status != null) {
+                this.addRenderableOnly(MatrixDestructorIndicator(xPos(83), yPos(36), entity.status!!))
+            }
+        }
     }
 
     override fun render(gg: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {

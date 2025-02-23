@@ -2,7 +2,6 @@ package team._0mods.ecr.mixin.client;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;

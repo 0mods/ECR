@@ -2,6 +2,8 @@ package team._0mods.ecr.common.menu
 
 import net.minecraft.core.BlockPos
 import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.world.Container
+import net.minecraft.world.SimpleContainer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.ContainerData
@@ -10,10 +12,8 @@ import net.minecraft.world.inventory.MenuType
 import net.minecraft.world.inventory.SimpleContainerData
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
-import net.minecraftforge.items.IItemHandler
-import net.minecraftforge.items.ItemStackHandler
 import team._0mods.ecr.api.container.AbstractMenu
-import team._0mods.ecr.api.container.slot.SpecialSlot
+import team._0mods.ecr.api.container.slot.VanillaSpecialSlot
 import team._0mods.ecr.api.item.BoundGem
 import team._0mods.ecr.common.blocks.entity.XLikeBlockEntity
 import team._0mods.ecr.common.init.registry.ECRegistry
@@ -22,7 +22,7 @@ abstract class XLikeMenu(
     type: MenuType<*>,
     containerId: Int,
     inv: Inventory,
-    container: IItemHandler,
+    container: Container,
     val blockEntity: XLikeBlockEntity?,
     access: ContainerLevelAccess,
     val data: ContainerData
@@ -35,21 +35,21 @@ abstract class XLikeMenu(
         }
     }
 
-    protected fun buildSlots(container: IItemHandler, inv: Inventory, stackSize: Int = 64) {
+    protected fun buildSlots(container: Container, inv: Inventory, stackSize: Int = 64) {
         // Recipe slots
-        addSlot(SpecialSlot(container, 0, 26, 17, stackSize =  stackSize))
-        addSlot(SpecialSlot(container, 1, 62, 17, stackSize =  stackSize))
-        addSlot(SpecialSlot(container, 2, 26, 53, stackSize =  stackSize))
-        addSlot(SpecialSlot(container, 3, 62, 53, stackSize =  stackSize))
+        addSlot(VanillaSpecialSlot(container, 0, 26, 17, stackSize =  stackSize))
+        addSlot(VanillaSpecialSlot(container, 1, 62, 17, stackSize =  stackSize))
+        addSlot(VanillaSpecialSlot(container, 2, 26, 53, stackSize =  stackSize))
+        addSlot(VanillaSpecialSlot(container, 3, 62, 53, stackSize =  stackSize))
 
         // Catalyst
-        addSlot(SpecialSlot(container, 4, 44, 35, stackSize =  stackSize))
+        addSlot(VanillaSpecialSlot(container, 4, 44, 35, stackSize =  stackSize))
         // Result
-        addSlot(SpecialSlot(container, 5, 116, 35, { false }))
+        addSlot(VanillaSpecialSlot(container, 5, 116, 35, { false }))
 
         // Bound gem
         addSlot(
-            SpecialSlot(
+            VanillaSpecialSlot(
                 container, 6, 152, 53, {
                     val item = it.item
                     item is BoundGem && item.getBoundPos(it) != null
@@ -99,7 +99,7 @@ abstract class XLikeMenu(
     class Envoyer(
         containerId: Int,
         inv: Inventory,
-        container: IItemHandler,
+        container: Container,
         blockEntity: XLikeBlockEntity?,
         access: ContainerLevelAccess,
         data: ContainerData
@@ -115,7 +115,7 @@ abstract class XLikeMenu(
         ): this(
             id,
             inv,
-            ItemStackHandler(7),
+            SimpleContainer(7),
             be(inv.player.commandSenderWorld, buf.readBlockPos()),
             ContainerLevelAccess.NULL,
             SimpleContainerData(2)
@@ -127,7 +127,7 @@ abstract class XLikeMenu(
     class MagicTable(
         containerId: Int,
         inv: Inventory,
-        container: IItemHandler,
+        container: Container,
         blockEntity: XLikeBlockEntity?,
         access: ContainerLevelAccess,
         data: ContainerData
@@ -143,7 +143,7 @@ abstract class XLikeMenu(
         ): this(
             id,
             inv,
-            ItemStackHandler(7),
+            SimpleContainer(7),
             be(inv.player.commandSenderWorld, buf.readBlockPos()),
             ContainerLevelAccess.NULL,
             SimpleContainerData(2)

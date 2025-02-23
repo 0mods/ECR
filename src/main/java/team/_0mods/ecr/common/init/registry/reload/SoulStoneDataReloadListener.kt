@@ -3,11 +3,11 @@ package team._0mods.ecr.common.init.registry.reload
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraftforge.fml.ModList
-import net.minecraftforge.registries.ForgeRegistries
 import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.api.ModId
@@ -22,7 +22,7 @@ class SoulStoneDataReloadListener(private val json: Json): SimplePreparableReloa
         resourceManager.listResources("soul_stone") { it.path.endsWith(".json") }.forEach {
             val data = json.decodeFromStream(SoulStoneData.serializer(), it.value.open())
             val id = data.entity.rl
-            val entity = if (ForgeRegistries.ENTITY_TYPES.containsKey(id)) ForgeRegistries.ENTITY_TYPES.getValue(id) else null
+            val entity = if (BuiltInRegistries.ENTITY_TYPE.containsKey(id)) BuiltInRegistries.ENTITY_TYPE.get(id) else null
 
             if (!ModList.get().isLoaded(id.namespace)) {
                 LOGGER.info("Mod ${id.namespace} is not loaded! Skipping loading soul stone data for entity \"${id}\" (${it.key})")

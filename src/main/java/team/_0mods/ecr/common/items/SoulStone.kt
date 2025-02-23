@@ -118,12 +118,14 @@ class SoulStone: Item(Properties()), SoulStoneLike {
                         .mcTranslate(stack.capacity.toString().literal.withStyle(ChatFormatting.GREEN))
                         .withStyle(ChatFormatting.DARK_GRAY)
                 )
-            else tooltipComponents.add("tooltip.${ModId}.soul_stone.creative".mcTranslate.withStyle(ChatFormatting.DARK_PURPLE))
 
             stack.matrix?.let {
                 tooltipComponents.add("tooltip.$ModId.soul_stone.matrix".mcTranslate(it.displayName).withStyle(ChatFormatting.DARK_GRAY))
             }
         }
+
+        if (stack.isCreative)
+            tooltipComponents.add("tooltip.${ModId}.soul_stone.creative".mcTranslate.withStyle(ChatFormatting.DARK_PURPLE))
     }
 
     override fun inventoryTick(stack: ItemStack, level: Level, entity: Entity, slotId: Int, isSelected: Boolean) {

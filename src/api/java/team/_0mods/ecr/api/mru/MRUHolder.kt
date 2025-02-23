@@ -5,11 +5,11 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.api.item.BoundGem
+import team._0mods.ecr.api.item.ItemStorage
 
 interface MRUHolder {
     /**
@@ -20,13 +20,13 @@ interface MRUHolder {
     val mruContainer: MRUStorage
 
     /**
-     * Gets [ItemStack] in Container that's item is instanceof [BoundGem].
+     * Gets Locator Data Container for slot getting.
      *
      * If null, MRU cannot be received from the generator
      *
-     * @return [ItemStack] if present else `null` by default
+     * @return [LocatorData] if present else `null` by default
      */
-    val locator: ItemStack? get() = null
+    val locator: LocatorData? get() = null
 
     val holderType: MRUHolderType
 
@@ -39,6 +39,8 @@ interface MRUHolder {
 
         val isStorage: Boolean get() = this == STORAGE || this.isUniversal
     }
+
+    data class LocatorData(val locatorStorage: ItemStorage, val locatorSlot: Int)
 }
 
 @OptIn(DelicateCoroutinesApi::class)
@@ -46,9 +48,13 @@ fun MRUHolder.processReceive(level: Level) {
     if (level.isClientSide) return
     LOGGER.info("Processing receive...")
 
-    val stack = this.locator ?: return
+    val stack = this.locator?.let { it.locatorStorage.items.getItem(it.locatorSlot) } ?: return
     LOGGER.info("Stack was loaded")
-    val item = stack.item as? BoundGem ?: return
+    val item = stack.item as? BoundGem
+    if (item == null) {
+        LOGGER.info("It is not Bound Gem. Item: ${stack.item.descriptionId}")
+        return
+    }
     LOGGER.info("Stack is Bound Gem")
     val pos = item.getBoundPos(stack) ?: return
     LOGGER.info("Position: $pos")
@@ -58,31 +64,25 @@ fun MRUHolder.processReceive(level: Level) {
     LOGGER.info("World was taken")
 
     val dimensionalLevel = world?.let { server.getLevel(ResourceKey.create(Registries.DIMENSION, world.rl)) }
-    val blockEntity = ((dimensionalLevel ?: level).getBlockEntity(pos)) as? MRUHolder ?: return
+    val exporterBlockEntity = ((dimensionalLevel ?: level).getBlockEntity(pos)) as? MRUHolder ?: return
     LOGGER.info("Block Entity founded")
 
-    if (!blockEntity.holderType.isExporter) return
+    if (!exporterBlockEntity.holderType.isExporter) return
     LOGGER.info("Attached block is exporter")
 
-    if (blockEntity.mruContainer.mruType != this.mruContainer.mruType) return
+    if (exporterBlockEntity.mruContainer.mruType != this.mruContainer.mruType) {
+        LOGGER.warn("MRU Types are not matches!")
+        LOGGER.warn("Provided: ${exporterBlockEntity.mruContainer.mruType.displayName.string}; Needed: ${this.mruContainer.mruType.displayName.string}")
+        return
+    }
     LOGGER.info("Mru types was matched")
 
     val currentContainer = this.mruContainer
-    val generator = blockEntity.mruContainer
+    val generator = exporterBlockEntity.mruContainer
 
     GlobalScope.launch {
-        /*val transferCount = item.transferStrength.reversedArray()
+        val transferCount = item.transferStrength.reversedArray()
         for (count in transferCount)
-            if (generator.canExtractAndReceive(currentContainer, count)) break*/
-
-        LOGGER.info("RECEIVING")
-        if (!generator.canExtractAndReceive(currentContainer, 1000)) {
-            if (!generator.canExtractAndReceive(currentContainer, 100)) {
-                if (!generator.canExtractAndReceive(currentContainer, 50)) {
-                    if (!generator.canExtractAndReceive(currentContainer, 10))
-                        generator.canExtractAndReceive(currentContainer, 1)
-                }
-            }
-        }
+            if (generator.canExtractAndReceive(currentContainer, count)) break
     }
 }

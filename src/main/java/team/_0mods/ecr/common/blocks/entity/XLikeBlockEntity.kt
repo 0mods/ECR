@@ -1,7 +1,6 @@
 package team._0mods.ecr.common.blocks.entity
 
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
 import net.minecraft.core.NonNullList
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
@@ -16,19 +15,14 @@ import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraftforge.common.capabilities.Capability
-import net.minecraftforge.common.capabilities.ForgeCapabilities
-import net.minecraftforge.common.util.LazyOptional
-import net.minecraftforge.items.IItemHandler
-import net.minecraftforge.items.ItemStackHandler
 import ru.hollowhorizon.hc.client.utils.get
 import ru.hollowhorizon.hc.common.capabilities.CapabilityInstance
 import ru.hollowhorizon.hc.common.capabilities.HollowCapabilityV2
+import ru.hollowhorizon.hc.common.capabilities.containers.HollowContainer
+import ru.hollowhorizon.hc.common.capabilities.containers.container
 import ru.hollowhorizon.hc.common.objects.blocks.HollowBlockEntity
-import team._0mods.ecr.api.mru.MRUReceivable
-import team._0mods.ecr.api.mru.MRUStorage
-import team._0mods.ecr.api.mru.MRUTypes
-import team._0mods.ecr.api.mru.processReceive
+import team._0mods.ecr.api.item.ItemStorage
+import team._0mods.ecr.api.mru.*
 import team._0mods.ecr.common.api.ContainerLevelAccess
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.menu.XLikeMenu
@@ -39,19 +33,6 @@ abstract class XLikeBlockEntity(
     pos: BlockPos,
     state: BlockState
 ): HollowBlockEntity(bet, pos, state), MenuProvider, MRUReceivable {
-    protected var slotLimit: (Int) -> Int = { 64 }
-
-    protected val itemHandler = object : ItemStackHandler(7) {
-        override fun onContentsChanged(slot: Int) {
-            super.onContentsChanged(slot)
-            setChanged()
-        }
-
-        override fun getSlotLimit(slot: Int): Int {
-            return slotLimit(slot)
-        }
-    }
-
     protected val containerData: ContainerData = object : ContainerData {
         override fun get(index: Int): Int  = when (index) {
             0 -> this@XLikeBlockEntity.progress
@@ -69,51 +50,30 @@ abstract class XLikeBlockEntity(
         override fun getCount(): Int = 2
     }
 
-    private var itemHandlerLazy = LazyOptional.empty<IItemHandler>()
-
     var progress = 0
     var maxProgress = 0
-
-    override fun onLoad() {
-        itemHandlerLazy = LazyOptional.of(::itemHandler)
-        super.onLoad()
-    }
-
-    override fun invalidateCaps() {
-        super.invalidateCaps()
-        itemHandlerLazy.invalidate()
-    }
 
     override fun saveAdditional(tag: CompoundTag) {
         tag.putInt("Progress", progress)
         tag.putInt("MaxProgress", maxProgress)
-        tag.put("Items", itemHandler.serializeNBT())
         super.saveAdditional(tag)
     }
 
     override fun load(tag: CompoundTag) {
         progress = tag.getInt("Progress")
         maxProgress = tag.getInt("MaxProgress")
-        itemHandler.deserializeNBT(tag.getCompound("Items"))
         super.load(tag)
-    }
-
-    override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) return itemHandlerLazy.cast()
-
-        return super.getCapability(cap, side)
     }
 
     override fun getDisplayName(): Component = Component.empty()
 
-    abstract override val locator: ItemStack
-
     fun <T: XLikeRecipe, X: XLikeBlockEntity> processRecipeIfPresent(level: Level, recipeType: RecipeType<T>, be: X, needEmptySlot: Boolean = false) {
         if (level.isClientSide) return
+        val container = this[ItemContainer::class].items
         val list = NonNullList.withSize(5, ItemStack.EMPTY)
         (0 ..< 5).forEach {
-            if (!this.itemHandler.getStackInSlot(it).isEmpty)
-                list[it] = this.itemHandler.getStackInSlot(it)
+            if (!container.getItem(it).isEmpty)
+                list[it] = container.getItem(it)
         }
 
         val inv = SimpleContainer(5).apply { (0 ..< this.containerSize).forEach { this.setItem(it, list[it]) } }
@@ -127,12 +87,15 @@ abstract class XLikeBlockEntity(
 
             be.maxProgress = time
 
-            if (!needEmptySlot || this.itemHandler.getStackInSlot(5).isEmpty) {
+            if (!needEmptySlot || container.getItem(5).isEmpty) {
                 this.processTick(time, mru)
                 if (this.progress >= time) {
                     inv.clearContent()
-                    (0 ..< 5).forEach { this.itemHandler.extractItem(it, 1, false) }
-                    this.itemHandler.insertItem(5, result.copy(), false)
+                    (0 ..< 5).forEach { container.removeItem(it, recipe.ingredients[it].items[0].count) }
+
+                    if (container.getItem(5).isEmpty)
+                        container.setItem(5, result.copy())
+                    else container.getItem(5).grow(result.count)
                     this.resetProgress()
                 }
             }
@@ -141,6 +104,8 @@ abstract class XLikeBlockEntity(
             this.resetProgress()
         }
     }
+
+    abstract override val mruContainer: MRUStorage
 
     private fun XLikeBlockEntity.processTick(time: Int, mru: Int) {
         val storage = this.mruContainer
@@ -158,6 +123,8 @@ abstract class XLikeBlockEntity(
         this.setChanged()
     }
 
+    abstract override val locator: MRUHolder.LocatorData
+
     @HollowCapabilityV2(XLikeBlockEntity::class)
     class MRUContainer: CapabilityInstance(), MRUStorage {
         override var mru: Int by syncable(0)
@@ -165,9 +132,19 @@ abstract class XLikeBlockEntity(
         override val mruType: MRUTypes = MRUTypes.RADIATION_UNIT
     }
 
+    @HollowCapabilityV2(XLikeBlockEntity::class)
+    class ItemContainer: CapabilityInstance(), ItemStorage {
+        var size by syncable(64)
+        override val items by container(SizeableContainer(size))
+
+        inner class SizeableContainer(private val containerSize: Int): HollowContainer(this, 7, { slot, _ -> slot == 5 }) {
+            override fun getContainerSize(): Int = containerSize
+        }
+    }
+
     class Envoyer(pos: BlockPos, state: BlockState): XLikeBlockEntity(ECRegistry.envoyerEntity.get(), pos, state) {
         init {
-            slotLimit = { if (it != 5) 1 else 64 }
+            this[ItemContainer::class].size = 1
         }
 
         override fun createMenu(
@@ -175,7 +152,7 @@ abstract class XLikeBlockEntity(
             inv: Inventory,
             player: Player
         ): AbstractContainerMenu? {
-            return XLikeMenu.Envoyer(id, inv, this.itemHandler, this, ContainerLevelAccess(this.level ?: return null, this.blockPos), containerData)
+            return XLikeMenu.Envoyer(id, inv, this[ItemContainer::class].items, this, ContainerLevelAccess(this.level ?: return null, this.blockPos), containerData)
         }
 
         companion object {
@@ -186,9 +163,9 @@ abstract class XLikeBlockEntity(
             }
         }
 
-        override val locator: ItemStack = this.itemHandler.getStackInSlot(6)
+        override val mruContainer: MRUStorage by lazy { this@Envoyer[MRUContainer::class] }
 
-        override val mruContainer: MRUStorage = this[MRUContainer::class]
+        override val locator: MRUHolder.LocatorData = MRUHolder.LocatorData(this[ItemContainer::class], 6)
     }
 
     class MagicTable(pos: BlockPos, state: BlockState): XLikeBlockEntity(ECRegistry.magicTableEntity.get(), pos, state) {
@@ -197,7 +174,7 @@ abstract class XLikeBlockEntity(
             inv: Inventory,
             player: Player
         ): AbstractContainerMenu? {
-            return XLikeMenu.MagicTable(id, inv, this.itemHandler, this, ContainerLevelAccess(this.level ?: return null, this.blockPos), containerData)
+            return XLikeMenu.MagicTable(id, inv, this[ItemContainer::class].items, this, ContainerLevelAccess(this.level ?: return null, this.blockPos), containerData)
         }
 
         companion object {
@@ -208,8 +185,8 @@ abstract class XLikeBlockEntity(
             }
         }
 
-        override val locator: ItemStack = this.itemHandler.getStackInSlot(6)
+        override val mruContainer: MRUStorage by lazy { this@MagicTable[MRUContainer::class] }
 
-        override val mruContainer: MRUStorage = this[MRUContainer::class]
+        override val locator: MRUHolder.LocatorData = MRUHolder.LocatorData(this[ItemContainer::class], 6)
     }
 }

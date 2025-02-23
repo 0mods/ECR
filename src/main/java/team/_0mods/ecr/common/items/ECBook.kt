@@ -11,12 +11,8 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Rarity
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
-import net.minecraftforge.fml.loading.FMLEnvironment
 import org.jetbrains.annotations.NotNull
-import ru.hollowhorizon.hc.client.utils.HollowPack
-import ru.hollowhorizon.hc.client.utils.literal
-import ru.hollowhorizon.hc.client.utils.mcTranslate
-import ru.hollowhorizon.hc.client.utils.rl
+import ru.hollowhorizon.hc.client.utils.*
 import ru.hollowhorizon.hc.common.registry.AutoModelType
 import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.api.ModId
@@ -82,10 +78,9 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), HasSubItem
     }
 
     init {
-        if (FMLEnvironment.dist.isClient) {
+        if (isPhysicalClient) {
             ItemProperties.register(this, ResourceLocation(ModId, "type")) r@ { s, _, _, _ ->
-                val types = s.bookTypes
-                if (types == null) return@r 0f
+                val types = s.bookTypes ?: return@r 0f
                 return@r if (types.isNotEmpty() && types.size <= 5)
                     types.size.toFloat() - 1
                 else if (types.size > 5) 4f
@@ -96,19 +91,19 @@ class ECBook: Item(Properties().stacksTo(1).rarity(Rarity.UNCOMMON)), HasSubItem
         val entries = ECRegistries.BOOK_TYPES.registries.keys
 
         // textures for types
-        for (i in 0 ..< entries.size) {
+        for (i in entries.indices) {
             val id = entries.toList()[i]
             HollowPack.addItemModel("${id.namespace}:research_book/${id.path}".rl, AutoModelType.DEFAULT)
         }
 
-        // textures for main book
+        // textures for the main book
         val sb = buildString {
             append("{").append('\n')
             append("\"parent\":\"item/generated\",")
             append("\"textures\":{\"layer0\":\"$ModId:item/research_book\"},")
             append("\"overrides\":[")
 
-            for (i in 0 ..< entries.size) {
+            for (i in entries.indices) {
                 val id = entries.toList()[i]
 
                 append("{\"predicate\":{\"$ModId:type\":$i.0},\"model\":\"${id.namespace}:item/${

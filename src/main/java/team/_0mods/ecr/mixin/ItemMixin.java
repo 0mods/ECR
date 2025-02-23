@@ -29,7 +29,7 @@ public class ItemMixin {
         if (!player.isShiftKeyDown()) return;
         if (bg.getBoundPos(item) == null) return;
 
-        player.displayClientMessage(mcTranslate(String.format("tooltip.%s.bound_gem.unbound", ECConstantsKt.ModId)), true);
+        player.displayClientMessage(mcTranslate(String.format("tooltip.%s.bound_gem.linked.revoked", ECConstantsKt.ModId)), true);
         bg.setBoundPos(item, null);
         cir.setReturnValue(InteractionResultHolder.success(item));
     }
@@ -53,7 +53,7 @@ public class ItemMixin {
                 "Y:" + ' ' + pos.getY() + ' ' +
                 "Z:" + ' ' + pos.getZ();
 
-        player.displayClientMessage(mcTranslate(String.format("tooltip.%s.bound_gem.bound", ECConstantsKt.ModId), builder), true);
+        player.displayClientMessage(mcTranslate(String.format("tooltip.%s.bound_gem.linked", ECConstantsKt.ModId)).append(":").append(" ").append(builder), true);
         if (stack.getCount() > 1) {
             var copiedStack = stack.copy();
             copiedStack.setCount(1);

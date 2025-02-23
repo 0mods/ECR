@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonSyntaxException
 import net.minecraft.core.NonNullList
 import net.minecraft.core.RegistryAccess
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.resources.ResourceLocation
@@ -13,7 +14,6 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.*
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
-import net.minecraftforge.registries.ForgeRegistries
 import ru.hollowhorizon.hc.client.utils.rl
 import ru.hollowhorizon.hc.common.multiblock.Multiblock
 import ru.hollowhorizon.hc.common.registry.MultiblockRegistry
@@ -71,8 +71,8 @@ class StructureRecipe(
                 val blockIdJson = serializedRecipe.get("placement")
                 if (!blockIdJson.isJsonPrimitive) throw JsonSyntaxException("Recipe cannot be created, because argument \"placement\" is not json primitive.")
                 val id = blockIdJson.asString
-                if (!ForgeRegistries.BLOCKS.containsKey(id.rl)) throw JsonSyntaxException("Recipe cannot be created, because block \"$id\" is not loaded.")
-                ForgeRegistries.BLOCKS.getValue(id.rl)
+                if (!BuiltInRegistries.BLOCK.containsKey(id.rl)) throw JsonSyntaxException("Recipe cannot be created, because block \"$id\" is not loaded.")
+                BuiltInRegistries.BLOCK.get(id.rl)
             } else null
 
             if (!serializedRecipe.has("multiblock")) throw JsonSyntaxException("Recipe cannot be created, because argument \"multiblock\" is missing.")
@@ -110,7 +110,7 @@ class StructureRecipe(
             val multiblock = MultiblockRegistry[tag.getString("MultiBlockId").rl]
 
             val blockId = if (tag.contains("BlockId")) tag.getString("BlockId") else null
-            val block = blockId?.rl?.let { ForgeRegistries.BLOCKS.getValue(it) }
+            val block = blockId?.rl?.let { BuiltInRegistries.BLOCK.get(it) }
 
             (0 ..< ingredients.size).forEach {
                 ingredients.add(it, Ingredient.fromNetwork(buffer))
@@ -128,7 +128,7 @@ class StructureRecipe(
         override fun toNetwork(buffer: FriendlyByteBuf, recipe: StructureRecipe) {
             val tag = CompoundTag().apply {
                 this.putString("MultiBlockId", MultiblockRegistry[recipe.multiblock].toString())
-                recipe.blockForPlace?.let { ForgeRegistries.BLOCKS.getKey(it)?.let { i -> this.putString("BlockId", i.toString()) } }
+                recipe.blockForPlace?.let { try { BuiltInRegistries.BLOCK.getKey(it) } catch (e: Exception) { null }?.let { i -> this.putString("BlockId", i.toString()) } }
             }
 
             buffer.writeInt(recipe.ingredients.size)

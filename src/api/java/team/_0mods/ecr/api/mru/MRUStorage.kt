@@ -10,6 +10,14 @@ interface MRUStorage {
 
     val maxMRUStorage: Int
 
+    val mruType: MRUTypes
+
+    val isFilled: Boolean get() = mru == maxMRUStorage
+
+    val hasMRU: Boolean get() = mru > 0
+
+    val isEmpty: Boolean get() = mru == 0
+
     fun extractMru(max: Int, simulate: Boolean = false): Int {
         val extracted = min(mru, max)
         if (!simulate) mru -= extracted
@@ -23,8 +31,6 @@ interface MRUStorage {
 
         return received
     }
-
-    val mruType: MRUTypes
 
     fun canExtract(max: Int): Boolean = mru - max >= 0
 

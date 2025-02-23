@@ -10,9 +10,9 @@ import snownee.jade.api.TooltipPosition
 import snownee.jade.api.config.IPluginConfig
 import snownee.jade.api.ui.BoxStyle
 import snownee.jade.api.ui.IElementHelper
+import team._0mods.ecr.api.mru.MRUHolder
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
-import team._0mods.ecr.common.init.registry.ECCapabilities
 import java.awt.Color
 
 class MRUComponent: IBlockComponentProvider {
@@ -22,7 +22,7 @@ class MRUComponent: IBlockComponentProvider {
         config: IPluginConfig
     ) {
         val be = accessor.blockEntity ?: return
-        val cap = be.getCapability(ECCapabilities.MRU_CONTAINER).orElse(null) ?: return
+        val cap = (be as? MRUHolder)?.mruContainer ?: return
 
         val helper = IElementHelper.get()
         val progbar = helper.progressStyle().color(Color(139, 0, 255).rgb, Color(50, 18, 122).rgb)

@@ -1,8 +1,8 @@
 package team._0mods.ecr.common.compact.jade.components
 
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
-import net.minecraftforge.registries.ForgeRegistries
 import snownee.jade.api.BlockAccessor
 import snownee.jade.api.IBlockComponentProvider
 import snownee.jade.api.ITooltip
@@ -14,7 +14,11 @@ import team._0mods.ecr.common.init.config.ECCommonConfig
 import team._0mods.ecr.common.init.registry.ECRegistry
 
 class MithrilineFurnaceComponent: IBlockComponentProvider {
-    override fun getUid(): ResourceLocation? = ForgeRegistries.BLOCKS.getKey(ECRegistry.mithrilineFurnace.get())
+    override fun getUid(): ResourceLocation? = try {
+        BuiltInRegistries.BLOCK.getKey(ECRegistry.mithrilineFurnace.get())
+    } catch (e: Exception) {
+        null
+    }
 
     override fun appendTooltip(tooltip: ITooltip, accessor: BlockAccessor, config: IPluginConfig) {
         val be = accessor.blockEntity as MithrilineFurnaceEntity
