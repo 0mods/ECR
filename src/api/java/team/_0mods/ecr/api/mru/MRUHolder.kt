@@ -7,7 +7,6 @@ import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.level.Level
 import ru.hollowhorizon.hc.client.utils.rl
-import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.api.item.BoundGem
 import team._0mods.ecr.api.item.ItemStorage
 
@@ -46,10 +45,8 @@ interface MRUHolder {
 @OptIn(DelicateCoroutinesApi::class)
 fun MRUHolder.processReceive(level: Level) {
     if (level.isClientSide) return
-    LOGGER.info("Processing receive...")
 
     val stack = this.locator?.let { it.locatorStorage.items.getItem(it.locatorSlot) } ?: return
-    LOGGER.info("Stack was loaded")
     val item = stack.item as? BoundGem ?: return
 
     val pos = item.getBoundPos(stack) ?: return
