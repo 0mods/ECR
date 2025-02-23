@@ -53,7 +53,7 @@ fun MRUHolder.processReceive(level: Level) {
     val server = level.server ?: return
     val world = item.getBoundedWorld(stack)
 
-    val logicalLevel = world?.let { server.getLevel(ResourceKey.create(Registries.DIMENSION, world.rl)) } ?: level
+    val logicalLevel = world?.let { server.getLevel(ResourceKey.create(Registries.DIMENSION, it.rl)) } ?: level
     val exporterBlockEntity = logicalLevel.getBlockEntity(pos) as? MRUHolder ?: return
 
     if (!exporterBlockEntity.holderType.isExporter) return
