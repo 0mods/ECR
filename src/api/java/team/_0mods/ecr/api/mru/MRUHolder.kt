@@ -66,7 +66,6 @@ fun MRUHolder.processReceive(level: Level) {
 
     GlobalScope.launch {
         val transferCount = item.transferStrength.reversedArray()
-        for (count in transferCount)
-            if (generator.canExtractAndReceive(currentContainer, count)) break
+        transferCount.forEach { if (generator.canExtractAndReceive(currentContainer, it)) return@launch }
     }
 }
