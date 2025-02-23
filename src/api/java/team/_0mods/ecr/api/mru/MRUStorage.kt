@@ -18,6 +18,8 @@ interface MRUStorage {
 
     val isEmpty: Boolean get() = mru == 0
 
+    fun comparableWith(storage: MRUStorage): Boolean = this.mruType == storage.mruType
+
     fun extractMru(max: Int, simulate: Boolean = false): Int {
         val extracted = min(mru, max)
         if (!simulate) mru -= extracted

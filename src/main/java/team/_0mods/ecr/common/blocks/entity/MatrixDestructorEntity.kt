@@ -1,7 +1,6 @@
 package team._0mods.ecr.common.blocks.entity
 
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.world.MenuProvider
@@ -12,17 +11,15 @@ import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraftforge.common.capabilities.Capability
-import net.minecraftforge.common.capabilities.ForgeCapabilities
-import net.minecraftforge.common.util.LazyOptional
-import net.minecraftforge.items.IItemHandler
-import net.minecraftforge.items.ItemStackHandler
 import ru.hollowhorizon.hc.client.utils.get
 import ru.hollowhorizon.hc.common.capabilities.CapabilityInstance
 import ru.hollowhorizon.hc.common.capabilities.HollowCapabilityV2
+import ru.hollowhorizon.hc.common.capabilities.containers.HollowContainer
+import ru.hollowhorizon.hc.common.capabilities.containers.container
 import ru.hollowhorizon.hc.common.objects.blocks.HollowBlockEntity
+import team._0mods.ecr.api.item.ItemStorage
 import team._0mods.ecr.api.item.SoulStoneLike
-import team._0mods.ecr.api.mru.MRUGenerator
+import team._0mods.ecr.api.mru.MRUHolder
 import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUTypes
 import team._0mods.ecr.api.utils.SoulStoneUtils.capacity
@@ -32,33 +29,14 @@ import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.menu.MatrixDestructorMenu
 
 class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
-    HollowBlockEntity(ECRegistry.matrixDestructorEntity.get(), pos, blockState), MenuProvider, MRUGenerator {
-    val itemHandler = object : ItemStackHandler(1) {
-        override fun onContentsChanged(slot: Int) {
-            setChanged()
-        }
-    }
-
-    private var itemHandlerLazy = LazyOptional.empty<IItemHandler>()
-    @JvmField
-    var status: MatrixDestructorStatus? = null
-
+    HollowBlockEntity(ECRegistry.matrixDestructorEntity.get(), pos, blockState), MenuProvider, MRUHolder {
+    @JvmField var status: MatrixDestructorStatus? = null
     var progress = 0
 
     override val mruContainer = this[MRUContainer::class]
-
-    override fun onLoad() {
-        super.onLoad()
-        itemHandlerLazy = LazyOptional.of(::itemHandler)
-    }
-
-    override fun invalidateCaps() {
-        super.invalidateCaps()
-        itemHandlerLazy.invalidate()
-    }
+    override val holderType: MRUHolder.MRUHolderType = MRUHolder.MRUHolderType.TRANSLATOR
 
     override fun saveAdditional(tag: CompoundTag) {
-        tag.put("ItemStorage", itemHandler.serializeNBT())
         tag.putInt("InjectionProgress", progress)
 
         if (status == null) tag.remove("Status")
@@ -68,7 +46,6 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
     }
 
     override fun load(tag: CompoundTag) {
-        itemHandler.deserializeNBT(tag.getCompound("ItemStorage"))
         progress = tag.getInt("InjectionProgress")
         if (tag.contains("Status")) {
             val t = tag.getString("Status")
@@ -82,17 +59,11 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
         super.load(tag)
     }
 
-    override fun <T : Any?> getCapability(cap: Capability<T>, side: Direction?): LazyOptional<T> {
-        if (cap == ForgeCapabilities.ITEM_HANDLER) return itemHandlerLazy.cast()
-
-        return super.getCapability(cap, side)
-    }
-
     override fun createMenu(id: Int, inv: Inventory, arg2: Player): AbstractContainerMenu? {
         return MatrixDestructorMenu(
             id,
             inv,
-            this.itemHandler,
+            this[ItemContainer::class].items,
             this,
             ContainerLevelAccess.create(this.level ?: return null, this.blockPos)
         )
@@ -106,6 +77,11 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
         override val maxMRUStorage: Int = 10000
 
         override val mruType: MRUTypes = MRUTypes.RADIATION_UNIT
+    }
+
+    @HollowCapabilityV2(MatrixDestructorEntity::class)
+    class ItemContainer: CapabilityInstance(), ItemStorage {
+        override val items: HollowContainer by container(1)
     }
 
     enum class MatrixDestructorStatus {
@@ -132,7 +108,7 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MatrixDestructorEntity) {
             if (level.isClientSide || be.mruContainer.mru >= be.mruContainer.maxMRUStorage) return
 
-            val stack = be.itemHandler.getStackInSlot(0)
+            val stack = be[ItemContainer::class].items.getItem(0)
             if (stack.isEmpty) return
 
             val storage = stack.capacity

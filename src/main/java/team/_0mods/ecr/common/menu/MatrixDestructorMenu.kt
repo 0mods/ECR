@@ -1,15 +1,15 @@
 package team._0mods.ecr.common.menu
 
 import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.world.Container
+import net.minecraft.world.SimpleContainer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.entity.BlockEntity
-import net.minecraftforge.items.IItemHandler
-import net.minecraftforge.items.ItemStackHandler
 import team._0mods.ecr.api.container.AbstractMenu
-import team._0mods.ecr.api.container.slot.SpecialSlot
+import team._0mods.ecr.api.container.slot.VanillaSpecialSlot
 import team._0mods.ecr.api.item.SoulStoneLike
 import team._0mods.ecr.api.utils.SoulStoneUtils.owner
 import team._0mods.ecr.common.init.registry.ECRegistry
@@ -17,18 +17,18 @@ import team._0mods.ecr.common.init.registry.ECRegistry
 class MatrixDestructorMenu(
     containerId: Int,
     inv: Inventory,
-    container: IItemHandler,
+    container: Container,
     val blockEntity: BlockEntity?,
     access: ContainerLevelAccess
 ) : AbstractMenu(
     ECRegistry.matrixDestructorMenu.get(), containerId, access
 ) {
     constructor(containerId: Int, inv: Inventory, buf: FriendlyByteBuf): this(
-        containerId, inv, ItemStackHandler(1), inv.player.commandSenderWorld.getBlockEntity(buf.readBlockPos()), ContainerLevelAccess.NULL
+        containerId, inv, SimpleContainer(1), inv.player.commandSenderWorld.getBlockEntity(buf.readBlockPos()), ContainerLevelAccess.NULL
     )
 
     init {
-        addSlot(SpecialSlot(container, 0, 80, 60, {
+        addSlot(VanillaSpecialSlot(container, 0, 80, 60, {
             if (it.item is SoulStoneLike) it.owner != null
             else false
         }))

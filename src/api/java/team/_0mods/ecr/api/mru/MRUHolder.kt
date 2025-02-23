@@ -31,13 +31,13 @@ interface MRUHolder {
     val holderType: MRUHolderType
 
     enum class MRUHolderType {
-        RECEIVER, TRANSLATOR, STORAGE, IO;
+        RECEIVER, TRANSLATOR, IO;
 
         val isExporter: Boolean get() = this == TRANSLATOR || this.isUniversal
 
         val isUniversal: Boolean get() = this == IO
 
-        val isStorage: Boolean get() = this == STORAGE || this.isUniversal
+        val isReceiver: Boolean get() = this == RECEIVER || this.isUniversal
     }
 
     data class LocatorData(val locatorStorage: ItemStorage, val locatorSlot: Int)
@@ -50,35 +50,22 @@ fun MRUHolder.processReceive(level: Level) {
 
     val stack = this.locator?.let { it.locatorStorage.items.getItem(it.locatorSlot) } ?: return
     LOGGER.info("Stack was loaded")
-    val item = stack.item as? BoundGem
-    if (item == null) {
-        LOGGER.info("It is not Bound Gem. Item: ${stack.item.descriptionId}")
-        return
-    }
-    LOGGER.info("Stack is Bound Gem")
-    val pos = item.getBoundPos(stack) ?: return
-    LOGGER.info("Position: $pos")
-    val server = level.server ?: return
-    LOGGER.info("Server is loaded")
-    val world = item.getBoundedWorld(stack)
-    LOGGER.info("World was taken")
+    val item = stack.item as? BoundGem ?: return
 
-    val dimensionalLevel = world?.let { server.getLevel(ResourceKey.create(Registries.DIMENSION, world.rl)) }
-    val exporterBlockEntity = ((dimensionalLevel ?: level).getBlockEntity(pos)) as? MRUHolder ?: return
-    LOGGER.info("Block Entity founded")
+    val pos = item.getBoundPos(stack) ?: return
+    val server = level.server ?: return
+    val world = item.getBoundedWorld(stack)
+
+    val logicalLevel = world?.let { server.getLevel(ResourceKey.create(Registries.DIMENSION, world.rl)) } ?: level
+    val exporterBlockEntity = logicalLevel.getBlockEntity(pos) as? MRUHolder ?: return
 
     if (!exporterBlockEntity.holderType.isExporter) return
-    LOGGER.info("Attached block is exporter")
-
-    if (exporterBlockEntity.mruContainer.mruType != this.mruContainer.mruType) {
-        LOGGER.warn("MRU Types are not matches!")
-        LOGGER.warn("Provided: ${exporterBlockEntity.mruContainer.mruType.displayName.string}; Needed: ${this.mruContainer.mruType.displayName.string}")
-        return
-    }
-    LOGGER.info("Mru types was matched")
+    if (!this.holderType.isReceiver) return
 
     val currentContainer = this.mruContainer
     val generator = exporterBlockEntity.mruContainer
+
+    if (!currentContainer.comparableWith(generator)) return
 
     GlobalScope.launch {
         val transferCount = item.transferStrength.reversedArray()

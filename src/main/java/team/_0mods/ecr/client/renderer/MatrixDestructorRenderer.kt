@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemDisplayContext
+import ru.hollowhorizon.hc.client.utils.get
 import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 
 class MatrixDestructorRenderer(private val ctx: BlockEntityRendererProvider.Context): BlockEntityRenderer<MatrixDestructorEntity> {
@@ -18,7 +19,7 @@ class MatrixDestructorRenderer(private val ctx: BlockEntityRendererProvider.Cont
         packedLight: Int,
         packedOverlay: Int
     ) {
-        val stack = blockEntity.itemHandler.getStackInSlot(0)
+        val stack = blockEntity[MatrixDestructorEntity.ItemContainer::class].items.getItem(0)
 
         if (!stack.isEmpty) {
             poseStack.apply {

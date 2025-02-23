@@ -22,7 +22,10 @@ import ru.hollowhorizon.hc.common.capabilities.containers.HollowContainer
 import ru.hollowhorizon.hc.common.capabilities.containers.container
 import ru.hollowhorizon.hc.common.objects.blocks.HollowBlockEntity
 import team._0mods.ecr.api.item.ItemStorage
-import team._0mods.ecr.api.mru.*
+import team._0mods.ecr.api.mru.MRUHolder
+import team._0mods.ecr.api.mru.MRUStorage
+import team._0mods.ecr.api.mru.MRUTypes
+import team._0mods.ecr.api.mru.processReceive
 import team._0mods.ecr.common.api.ContainerLevelAccess
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.menu.XLikeMenu
@@ -32,7 +35,7 @@ abstract class XLikeBlockEntity(
     bet: BlockEntityType<*>,
     pos: BlockPos,
     state: BlockState
-): HollowBlockEntity(bet, pos, state), MenuProvider, MRUReceivable {
+): HollowBlockEntity(bet, pos, state), MenuProvider, MRUHolder {
     protected val containerData: ContainerData = object : ContainerData {
         override fun get(index: Int): Int  = when (index) {
             0 -> this@XLikeBlockEntity.progress
@@ -52,6 +55,11 @@ abstract class XLikeBlockEntity(
 
     var progress = 0
     var maxProgress = 0
+
+    override val holderType: MRUHolder.MRUHolderType = MRUHolder.MRUHolderType.RECEIVER
+
+    abstract override val mruContainer: MRUStorage
+    abstract override val locator: MRUHolder.LocatorData
 
     override fun saveAdditional(tag: CompoundTag) {
         tag.putInt("Progress", progress)
@@ -105,8 +113,6 @@ abstract class XLikeBlockEntity(
         }
     }
 
-    abstract override val mruContainer: MRUStorage
-
     private fun XLikeBlockEntity.processTick(time: Int, mru: Int) {
         val storage = this.mruContainer
         if (this.progress >= time) return
@@ -122,8 +128,6 @@ abstract class XLikeBlockEntity(
         this.maxProgress = 0
         this.setChanged()
     }
-
-    abstract override val locator: MRUHolder.LocatorData
 
     @HollowCapabilityV2(XLikeBlockEntity::class)
     class MRUContainer: CapabilityInstance(), MRUStorage {

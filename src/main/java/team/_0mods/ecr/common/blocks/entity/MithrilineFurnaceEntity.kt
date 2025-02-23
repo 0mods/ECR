@@ -20,7 +20,7 @@ import ru.hollowhorizon.hc.common.objects.blocks.HollowBlockEntity
 import team._0mods.ecr.api.block.StructuralPosition
 import team._0mods.ecr.api.block.inventory.WrappedHollowInventory
 import team._0mods.ecr.api.item.ItemStorage
-import team._0mods.ecr.api.mru.MRUReceivable
+import team._0mods.ecr.api.mru.MRUHolder
 import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUTypes
 import team._0mods.ecr.api.utils.StackHelper
@@ -31,7 +31,8 @@ import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.menu.MithrilineFurnaceMenu
 import kotlin.math.floor
 
-class MithrilineFurnaceEntity(pos: BlockPos, state: BlockState) : HollowBlockEntity(ECRegistry.mithrilineFurnaceEntity.get(), pos, state), MenuProvider, MRUReceivable {
+class MithrilineFurnaceEntity(pos: BlockPos, state: BlockState) : HollowBlockEntity(ECRegistry.mithrilineFurnaceEntity.get(), pos, state), MenuProvider,
+    MRUHolder {
     private val containerData: ContainerData = object : ContainerData {
         override fun get(index: Int): Int = when (index) {
             0 -> this@MithrilineFurnaceEntity.craftProgress
@@ -88,6 +89,8 @@ class MithrilineFurnaceEntity(pos: BlockPos, state: BlockState) : HollowBlockEnt
     override fun getDisplayName(): Component = Component.empty()
 
     override val mruContainer: MRUStorage = this[MRUContainer::class]
+
+    override val holderType: MRUHolder.MRUHolderType = MRUHolder.MRUHolderType.RECEIVER
 
     @HollowCapabilityV2(MithrilineFurnaceEntity::class)
     class ItemContainer: CapabilityInstance(), ItemStorage {
