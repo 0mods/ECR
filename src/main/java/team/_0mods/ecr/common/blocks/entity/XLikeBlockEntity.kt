@@ -99,7 +99,10 @@ abstract class XLikeBlockEntity(
                 this.processTick(time, mru)
                 if (this.progress >= time) {
                     inv.clearContent()
-                    (0 ..< 5).forEach { container.removeItem(it, recipe.ingredients[it].items[0].count) }
+                    (0 ..< 5).forEach {
+                        if (!container.getItem(it).isEmpty)
+                            container.removeItem(it, recipe.ingredients[it].items[0].count)
+                    }
 
                     if (container.getItem(5).isEmpty)
                         container.setItem(5, result.copy())

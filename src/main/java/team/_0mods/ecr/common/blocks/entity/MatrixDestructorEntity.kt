@@ -108,7 +108,10 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MatrixDestructorEntity) {
             if (level.isClientSide || be.mruContainer.mru >= be.mruContainer.maxMRUStorage) return
 
-            val stack = be[ItemContainer::class].items.getItem(0)
+            val container = be[ItemContainer::class]
+            container.synchronize()
+
+            val stack = container.items.getItem(0)
             if (stack.isEmpty) return
 
             val storage = stack.capacity

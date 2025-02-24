@@ -3,7 +3,12 @@
   "catalyst": {
     "type": "forge:nbt",
     "item": "ecreimagined:research_book",
-    "nbt": "{ECBookTypes:[\"ecreimagined:basic\",\"ecreimagined:mru\"]}"
+    "nbt": {
+      "ECBookTypes": [
+        "ecreimagined:basic",
+        "ecreimagined:mru"
+      ]
+    }
   },
   "time": 100,
   "mru": 1,
