@@ -29,7 +29,7 @@ class Envoyer(properties: Properties) : PropertiedEntityBlock(properties), LowSi
         level: Level,
         state: BlockState,
         blockEntityType: BlockEntityType<T>
-    ): BlockEntityTicker<T> = simpleTicker<T, XLikeBlockEntity.Envoyer>(XLikeBlockEntity.Envoyer::onTick)
+    ): BlockEntityTicker<T> = simpleTicker(XLikeBlockEntity.Envoyer::onTick)
 
     override fun use(
         state: BlockState,

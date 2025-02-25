@@ -7,7 +7,7 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
-import net.minecraftforge.fml.ModList
+import ru.hollowhorizon.hc.client.utils.ModList
 import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.api.ModId
@@ -19,13 +19,13 @@ class SoulStoneDataReloadListener(private val json: Json): SimplePreparableReloa
 
     @OptIn(ExperimentalSerializationApi::class)
     override fun apply(`object`: Unit, resourceManager: ResourceManager, profiler: ProfilerFiller) {
-        resourceManager.listResources("soul_stone") { it.path.endsWith(".json") }.forEach {
+        resourceManager.listResources("settings/soul_stone") { it.path.endsWith(".json") && !it.path.split('/').last().startsWith('_') }.forEach {
             val data = json.decodeFromStream(SoulStoneData.serializer(), it.value.open())
             val id = data.entity.rl
             val entity = if (BuiltInRegistries.ENTITY_TYPE.containsKey(id)) BuiltInRegistries.ENTITY_TYPE.get(id) else null
 
-            if (!ModList.get().isLoaded(id.namespace)) {
-                LOGGER.info("Mod ${id.namespace} is not loaded! Skipping loading soul stone data for entity \"${id}\" (${it.key})")
+            if (!ModList.isLoaded(id.namespace)) {
+                LOGGER.warn("Mod ${id.namespace} is not loaded! Skipping loading soul stone data for entity \"${id}\" (${it.key})")
                 return@forEach
             }
 

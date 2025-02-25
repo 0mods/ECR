@@ -13,7 +13,8 @@ class VanillaSpecialSlot(
     private val place: (VanillaSpecialSlot.(ItemStack) -> Boolean)? = null,
     private val pickup: (VanillaSpecialSlot.(Player) -> Boolean)? = null,
     private val stackSize: Int? = null,
-    private val stackSizeWithItem: ((ItemStack) -> Int)? = null
+    private val stackSizeWithItem: (VanillaSpecialSlot.(ItemStack) -> Int)? = null,
+    private val isHighlightable: (VanillaSpecialSlot.() -> Boolean)? = null
 ) : Slot(container, index, x, y) {
     override fun getMaxStackSize(): Int = this.stackSize ?: super.getMaxStackSize()
 
@@ -22,4 +23,6 @@ class VanillaSpecialSlot(
     override fun mayPlace(stack: ItemStack): Boolean = this.place?.let { it(stack) } ?: super.mayPlace(stack)
 
     override fun mayPickup(player: Player): Boolean = this.pickup?.let { it(player) } ?: super.mayPickup(player)
+
+    override fun isHighlightable(): Boolean = this.isHighlightable?.let { it() } ?: super.isHighlightable()
 }

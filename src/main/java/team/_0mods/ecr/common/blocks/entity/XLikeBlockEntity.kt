@@ -141,17 +141,18 @@ abstract class XLikeBlockEntity(
 
     @HollowCapabilityV2(XLikeBlockEntity::class)
     class ItemContainer: CapabilityInstance(), ItemStorage {
-        var size by syncable(64)
-        override val items by container(SizeableContainer(size))
+        internal var stackSize by syncable(64)
+        internal var containerSize by syncable(7)
+        override val items by container(SizeableContainer(stackSize))
 
-        inner class SizeableContainer(private val containerSize: Int): HollowContainer(this, 7, { slot, _ -> slot == 5 }) {
-            override fun getContainerSize(): Int = containerSize
+        inner class SizeableContainer(private val stackSize: Int): HollowContainer(this, containerSize, { slot, _ -> slot == 5 }) {
+            override fun getContainerSize(): Int = stackSize
         }
     }
 
     class Envoyer(pos: BlockPos, state: BlockState): XLikeBlockEntity(ECRegistry.envoyerEntity.get(), pos, state) {
         init {
-            this[ItemContainer::class].size = 1
+            this[ItemContainer::class].stackSize = 1
         }
 
         override fun createMenu(
@@ -176,6 +177,10 @@ abstract class XLikeBlockEntity(
     }
 
     class MagicTable(pos: BlockPos, state: BlockState): XLikeBlockEntity(ECRegistry.magicTableEntity.get(), pos, state) {
+        init {
+            this[ItemContainer::class].containerSize = 8
+        }
+
         override fun createMenu(
             id: Int,
             inv: Inventory,

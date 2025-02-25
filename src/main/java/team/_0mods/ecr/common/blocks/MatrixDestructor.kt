@@ -30,7 +30,7 @@ class MatrixDestructor(properties: Properties) : PropertiedEntityBlock(propertie
         level: Level,
         state: BlockState,
         blockEntityType: BlockEntityType<T>,
-    ): BlockEntityTicker<T> = simpleTicker<T, MatrixDestructorEntity>(MatrixDestructorEntity::onTick)
+    ): BlockEntityTicker<T> = simpleTicker(MatrixDestructorEntity::onTick)
 
     override fun use(
         state: BlockState,

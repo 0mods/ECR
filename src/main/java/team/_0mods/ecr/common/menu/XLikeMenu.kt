@@ -134,6 +134,8 @@ abstract class XLikeMenu(
     ): XLikeMenu(ECRegistry.magicTableMenu.get(), containerId, inv, container, blockEntity, access, data) {
         init {
             buildSlots(container, inv)
+
+            addSlot(VanillaSpecialSlot(container, 7, 152, 17, { false }, { false }, isHighlightable = { !container.getItem(7).isEmpty }))
         }
 
         constructor(
@@ -143,7 +145,7 @@ abstract class XLikeMenu(
         ): this(
             id,
             inv,
-            SimpleContainer(7),
+            SimpleContainer(8),
             be(inv.player.commandSenderWorld, buf.readBlockPos()),
             ContainerLevelAccess.NULL,
             SimpleContainerData(2)

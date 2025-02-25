@@ -1,23 +1,20 @@
-@file:Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE)
-
 package team._0mods.ecr.common.init.events
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import net.minecraft.client.Minecraft
-import net.minecraftforge.event.AddReloadListenerEvent
-import net.minecraftforge.event.RegisterCommandsEvent
-import net.minecraftforge.event.entity.player.PlayerInteractEvent
-import net.minecraftforge.eventbus.api.SubscribeEvent
-import net.minecraftforge.fml.common.Mod
+import ru.hollowhorizon.hc.common.events.entity.player.PlayerInteractEvent
+import ru.hollowhorizon.hc.common.events.registry.RegisterCommandsEvent
+import ru.hollowhorizon.hc.common.events.registry.RegisterReloadListenersEvent
 import team._0mods.ecr.client.screen.book.ECBookScreen
 import team._0mods.ecr.common.data.ResearchBookData
 import team._0mods.ecr.common.init.registry.ECCommands
 import team._0mods.ecr.common.init.registry.reload.ConfigReloadListener
-import team._0mods.ecr.common.init.registry.reload.ECStructureReloadListener
+import team._0mods.ecr.common.init.registry.reload.MagicTableIncreaseDataReloadListener
 import team._0mods.ecr.common.init.registry.reload.SoulStoneDataReloadListener
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECBook.Companion.bookTypes
+import ru.hollowhorizon.hc.common.events.SubscribeEvent as HCSubscribe
 
 @OptIn(ExperimentalSerializationApi::class)
 private val json = Json {
@@ -30,10 +27,10 @@ private val json = Json {
     allowTrailingComma = true
 }
 
-@SubscribeEvent
-fun onBookUsed(e: PlayerInteractEvent.RightClickItem) {
-    val player = e.entity
-    val level = e.level
+@HCSubscribe
+fun onBookUsed(e: PlayerInteractEvent.ItemInteract) {
+    val player = e.player
+    val level = player.level()
     val hand = e.hand
     val stack = player.getItemInHand(hand)
     val item = stack.item
@@ -47,14 +44,14 @@ fun onBookUsed(e: PlayerInteractEvent.RightClickItem) {
     }
 }
 
-@SubscribeEvent
+@HCSubscribe
 fun onCommandRegister(e: RegisterCommandsEvent) {
     ECCommands.register(e.dispatcher)
 }
 
-@SubscribeEvent
-fun onRegisterReloadListener(e: AddReloadListenerEvent) {
-    e.addListener(SoulStoneDataReloadListener(json))
-    e.addListener(ECStructureReloadListener(json))
-    e.addListener(ConfigReloadListener())
+@HCSubscribe
+fun onRegisterReloadListener(e: RegisterReloadListenersEvent.Server) {
+    e.register(SoulStoneDataReloadListener(json))
+    e.register(ConfigReloadListener())
+    e.register(MagicTableIncreaseDataReloadListener(json))
 }
