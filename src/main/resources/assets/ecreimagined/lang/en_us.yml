@@ -82,7 +82,7 @@ tooltip.ecreimagined:
       .: Bound gem was bounded at pos
       revoked: Bound gem was unbounded
       pos: Currently bound to position at
-      not_mru: Soul Stone is linked to a position where no MRU devices are detected #Камень души привязан к позиции, где не обнаружено MRU устройств
+      not_mru: Bound gem is linked to a position where no MRU devices are detected
     dimension:
       .: Dimension
       disallowed: Current Bound Gem is not supports the dimension bounds
