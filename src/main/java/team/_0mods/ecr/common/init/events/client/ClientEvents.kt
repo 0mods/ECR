@@ -7,12 +7,19 @@ import net.minecraft.world.item.SwordItem
 import ru.hollowhorizon.hc.client.utils.literal
 import ru.hollowhorizon.hc.client.utils.mcTranslate
 import ru.hollowhorizon.hc.common.events.client.ItemTooltipEvent
+import ru.hollowhorizon.hc.common.events.client.render.RegisterEntityLayersDefinitions
+import ru.hollowhorizon.hc.common.events.registry.RegisterBlockEntityRenderersEvent
 import ru.hollowhorizon.hc.common.events.registry.RegisterKeyBindingsEvent
+import ru.hollowhorizon.hc.common.events.registry.RegisterParticlesEvent
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.item.BoundGem
 import team._0mods.ecr.api.mru.MRUHolder
 import team._0mods.ecr.api.mru.MRUMultiplierWeapon
 import team._0mods.ecr.client.keys.ECKeys
+import team._0mods.ecr.client.particle.ECParticleFactory
+import team._0mods.ecr.client.renderer.MatrixDestructorRenderer
+import team._0mods.ecr.client.renderer.MithrilineFurnaceRenderer
+import team._0mods.ecr.common.init.registry.ECRegistry
 import ru.hollowhorizon.hc.common.events.SubscribeEvent as HCSubscribe
 
 @HCSubscribe
@@ -30,17 +37,17 @@ fun onItemTooltip(e: ItemTooltipEvent) {
 
     if (item is BoundGem) {
         val level = Minecraft.getInstance().level ?: return
-        val pos = item.getBoundPos(stack)
-        val blockEntity = pos?.let { level.getBlockEntity(pos) }
+        val pos = item.getBoundPos(stack) ?: return
+        val blockEntity = pos.let { level.getBlockEntity(pos) }
         tooltip.add("tooltip.$ModId.bound_gem.linked.pos".mcTranslate.append(":").withStyle(ChatFormatting.GOLD))
         tooltip.add(
             "X".literal.withStyle(ChatFormatting.RED).append(": ")
-                .append("${pos?.x}".literal).append(" ")
+                .append("${pos.x}".literal).append(" ")
                 .append("Y".literal.withStyle(ChatFormatting.GREEN).append(": ")
-                    .append("${pos?.y}".literal).append(" "))
+                    .append("${pos.y}".literal).append(" "))
                 .append(
                     "Z".literal.withStyle(ChatFormatting.BLUE).append(": ")
-                        .append("${pos?.z}".literal))
+                        .append("${pos.z}".literal))
         )
 
         if (blockEntity == null || blockEntity !is MRUHolder || !blockEntity.holderType.isExporter) {
@@ -55,4 +62,20 @@ fun onItemTooltip(e: ItemTooltipEvent) {
 @HCSubscribe
 fun onKeyBindRegister(e: RegisterKeyBindingsEvent) {
     ECKeys.kbList.forEach(e::registerKeyMapping)
+}
+
+@HCSubscribe
+fun onRenderRegister(e: RegisterBlockEntityRenderersEvent) {
+    e.registerEntity(ECRegistry.mithrilineFurnaceEntity.get(), ::MithrilineFurnaceRenderer)
+    e.registerEntity(ECRegistry.matrixDestructorEntity.get(), ::MatrixDestructorRenderer)
+}
+
+@HCSubscribe
+fun onParticleRegister(e: RegisterParticlesEvent) {
+    e.registerSpriteSet(ECRegistry.ecParticle.get(), ::ECParticleFactory)
+}
+
+@HCSubscribe
+fun onLayersRegister(e: RegisterEntityLayersDefinitions) {
+    e.registerLayerDefinition(MithrilineFurnaceRenderer.MF_LAYER, MithrilineFurnaceRenderer::createBodyLayer)
 }

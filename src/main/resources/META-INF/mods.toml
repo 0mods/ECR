@@ -8,6 +8,7 @@ license="${modLicense}"
     credits="${modCredits}"
     authors="${modAuthors}"
     description='''${modDesc}'''
+    logoFile = "ecr.png"
 [[dependencies.${modId}]]
     modId="forge"
     mandatory=true

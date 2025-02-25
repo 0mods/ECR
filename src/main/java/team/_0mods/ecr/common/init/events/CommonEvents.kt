@@ -3,12 +3,20 @@ package team._0mods.ecr.common.init.events
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import net.minecraft.client.Minecraft
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.world.item.BlockItem
+import net.minecraft.world.item.ItemStack
 import ru.hollowhorizon.hc.common.events.entity.player.PlayerInteractEvent
+import ru.hollowhorizon.hc.common.events.item.BuildTabContentsEvent
 import ru.hollowhorizon.hc.common.events.registry.RegisterCommandsEvent
 import ru.hollowhorizon.hc.common.events.registry.RegisterReloadListenersEvent
+import team._0mods.ecr.api.ModId
+import team._0mods.ecr.api.item.HasSubItem
 import team._0mods.ecr.client.screen.book.ECBookScreen
+import team._0mods.ecr.common.api.NoTab
 import team._0mods.ecr.common.data.ResearchBookData
 import team._0mods.ecr.common.init.registry.ECCommands
+import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.init.registry.reload.ConfigReloadListener
 import team._0mods.ecr.common.init.registry.reload.MagicTableIncreaseDataReloadListener
 import team._0mods.ecr.common.init.registry.reload.SoulStoneDataReloadListener
@@ -54,4 +62,18 @@ fun onRegisterReloadListener(e: RegisterReloadListenersEvent.Server) {
     e.register(SoulStoneDataReloadListener(json))
     e.register(ConfigReloadListener())
     e.register(MagicTableIncreaseDataReloadListener(json))
+}
+
+@HCSubscribe
+fun onBuildCreativeTabs(e: BuildTabContentsEvent) {
+    BuiltInRegistries.ITEM.filter { BuiltInRegistries.ITEM.getKey(it).namespace.contains(ModId) }.forEach {
+        if (it is NoTab) return@forEach
+
+        if (it is HasSubItem) {
+            it.addSubItems(ItemStack(it)).forEach { stack -> e.acceptFor(ECRegistry.tabItems.get(), stack) }
+            return@forEach
+        }
+
+        e.acceptFor(if (it is BlockItem) ECRegistry.tabBlocks.get() else ECRegistry.tabItems.get()) { it }
+    }
 }

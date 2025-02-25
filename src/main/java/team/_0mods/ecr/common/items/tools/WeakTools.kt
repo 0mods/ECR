@@ -38,6 +38,5 @@ class WeakSword : SwordItem(
     -2.4f,
     Properties()
 ), MRUMultiplierWeapon {
-    override val multiplier: Float
-        get() = 1.2f
+    override val multiplier: Float = 1.2f
 }
