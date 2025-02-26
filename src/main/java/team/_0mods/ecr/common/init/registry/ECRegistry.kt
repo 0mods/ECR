@@ -12,7 +12,7 @@ import ru.hollowhorizon.hc.common.registry.AutoModelType
 import ru.hollowhorizon.hc.common.registry.HollowRegistry
 import ru.hollowhorizon.hc.common.registry.RegistryObject
 import team._0mods.ecr.api.ModId
-import team._0mods.ecr.api.block.entity.simpleBlockEntityType
+import team._0mods.ecr.api.utils.simpleBlockEntityType
 import team._0mods.ecr.api.utils.creativeTabBuilder
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.api.utils.simpleMenuFactory

@@ -6,3 +6,5 @@ accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScr
 accessible field net/minecraft/client/gui/screens/inventory/AbstractContainerScreen imageHeight I
 
 accessible field net/minecraft/client/renderer/ItemBlockRenderTypes TYPE_BY_BLOCK Ljava/util/Map;
+
+accessible method net/minecraft/server/level/ServerPlayer nextContainerCounter ()V

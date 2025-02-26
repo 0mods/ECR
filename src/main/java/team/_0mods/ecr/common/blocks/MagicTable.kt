@@ -16,10 +16,10 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
 import ru.hollowhorizon.hc.client.utils.get
-import team._0mods.ecr.api.block.checkAndOpenMenu
+import team._0mods.ecr.api.utils.checkAndOpenMenu
 import team._0mods.ecr.api.block.client.LowSizeBreakParticle
-import team._0mods.ecr.api.block.prepareDrops
-import team._0mods.ecr.api.block.simpleTicker
+import team._0mods.ecr.api.utils.prepareDrops
+import team._0mods.ecr.api.utils.simpleTicker
 import team._0mods.ecr.common.api.PropertiedEntityBlock
 import team._0mods.ecr.common.blocks.entity.XLikeBlockEntity
 import team._0mods.ecr.common.init.registry.ECRegistry

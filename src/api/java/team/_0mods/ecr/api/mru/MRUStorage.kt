@@ -40,7 +40,6 @@ interface MRUStorage {
         if (receiver.canReceive(max) && this.canExtract(max)) {
             this.extractMru(max)
             receiver.receiveMru(max)
-            LOGGER.info("receive ${max} success")
             return true
         }
 
