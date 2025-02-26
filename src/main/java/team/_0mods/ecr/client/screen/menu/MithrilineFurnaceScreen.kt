@@ -43,6 +43,6 @@ class MithrilineFurnaceScreen(
     }
 
     override fun renderBg(guiGraphics: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
-        guiGraphics.defaultBlit(texture, this.guiLeft, this.guiTop)
+        guiGraphics.defaultBlit(texture, this.guiPosLeft, this.guiPosTop)
     }
 }

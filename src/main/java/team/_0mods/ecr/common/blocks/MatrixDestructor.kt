@@ -15,6 +15,7 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
+import ru.hollowhorizon.hc.client.utils.get
 import team._0mods.ecr.api.block.checkAndOpenMenu
 import team._0mods.ecr.api.block.client.LowSizeBreakParticle
 import team._0mods.ecr.api.block.prepareDrops
@@ -43,7 +44,7 @@ class MatrixDestructor(properties: Properties) : PropertiedEntityBlock(propertie
 
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
-        prepareDrops<MatrixDestructorEntity>(state, level, pos, newState)
+        prepareDrops<MatrixDestructorEntity>({ it[MatrixDestructorEntity.ItemContainer::class].items }, state, level, pos, newState)
 
         super.onRemove(state, level, pos, newState, isMoving)
     }

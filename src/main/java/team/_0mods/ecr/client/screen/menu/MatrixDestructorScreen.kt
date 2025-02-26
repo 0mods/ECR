@@ -6,10 +6,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.api.ModId
-import team._0mods.ecr.api.client.defaultBlit
-import team._0mods.ecr.api.client.drawMRULine
-import team._0mods.ecr.api.client.xPos
-import team._0mods.ecr.api.client.yPos
+import team._0mods.ecr.api.client.*
 import team._0mods.ecr.client.screen.menu.widget.MatrixDestructorIndicator
 import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 import team._0mods.ecr.common.menu.MatrixDestructorMenu
@@ -45,7 +42,7 @@ class MatrixDestructorScreen(
     }
 
     override fun renderBg(gg: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
-        gg.defaultBlit(texture, this.guiLeft, this.guiTop)
+        gg.defaultBlit(texture, this.guiPosLeft, this.guiPosTop)
 
         val be = menu.blockEntity
         if (be is MatrixDestructorEntity) {

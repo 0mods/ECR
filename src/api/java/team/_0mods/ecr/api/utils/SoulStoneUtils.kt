@@ -1,7 +1,6 @@
 package team._0mods.ecr.api.utils
 
 import net.minecraft.world.item.ItemStack
-import net.minecraftforge.server.ServerLifecycleHooks
 import org.jetbrains.annotations.NotNull
 import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.api.item.SoulStoneLike
@@ -27,11 +26,7 @@ object SoulStoneUtils {
             if (!tag.contains("SoulStoneOwner")) {
                 if (value != null) {
                     tag.putUUID("SoulStoneOwner", value)
-                    ServerLifecycleHooks.getCurrentServer()?.let { l ->
-                        l.playerList.getPlayer(value)?.let {
-                            tag.putString("SoulStoneOwnerName", it.name.string)
-                        }
-                    }
+                    tag.putString("SoulStoneOwnerName", "")
                 }
             } else {
                 if (value == null) {

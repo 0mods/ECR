@@ -1,6 +1,7 @@
 package team._0mods.ecr.datagen
+//? if forge {
 
-import net.minecraft.data.DataGenerator
+/*import net.minecraft.data.DataGenerator
 import net.minecraft.data.recipes.FinishedRecipe
 import net.minecraft.data.recipes.RecipeProvider
 import net.minecraft.world.item.Items
@@ -163,3 +164,4 @@ class ECRecipeProvider(generator: DataGenerator) : RecipeProvider(generator.pack
         MithrilineFurnaceRecipeBuilder.make(Items.BLUE_ICE).requires(Items.PACKED_ICE).espe(1).save(c)
     }
 }
+*///?}

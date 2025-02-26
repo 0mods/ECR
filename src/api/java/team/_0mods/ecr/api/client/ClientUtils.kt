@@ -8,6 +8,12 @@ import net.minecraft.resources.ResourceLocation
 import team._0mods.ecr.api.mru.MRUStorage
 import java.awt.Color
 
+val AbstractContainerScreen<*>.guiPosLeft: Int
+    get() = (this.width - this.imageWidth) / 2
+
+val AbstractContainerScreen<*>.guiPosTop: Int
+    get() = (this.height - this.imageHeight) / 2
+
 fun isCursorAtPos(cursorX: Int, cursorY: Int, x: Int, y: Int, width: Int, height: Int) : Boolean =
     cursorX >= x && cursorY >= y && cursorX <= x + width && cursorY <= y + height
 

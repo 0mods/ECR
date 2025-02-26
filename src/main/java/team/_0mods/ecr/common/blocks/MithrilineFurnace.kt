@@ -15,6 +15,7 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
+import ru.hollowhorizon.hc.client.utils.get
 import team._0mods.ecr.api.block.checkAndOpenMenu
 import team._0mods.ecr.api.block.prepareDrops
 import team._0mods.ecr.api.block.simpleTicker
@@ -50,7 +51,7 @@ class MithrilineFurnace(properties: Properties) : PropertiedEntityBlock(properti
         newState: BlockState,
         movedByPiston: Boolean
     ) {
-        prepareDrops<MithrilineFurnaceEntity>(state, level, pos, state)
+        prepareDrops<MithrilineFurnaceEntity>({ it[MithrilineFurnaceEntity.ItemContainer::class].items }, state, level, pos, state)
 
         super.onRemove(state, level, pos, newState, movedByPiston)
     }

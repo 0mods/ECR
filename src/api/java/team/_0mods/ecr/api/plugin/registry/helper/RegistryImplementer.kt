@@ -1,7 +1,6 @@
 package team._0mods.ecr.api.plugin.registry.helper
 
 import net.minecraft.resources.ResourceLocation
-import net.minecraftforge.fml.ModList
 import ru.hollowhorizon.hc.client.utils.rl
 import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.api.registries.Registrar
@@ -20,7 +19,7 @@ open class RegistryImplementer<T>(val modId: String, val registry: Registrar<T>)
         else
             LOGGER.warn(
                 "Oh... Mod: {} trying to register entry with id {}, because entry with this id is already registered! Skipping...",
-                ModList.get().getModContainerById(modId).get().modInfo.displayName,
+                modId,
                 id
             )
         return { type }

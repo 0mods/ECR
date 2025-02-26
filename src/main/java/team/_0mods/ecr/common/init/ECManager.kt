@@ -22,18 +22,14 @@ fun initCommon() {
 }
 
 fun initClient() {
-    val cutoutTextures by lazy {
-        listOf<Block>(
-            ECRegistry.airCluster.get(),
-            ECRegistry.earthCluster.get(),
-            ECRegistry.waterCluster.get(),
-            ECRegistry.flameCluster.get()
-        )
-    }
+    val renderers by lazy {
+        mapOf<Block, RenderType>(
+            ECRegistry.airCluster.get() to RenderType.cutout(),
+            ECRegistry.earthCluster.get() to RenderType.cutout(),
+            ECRegistry.waterCluster.get() to RenderType.cutout(),
+            ECRegistry.flameCluster.get() to RenderType.cutout(),
 
-    val invisibleTextures by lazy {
-        listOf<Block>(
-            ECRegistry.magicTable.get()
+            ECRegistry.magicTable.get() to RenderType.translucent()
         )
     }
 
@@ -50,6 +46,5 @@ fun initClient() {
         XLikeScreen.MagicTable(menu, inv, title)
     }
 
-    cutoutTextures.forEach { ItemBlockRenderTypes.setRenderLayer(it, RenderType.cutout()) }
-    invisibleTextures.forEach { ItemBlockRenderTypes.setRenderLayer(it, RenderType.translucent()) }
+    ItemBlockRenderTypes.TYPE_BY_BLOCK.putAll(renderers)
 }

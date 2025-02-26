@@ -4,14 +4,24 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import net.minecraft.client.Minecraft
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.entity.monster.Enemy
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.SwordItem
+import ru.hollowhorizon.hc.common.events.entity.LivingEntityDeathEvent
 import ru.hollowhorizon.hc.common.events.entity.player.PlayerInteractEvent
 import ru.hollowhorizon.hc.common.events.item.BuildTabContentsEvent
 import ru.hollowhorizon.hc.common.events.registry.RegisterCommandsEvent
 import ru.hollowhorizon.hc.common.events.registry.RegisterReloadListenersEvent
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.item.HasSubItem
+import team._0mods.ecr.api.item.SoulStoneLike
+import team._0mods.ecr.api.mru.MRUMultiplierWeapon
+import team._0mods.ecr.api.utils.SoulStoneUtils.addUBMRU
+import team._0mods.ecr.api.utils.SoulStoneUtils.isCreative
+import team._0mods.ecr.api.utils.SoulStoneUtils.owner
 import team._0mods.ecr.client.screen.book.ECBookScreen
 import team._0mods.ecr.common.api.NoTab
 import team._0mods.ecr.common.data.ResearchBookData
@@ -22,6 +32,9 @@ import team._0mods.ecr.common.init.registry.reload.MagicTableIncreaseDataReloadL
 import team._0mods.ecr.common.init.registry.reload.SoulStoneDataReloadListener
 import team._0mods.ecr.common.items.ECBook
 import team._0mods.ecr.common.items.ECBook.Companion.bookTypes
+import team._0mods.ecr.common.items.SoulStone.Companion.defaultCapacityAdd
+import team._0mods.ecr.common.items.SoulStone.Companion.defaultEnemyAdd
+import team._0mods.ecr.common.items.SoulStone.Companion.entityCapacityAdd
 import ru.hollowhorizon.hc.common.events.SubscribeEvent as HCSubscribe
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -76,4 +89,34 @@ fun onBuildCreativeTabs(e: BuildTabContentsEvent) {
 
         e.acceptFor(if (it is BlockItem) ECRegistry.tabBlocks.get() else ECRegistry.tabItems.get()) { it }
     }
+}
+
+@HCSubscribe
+fun onEntityDeath(e: LivingEntityDeathEvent) {
+    val source = e.source.entity ?: return
+    val ent = e.entity
+    if (source !is Player) return
+
+    val items = source.inventory.items.filter { it.item is SoulStoneLike }
+
+    if (items.isEmpty()) return
+
+    val item = items.random()
+
+    item.owner ?: return
+
+    if (item.isCreative) return
+    if (ent.isBaby && ent !is Enemy) return
+
+    val weapon = source.getItemInHand(InteractionHand.MAIN_HAND).item
+    val multiplier = if (weapon is MRUMultiplierWeapon && weapon is SwordItem) weapon.multiplier else 1f
+
+    val addCount = if (entityCapacityAdd.contains(ent.type))
+        entityCapacityAdd[ent.type]!!.random() * multiplier
+    else {
+        if (ent is Enemy) defaultEnemyAdd.random() * multiplier
+        else defaultCapacityAdd.random() * multiplier
+    }
+
+    item.addUBMRU(addCount)
 }

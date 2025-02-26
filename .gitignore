@@ -32,3 +32,5 @@ build/
 
 .cache/
 auth.data
+
+merged/

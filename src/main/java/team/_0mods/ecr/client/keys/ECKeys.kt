@@ -1,14 +1,14 @@
 package team._0mods.ecr.client.keys
 
 import net.minecraft.client.KeyMapping
-import net.minecraftforge.fml.loading.FMLLoader
 import org.lwjgl.glfw.GLFW
+import ru.hollowhorizon.hc.client.utils.isProduction
 import team._0mods.ecr.api.ModId
 
 object ECKeys {
     internal val kbList: List<KeyMapping> = mutableListOf()
 
-    val hideFurnaceKey by register(!FMLLoader.isProduction()) {
+    val hideFurnaceKey by register(!isProduction) {
         KeyMapping("key.$ModId.hide_furnace_renderer", GLFW.GLFW_KEY_RIGHT_BRACKET, "category.$ModId")
     }
 

@@ -15,6 +15,8 @@ import net.minecraft.client.renderer.texture.TextureAtlas
 import net.minecraft.client.renderer.texture.TextureManager
 import org.lwjgl.opengl.GL11
 import team._0mods.ecr.api.ModId
+import team._0mods.ecr.common.api.blurMipmap
+import team._0mods.ecr.common.api.restoreLastMipmapBlur
 import java.awt.Color
 
 class ECParticle(
@@ -64,13 +66,13 @@ class ECParticle(
             RenderSystem.depthMask(false)
             RenderSystem.enableBlend()
             RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE)
-            textureManager.getTexture(atlas).setBlurMipmap(true, false)
+            textureManager.getTexture(atlas).blurMipmap(true, false)
             builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE)
         }
 
         override fun end(tesselator: Tesselator) {
             tesselator.end()
-            Minecraft.getInstance().textureManager.getTexture(atlas).restoreLastBlurMipmap()
+            Minecraft.getInstance().textureManager.getTexture(atlas).restoreLastMipmapBlur()
             RenderSystem.disableBlend()
             RenderSystem.depthMask(true)
         }

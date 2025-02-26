@@ -1,4 +1,5 @@
-package team._0mods.ecr
+//? if forge {
+/*package team._0mods.ecr
 
 import net.minecraftforge.fml.common.Mod
 import team._0mods.ecr.api.ModId
@@ -10,3 +11,4 @@ class ECReimagined {
         initCommon()
     }
 }
+*///?}

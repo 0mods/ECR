@@ -5,6 +5,7 @@
   "package": "team._0mods.ecr.mixin",
   "client": [
     "client.AbstractContainerScreenMixin",
+    "client.AbstractTextureMixin",
     "client.GuiHeartTypeMixin",
     "client.LevelRendererMixin",
     "client.ParticleEngineMixin"
@@ -17,5 +18,6 @@
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "refmap": "${modId}.refmap.json"
 }

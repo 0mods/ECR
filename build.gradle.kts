@@ -1,18 +1,18 @@
 val modId: String by project
+val modName: String by project
 val modVersion: String by project
-val minecraftVersion = libs.versions.minecraft.get()
-val forgeVersion = libs.versions.forge.get()
-val hcVersion = libs.versions.hc.get()
-
-val authData = if (project.file("auth.data").exists()) project.file("auth.data").readText().trim() else ""
+val kotlinVersion: String by project
+val license = "modLicense".fromProperties
 
 plugins {
     java
     idea
-    alias(libs.plugins.kotlin.jvm)
-    alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.architectury.loom)
-    alias(libs.plugins.yamlang)
+    `maven-publish`
+    id("architectury-plugin")
+    id("dev.architectury.loom")
+    id("me.fallenbreath.yamlang")
+    kotlin("jvm")
+    kotlin("plugin.serialization")
 }
 
 java.withSourcesJar()
@@ -31,188 +31,60 @@ sourceSets {
     }
 }
 
-loom {
-    silentMojangMappingsLicense()
+val container = ModContainer(
+    minecraftVersion = stonecutter.current.project.substringBeforeLast('-'),
+    modPlatform = stonecutter.current.project.substringAfterLast('-'),
+    modId = modId,
+    modName = modName,
+    license = license,
+    modVersion = modVersion,
+    credits = if (stonecutter.current.project.substringAfterLast('-') == "fabric") "modCredits".fromProperties.multilineJson else "modCredits".fromProperties,
+    description = "modDesc".fromProperties,
+    author = if (stonecutter.current.project.substringAfterLast('-') == "fabric") "modAuthors".fromProperties.multilineJson else "modAuthors".fromProperties
+)
 
-    val awFile = project.file("src/main/resources/$modId.accesswidener")
-    if (awFile.exists()) accessWidenerPath = awFile
+val String.fromProperties
+    get() = project.properties[this].toString()
 
-    forge {
-        convertAccessWideners = true
-        extraAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
-        mixinConfigs("$modId.mixins.json")
-    }
+group = "modGroupId".fromProperties
+version = modVersion
+base.archivesName = "${"archivesName".fromProperties}-${container.modPlatform}-${container.minecraftVersion}"
 
-    runs {
-        named("client") {
-            client()
-            if (authData.isNotEmpty()) {
-                val lines = authData.lines()
-                if (lines.isNotEmpty()) {
-                    println("UUID: ${lines[0]}")
-                    println("USERNAME: ${lines[1]}")
-                    programArgs("--uuid", lines[0], "--username", lines[1], /*"-XX:+AllowEnhancedClassRedefinition"*/)
-                }
-            }
+setupEnvironment(
+    container,
+    defaultPlatformVersion,
+    defaultMappingsVersion,
+    kotlinVersion,
+    libs.versions.kotlin.coroutines.get(),
+    libs.versions.kotlin.serialization.get()
+)
 
-            mods {
-                create(modId) {
-                    sourceSet(sourceSets["api"])
-                    sourceSet(sourceSets.main.get())
-                }
-            }
-        }
-
-        named("server") {
-            server()
-            mods {
-                create(modId) {
-                    sourceSet(sourceSets["api"])
-                    sourceSet(sourceSets.main.get())
-                }
-            }
-        }
-
-        create("data") {
-            data()
-            programArgs("--all", "--mod", modId)
-            programArgs("--output", file("src/generated").absolutePath)
-        }
-    }
-}
-
-version = "$minecraftVersion-$modVersion"
-
-base {
-    archivesName = "archivesName".fromProperties
-}
+setupResources(sourceSets, container, mapOf("hcVersion" to libs.versions.hc.get()))
 
 repositories {
-    mavenCentral()
-    maven("https://maven.0mods.team/releases") // Kotlin Extras
-    maven("https://maven.minecraftforge.net/") // MinecraftForge
-    maven("https://maven.architectury.dev/") // Architectury API
-    maven("https://maven.fabricmc.net/") // Loom
-    maven("https://maven.parchmentmc.org") // Mappings
     maven("https://maven.blamejared.com/") // CT
-    maven("https://modmaven.dev") // JEI
-    maven("https://maven.tterrag.com/") // CTM
-    maven("https://repo.spongepowered.org/repository/maven-public/") // Mixins
     maven("https://maven.saps.dev/releases") // Kubejs
     maven("https://api.modrinth.com/maven") // Modrinth maven for some mods
-    maven("https://maven.terraformersmc.com/") // Mixin Extras
-    maven("https://jitpack.io")
-    flatDir { dir("libs") }
 }
 
 dependencies {
-    minecraft(libs.minecraft)
-    mappings(loom.layered {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${minecraftVersion}:${libs.versions.parchment.get()}@zip")
-    })
-
-    compileOnly(libs.mixin)
-    compileOnly(libs.mixinextras.common)
-
-    forge("net.minecraftforge:forge:${minecraftVersion}-${forgeVersion}")
-
-    modImplementation(libs.hollowcore.forge.mcReplace)
-
-    equalDepend(libs.mixinextras.forge)
-
-    compileOnlyMinecraft(libs.kotlin.stdlib)
-
-    compileOnlyMinecraft(libs.kotlin.coroutines)
-    compileOnlyMinecraft(libs.kotlin.coroutines.jvm)
-    compileOnlyMinecraft(libs.kotlin.serialization)
-    compileOnlyMinecraft(libs.kotlin.serialization.json)
-
-    modImplementation(libs.jei.mcReplace)
-    modImplementation(libs.crafttweaker.forge.mcReplace)
-    modImplementation(libs.jade.forge)
-    modImplementation(libs.mysticalAgriculture)
-    modCompileOnly(libs.kubejs.forge)
-
-    modRuntimeOnly(libs.cucumber)
+    modImplementation(libs.hollowcore.mcReplace(container.minecraftVersion).replace("platform", container.modPlatform))
     prepareHCDeps()
+
+    compileOnly(libs.mixinextras.common)
+    install(libs.mixinextras.asProvider().replace("platform", container.modPlatform), true)
+
+    modImplementation(libs.jei.mcReplace(container.minecraftVersion).replace("platform", container.modPlatform))
+    modImplementation(libs.crafttweaker.asProvider().mcReplace(container.minecraftVersion).replace("platform", container.modPlatform))
+    modImplementation(libs.jade.replace("platform", container.modPlatform))
+    modImplementation(libs.kubejs.replace("platform", container.modPlatform))
+
+    platformModImplementation(Platform.FORGE, container.modPlatform, libs.mysticalAgriculture.replace("ma_version", "7.0.17"))
+    platformModImplementation(Platform.FORGE, container.modPlatform, libs.cucumber.replace("cucumber_version", "7.0.13"))
 
     annotationProcessor(libs.mixinextras.common)
     annotationProcessor(libs.crafttweaker.annotationProcessor)
 }
-
-tasks {
-    jar {
-        from(sourceSets["api"].output)
-    }
-
-    compileKotlin {
-        useDaemonFallbackStrategy = false
-        compilerOptions.freeCompilerArgs.add("-Xjvm-default=all")
-    }
-
-    processResources {
-        from(project.sourceSets.main.get().resources)
-
-        val replacement = mapOf(
-            "modId" to modId, "modVersion" to modVersion, "modName" to "modName".fromProperties,
-            "modCredits" to "modCredits".fromProperties, "modAuthors" to "modAuthors".fromProperties,
-            "modDesc" to "modDesc".fromProperties, "forgeVersionRange" to forgeVersion.range,
-            "minecraftVersionRange" to minecraftVersion.mcRange, "loaderVersionRange" to forgeVersion.range,
-            "modLicense" to "modLicense".fromProperties, "hcVersionRange" to "[$hcVersion,)"
-        )
-
-        filesMatching(listOf("META-INF/mods.toml", "pack.mcmeta", "*.mixins.json")) {
-            expand(replacement)
-        }
-
-        inputs.properties(replacement)
-    }
-
-    withType<JavaCompile> {
-        options.encoding = "UTF-8"
-        options.release = 17
-    }
-
-    task("removeOldJar") {
-        val f = file("build/libs")
-        if (f.exists() && f.isDirectory) {
-            f.listFiles()?.forEach { it.delete() }
-        }
-    }
-
-    val jt = task<Jar>("apiJar") {
-        archiveClassifier = "api"
-        from(sourceSets["api"].output)
-        dependsOn("removeOldJar")
-    }
-
-    val sourcesAPI = task<Jar>("apiSources") {
-        archiveClassifier = "api-sources"
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        from(sourceSets["api"].allSource)
-        dependsOn("apiJar")
-    }
-
-    named("sourcesJar").get().dependsOn("apiSources")
-
-    artifacts {
-        archives(jt)
-        archives(sourcesAPI)
-    }
-}
-
-kotlin {
-    jvmToolchain(17)
-}
-
-yamlang {
-    targetSourceSets = listOf(sourceSets.main.get())
-    inputDir = "assets/$modId/lang"
-}
-
-val String.fromProperties
-    get() = project.properties[this].toString()
 
 fun DependencyHandlerScope.prepareHCDeps() {
     minecraftRuntimeLibraries(libs.ktoml.core.jvm)
@@ -223,37 +95,44 @@ fun DependencyHandlerScope.prepareHCDeps() {
     compileOnlyMinecraft(libs.kool.editor)
     compileOnlyMinecraft(libs.kool.editor.model)
     compileOnlyMinecraft(libs.kool.core)
-
-    minecraftRuntimeLibraries(libs.kotlin.reflect) { exclude("org.jetbrains.kotlin") }
 }
 
-fun DependencyHandlerScope.compileOnlyMinecraft(dependency: Any) {
-    compileOnly(dependency)
-    minecraftRuntimeLibraries(dependency)
-}
-
-fun DependencyHandlerScope.equalDepend(dependency: Any) {
-    implementation(dependency)
-    include(dependency)
-}
-
-val String.range: String
-    get() {
-        val ver = this.split('.')[0]
-        return "[$ver,)"
+tasks {
+    jar {
+        from(sourceSets["api"].output)
     }
 
-val String.mcRange: String
-    get() {
-        val ver = this.split('.').last()
-        val buildedVersion = "${this.split('.').first()}.${this.split('.')[1]}.${ver.toInt() + 1}"
-        return "[$this,$buildedVersion)"
-   }
+    task("removeOldJar") {
+        val buildDirs = listOf(
+            rootProject.layout.buildDirectory.file("libs").get().asFile,
+            project.layout.buildDirectory.file("libs").get().asFile,
+            rootProject.file("merged")
+        )
 
-val Provider<MinimalExternalModuleDependency>.mcReplace: String
-    get() {
-        val group = this.get().module.group
-        val name = this.get().module.name
-        val version = this.get().version
-        return "${group}:${name.replace("mc_version", minecraftVersion)}:$version"
+        buildDirs.forEach {
+            if (it.exists() && it.isDirectory) {
+                it.listFiles()?.forEach { file -> file.delete() }
+            }
+        }
     }
+
+    val apiJar = task<Jar>("apiJar") {
+        archiveClassifier = "api"
+        from(sourceSets["api"].output)
+        dependsOn("removeOldJar")
+    }
+
+    val apiSourcesJar = task<Jar>("apiSourcesJar") {
+        archiveClassifier = "api-sources"
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        from(sourceSets["api"].allSource)
+        dependsOn("apiJar")
+    }
+
+    named("sourcesJar").get().dependsOn(apiSourcesJar)
+
+    artifacts {
+        archives(apiJar)
+        archives(apiSourcesJar)
+    }
+}

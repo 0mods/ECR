@@ -48,7 +48,12 @@ public abstract class ParticleEngineMixin {
                             double d7 = d4 * d1 + d;
                             double d8 = d5 * d2 + e;
                             double d9 = d6 * d3 + f;
-                            this.add(new TerrainParticle(this.level, pos.getX() + d7, pos.getY() + d8, pos.getZ() + d9, d4 - 0.5, d5 - 0.5, d6 - 0.5, state, pos).updateSprite(state, pos));
+                            var terrPart = new TerrainParticle(this.level, pos.getX() + d7, pos.getY() + d8, pos.getZ() + d9, d4 - 0.5, d5 - 0.5, d6 - 0.5, state, pos);
+                            //? if forge {
+                            /*this.add(terrPart.updateSprite(state, pos));
+                            *///?} elif fabric {
+                            this.add(terrPart);
+                            //?}
                         }
                     }
                 }

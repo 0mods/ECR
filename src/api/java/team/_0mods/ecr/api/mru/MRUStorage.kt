@@ -1,10 +1,8 @@
 package team._0mods.ecr.api.mru
 
-import net.minecraftforge.common.capabilities.AutoRegisterCapability
 import team._0mods.ecr.api.LOGGER
 import kotlin.math.min
 
-@AutoRegisterCapability
 interface MRUStorage {
     var mru: Int
 

@@ -3,10 +3,8 @@ package team._0mods.ecr.common.init.registry
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.sounds.SoundEvent
-import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.block.state.BlockBehaviour
 import ru.hollowhorizon.hc.client.utils.JavaHacks
 import ru.hollowhorizon.hc.client.utils.rl
@@ -15,17 +13,28 @@ import ru.hollowhorizon.hc.common.registry.HollowRegistry
 import ru.hollowhorizon.hc.common.registry.RegistryObject
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.block.entity.simpleBlockEntityType
-import team._0mods.ecr.api.menu.simpleMenuFactory
+import team._0mods.ecr.api.utils.creativeTabBuilder
 import team._0mods.ecr.api.utils.ecRL
+import team._0mods.ecr.api.utils.simpleMenuFactory
+import team._0mods.ecr.api.utils.simpleRecipeType
 import team._0mods.ecr.common.api.PropertiedBlock
 import team._0mods.ecr.common.blocks.*
-import team._0mods.ecr.common.blocks.entity.*
-import team._0mods.ecr.common.menu.*
-import team._0mods.ecr.common.effects.*
-import team._0mods.ecr.common.items.*
+import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
+import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
+import team._0mods.ecr.common.blocks.entity.XLikeBlockEntity
+import team._0mods.ecr.common.effects.MRUCorruption
+import team._0mods.ecr.common.items.ECBook
+import team._0mods.ecr.common.items.ECGem
+import team._0mods.ecr.common.items.LocallyBoundGem
+import team._0mods.ecr.common.items.SoulStone
 import team._0mods.ecr.common.items.tools.*
+import team._0mods.ecr.common.menu.MatrixDestructorMenu
+import team._0mods.ecr.common.menu.MithrilineFurnaceMenu
+import team._0mods.ecr.common.menu.XLikeMenu
 import team._0mods.ecr.common.particle.ECParticleType
-import team._0mods.ecr.common.recipes.*
+import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
+import team._0mods.ecr.common.recipes.StructureRecipe
+import team._0mods.ecr.common.recipes.XLikeRecipe
 
 object ECRegistry: HollowRegistry(ModId) {
     private val defaultBlockProperties = BlockBehaviour.Properties.of().strength(3f, 3f).requiresCorrectToolForDrops()
@@ -33,17 +42,18 @@ object ECRegistry: HollowRegistry(ModId) {
 
     // Item tabs
     val tabItems by register("tab_items") {
-        CreativeModeTab.builder()
+        creativeTabBuilder
             .icon { ItemStack(elementalGem.get()) }
             .title(Component.translatable("itemGroup.$ModId.items"))
             .build()
     }
 
     val tabBlocks by register("tab_blocks") {
-        CreativeModeTab.builder()
+        creativeTabBuilder
             .title(Component.translatable("itemGroup.$ModId.blocks"))
             .icon { ItemStack(mithrilineFurnace.get()) }
-            .withTabsBefore("tab_items".ecRL)
+            //? if forge
+            /*.withTabsBefore("tab_items".ecRL)*/
             .build()
     }
 
@@ -128,10 +138,10 @@ object ECRegistry: HollowRegistry(ModId) {
     val magicTableMenu by register("magic_table") { simpleMenuFactory(XLikeMenu::MagicTable) }
 
     // recipe types
-    val mithrilineFurnaceRecipe by register("mithriline_furnace") { RecipeType.simple<MithrilineFurnaceRecipe>(it) }
-    val envoyerRecipe by register("envoyer") { RecipeType.simple<XLikeRecipe.Envoyer>(it) }
-    val magicTableRecipe by register("magic_table") { RecipeType.simple<XLikeRecipe.MagicTable>(it) }
-    val structureRecipe by register("structure") { RecipeType.simple<StructureRecipe>(it) }
+    val mithrilineFurnaceRecipe by register("mithriline_furnace") { simpleRecipeType<MithrilineFurnaceRecipe>(it) }
+    val envoyerRecipe by register("envoyer") { simpleRecipeType<XLikeRecipe.Envoyer>(it) }
+    val magicTableRecipe by register("magic_table") { simpleRecipeType<XLikeRecipe.MagicTable>(it) }
+    val structureRecipe by register("structure") { simpleRecipeType<StructureRecipe>(it) }
 
     // recipe serializers
     val mithrilineFurnaceRecipeSerial by register("mithriline_furnace") { MithrilineFurnaceRecipe.Serializer(::MithrilineFurnaceRecipe) }

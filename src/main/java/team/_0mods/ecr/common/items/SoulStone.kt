@@ -1,5 +1,7 @@
 package team._0mods.ecr.common.items
 
+//? if forge {
+//?}
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
@@ -7,22 +9,16 @@ import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
 import net.minecraft.world.entity.item.ItemEntity
-import net.minecraft.world.entity.monster.Enemy
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.SwordItem
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
-import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.event.entity.living.LivingDeathEvent
 import ru.hollowhorizon.hc.client.utils.get
 import ru.hollowhorizon.hc.client.utils.literal
 import ru.hollowhorizon.hc.client.utils.mcTranslate
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.item.SoulStoneLike
-import team._0mods.ecr.api.mru.MRUMultiplierWeapon
-import team._0mods.ecr.api.utils.SoulStoneUtils.addUBMRU
 import team._0mods.ecr.api.utils.SoulStoneUtils.capacity
 import team._0mods.ecr.api.utils.SoulStoneUtils.isCreative
 import team._0mods.ecr.api.utils.SoulStoneUtils.matrix
@@ -37,10 +33,6 @@ class SoulStone: Item(Properties()), SoulStoneLike {
         val entityCapacityAdd = mutableMapOf<EntityType<*>, IntRange>()
         lateinit var defaultCapacityAdd: IntRange
         lateinit var defaultEnemyAdd: IntRange
-    }
-
-    init {
-        MinecraftForge.EVENT_BUS.addListener(this::onEntityKill)
     }
 
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
@@ -92,12 +84,6 @@ class SoulStone: Item(Properties()), SoulStoneLike {
         return super.use(level, player, usedHand)
     }
 
-    override fun getMaxStackSize(stack: ItemStack?): Int {
-        if (stack != null && stack.hasTag()) return 1
-
-        return super.getMaxStackSize(stack)
-    }
-
     override fun appendHoverText(
         stack: ItemStack,
         level: Level?,
@@ -133,42 +119,19 @@ class SoulStone: Item(Properties()), SoulStoneLike {
         if (!level.isClientSide) {
             val server = level.server!!
             val uuid = stack.owner
+
             if (uuid != null) {
                 val player = server.playerList.getPlayer(uuid)
-                player?.let { stack.matrix = it[PlayerMRU::class].getMatrixType() }
+                player?.let {
+                    if (stack.ownerName.isNullOrEmpty())
+                        stack.ownerName = it.displayName.string
+
+                    stack.matrix = it[PlayerMRU::class].getMatrixType()
+                }
             } else if (stack.matrix != null) {
                 stack.matrix = null
             }
         }
-    }
-
-    private fun onEntityKill(e: LivingDeathEvent) {
-        val source = e.source.entity ?: return
-        val ent = e.entity
-        if (source !is Player) return
-
-        val items = source.inventory.items.filter { it.item is SoulStone }
-
-        if (items.isEmpty()) return
-
-        val item = items.random()
-
-        item.owner ?: return
-
-        if (item.isCreative) return
-        if (ent.isBaby && ent !is Enemy) return
-
-        val weapon = source.getItemInHand(InteractionHand.MAIN_HAND).item
-        val multiplier = if (weapon is MRUMultiplierWeapon && weapon is SwordItem) weapon.multiplier else 1f
-
-        val addCount = if (entityCapacityAdd.contains(ent.type))
-            entityCapacityAdd[ent.type]!!.random() * multiplier
-        else {
-            if (ent is Enemy) defaultEnemyAdd.random() * multiplier
-            else defaultCapacityAdd.random() * multiplier
-        }
-
-        item.addUBMRU(addCount)
     }
 
     override val receiveCount: Int = ECCommonConfig.instance.soulStoneReceiveCount

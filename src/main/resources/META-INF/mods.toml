@@ -24,6 +24,6 @@ license="${modLicense}"
 [[dependencies.${modId}]]
     modId="hollowcore"
     mandatory=true
-    versionRange="${hcVersionRange}"
+    versionRange="[${hcVersion},)"
     ordering="NONE"
     side="BOTH"

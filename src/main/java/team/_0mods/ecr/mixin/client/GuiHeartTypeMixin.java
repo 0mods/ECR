@@ -9,6 +9,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import ru.hollowhorizon.hc.client.utils.ForgeKotlinKt;
 import team._0mods.ecr.api.PlayerHeartType;
+import team._0mods.ecr.api.PlayerHeartTypeKt;
 import team._0mods.ecr.common.capability.PlayerMRU;
 
 import java.util.ArrayList;
@@ -41,6 +42,6 @@ public class GuiHeartTypeMixin {
     }
 
     static {
-        PlayerHeartType.setReg$EC_Reimagined_api(GuiHeartTypeMixin::ecr$addVariant);
+        PlayerHeartTypeKt.setReg(GuiHeartTypeMixin::ecr$addVariant);
     }
 }

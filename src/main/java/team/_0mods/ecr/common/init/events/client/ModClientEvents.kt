@@ -1,4 +1,5 @@
-@file:Mod.EventBusSubscriber(Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
+//? if forge {
+/*@file:Mod.EventBusSubscriber(Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 
 package team._0mods.ecr.common.init.events.client
 
@@ -12,3 +13,4 @@ import team._0mods.ecr.common.init.initClient
 fun onModLoad(e: FMLClientSetupEvent) {
     e.enqueueWork { initClient() }
 }
+*///?}

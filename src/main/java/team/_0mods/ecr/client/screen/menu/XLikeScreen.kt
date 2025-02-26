@@ -4,10 +4,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
-import team._0mods.ecr.api.client.defaultBlit
-import team._0mods.ecr.api.client.drawMRULine
-import team._0mods.ecr.api.client.xPos
-import team._0mods.ecr.api.client.yPos
+import team._0mods.ecr.api.client.*
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.client.screen.menu.widget.XLikeProgressArrow
 import team._0mods.ecr.common.menu.XLikeMenu
@@ -36,7 +33,7 @@ open class XLikeScreen<T: XLikeMenu>(
         mouseX: Int,
         mouseY: Int
     ) {
-        gg.defaultBlit(texture, this.guiLeft, this.guiTop)
+        gg.defaultBlit(texture, this.guiPosLeft, this.guiPosTop)
         val be = menu.blockEntity
         if (be != null) {
             val mru = be.mruContainer

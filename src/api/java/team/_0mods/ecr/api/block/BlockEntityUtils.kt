@@ -1,35 +1,28 @@
 package team._0mods.ecr.api.block
 
 import net.minecraft.core.BlockPos
-import net.minecraft.core.NonNullList
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.Container
 import net.minecraft.world.Containers
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.entity.player.Player
-import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraftforge.common.capabilities.ForgeCapabilities
-import net.minecraftforge.network.NetworkHooks
+//? if forge
+/*import net.minecraftforge.network.NetworkHooks*/
 
-fun BlockEntity?.dropForgeContents(level: Level, pos: BlockPos) {
-    this?.getCapability(ForgeCapabilities.ITEM_HANDLER)?.ifPresent {
-        val nnl = NonNullList.withSize(it.slots, ItemStack.EMPTY)
-        for (i in 0 ..< it.slots)
-            nnl[i] = it.getStackInSlot(i)
-
-        Containers.dropContents(level, pos, nnl)
-    }
+fun Container.dropContents(level: Level, pos: BlockPos) {
+    Containers.dropContents(level, pos, this)
 }
 
-inline fun <reified T: BlockEntity> prepareDrops(state: BlockState, level: Level, pos: BlockPos, newState: BlockState) {
+inline fun <reified T: BlockEntity> prepareDrops(container: (T) -> Container, state: BlockState, level: Level, pos: BlockPos, newState: BlockState) {
     if (state.block != newState.block) {
         val be = level.getBlockEntity(pos)
         if (be is T) {
-            be.dropForgeContents(level, pos)
+            container(be).dropContents(level, pos)
         }
     }
 }
@@ -38,7 +31,12 @@ inline fun <reified T> checkAndOpenMenu(player: Player, level: Level, blockPos: 
     if (!level.isClientSide) {
         val be = level.getBlockEntity(blockPos)
         if (be != null && be is T) {
-            NetworkHooks.openScreen(player as ServerPlayer, be, be.blockPos)
+            player as ServerPlayer
+            //? if forge {
+            /*NetworkHooks.openScreen(player, be, be.blockPos)
+            *///?} else {
+            player.openMenu(be)
+            //?}
         } else if (be != null) {
             throw IllegalStateException("Can not open any block entity that is not instanceof ${T::class.java}")
         } else return InteractionResult.FAIL

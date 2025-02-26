@@ -77,7 +77,7 @@ class MagicTable(properties: Properties): PropertiedEntityBlock(properties), Low
     }
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
-        prepareDrops<XLikeBlockEntity.MagicTable>(state, level, pos, newState)
+        prepareDrops<XLikeBlockEntity.MagicTable>({ it[XLikeBlockEntity.ItemContainer::class].items },state, level, pos, newState)
 
         super.onRemove(state, level, pos, newState, isMoving)
     }
