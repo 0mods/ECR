@@ -21,7 +21,7 @@ class MatrixDestructorMenu(
     val blockEntity: BlockEntity?,
     access: ContainerLevelAccess
 ) : AbstractMenu(
-    ECRegistry.matrixDestructorMenu.get(), containerId, access
+    ECRegistry.matrixDestructorMenu, containerId, access
 ) {
     constructor(containerId: Int, inv: Inventory, buf: FriendlyByteBuf): this(
         containerId, inv, SimpleContainer(1), inv.player.commandSenderWorld.getBlockEntity(buf.readBlockPos()), ContainerLevelAccess.NULL
@@ -69,5 +69,5 @@ class MatrixDestructorMenu(
         return qms
     }
 
-    override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.matrixDestructor.get())
+    override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.matrixDestructor)
 }

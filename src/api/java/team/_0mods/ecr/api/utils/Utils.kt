@@ -1,6 +1,5 @@
 package team._0mods.ecr.api.utils
 
-import net.minecraft.nbt.ByteArrayTag
 import net.minecraft.nbt.ByteTag
 import net.minecraft.nbt.DoubleTag
 import net.minecraft.nbt.FloatTag
@@ -9,7 +8,7 @@ import net.minecraft.nbt.LongTag
 import net.minecraft.nbt.ShortTag
 import net.minecraft.nbt.StringTag
 import net.minecraft.resources.ResourceLocation
-import ru.hollowhorizon.hc.client.utils.rl
+import ru.hollowhorizon.hc.common.utils.rl
 import team._0mods.ecr.api.ModId
 
 val String.ecRL: ResourceLocation

@@ -1,7 +1,6 @@
 package team._0mods.ecr.api.item
 
-import ru.hollowhorizon.hc.common.capabilities.containers.HollowContainer
+import ru.hollowhorizon.hc.common.capabilities.containers.ItemStorage as HCItemStorage
 
-interface ItemStorage {
-    val items: HollowContainer
-}
+@Deprecated("Use HC variant", replaceWith = ReplaceWith("ItemStorage", "ru.hollowhorizon.hc.common.capabilities.containers.ItemStorage"))
+interface ItemStorage: HCItemStorage

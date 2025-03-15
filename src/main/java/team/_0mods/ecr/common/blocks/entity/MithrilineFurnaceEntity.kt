@@ -11,7 +11,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerData
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
-import ru.hollowhorizon.hc.client.utils.get
+import ru.hollowhorizon.hc.common.utils.get
 import ru.hollowhorizon.hc.common.capabilities.CapabilityInstance
 import ru.hollowhorizon.hc.common.capabilities.HollowCapabilityV2
 import ru.hollowhorizon.hc.common.capabilities.containers.HollowContainer
@@ -31,7 +31,7 @@ import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.menu.MithrilineFurnaceMenu
 import kotlin.math.floor
 
-class MithrilineFurnaceEntity(pos: BlockPos, state: BlockState) : HollowBlockEntity(ECRegistry.mithrilineFurnaceEntity.get(), pos, state), MenuProvider,
+class MithrilineFurnaceEntity(pos: BlockPos, state: BlockState) : HollowBlockEntity(ECRegistry.mithrilineFurnaceEntity, pos, state), MenuProvider,
     MRUHolder {
     private val containerData: ContainerData = object : ContainerData {
         override fun get(index: Int): Int = when (index) {
@@ -113,13 +113,13 @@ class MithrilineFurnaceEntity(pos: BlockPos, state: BlockState) : HollowBlockEnt
 
         @JvmStatic
         fun getActiveCollectors(level: Level, pos: BlockPos): Int {
-            val coll = CRYSTAL_POSITION?.get(pos)?.filter { level.getBlockState(it).block == ECRegistry.mithrilineCrystal.get() }
+            val coll = CRYSTAL_POSITION?.get(pos)?.filter { level.getBlockState(it).block == ECRegistry.mithrilineCrystal }
             return coll?.size ?: 0
         }
 
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MithrilineFurnaceEntity) {
-            be.structureIsValid = ECRMultiblocks.mithrilineFurnace.get().isValid(level, pos)
+            be.structureIsValid = ECRMultiblocks.mithrilineFurnace.isValid(level, pos)
             if (level.isClientSide) {
                 be.processRotation()
                 return
@@ -174,7 +174,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, state: BlockState) : HollowBlockEnt
             }
 
             val inv = SimpleContainer(1).apply { this.setItem(0, input) }
-            val recipe = level.recipeManager.getRecipeFor(ECRegistry.mithrilineFurnaceRecipe.get(), inv, level)
+            val recipe = level.recipeManager.getRecipeFor(ECRegistry.mithrilineFurnaceRecipe, inv, level)
 
             if (recipe.isPresent) {
                 val mfr = recipe.get()

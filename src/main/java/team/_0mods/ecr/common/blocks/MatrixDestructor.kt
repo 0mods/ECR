@@ -15,7 +15,7 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
-import ru.hollowhorizon.hc.client.utils.get
+import ru.hollowhorizon.hc.common.utils.get
 import team._0mods.ecr.api.utils.checkAndOpenMenu
 import team._0mods.ecr.api.block.client.LowSizeBreakParticle
 import team._0mods.ecr.api.utils.prepareDrops

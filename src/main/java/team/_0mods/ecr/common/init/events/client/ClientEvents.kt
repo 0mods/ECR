@@ -4,8 +4,8 @@ import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.SwordItem
-import ru.hollowhorizon.hc.client.utils.literal
-import ru.hollowhorizon.hc.client.utils.mcTranslate
+import ru.hollowhorizon.hc.common.utils.literal
+import ru.hollowhorizon.hc.common.utils.mcTranslate
 import ru.hollowhorizon.hc.common.events.client.ItemTooltipEvent
 import ru.hollowhorizon.hc.common.events.client.render.RegisterEntityLayersDefinitions
 import ru.hollowhorizon.hc.common.events.registry.RegisterBlockEntityRenderersEvent
@@ -66,13 +66,13 @@ fun onKeyBindRegister(e: RegisterKeyBindingsEvent) {
 
 @HCSubscribe
 fun onRenderRegister(e: RegisterBlockEntityRenderersEvent) {
-    e.registerEntity(ECRegistry.mithrilineFurnaceEntity.get(), ::MithrilineFurnaceRenderer)
-    e.registerEntity(ECRegistry.matrixDestructorEntity.get(), ::MatrixDestructorRenderer)
+    e.registerEntity(ECRegistry.mithrilineFurnaceEntity, ::MithrilineFurnaceRenderer)
+    e.registerEntity(ECRegistry.matrixDestructorEntity, ::MatrixDestructorRenderer)
 }
 
 @HCSubscribe
 fun onParticleRegister(e: RegisterParticlesEvent) {
-    e.registerSpriteSet(ECRegistry.ecParticle.get(), ::ECParticleFactory)
+    e.registerSpriteSet(ECRegistry.ecParticle, ::ECParticleFactory)
 }
 
 @HCSubscribe

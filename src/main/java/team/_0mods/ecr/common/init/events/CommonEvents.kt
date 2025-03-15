@@ -83,11 +83,11 @@ fun onBuildCreativeTabs(e: BuildTabContentsEvent) {
         if (it is NoTab) return@forEach
 
         if (it is HasSubItem) {
-            it.addSubItems(ItemStack(it)).forEach { stack -> e.acceptFor(ECRegistry.tabItems.get(), stack) }
+            it.addSubItems(ItemStack(it)).forEach { stack -> e.acceptFor(ECRegistry.tabItems, stack) }
             return@forEach
         }
 
-        e.acceptFor(if (it is BlockItem) ECRegistry.tabBlocks.get() else ECRegistry.tabItems.get()) { it }
+        e.acceptFor(if (it is BlockItem) ECRegistry.tabBlocks else ECRegistry.tabItems) { it }
     }
 }
 

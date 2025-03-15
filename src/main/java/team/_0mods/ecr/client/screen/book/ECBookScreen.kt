@@ -16,13 +16,14 @@ import team._0mods.ecr.api.research.BookLevel
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.data.ResearchBookData
 
-class ECBookScreen(private val type: List<BookLevel>, val data: ResearchBookData): KoolScreen({
-    /*if (data.selectedResearch == null) {
-        renderDefaultBG("textures/gui/book/book.png".ecRL)
-    }*/
-    renderDefaultBG("textures/gui/book/book.png".ecRL)
-}) {
+class ECBookScreen(private val type: List<BookLevel>, val data: ResearchBookData): KoolScreen() {
     override fun isPauseScreen(): Boolean = false
+    override fun Scene.setup() {
+        /*if (data.selectedResearch == null) {
+            renderDefaultBG("textures/gui/book/book.png".ecRL)
+        }*/
+        renderDefaultBG("textures/gui/book/book.png".ecRL)
+    }
 }
 
 fun Scene.renderDefaultBG(

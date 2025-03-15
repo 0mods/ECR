@@ -94,7 +94,7 @@ class MithrilineFurnaceRecipeBuilder private constructor(private val result: Ite
 
         override fun getId(): ResourceLocation = this.id
 
-        override fun getType(): RecipeSerializer<*> = ECRegistry.mithrilineFurnaceRecipeSerial.get()
+        override fun getType(): RecipeSerializer<*> = ECRegistry.mithrilineFurnaceRecipeSerial
 
         override fun serializeAdvancement(): JsonObject? = null
 

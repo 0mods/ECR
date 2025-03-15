@@ -2,7 +2,7 @@ package team._0mods.ecr.common.compact.jade.components
 
 import net.minecraft.ChatFormatting
 import net.minecraft.resources.ResourceLocation
-import ru.hollowhorizon.hc.client.utils.literal
+import ru.hollowhorizon.hc.common.utils.literal
 import snownee.jade.api.BlockAccessor
 import snownee.jade.api.IBlockComponentProvider
 import snownee.jade.api.ITooltip

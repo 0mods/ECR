@@ -7,8 +7,8 @@ import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
 import net.minecraft.world.item.Items
-import ru.hollowhorizon.hc.client.utils.get
-import ru.hollowhorizon.hc.client.utils.literal
+import ru.hollowhorizon.hc.common.utils.get
+import ru.hollowhorizon.hc.common.utils.literal
 import ru.hollowhorizon.hc.common.commands.arg
 import ru.hollowhorizon.hc.common.commands.onRegisterCommands
 import team._0mods.ecr.api.item.SoulStoneLike

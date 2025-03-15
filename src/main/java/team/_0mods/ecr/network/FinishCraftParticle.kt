@@ -4,13 +4,13 @@ import kotlinx.serialization.Serializable
 import net.minecraft.client.Minecraft
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.world.entity.player.Player
-import ru.hollowhorizon.hc.common.network.HollowPacketV2
-import ru.hollowhorizon.hc.common.network.HollowPacketV3
+import ru.hollowhorizon.hc.common.network.HollowPacket
+import ru.hollowhorizon.hc.common.network.HollowPacketHandler
 import kotlin.random.Random
 
 @Serializable
-@HollowPacketV2(HollowPacketV2.Direction.TO_CLIENT)
-class FinishCraftParticle(val x: Double, val y: Double, val z: Double, val count: Int): HollowPacketV3<FinishCraftParticle> {
+@HollowPacketHandler(HollowPacketHandler.Direction.TO_CLIENT)
+class FinishCraftParticle(val x: Double, val y: Double, val z: Double, val count: Int): HollowPacket<FinishCraftParticle> {
     override fun handle(player: Player) {
         val level = Minecraft.getInstance().level ?: return
         val rand = Random

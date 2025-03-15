@@ -14,6 +14,7 @@ import net.minecraft.world.level.Level
 import org.jetbrains.annotations.NotNull
 import ru.hollowhorizon.hc.client.utils.*
 import ru.hollowhorizon.hc.common.registry.AutoModelType
+import ru.hollowhorizon.hc.common.utils.*
 import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.item.HasSubItem

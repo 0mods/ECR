@@ -14,7 +14,7 @@ object ECAnnotationProcessor {
             .sortedBy { if (ECPlugin::class.java.isAssignableFrom(it)) 0 else 1 }
             .forEach {
                 val annotation = it.getAnnotation(ECRPlugin::class.java)
-                val modPlugin = it.kotlin.objectInstance as ECRModPlugin
+                val modPlugin = it.kotlin.objectInstance as? ECRModPlugin ?: it.getDeclaredConstructor().newInstance() as ECRModPlugin
                 reg(annotation, modPlugin)
             }
     }

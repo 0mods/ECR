@@ -24,7 +24,7 @@ fun checkCraft(stack: ItemStack, pos: Vec3, level: Level, timer: IntArray) {
         this.setItem(0, stack)
     }
 
-    val recipe = level.recipeManager.getRecipeFor(ECRegistry.structureRecipe.get(), container, level)
+    val recipe = level.recipeManager.getRecipeFor(ECRegistry.structureRecipe, container, level)
 
     if (!recipe.isPresent) {
         container.clearContent()
@@ -35,11 +35,11 @@ fun checkCraft(stack: ItemStack, pos: Vec3, level: Level, timer: IntArray) {
 
     val s = level.getBlockState(center)
     val isAtCenter = when (r.multiblock) {
-        ECRMultiblocks.soulStone.get() -> s.`is`(Blocks.EMERALD_BLOCK)
-        ECRMultiblocks.flameCrystal.get() -> s.`is`(BlockTags.INFINIBURN_NETHER)
-        ECRMultiblocks.waterCrystal.get() -> s.`is`(BlockTags.ICE)
-        ECRMultiblocks.earthCrystal.get() -> s.`is`(Blocks.MOSS_BLOCK)
-        ECRMultiblocks.airCrystal.get() -> s.`is`(Blocks.PURPUR_BLOCK)
+        ECRMultiblocks.soulStone -> s.`is`(Blocks.EMERALD_BLOCK)
+        ECRMultiblocks.flameCrystal -> s.`is`(BlockTags.INFINIBURN_NETHER)
+        ECRMultiblocks.waterCrystal -> s.`is`(BlockTags.ICE)
+        ECRMultiblocks.earthCrystal -> s.`is`(Blocks.MOSS_BLOCK)
+        ECRMultiblocks.airCrystal -> s.`is`(Blocks.PURPUR_BLOCK)
         else -> true
     }
 

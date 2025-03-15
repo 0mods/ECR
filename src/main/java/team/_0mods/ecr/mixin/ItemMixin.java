@@ -17,7 +17,7 @@ import team._0mods.ecr.api.ECConstantsKt;
 import team._0mods.ecr.api.item.BoundGem;
 import team._0mods.ecr.api.mru.MRUHolder;
 
-import static ru.hollowhorizon.hc.client.utils.ForgeKotlinKt.mcTranslate;
+import static ru.hollowhorizon.hc.common.utils.ForgeKotlinKt.mcTranslate;
 
 @Mixin(Item.class)
 public class ItemMixin {

@@ -1,7 +1,5 @@
 package team._0mods.ecr.common.items
 
-//? if forge {
-//?}
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
@@ -14,9 +12,9 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.Level
-import ru.hollowhorizon.hc.client.utils.get
-import ru.hollowhorizon.hc.client.utils.literal
-import ru.hollowhorizon.hc.client.utils.mcTranslate
+import ru.hollowhorizon.hc.common.utils.get
+import ru.hollowhorizon.hc.common.utils.literal
+import ru.hollowhorizon.hc.common.utils.mcTranslate
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.item.SoulStoneLike
 import team._0mods.ecr.api.utils.SoulStoneUtils.capacity

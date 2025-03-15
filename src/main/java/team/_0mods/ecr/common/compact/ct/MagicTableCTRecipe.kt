@@ -13,7 +13,7 @@ import net.minecraft.core.NonNullList
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.crafting.RecipeType
 import org.openzen.zencode.java.ZenCodeType
-import ru.hollowhorizon.hc.client.utils.rl
+import ru.hollowhorizon.hc.common.utils.rl
 import team._0mods.ecr.api.SHORT_ID
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.recipes.XLikeRecipe
@@ -22,7 +22,7 @@ import java.util.*
 @ZenRegister
 @ZenCodeType.Name("mods.$SHORT_ID.MagicTable")
 object MagicTableCTRecipe: IRecipeManager<XLikeRecipe.MagicTable> {
-    override fun getRecipeType(): RecipeType<XLikeRecipe.MagicTable> = ECRegistry.magicTableRecipe.get()
+    override fun getRecipeType(): RecipeType<XLikeRecipe.MagicTable> = ECRegistry.magicTableRecipe
 
     @JvmStatic
     @ZenCodeType.Method

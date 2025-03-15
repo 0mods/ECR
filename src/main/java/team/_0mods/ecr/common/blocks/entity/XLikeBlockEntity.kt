@@ -15,7 +15,7 @@ import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
-import ru.hollowhorizon.hc.client.utils.get
+import ru.hollowhorizon.hc.common.utils.get
 import ru.hollowhorizon.hc.common.capabilities.CapabilityInstance
 import ru.hollowhorizon.hc.common.capabilities.HollowCapabilityV2
 import ru.hollowhorizon.hc.common.capabilities.containers.HollowContainer
@@ -150,7 +150,7 @@ abstract class XLikeBlockEntity(
         }
     }
 
-    class Envoyer(pos: BlockPos, state: BlockState): XLikeBlockEntity(ECRegistry.envoyerEntity.get(), pos, state) {
+    class Envoyer(pos: BlockPos, state: BlockState): XLikeBlockEntity(ECRegistry.envoyerEntity, pos, state) {
         init {
             this[ItemContainer::class].stackSize = 1
         }
@@ -167,7 +167,7 @@ abstract class XLikeBlockEntity(
             @JvmStatic
             fun onTick(level: Level, pos: BlockPos, state: BlockState, be: Envoyer) {
                 be.processReceive(level)
-                be.processRecipeIfPresent(level, ECRegistry.envoyerRecipe.get(), be, true)
+                be.processRecipeIfPresent(level, ECRegistry.envoyerRecipe, be, true)
             }
         }
 
@@ -176,7 +176,7 @@ abstract class XLikeBlockEntity(
         override val locator: MRUHolder.LocatorData = MRUHolder.LocatorData(this[ItemContainer::class], 6)
     }
 
-    class MagicTable(pos: BlockPos, state: BlockState): XLikeBlockEntity(ECRegistry.magicTableEntity.get(), pos, state) {
+    class MagicTable(pos: BlockPos, state: BlockState): XLikeBlockEntity(ECRegistry.magicTableEntity, pos, state) {
         init {
             this[ItemContainer::class].containerSize = 8
         }
@@ -193,7 +193,7 @@ abstract class XLikeBlockEntity(
             @JvmStatic
             fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MagicTable) {
                 be.processReceive(level)
-                be.processRecipeIfPresent(level, ECRegistry.magicTableRecipe.get(), be)
+                be.processRecipeIfPresent(level, ECRegistry.magicTableRecipe, be)
             }
         }
 

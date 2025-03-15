@@ -112,7 +112,7 @@ class ECParticleOptions(
 
     val size = Mth.clamp(size, 0.05f, 5f)
 
-    override fun getType(): ParticleType<*> = ECRegistry.ecParticle.get()
+    override fun getType(): ParticleType<*> = ECRegistry.ecParticle
 
     override fun writeToNetwork(buffer: FriendlyByteBuf) {
         buffer.writeInt(color.red)

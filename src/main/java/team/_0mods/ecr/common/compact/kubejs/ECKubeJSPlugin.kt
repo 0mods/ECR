@@ -8,6 +8,6 @@ import team._0mods.ecr.common.init.registry.ECRegistry
 
 class ECKubeJSPlugin: KubeJSPlugin() {
     override fun registerRecipeSchemas(event: RegisterRecipeSchemasEvent) {
-        event.register(BuiltInRegistries.RECIPE_TYPE.getKey(ECRegistry.mithrilineFurnaceRecipe.get())!!, MithrilineFurnaceSchema.SCHEMA)
+        event.register(BuiltInRegistries.RECIPE_TYPE.getKey(ECRegistry.mithrilineFurnaceRecipe)!!, MithrilineFurnaceSchema.SCHEMA)
     }
 }

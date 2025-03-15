@@ -103,7 +103,7 @@ abstract class XLikeMenu(
         blockEntity: XLikeBlockEntity?,
         access: ContainerLevelAccess,
         data: ContainerData
-    ): XLikeMenu(ECRegistry.envoyerMenu.get(), containerId, inv, container, blockEntity, access, data) {
+    ): XLikeMenu(ECRegistry.envoyerMenu, containerId, inv, container, blockEntity, access, data) {
         init {
             buildSlots(container, inv, 1)
         }
@@ -121,7 +121,7 @@ abstract class XLikeMenu(
             SimpleContainerData(2)
         )
 
-        override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.envoyer.get())
+        override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.envoyer)
     }
 
     class MagicTable(
@@ -131,7 +131,7 @@ abstract class XLikeMenu(
         blockEntity: XLikeBlockEntity?,
         access: ContainerLevelAccess,
         data: ContainerData
-    ): XLikeMenu(ECRegistry.magicTableMenu.get(), containerId, inv, container, blockEntity, access, data) {
+    ): XLikeMenu(ECRegistry.magicTableMenu, containerId, inv, container, blockEntity, access, data) {
         init {
             buildSlots(container, inv)
 
@@ -151,6 +151,6 @@ abstract class XLikeMenu(
             SimpleContainerData(2)
         )
 
-        override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.magicTable.get())
+        override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.magicTable)
     }
 }

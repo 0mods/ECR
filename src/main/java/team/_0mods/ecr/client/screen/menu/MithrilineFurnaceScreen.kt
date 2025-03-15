@@ -4,6 +4,8 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
+import ru.hollowhorizon.hc.client.utils.guiPosLeft
+import ru.hollowhorizon.hc.client.utils.guiPosTop
 import team._0mods.ecr.api.client.*
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.client.screen.menu.widget.MithrilineFurnaceProgressArrow

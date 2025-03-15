@@ -1,7 +1,7 @@
 package team._0mods.ecr.api.research
 
 import net.minecraft.network.chat.Component
-import ru.hollowhorizon.hc.client.utils.mcTranslate
+import ru.hollowhorizon.hc.common.utils.mcTranslate
 import team._0mods.ecr.api.registries.ECRegistries
 
 interface BookLevel {

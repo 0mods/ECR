@@ -24,25 +24,25 @@ fun initCommon() {
 fun initClient() {
     val renderers by lazy {
         mapOf<Block, RenderType>(
-            ECRegistry.airCluster.get() to RenderType.cutout(),
-            ECRegistry.earthCluster.get() to RenderType.cutout(),
-            ECRegistry.waterCluster.get() to RenderType.cutout(),
-            ECRegistry.flameCluster.get() to RenderType.cutout(),
+            ECRegistry.airCluster to RenderType.cutout(),
+            ECRegistry.earthCluster to RenderType.cutout(),
+            ECRegistry.waterCluster to RenderType.cutout(),
+            ECRegistry.flameCluster to RenderType.cutout(),
 
-            ECRegistry.magicTable.get() to RenderType.translucent()
+            ECRegistry.magicTable to RenderType.translucent()
         )
     }
 
-    MenuScreens.register(ECRegistry.mithrilineFurnaceMenu.get(),
+    MenuScreens.register(ECRegistry.mithrilineFurnaceMenu,
         ::MithrilineFurnaceScreen
     )
-    MenuScreens.register(ECRegistry.matrixDestructorMenu.get(),
+    MenuScreens.register(ECRegistry.matrixDestructorMenu,
         ::MatrixDestructorScreen
     )
-    MenuScreens.register(ECRegistry.envoyerMenu.get()) { menu, inv, title ->
+    MenuScreens.register(ECRegistry.envoyerMenu) { menu, inv, title ->
         XLikeScreen.Envoyer(menu, inv, title)
     }
-    MenuScreens.register(ECRegistry.magicTableMenu.get()) { menu, inv, title ->
+    MenuScreens.register(ECRegistry.magicTableMenu) { menu, inv, title ->
         XLikeScreen.MagicTable(menu, inv, title)
     }
 

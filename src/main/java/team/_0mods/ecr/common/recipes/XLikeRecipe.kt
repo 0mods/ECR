@@ -131,7 +131,7 @@ open class XLikeRecipe(
         time: Int,
         mruPerTick: Int,
         result: ItemStack
-    ): XLikeRecipe(ECRegistry.envoyerRecipe.get(), ECRegistry.envoyerRecipeSerial.get(), id, inputs, catalyst, time, mruPerTick, result)
+    ): XLikeRecipe(ECRegistry.envoyerRecipe, ECRegistry.envoyerRecipeSerial, id, inputs, catalyst, time, mruPerTick, result)
 
     class MagicTable(
         id: ResourceLocation,
@@ -140,5 +140,5 @@ open class XLikeRecipe(
         time: Int,
         mruPerTick: Int,
         result: ItemStack
-    ): XLikeRecipe(ECRegistry.magicTableRecipe.get(), ECRegistry.magicTableRecipeSerial.get(), id, inputs, catalyst, time, mruPerTick, result)
+    ): XLikeRecipe(ECRegistry.magicTableRecipe, ECRegistry.magicTableRecipeSerial, id, inputs, catalyst, time, mruPerTick, result)
 }

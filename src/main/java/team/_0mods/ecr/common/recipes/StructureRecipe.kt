@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.*
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
-import ru.hollowhorizon.hc.client.utils.rl
+import ru.hollowhorizon.hc.common.utils.rl
 import ru.hollowhorizon.hc.common.multiblock.Multiblock
 import ru.hollowhorizon.hc.common.registry.MultiblockRegistry
 import team._0mods.ecr.common.init.registry.ECRegistry
@@ -45,9 +45,9 @@ class StructureRecipe(
 
     override fun getId(): ResourceLocation = this.id
 
-    override fun getSerializer(): RecipeSerializer<*> = ECRegistry.structureRecipeSerial.get()
+    override fun getSerializer(): RecipeSerializer<*> = ECRegistry.structureRecipeSerial
 
-    override fun getType(): RecipeType<*> = ECRegistry.structureRecipe.get()
+    override fun getType(): RecipeType<*> = ECRegistry.structureRecipe
 
     override fun isSpecial(): Boolean = true
 
@@ -102,10 +102,10 @@ class StructureRecipe(
             return serial(recipeId, ingredients, multiblock, time, result, chance.first, chance.second, block)
         }
 
-        override fun fromNetwork(recipeId: ResourceLocation, buffer: FriendlyByteBuf): StructureRecipe? {
+        override fun fromNetwork(recipeId: ResourceLocation, buffer: FriendlyByteBuf): StructureRecipe {
             val ingredients = NonNullList.withSize(buffer.readInt(), Ingredient.EMPTY)
 
-            val tag = buffer.readNbt() ?: return null
+            val tag = buffer.readNbt() ?: throw JsonSyntaxException("Network decoding failed: NBT is not present")
 
             val multiblock = MultiblockRegistry[tag.getString("MultiBlockId").rl]
 

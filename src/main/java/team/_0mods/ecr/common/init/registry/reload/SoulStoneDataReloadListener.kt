@@ -7,8 +7,8 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener
 import net.minecraft.util.profiling.ProfilerFiller
-import ru.hollowhorizon.hc.client.utils.ModList
-import ru.hollowhorizon.hc.client.utils.rl
+import ru.hollowhorizon.hc.common.utils.ModList
+import ru.hollowhorizon.hc.common.utils.rl
 import team._0mods.ecr.api.LOGGER
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.common.data.SoulStoneData

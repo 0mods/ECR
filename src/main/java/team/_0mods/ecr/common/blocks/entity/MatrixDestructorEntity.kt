@@ -11,7 +11,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
-import ru.hollowhorizon.hc.client.utils.get
+import ru.hollowhorizon.hc.common.utils.get
 import ru.hollowhorizon.hc.common.capabilities.CapabilityInstance
 import ru.hollowhorizon.hc.common.capabilities.HollowCapabilityV2
 import ru.hollowhorizon.hc.common.capabilities.containers.HollowContainer
@@ -29,7 +29,7 @@ import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.menu.MatrixDestructorMenu
 
 class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
-    HollowBlockEntity(ECRegistry.matrixDestructorEntity.get(), pos, blockState), MenuProvider, MRUHolder {
+    HollowBlockEntity(ECRegistry.matrixDestructorEntity, pos, blockState), MenuProvider, MRUHolder {
     @JvmField var status: MatrixDestructorStatus? = null
     var progress = 0
 

@@ -13,7 +13,10 @@
       "item": "ecreimagined:elemental_gem"
     },
     "c": {
-      "type": "forge:nbt",
+      "hollowcore:type": "hollowcore:nbt",
+      "base": {
+        "item": "ecreimagined:research_book"
+      },
       "item": "ecreimagined:research_book",
       "nbt": {
         "ECBookTypes": [

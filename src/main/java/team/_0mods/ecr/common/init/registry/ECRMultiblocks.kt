@@ -10,8 +10,8 @@ object ECRMultiblocks : HollowRegistry(ModId) {
     val mithrilineFurnace by register("mithriline_furnace") {
         Multiblock {
             size(5, 5, 3)
-            val a = block(ECRegistry.mithrilinePlating.get().defaultBlockState())
-            val b = block(ECRegistry.mithrilineFurnace.get().defaultBlockState())
+            val a = block(ECRegistry.mithrilinePlating.defaultBlockState())
+            val b = block(ECRegistry.mithrilineFurnace.defaultBlockState())
 
             pattern(
                 a, null, a, null, a,

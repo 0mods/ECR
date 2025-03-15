@@ -2,7 +2,7 @@ package team._0mods.ecr.api.utils
 
 import net.minecraft.world.item.ItemStack
 import org.jetbrains.annotations.NotNull
-import ru.hollowhorizon.hc.client.utils.rl
+import ru.hollowhorizon.hc.common.utils.rl
 import team._0mods.ecr.api.item.SoulStoneLike
 import team._0mods.ecr.api.mru.PlayerMatrixType
 import team._0mods.ecr.api.registries.ECRegistries

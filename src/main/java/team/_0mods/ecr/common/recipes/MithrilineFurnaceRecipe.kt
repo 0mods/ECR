@@ -35,9 +35,9 @@ class MithrilineFurnaceRecipe(
 
     override fun getIngredients(): NonNullList<Ingredient> = this.inputs
 
-    override fun getSerializer(): RecipeSerializer<*> = ECRegistry.mithrilineFurnaceRecipeSerial.get()
+    override fun getSerializer(): RecipeSerializer<*> = ECRegistry.mithrilineFurnaceRecipeSerial
 
-    override fun getType(): RecipeType<*> = ECRegistry.mithrilineFurnaceRecipe.get()
+    override fun getType(): RecipeType<*> = ECRegistry.mithrilineFurnaceRecipe
 
     override fun isSpecial(): Boolean = true
 

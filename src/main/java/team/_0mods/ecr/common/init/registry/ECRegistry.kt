@@ -6,11 +6,10 @@ import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.state.BlockBehaviour
-import ru.hollowhorizon.hc.client.utils.JavaHacks
-import ru.hollowhorizon.hc.client.utils.rl
+import ru.hollowhorizon.hc.common.utils.JavaHacks
+import ru.hollowhorizon.hc.common.utils.rl
 import ru.hollowhorizon.hc.common.registry.AutoModelType
 import ru.hollowhorizon.hc.common.registry.HollowRegistry
-import ru.hollowhorizon.hc.common.registry.RegistryObject
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.utils.simpleBlockEntityType
 import team._0mods.ecr.api.utils.creativeTabBuilder
@@ -43,7 +42,7 @@ object ECRegistry: HollowRegistry(ModId) {
     // Item tabs
     val tabItems by register("tab_items") {
         creativeTabBuilder
-            .icon { ItemStack(elementalGem.get()) }
+            .icon { ItemStack(elementalGem) }
             .title(Component.translatable("itemGroup.$ModId.items"))
             .build()
     }
@@ -51,7 +50,7 @@ object ECRegistry: HollowRegistry(ModId) {
     val tabBlocks by register("tab_blocks") {
         creativeTabBuilder
             .title(Component.translatable("itemGroup.$ModId.blocks"))
-            .icon { ItemStack(mithrilineFurnace.get()) }
+            .icon { ItemStack(mithrilineFurnace) }
             //? if forge
             /*.withTabsBefore("tab_items".ecRL)*/
             .build()
@@ -126,10 +125,10 @@ object ECRegistry: HollowRegistry(ModId) {
     val airCluster by register("air_cluster", null) { ClusterBlock(clusterProperties) }
 
     // blockEntity
-    val mithrilineFurnaceEntity by register("mithriline_furnace") { simpleBlockEntityType(::MithrilineFurnaceEntity, mithrilineFurnace.get()) }
-    val matrixDestructorEntity by register("matrix_destructor") { simpleBlockEntityType(::MatrixDestructorEntity, matrixDestructor.get()) }
-    val envoyerEntity by register("envoyer") { simpleBlockEntityType(XLikeBlockEntity::Envoyer, envoyer.get()) }
-    val magicTableEntity by register("magic_table") { simpleBlockEntityType(XLikeBlockEntity::MagicTable, magicTable.get()) }
+    val mithrilineFurnaceEntity by register("mithriline_furnace") { simpleBlockEntityType(::MithrilineFurnaceEntity, mithrilineFurnace) }
+    val matrixDestructorEntity by register("matrix_destructor") { simpleBlockEntityType(::MatrixDestructorEntity, matrixDestructor) }
+    val envoyerEntity by register("envoyer") { simpleBlockEntityType(XLikeBlockEntity::Envoyer, envoyer) }
+    val magicTableEntity by register("magic_table") { simpleBlockEntityType(XLikeBlockEntity::MagicTable, magicTable) }
 
     // menu types
     val mithrilineFurnaceMenu by register("mithriline_furnace") { simpleMenuFactory(::MithrilineFurnaceMenu) }
@@ -158,12 +157,9 @@ object ECRegistry: HollowRegistry(ModId) {
     // sounds
     val calm4 by register("calm4") { SoundEvent.createVariableRangeEvent("calm4".ecRL) }
 
-    private fun basicItem(id: String, autoModel: AutoModelType? = AutoModelType.DEFAULT, props: Item.Properties.() -> Unit = {}, noTab: Boolean = false): RegistryObject<Item> {
+    private fun basicItem(id: String, autoModel: AutoModelType? = AutoModelType.DEFAULT, props: Item.Properties.() -> Unit = {}, noTab: Boolean = false): Item {
         val p = Item.Properties().apply(props)
         val reg by register(id, autoModel) { Item(p) }
-        return JavaHacks.forceCast(reg)
+        return reg
     }
-
-    private val String.id: ResourceLocation
-        get() = "$ModId:$this".rl
 }

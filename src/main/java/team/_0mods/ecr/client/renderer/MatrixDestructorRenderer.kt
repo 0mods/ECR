@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemDisplayContext
-import ru.hollowhorizon.hc.client.utils.get
+import ru.hollowhorizon.hc.common.utils.get
 import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 
 class MatrixDestructorRenderer(private val ctx: BlockEntityRendererProvider.Context): BlockEntityRenderer<MatrixDestructorEntity> {

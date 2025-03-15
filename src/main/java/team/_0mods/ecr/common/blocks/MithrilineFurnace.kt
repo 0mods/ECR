@@ -15,7 +15,7 @@ import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
-import ru.hollowhorizon.hc.client.utils.get
+import ru.hollowhorizon.hc.common.utils.get
 import team._0mods.ecr.api.utils.checkAndOpenMenu
 import team._0mods.ecr.api.utils.prepareDrops
 import team._0mods.ecr.api.utils.simpleTicker
@@ -40,7 +40,7 @@ class MithrilineFurnace(properties: Properties) : PropertiedEntityBlock(properti
         player: Player,
         hand: InteractionHand,
         hit: BlockHitResult
-    ): InteractionResult = if (ECRMultiblocks.mithrilineFurnace.get().isValid(level, pos)) {
+    ): InteractionResult = if (ECRMultiblocks.mithrilineFurnace.isValid(level, pos)) {
         checkAndOpenMenu<MithrilineFurnaceEntity>(player, level, pos)
     } else InteractionResult.FAIL
 
@@ -58,7 +58,7 @@ class MithrilineFurnace(properties: Properties) : PropertiedEntityBlock(properti
 
     override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape = shape
 
-    val shape by lazy {
+    private val shape by lazy {
         var shape = Shapes.empty()
         shape = Shapes.join(shape, Shapes.box(0.125, 0.875, 0.125, 0.875, 0.9375, 0.875), BooleanOp.OR)
         shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.0, 1.0, 0.125, 0.125), BooleanOp.OR)

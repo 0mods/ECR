@@ -2,7 +2,7 @@ package team._0mods.ecr.common.capability
 
 import kotlinx.serialization.Serializable
 import net.minecraft.world.entity.player.Player
-import ru.hollowhorizon.hc.client.utils.rl
+import ru.hollowhorizon.hc.common.utils.rl
 import ru.hollowhorizon.hc.common.capabilities.CapabilityInstance
 import ru.hollowhorizon.hc.common.capabilities.HollowCapabilityV2
 import team._0mods.ecr.api.ModId

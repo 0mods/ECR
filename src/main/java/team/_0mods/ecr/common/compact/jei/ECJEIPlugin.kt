@@ -34,17 +34,17 @@ class ECJEIPlugin: IModPlugin {
     }
 
     override fun registerRecipeCatalysts(registration: IRecipeCatalystRegistration) {
-        registration.addRecipeCatalyst(ItemStack(ECRegistry.mithrilineFurnace.get()), MITHRILINE_FURNACE)
-        registration.addRecipeCatalyst(ItemStack(ECRegistry.envoyer.get()), ENVOYER)
-        registration.addRecipeCatalyst(ItemStack(ECRegistry.magicTable.get()), MAGIC_TABLE)
+        registration.addRecipeCatalyst(ItemStack(ECRegistry.mithrilineFurnace), MITHRILINE_FURNACE)
+        registration.addRecipeCatalyst(ItemStack(ECRegistry.envoyer), ENVOYER)
+        registration.addRecipeCatalyst(ItemStack(ECRegistry.magicTable), MAGIC_TABLE)
     }
 
     override fun registerRecipes(registration: IRecipeRegistration) {
         val mgr = Minecraft.getInstance().level?.recipeManager ?: return
 
-        registration.addRecipes(MITHRILINE_FURNACE, mgr.getAllRecipesFor(ECRegistry.mithrilineFurnaceRecipe.get()))
-        registration.addRecipes(ENVOYER, mgr.getAllRecipesFor(ECRegistry.envoyerRecipe.get()))
-        registration.addRecipes(MAGIC_TABLE, mgr.getAllRecipesFor(ECRegistry.magicTableRecipe.get()))
+        registration.addRecipes(MITHRILINE_FURNACE, mgr.getAllRecipesFor(ECRegistry.mithrilineFurnaceRecipe))
+        registration.addRecipes(ENVOYER, mgr.getAllRecipesFor(ECRegistry.envoyerRecipe))
+        registration.addRecipes(MAGIC_TABLE, mgr.getAllRecipesFor(ECRegistry.magicTableRecipe))
     }
 
     override fun registerGuiHandlers(registration: IGuiHandlerRegistration) {
@@ -52,10 +52,9 @@ class ECJEIPlugin: IModPlugin {
     }
 
     override fun registerRecipeTransferHandlers(registration: IRecipeTransferRegistration) {
-        // TODO need fix
         registration.addRecipeTransferHandler(
             MithrilineFurnaceMenu::class.java,
-            ECRegistry.mithrilineFurnaceMenu.get(),
+            ECRegistry.mithrilineFurnaceMenu,
             MITHRILINE_FURNACE,
             0, 1, 2, 36
         )

@@ -15,7 +15,7 @@ import team._0mods.ecr.common.init.registry.ECRegistry
 
 class MithrilineFurnaceComponent: IBlockComponentProvider {
     override fun getUid(): ResourceLocation? = try {
-        BuiltInRegistries.BLOCK.getKey(ECRegistry.mithrilineFurnace.get())
+        BuiltInRegistries.BLOCK.getKey(ECRegistry.mithrilineFurnace)
     } catch (e: Exception) {
         null
     }

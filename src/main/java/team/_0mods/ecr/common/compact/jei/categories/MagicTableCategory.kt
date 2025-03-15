@@ -13,7 +13,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
-import ru.hollowhorizon.hc.client.utils.mcTranslate
+import ru.hollowhorizon.hc.common.utils.mcTranslate
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.client.isCursorAtPos
 import team._0mods.ecr.api.utils.ecRL
@@ -23,13 +23,13 @@ import team._0mods.ecr.common.recipes.XLikeRecipe
 import java.awt.Color
 
 class MagicTableCategory(guiHelper: IGuiHelper): IRecipeCategory<XLikeRecipe.MagicTable> {
-    private val icon = guiHelper.createDrawableItemStack(ItemStack(ECRegistry.magicTable.get()))
+    private val icon = guiHelper.createDrawableItemStack(ItemStack(ECRegistry.magicTable))
     private val bg = guiHelper.drawableBuilder("textures/gui/jei/x.png".ecRL, 0, 0, 126, 54)
         .setTextureSize(126, 54).build()
 
     override fun getRecipeType(): RecipeType<XLikeRecipe.MagicTable> = ECJEIPlugin.MAGIC_TABLE
 
-    override fun getTitle(): Component = ECRegistry.magicTable.get().name.withStyle(ChatFormatting.RESET)
+    override fun getTitle(): Component = ECRegistry.magicTable.name.withStyle(ChatFormatting.RESET)
 
     override fun getIcon(): IDrawable? = icon
 

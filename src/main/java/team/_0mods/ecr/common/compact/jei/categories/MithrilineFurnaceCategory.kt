@@ -20,12 +20,12 @@ import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
 import java.awt.Color
 
 class MithrilineFurnaceCategory(guiHelper: IGuiHelper): IRecipeCategory<MithrilineFurnaceRecipe> {
-    private val icon = guiHelper.createDrawableItemStack(ItemStack(ECRegistry.mithrilineFurnace.get()))
+    private val icon = guiHelper.createDrawableItemStack(ItemStack(ECRegistry.mithrilineFurnace))
     private val bg = guiHelper.createDrawable("textures/gui/jei/${RL_ID.path}.png".ecRL, 0, 0, 170, 80)
 
     override fun getRecipeType(): RecipeType<MithrilineFurnaceRecipe> = ECJEIPlugin.MITHRILINE_FURNACE
 
-    override fun getTitle(): Component = ECRegistry.mithrilineFurnace.get().name.withStyle(ChatFormatting.RESET)
+    override fun getTitle(): Component = ECRegistry.mithrilineFurnace.name.withStyle(ChatFormatting.RESET)
 
     override fun getWidth(): Int = bg.width
 

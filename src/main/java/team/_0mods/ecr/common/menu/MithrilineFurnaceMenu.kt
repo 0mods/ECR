@@ -21,7 +21,7 @@ class MithrilineFurnaceMenu(
     val blockEntity: BlockEntity?,
     access: ContainerLevelAccess,
     val data: ContainerData
-): AbstractMenu(ECRegistry.mithrilineFurnaceMenu.get(), containerId, access) {
+): AbstractMenu(ECRegistry.mithrilineFurnaceMenu, containerId, access) {
     constructor(containerId: Int, inventory: Inventory, buffer: FriendlyByteBuf):
             this(containerId, inventory, SimpleContainer(2), inventory.player.commandSenderWorld.getBlockEntity(buffer.readBlockPos()), ContainerLevelAccess.NULL, SimpleContainerData(2))
 
@@ -70,5 +70,5 @@ class MithrilineFurnaceMenu(
         return qms
     }
 
-    override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.mithrilineFurnace.get())
+    override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.mithrilineFurnace)
 }

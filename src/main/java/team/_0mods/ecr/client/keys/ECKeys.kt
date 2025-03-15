@@ -2,7 +2,7 @@ package team._0mods.ecr.client.keys
 
 import net.minecraft.client.KeyMapping
 import org.lwjgl.glfw.GLFW
-import ru.hollowhorizon.hc.client.utils.isProduction
+import ru.hollowhorizon.hc.common.utils.isProduction
 import team._0mods.ecr.api.ModId
 
 object ECKeys {

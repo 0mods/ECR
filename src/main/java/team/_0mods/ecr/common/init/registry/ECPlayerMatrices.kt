@@ -2,8 +2,8 @@ package team._0mods.ecr.common.init.registry
 
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
-import ru.hollowhorizon.hc.client.utils.colored
-import ru.hollowhorizon.hc.client.utils.mcTranslate
+import ru.hollowhorizon.hc.common.utils.colored
+import ru.hollowhorizon.hc.common.utils.mcTranslate
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.mru.PlayerMatrixType
 

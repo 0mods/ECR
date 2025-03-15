@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
-import ru.hollowhorizon.hc.client.utils.get
+import ru.hollowhorizon.hc.common.utils.get
 import team._0mods.ecr.api.utils.checkAndOpenMenu
 import team._0mods.ecr.api.block.client.LowSizeBreakParticle
 import team._0mods.ecr.api.utils.prepareDrops
@@ -44,7 +44,7 @@ class MagicTable(properties: Properties): PropertiedEntityBlock(properties), Low
     ): InteractionResult {
         val defaultResult = checkAndOpenMenu<XLikeBlockEntity.MagicTable>(player, level, pos)
         val item = player.getItemInHand(hand)
-        val blockEntity = level.getBlockEntity(pos, ECRegistry.magicTableEntity.get()).orElse(null) ?: return defaultResult
+        val blockEntity = level.getBlockEntity(pos, ECRegistry.magicTableEntity).orElse(null) ?: return defaultResult
 
         val inv = blockEntity[XLikeBlockEntity.ItemContainer::class].items
         val slotItem = inv.getItem(7)
