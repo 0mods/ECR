@@ -17,7 +17,9 @@
     "client": [
       "team._0mods.ecr.ECRManager::client"
     ],
-    "jei_mod_plugin": [ "team._0mods.ecr.common.compact.jei.ECJEIPlugin" ]
+    "jei_mod_plugin": [ "team._0mods.ecr.common.compact.jei.ECRJEIPlugin" ],
+    "rei_common": [ "team._0mods.ecr.common.compact.rei.ECRReiPlugin" ],
+    "rei_client": [ "team._0mods.ecr.common.compact.rei.ECRClientReiPlugin" ]
   },
   "mixins": [
     "${modId}.mixins.json"

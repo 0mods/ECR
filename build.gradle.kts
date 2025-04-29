@@ -65,6 +65,8 @@ repositories {
     maven("https://maven.blamejared.com/") // CT
     maven("https://maven.saps.dev/releases") // Kubejs
     maven("https://api.modrinth.com/maven") // Modrinth maven for some mods
+    maven("https://maven.shedaniel.me/") // REI
+    maven("https://maven.architectury.dev/")
 }
 
 dependencies {
@@ -78,6 +80,11 @@ dependencies {
     modImplementation(libs.crafttweaker.asProvider().mcReplace(container.minecraftVersion).replace("platform", container.modPlatform))
     modImplementation(libs.jade.replace("platform", container.modPlatform))
     modImplementation(libs.kubejs.replace("platform", container.modPlatform))
+
+    modCompileOnly(libs.rei.api.replace("platform", container.modPlatform))
+    modCompileOnly(libs.rei.default.plugin.replace("platform", container.modPlatform))
+
+    modRuntimeOnly(libs.rei.asProvider().replace("platform", container.modPlatform))
 
     platformModImplementation(Platform.FORGE, container.modPlatform, libs.mysticalAgriculture.replace("ma_version", "7.0.17"))
     platformModImplementation(Platform.FORGE, container.modPlatform, libs.cucumber.replace("cucumber_version", "7.0.13"))

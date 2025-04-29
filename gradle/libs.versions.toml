@@ -13,6 +13,7 @@ crafttweaker = "14.0.43"
 kubejs = "2001.6.5-build.14"
 jade = "11.12.3+platform"
 kool = "0.17.0-0mods-SNAPSHOT"
+rei = "12.1.785"
 
 [libraries]
 mixinextras-common = { module = "io.github.llamalad7:mixinextras-common", version.ref = "mixinextras" }
@@ -32,6 +33,9 @@ jade = { module = "maven.modrinth:jade", version.ref = "jade" }
 mysticalAgriculture = { module = "maven.modrinth:mystical-agriculture", version = "ma_version" }
 kubejs = { module = "dev.latvian.mods:kubejs-platform", version.ref = "kubejs" }
 cucumber = { module = "maven.modrinth:cucumber", version = "cucumber_version" }
+rei = { module = "me.shedaniel:RoughlyEnoughItems-platform", version.ref = "rei" }
+rei-api = { module = "me.shedaniel:RoughlyEnoughItems-api-platform", version.ref = "rei" }
+rei-default-plugin =  { module = "me.shedaniel:RoughlyEnoughItems-default-plugin-platform", version.ref = "rei" }
 hollowcore = { module = "ru.hollowhorizon:HollowCore-platform-mc_version", version.ref = "hc" }
 kool-editor = { module = "de.fabmax.kool:kool-editor-desktop", version.ref = "kool" }
 kool-editor-model = { module = "de.fabmax.kool:kool-editor-model-desktop", version.ref = "kool" }

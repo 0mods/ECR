@@ -17,7 +17,7 @@ import ru.hollowhorizon.hc.common.utils.mcTranslate
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.client.isCursorAtPos
 import team._0mods.ecr.api.utils.ecRL
-import team._0mods.ecr.common.compact.jei.ECJEIPlugin
+import team._0mods.ecr.common.compact.jei.ECRJEIPlugin
 import team._0mods.ecr.common.init.registry.ECRegistry
 import team._0mods.ecr.common.recipes.XLikeRecipe
 import java.awt.Color
@@ -27,7 +27,7 @@ class EnvoyerCategory(guiHelper: IGuiHelper): IRecipeCategory<XLikeRecipe.Envoye
     private val bg = guiHelper.drawableBuilder("textures/gui/jei/x.png".ecRL, 0, 0, 126, 54)
         .setTextureSize(126, 54).build()
 
-    override fun getRecipeType(): RecipeType<XLikeRecipe.Envoyer> = ECJEIPlugin.ENVOYER
+    override fun getRecipeType(): RecipeType<XLikeRecipe.Envoyer> = ECRJEIPlugin.ENVOYER
 
     override fun getTitle(): Component = ECRegistry.envoyer.name.withStyle(ChatFormatting.RESET)
 

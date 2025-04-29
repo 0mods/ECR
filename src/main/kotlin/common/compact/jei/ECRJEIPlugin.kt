@@ -14,7 +14,7 @@ import team._0mods.ecr.common.menu.MithrilineFurnaceMenu
 import team._0mods.ecr.common.recipes.*
 
 @JeiPlugin
-class ECJEIPlugin: IModPlugin {
+class ECRJEIPlugin: IModPlugin {
     companion object {
         @JvmField val MITHRILINE_FURNACE = RecipeType(MithrilineFurnaceCategory.RL_ID, MithrilineFurnaceRecipe::class.java)
         @JvmField val ENVOYER = RecipeType(EnvoyerCategory.RL_ID, XLikeRecipe.Envoyer::class.java)
