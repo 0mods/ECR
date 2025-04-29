@@ -4,10 +4,10 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import team._0mods.ecr.common.api.IAbstractTexture;
+import team._0mods.ecr.common.api.AbstractTextureExtender;
 
 @Mixin(AbstractTexture.class)
-public abstract class AbstractTextureMixin /*? if fabric {*/ implements IAbstractTexture /*?}*/ {
+public abstract class AbstractTextureMixin /*? if fabric {*/ implements AbstractTextureExtender /*?}*/ {
     @Shadow protected boolean blur;
     @Shadow protected boolean mipmap;
 

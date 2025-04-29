@@ -87,7 +87,6 @@ dependencies {
 }
 
 fun DependencyHandlerScope.prepareHCDeps() {
-    minecraftRuntimeLibraries(libs.ktoml.core.jvm)
     minecraftRuntimeLibraries(libs.imageio.apng)
     minecraftRuntimeLibraries(libs.joml)
     minecraftRuntimeLibraries(libs.kotgl.matrix)
@@ -95,6 +94,9 @@ fun DependencyHandlerScope.prepareHCDeps() {
     compileOnlyMinecraft(libs.kool.editor)
     compileOnlyMinecraft(libs.kool.editor.model)
     compileOnlyMinecraft(libs.kool.core)
+    compileOnlyMinecraft(libs.ktoml.core.jvm)
+
+    platformImplementation(Platform.FABRIC, container.modPlatform, "io.github.classgraph:classgraph:4.8.173")
 }
 
 tasks {

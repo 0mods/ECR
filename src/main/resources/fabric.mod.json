@@ -12,11 +12,12 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "team._0mods.ecr.common.init.ECManager::init"
+      "team._0mods.ecr.ECRManager::init"
     ],
     "client": [
-      "team._0mods.ecr.common.init.ECManager::initClient"
-    ]
+      "team._0mods.ecr.ECRManager::client"
+    ],
+    "jei_mod_plugin": [ "team._0mods.ecr.common.compact.jei.ECJEIPlugin" ]
   },
   "mixins": [
     "${modId}.mixins.json"
