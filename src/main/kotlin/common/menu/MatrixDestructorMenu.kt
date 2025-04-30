@@ -12,7 +12,7 @@ import team._0mods.ecr.api.container.AbstractMenu
 import team._0mods.ecr.api.container.slot.VanillaSpecialSlot
 import team._0mods.ecr.api.item.SoulStoneLike
 import team._0mods.ecr.api.utils.SoulStoneUtils.owner
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 
 class MatrixDestructorMenu(
     containerId: Int,
@@ -21,7 +21,7 @@ class MatrixDestructorMenu(
     val blockEntity: BlockEntity?,
     access: ContainerLevelAccess
 ) : AbstractMenu(
-    ECRegistry.matrixDestructorMenu, containerId, access
+    ECRRegistry.matrixDestructorMenu, containerId, access
 ) {
     constructor(containerId: Int, inv: Inventory, buf: FriendlyByteBuf): this(
         containerId, inv, SimpleContainer(1), inv.player.commandSenderWorld.getBlockEntity(buf.readBlockPos()), ContainerLevelAccess.NULL
@@ -69,5 +69,5 @@ class MatrixDestructorMenu(
         return qms
     }
 
-    override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.matrixDestructor)
+    override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRRegistry.matrixDestructor)
 }

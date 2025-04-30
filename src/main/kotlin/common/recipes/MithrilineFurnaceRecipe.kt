@@ -11,7 +11,7 @@ import net.minecraft.world.SimpleContainer
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.*
 import net.minecraft.world.level.Level
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 
 class MithrilineFurnaceRecipe(
     private val recipeId: ResourceLocation,
@@ -35,9 +35,9 @@ class MithrilineFurnaceRecipe(
 
     override fun getIngredients(): NonNullList<Ingredient> = this.inputs
 
-    override fun getSerializer(): RecipeSerializer<*> = ECRegistry.mithrilineFurnaceRecipeSerial
+    override fun getSerializer(): RecipeSerializer<*> = ECRRegistry.mithrilineFurnaceRecipeSerial
 
-    override fun getType(): RecipeType<*> = ECRegistry.mithrilineFurnaceRecipe
+    override fun getType(): RecipeType<*> = ECRRegistry.mithrilineFurnaceRecipe
 
     override fun isSpecial(): Boolean = true
 

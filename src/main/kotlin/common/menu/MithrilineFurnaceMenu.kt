@@ -12,7 +12,7 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.entity.BlockEntity
 import team._0mods.ecr.api.container.AbstractMenu
 import team._0mods.ecr.api.container.slot.VanillaSpecialSlot
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 
 class MithrilineFurnaceMenu(
     containerId: Int,
@@ -21,7 +21,7 @@ class MithrilineFurnaceMenu(
     val blockEntity: BlockEntity?,
     access: ContainerLevelAccess,
     val data: ContainerData
-): AbstractMenu(ECRegistry.mithrilineFurnaceMenu, containerId, access) {
+): AbstractMenu(ECRRegistry.mithrilineFurnaceMenu, containerId, access) {
     constructor(containerId: Int, inventory: Inventory, buffer: FriendlyByteBuf):
             this(containerId, inventory, SimpleContainer(2), inventory.player.commandSenderWorld.getBlockEntity(buffer.readBlockPos()), ContainerLevelAccess.NULL, SimpleContainerData(2))
 
@@ -70,5 +70,5 @@ class MithrilineFurnaceMenu(
         return qms
     }
 
-    override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.mithrilineFurnace)
+    override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRRegistry.mithrilineFurnace)
 }

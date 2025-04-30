@@ -22,7 +22,7 @@ import team._0mods.ecr.api.utils.prepareDrops
 import team._0mods.ecr.api.utils.simpleTicker
 import team._0mods.ecr.common.api.PropertiedEntityBlock
 import team._0mods.ecr.common.blocks.entity.XLikeBlockEntity
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 import java.util.function.Predicate
 
 class MagicTable(properties: Properties): PropertiedEntityBlock(properties), LowSizeBreakParticle {
@@ -44,7 +44,7 @@ class MagicTable(properties: Properties): PropertiedEntityBlock(properties), Low
     ): InteractionResult {
         val defaultResult = checkAndOpenMenu<XLikeBlockEntity.MagicTable>(player, level, pos)
         val item = player.getItemInHand(hand)
-        val blockEntity = level.getBlockEntity(pos, ECRegistry.magicTableEntity).orElse(null) ?: return defaultResult
+        val blockEntity = level.getBlockEntity(pos, ECRRegistry.magicTableEntity).orElse(null) ?: return defaultResult
 
         val inv = blockEntity[XLikeBlockEntity.ItemContainer::class].items
         val slotItem = inv.getItem(7)

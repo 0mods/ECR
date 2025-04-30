@@ -26,7 +26,7 @@ import team._0mods.ecr.client.screen.book.ECBookScreen
 import team._0mods.ecr.common.api.NoTab
 import team._0mods.ecr.common.data.ResearchBookData
 import team._0mods.ecr.common.init.registry.ECCommands
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 import team._0mods.ecr.common.init.registry.reload.MagicTableIncreaseDataReloadListener
 import team._0mods.ecr.common.init.registry.reload.SoulStoneDataReloadListener
 import team._0mods.ecr.common.items.ECBook
@@ -81,11 +81,11 @@ fun onBuildCreativeTabs(e: BuildTabContentsEvent) {
         if (it is NoTab) return@forEach
 
         if (it is HasSubItem) {
-            it.addSubItems(ItemStack(it)).forEach { stack -> e.acceptFor(ECRegistry.tabItems, stack) }
+            it.addSubItems(ItemStack(it)).forEach { stack -> e.acceptFor(ECRRegistry.tabItems, stack) }
             return@forEach
         }
 
-        e.acceptFor(if (it is BlockItem) ECRegistry.tabBlocks else ECRegistry.tabItems) { it }
+        e.acceptFor(if (it is BlockItem) ECRRegistry.tabBlocks else ECRRegistry.tabItems) { it }
     }
 }
 

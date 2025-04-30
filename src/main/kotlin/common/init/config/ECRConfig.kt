@@ -3,13 +3,11 @@ package team._0mods.ecr.common.init.config
 import com.akuleshov7.ktoml.annotations.TomlComments
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import ru.hollowhorizon.hc.common.config.HollowConfig
 
 @Serializable
 class ECRConfig: HollowConfig() {
-    @TomlComments(
-
-    )
     @SerialName("mithriline_furnace")
     val mithrilineFurnaceConfig = MithrilineFurnace()
     @SerialName("soul_stone")
@@ -26,7 +24,8 @@ class ECRConfig: HollowConfig() {
 
     @Serializable
     data class MithrilineFurnace(
-        @SerialName("crystal_position")
+        /*@SerialName("crystal_position")*/
+        @Transient
         val crystalPositions: Array<Offset> = arrayOf(
             Offset(2, 2, 2), Offset(-2, 2, -2),
             Offset(-2, 2, 2), Offset(2, 2, -2),

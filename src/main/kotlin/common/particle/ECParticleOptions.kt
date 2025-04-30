@@ -8,7 +8,7 @@ import net.minecraft.core.particles.ParticleType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.util.Mth
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 import java.awt.Color
 
 class ECParticleOptions(
@@ -112,7 +112,7 @@ class ECParticleOptions(
 
     val size = Mth.clamp(size, 0.05f, 5f)
 
-    override fun getType(): ParticleType<*> = ECRegistry.ecParticle
+    override fun getType(): ParticleType<*> = ECRRegistry.ecParticle
 
     override fun writeToNetwork(buffer: FriendlyByteBuf) {
         buffer.writeInt(color.red)

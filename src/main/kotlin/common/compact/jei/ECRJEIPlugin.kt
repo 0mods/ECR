@@ -9,7 +9,7 @@ import net.minecraft.world.item.ItemStack
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.client.screen.menu.MithrilineFurnaceScreen
 import team._0mods.ecr.common.compact.jei.categories.*
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 import team._0mods.ecr.common.menu.MithrilineFurnaceMenu
 import team._0mods.ecr.common.recipes.*
 
@@ -34,17 +34,17 @@ class ECRJEIPlugin: IModPlugin {
     }
 
     override fun registerRecipeCatalysts(registration: IRecipeCatalystRegistration) {
-        registration.addRecipeCatalyst(ItemStack(ECRegistry.mithrilineFurnace), MITHRILINE_FURNACE)
-        registration.addRecipeCatalyst(ItemStack(ECRegistry.envoyer), ENVOYER)
-        registration.addRecipeCatalyst(ItemStack(ECRegistry.magicTable), MAGIC_TABLE)
+        registration.addRecipeCatalyst(ItemStack(ECRRegistry.mithrilineFurnace), MITHRILINE_FURNACE)
+        registration.addRecipeCatalyst(ItemStack(ECRRegistry.envoyer), ENVOYER)
+        registration.addRecipeCatalyst(ItemStack(ECRRegistry.magicTable), MAGIC_TABLE)
     }
 
     override fun registerRecipes(registration: IRecipeRegistration) {
         val mgr = Minecraft.getInstance().level?.recipeManager ?: return
 
-        registration.addRecipes(MITHRILINE_FURNACE, mgr.getAllRecipesFor(ECRegistry.mithrilineFurnaceRecipe))
-        registration.addRecipes(ENVOYER, mgr.getAllRecipesFor(ECRegistry.envoyerRecipe))
-        registration.addRecipes(MAGIC_TABLE, mgr.getAllRecipesFor(ECRegistry.magicTableRecipe))
+        registration.addRecipes(MITHRILINE_FURNACE, mgr.getAllRecipesFor(ECRRegistry.mithrilineFurnaceRecipe))
+        registration.addRecipes(ENVOYER, mgr.getAllRecipesFor(ECRRegistry.envoyerRecipe))
+        registration.addRecipes(MAGIC_TABLE, mgr.getAllRecipesFor(ECRRegistry.magicTableRecipe))
     }
 
     override fun registerGuiHandlers(registration: IGuiHandlerRegistration) {
@@ -54,7 +54,7 @@ class ECRJEIPlugin: IModPlugin {
     override fun registerRecipeTransferHandlers(registration: IRecipeTransferRegistration) {
         registration.addRecipeTransferHandler(
             MithrilineFurnaceMenu::class.java,
-            ECRegistry.mithrilineFurnaceMenu,
+            ECRRegistry.mithrilineFurnaceMenu,
             MITHRILINE_FURNACE,
             0, 1, 2, 36
         )

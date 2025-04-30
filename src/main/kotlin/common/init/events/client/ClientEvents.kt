@@ -19,7 +19,7 @@ import team._0mods.ecr.client.keys.ECKeys
 import team._0mods.ecr.client.particle.ECParticleFactory
 import team._0mods.ecr.client.renderer.MatrixDestructorRenderer
 import team._0mods.ecr.client.renderer.MithrilineFurnaceRenderer
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 import ru.hollowhorizon.hc.common.events.SubscribeEvent as HCSubscribe
 
 @HCSubscribe
@@ -66,13 +66,13 @@ fun onKeyBindRegister(e: RegisterKeyBindingsEvent) {
 
 @HCSubscribe
 fun onRenderRegister(e: RegisterBlockEntityRenderersEvent) {
-    e.registerEntity(ECRegistry.mithrilineFurnaceEntity, ::MithrilineFurnaceRenderer)
-    e.registerEntity(ECRegistry.matrixDestructorEntity, ::MatrixDestructorRenderer)
+    e.registerEntity(ECRRegistry.mithrilineFurnaceEntity, ::MithrilineFurnaceRenderer)
+    e.registerEntity(ECRRegistry.matrixDestructorEntity, ::MatrixDestructorRenderer)
 }
 
 @HCSubscribe
 fun onParticleRegister(e: RegisterParticlesEvent) {
-    e.registerSpriteSet(ECRegistry.ecParticle, ::ECParticleFactory)
+    e.registerSpriteSet(ECRRegistry.ecParticle, ::ECParticleFactory)
 }
 
 @HCSubscribe

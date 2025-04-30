@@ -12,7 +12,7 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
 import ru.hollowhorizon.hc.common.network.sendAllInDimension
 import team._0mods.ecr.common.init.registry.ECRMultiblocks
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 import team._0mods.ecr.network.FinishCraftParticle
 
 fun makeIntArray(value: Int = 0) = intArrayOf(value)
@@ -24,7 +24,7 @@ fun checkCraft(stack: ItemStack, pos: Vec3, level: Level, timer: IntArray) {
         this.setItem(0, stack)
     }
 
-    val recipe = level.recipeManager.getRecipeFor(ECRegistry.structureRecipe, container, level)
+    val recipe = level.recipeManager.getRecipeFor(ECRRegistry.structureRecipe, container, level)
 
     if (!recipe.isPresent) {
         container.clearContent()

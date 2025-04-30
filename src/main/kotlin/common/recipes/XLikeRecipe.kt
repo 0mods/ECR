@@ -15,7 +15,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.item.crafting.ShapedRecipe
 import net.minecraft.world.level.Level
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 
 open class XLikeRecipe(
     private val type: RecipeType<*>,
@@ -131,7 +131,7 @@ open class XLikeRecipe(
         time: Int,
         mruPerTick: Int,
         result: ItemStack
-    ): XLikeRecipe(ECRegistry.envoyerRecipe, ECRegistry.envoyerRecipeSerial, id, inputs, catalyst, time, mruPerTick, result)
+    ): XLikeRecipe(ECRRegistry.envoyerRecipe, ECRRegistry.envoyerRecipeSerial, id, inputs, catalyst, time, mruPerTick, result)
 
     class MagicTable(
         id: ResourceLocation,
@@ -140,5 +140,5 @@ open class XLikeRecipe(
         time: Int,
         mruPerTick: Int,
         result: ItemStack
-    ): XLikeRecipe(ECRegistry.magicTableRecipe, ECRegistry.magicTableRecipeSerial, id, inputs, catalyst, time, mruPerTick, result)
+    ): XLikeRecipe(ECRRegistry.magicTableRecipe, ECRRegistry.magicTableRecipeSerial, id, inputs, catalyst, time, mruPerTick, result)
 }

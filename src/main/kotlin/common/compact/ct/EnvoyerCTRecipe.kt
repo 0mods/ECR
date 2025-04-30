@@ -15,14 +15,14 @@ import net.minecraft.world.item.crafting.RecipeType
 import org.openzen.zencode.java.ZenCodeType
 import ru.hollowhorizon.hc.common.utils.rl
 import team._0mods.ecr.api.SHORT_ID
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 import team._0mods.ecr.common.recipes.XLikeRecipe
 import java.util.UUID
 
 @ZenRegister
 @ZenCodeType.Name("mods.$SHORT_ID.Envoyer")
 object EnvoyerCTRecipe: IRecipeManager<XLikeRecipe.Envoyer> {
-    override fun getRecipeType(): RecipeType<XLikeRecipe.Envoyer> = ECRegistry.envoyerRecipe
+    override fun getRecipeType(): RecipeType<XLikeRecipe.Envoyer> = ECRRegistry.envoyerRecipe
 
     @JvmStatic
     @ZenCodeType.Method

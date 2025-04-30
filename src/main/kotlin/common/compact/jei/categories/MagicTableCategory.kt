@@ -18,18 +18,18 @@ import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.client.isCursorAtPos
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.compact.jei.ECRJEIPlugin
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 import team._0mods.ecr.common.recipes.XLikeRecipe
 import java.awt.Color
 
 class MagicTableCategory(guiHelper: IGuiHelper): IRecipeCategory<XLikeRecipe.MagicTable> {
-    private val icon = guiHelper.createDrawableItemStack(ItemStack(ECRegistry.magicTable))
+    private val icon = guiHelper.createDrawableItemStack(ItemStack(ECRRegistry.magicTable))
     private val bg = guiHelper.drawableBuilder("textures/gui/jei/x.png".ecRL, 0, 0, 126, 54)
         .setTextureSize(126, 54).build()
 
     override fun getRecipeType(): RecipeType<XLikeRecipe.MagicTable> = ECRJEIPlugin.MAGIC_TABLE
 
-    override fun getTitle(): Component = ECRegistry.magicTable.name.withStyle(ChatFormatting.RESET)
+    override fun getTitle(): Component = ECRRegistry.magicTable.name.withStyle(ChatFormatting.RESET)
 
     override fun getIcon(): IDrawable? = icon
 

@@ -15,23 +15,23 @@ import ru.hollowhorizon.hc.common.utils.get
 import ru.hollowhorizon.hc.common.capabilities.CapabilityInstance
 import ru.hollowhorizon.hc.common.capabilities.HollowCapability
 import ru.hollowhorizon.hc.common.capabilities.containers.HollowContainer
+import ru.hollowhorizon.hc.common.capabilities.containers.ItemStorage
 import ru.hollowhorizon.hc.common.capabilities.containers.container
 import ru.hollowhorizon.hc.common.objects.blocks.HollowBlockEntity
 import team._0mods.ecr.api.block.StructuralPosition
 import team._0mods.ecr.api.block.inventory.WrappedHollowInventory
-import team._0mods.ecr.api.item.ECRItemStorage
 import team._0mods.ecr.api.mru.MRUHolder
 import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUTypes
 import team._0mods.ecr.api.utils.StackHelper
 import team._0mods.ecr.common.api.ContainerLevelAccess
 import team._0mods.ecr.common.init.registry.ECRMultiblocks
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 import team._0mods.ecr.common.menu.MithrilineFurnaceMenu
 import team._0mods.ecr.commonConfig
 import kotlin.math.floor
 
-class MithrilineFurnaceEntity(pos: BlockPos, state: BlockState) : HollowBlockEntity(ECRegistry.mithrilineFurnaceEntity, pos, state), MenuProvider,
+class MithrilineFurnaceEntity(pos: BlockPos, state: BlockState) : HollowBlockEntity(ECRRegistry.mithrilineFurnaceEntity, pos, state), MenuProvider,
     MRUHolder {
     private val containerData: ContainerData = object : ContainerData {
         override fun get(index: Int): Int = when (index) {
@@ -93,7 +93,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, state: BlockState) : HollowBlockEnt
     override val holderType: MRUHolder.MRUHolderType = MRUHolder.MRUHolderType.RECEIVER
 
     @HollowCapability(MithrilineFurnaceEntity::class)
-    class ItemContainer: CapabilityInstance(), ECRItemStorage {
+    class ItemContainer: CapabilityInstance(), ItemStorage {
         private val container = HollowContainer(this, 2) { slot, _ -> slot != 1 }
 
         override val items by container(WrappedHollowInventory(container, this, { it == 1 }) { i, _ -> i == 0 })
@@ -113,7 +113,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, state: BlockState) : HollowBlockEnt
 
         @JvmStatic
         fun getActiveCollectors(level: Level, pos: BlockPos): Int {
-            val coll = CRYSTAL_POSITION?.get(pos)?.filter { level.getBlockState(it).block == ECRegistry.mithrilineCrystal }
+            val coll = CRYSTAL_POSITION?.get(pos)?.filter { level.getBlockState(it).block == ECRRegistry.mithrilineCrystal }
             return coll?.size ?: 0
         }
 
@@ -174,7 +174,7 @@ class MithrilineFurnaceEntity(pos: BlockPos, state: BlockState) : HollowBlockEnt
             }
 
             val inv = SimpleContainer(1).apply { this.setItem(0, input) }
-            val recipe = level.recipeManager.getRecipeFor(ECRegistry.mithrilineFurnaceRecipe, inv, level)
+            val recipe = level.recipeManager.getRecipeFor(ECRRegistry.mithrilineFurnaceRecipe, inv, level)
 
             if (recipe.isPresent) {
                 val mfr = recipe.get()

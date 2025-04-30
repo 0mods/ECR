@@ -10,12 +10,12 @@ import snownee.jade.api.TooltipPosition
 import snownee.jade.api.config.IPluginConfig
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.compact.jade.ECJadePlugin.Companion.withJade
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 import team._0mods.ecr.commonConfig
 
 class MithrilineFurnaceComponent: IBlockComponentProvider {
     override fun getUid(): ResourceLocation? = try {
-        BuiltInRegistries.BLOCK.getKey(ECRegistry.mithrilineFurnace)
+        BuiltInRegistries.BLOCK.getKey(ECRRegistry.mithrilineFurnace)
     } catch (e: Exception) {
         null
     }

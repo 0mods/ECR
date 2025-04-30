@@ -25,11 +25,11 @@ import team._0mods.ecr.api.mru.MRUTypes
 import team._0mods.ecr.api.utils.SoulStoneUtils.capacity
 import team._0mods.ecr.api.utils.SoulStoneUtils.consumeUBMRU
 import team._0mods.ecr.api.utils.SoulStoneUtils.isCreative
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 import team._0mods.ecr.common.menu.MatrixDestructorMenu
 
 class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
-    HollowBlockEntity(ECRegistry.matrixDestructorEntity, pos, blockState), MenuProvider, MRUHolder {
+    HollowBlockEntity(ECRRegistry.matrixDestructorEntity, pos, blockState), MenuProvider, MRUHolder {
     @JvmField var status: MatrixDestructorStatus? = null
     var progress = 0
 

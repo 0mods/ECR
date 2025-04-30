@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.Block
 import ru.hollowhorizon.hc.common.utils.rl
 import ru.hollowhorizon.hc.common.multiblock.Multiblock
 import ru.hollowhorizon.hc.common.registry.MultiblockRegistry
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 
 class StructureRecipe(
     private val id: ResourceLocation,
@@ -45,9 +45,9 @@ class StructureRecipe(
 
     override fun getId(): ResourceLocation = this.id
 
-    override fun getSerializer(): RecipeSerializer<*> = ECRegistry.structureRecipeSerial
+    override fun getSerializer(): RecipeSerializer<*> = ECRRegistry.structureRecipeSerial
 
-    override fun getType(): RecipeType<*> = ECRegistry.structureRecipe
+    override fun getType(): RecipeType<*> = ECRRegistry.structureRecipe
 
     override fun isSpecial(): Boolean = true
 

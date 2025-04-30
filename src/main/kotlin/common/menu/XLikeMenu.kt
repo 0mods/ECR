@@ -16,7 +16,7 @@ import team._0mods.ecr.api.container.AbstractMenu
 import team._0mods.ecr.api.container.slot.VanillaSpecialSlot
 import team._0mods.ecr.api.item.BoundGem
 import team._0mods.ecr.common.blocks.entity.XLikeBlockEntity
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 
 abstract class XLikeMenu(
     type: MenuType<*>,
@@ -103,7 +103,7 @@ abstract class XLikeMenu(
         blockEntity: XLikeBlockEntity?,
         access: ContainerLevelAccess,
         data: ContainerData
-    ): XLikeMenu(ECRegistry.envoyerMenu, containerId, inv, container, blockEntity, access, data) {
+    ): XLikeMenu(ECRRegistry.envoyerMenu, containerId, inv, container, blockEntity, access, data) {
         init {
             buildSlots(container, inv, 1)
         }
@@ -121,7 +121,7 @@ abstract class XLikeMenu(
             SimpleContainerData(2)
         )
 
-        override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.envoyer)
+        override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRRegistry.envoyer)
     }
 
     class MagicTable(
@@ -131,7 +131,7 @@ abstract class XLikeMenu(
         blockEntity: XLikeBlockEntity?,
         access: ContainerLevelAccess,
         data: ContainerData
-    ): XLikeMenu(ECRegistry.magicTableMenu, containerId, inv, container, blockEntity, access, data) {
+    ): XLikeMenu(ECRRegistry.magicTableMenu, containerId, inv, container, blockEntity, access, data) {
         init {
             buildSlots(container, inv)
 
@@ -151,6 +151,6 @@ abstract class XLikeMenu(
             SimpleContainerData(2)
         )
 
-        override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRegistry.magicTable)
+        override fun stillValid(player: Player): Boolean = stillValid(this.access, player, ECRRegistry.magicTable)
     }
 }

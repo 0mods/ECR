@@ -15,17 +15,17 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.compact.jei.ECRJEIPlugin
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
 import java.awt.Color
 
 class MithrilineFurnaceCategory(guiHelper: IGuiHelper): IRecipeCategory<MithrilineFurnaceRecipe> {
-    private val icon = guiHelper.createDrawableItemStack(ItemStack(ECRegistry.mithrilineFurnace))
+    private val icon = guiHelper.createDrawableItemStack(ItemStack(ECRRegistry.mithrilineFurnace))
     private val bg = guiHelper.createDrawable("textures/gui/jei/${RL_ID.path}.png".ecRL, 0, 0, 170, 80)
 
     override fun getRecipeType(): RecipeType<MithrilineFurnaceRecipe> = ECRJEIPlugin.MITHRILINE_FURNACE
 
-    override fun getTitle(): Component = ECRegistry.mithrilineFurnace.name.withStyle(ChatFormatting.RESET)
+    override fun getTitle(): Component = ECRRegistry.mithrilineFurnace.name.withStyle(ChatFormatting.RESET)
 
     override fun getWidth(): Int = bg.width
 

@@ -7,16 +7,15 @@ import me.shedaniel.rei.api.common.registry.RecipeManagerContext
 import me.shedaniel.rei.api.common.util.EntryIngredients
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.world.item.crafting.Recipe
-import team._0mods.ecr.common.compact.rei.ENVOYER
-import team._0mods.ecr.common.recipes.XLikeRecipe
+import team._0mods.ecr.common.compact.rei.MITHRILINE_FURNACE_DISPLAY
+import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
 import java.util.Optional
 
-class EnvoyerDisplay(
+class MithrilineFurnaceDisplay(
     input: List<EntryIngredient>,
     output: List<EntryIngredient>,
-    private val recipe: Recipe<*>,
-    val time: Int,
-    val mru: Int,
+    recipe: Recipe<*>,
+    espe: Int
 ): BasicDisplay(input, output, Optional.ofNullable(recipe).map { it.id }) {
     constructor(
         input: List<EntryIngredient>,
@@ -26,28 +25,15 @@ class EnvoyerDisplay(
         input,
         output,
         RecipeManagerContext.getInstance().byId(tag, "location"),
-        tag.getInt("time"),
-        tag.getInt("mru")
+        tag.getInt("espe")
     )
 
-    constructor(recipe: XLikeRecipe.Envoyer): this(
+    constructor(recipe: MithrilineFurnaceRecipe): this(
         EntryIngredients.ofIngredients(recipe.ingredients),
-        listOf(
-            EntryIngredients.of(recipe.getResultItem(registryAccess()) )
-        ),
+        listOf(EntryIngredients.of(recipe.result)),
         recipe,
-        recipe.time,
-        recipe.mruPerTick
+        recipe.espe
     )
 
-    override fun getCategoryIdentifier(): CategoryIdentifier<*>? = ENVOYER
-
-    companion object {
-        @JvmStatic
-        fun serializer(constructor: Serializer.RecipeLessConstructor<EnvoyerDisplay>): BasicDisplay.Serializer<EnvoyerDisplay> =
-            Serializer.ofRecipeLess(constructor) { display, tag ->
-                tag.putInt("time", display.time)
-                tag.putInt("mru", display.mru)
-            }
-    }
+    override fun getCategoryIdentifier(): CategoryIdentifier<*> = MITHRILINE_FURNACE_DISPLAY
 }

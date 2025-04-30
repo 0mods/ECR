@@ -16,13 +16,13 @@ import net.minecraft.world.item.crafting.RecipeType
 import org.openzen.zencode.java.ZenCodeType
 import ru.hollowhorizon.hc.common.utils.rl
 import team._0mods.ecr.api.SHORT_ID
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
 
 @ZenRegister
 @ZenCodeType.Name("mods.${SHORT_ID}.MithrilineFurnace")
 object MithrilineFurnaceCTRecipe: IRecipeManager<MithrilineFurnaceRecipe> {
-    override fun getRecipeType(): RecipeType<MithrilineFurnaceRecipe> = ECRegistry.mithrilineFurnaceRecipe
+    override fun getRecipeType(): RecipeType<MithrilineFurnaceRecipe> = ECRRegistry.mithrilineFurnaceRecipe
 
     @JvmStatic
     @ZenCodeType.Method

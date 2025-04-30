@@ -11,7 +11,7 @@ import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.level.ItemLike
 import team._0mods.ecr.api.utils.ecRL
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 import java.util.function.Consumer
 
 class MithrilineFurnaceRecipeBuilder private constructor(private val result: ItemLike, private val count: Int): RecipeBuilder {
@@ -94,7 +94,7 @@ class MithrilineFurnaceRecipeBuilder private constructor(private val result: Ite
 
         override fun getId(): ResourceLocation = this.id
 
-        override fun getType(): RecipeSerializer<*> = ECRegistry.mithrilineFurnaceRecipeSerial
+        override fun getType(): RecipeSerializer<*> = ECRRegistry.mithrilineFurnaceRecipeSerial
 
         override fun serializeAdvancement(): JsonObject? = null
 

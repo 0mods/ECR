@@ -27,7 +27,7 @@ import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUTypes
 import team._0mods.ecr.api.mru.processReceive
 import team._0mods.ecr.common.api.ContainerLevelAccess
-import team._0mods.ecr.common.init.registry.ECRegistry
+import team._0mods.ecr.common.init.registry.ECRRegistry
 import team._0mods.ecr.common.menu.XLikeMenu
 import team._0mods.ecr.common.recipes.XLikeRecipe
 
@@ -150,7 +150,7 @@ abstract class XLikeBlockEntity(
         }
     }
 
-    class Envoyer(pos: BlockPos, state: BlockState): XLikeBlockEntity(ECRegistry.envoyerEntity, pos, state) {
+    class Envoyer(pos: BlockPos, state: BlockState): XLikeBlockEntity(ECRRegistry.envoyerEntity, pos, state) {
         init {
             this[ItemContainer::class].stackSize = 1
         }
@@ -167,7 +167,7 @@ abstract class XLikeBlockEntity(
             @JvmStatic
             fun onTick(level: Level, pos: BlockPos, state: BlockState, be: Envoyer) {
                 be.processReceive(level)
-                be.processRecipeIfPresent(level, ECRegistry.envoyerRecipe, be, true)
+                be.processRecipeIfPresent(level, ECRRegistry.envoyerRecipe, be, true)
             }
         }
 
@@ -176,7 +176,7 @@ abstract class XLikeBlockEntity(
         override val locator: MRUHolder.LocatorData = MRUHolder.LocatorData(this[ItemContainer::class], 6)
     }
 
-    class MagicTable(pos: BlockPos, state: BlockState): XLikeBlockEntity(ECRegistry.magicTableEntity, pos, state) {
+    class MagicTable(pos: BlockPos, state: BlockState): XLikeBlockEntity(ECRRegistry.magicTableEntity, pos, state) {
         init {
             this[ItemContainer::class].containerSize = 8
         }
@@ -193,7 +193,7 @@ abstract class XLikeBlockEntity(
             @JvmStatic
             fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MagicTable) {
                 be.processReceive(level)
-                be.processRecipeIfPresent(level, ECRegistry.magicTableRecipe, be)
+                be.processRecipeIfPresent(level, ECRRegistry.magicTableRecipe, be)
             }
         }
 

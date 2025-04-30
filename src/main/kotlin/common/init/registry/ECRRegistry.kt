@@ -1,20 +1,16 @@
 package team._0mods.ecr.common.init.registry
 
 import net.minecraft.network.chat.Component
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.state.BlockBehaviour
-import ru.hollowhorizon.hc.common.utils.JavaHacks
-import ru.hollowhorizon.hc.common.utils.rl
 import ru.hollowhorizon.hc.common.registry.AutoModelType
 import ru.hollowhorizon.hc.common.registry.HollowRegistry
+import ru.hollowhorizon.hc.common.utils.simpleMenuFactory
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.utils.simpleBlockEntityType
-import team._0mods.ecr.api.utils.creativeTabBuilder
 import team._0mods.ecr.api.utils.ecRL
-import team._0mods.ecr.api.utils.simpleMenuFactory
 import team._0mods.ecr.api.utils.simpleRecipeType
 import team._0mods.ecr.common.api.PropertiedBlock
 import team._0mods.ecr.common.blocks.*
@@ -35,25 +31,21 @@ import team._0mods.ecr.common.recipes.MithrilineFurnaceRecipe
 import team._0mods.ecr.common.recipes.StructureRecipe
 import team._0mods.ecr.common.recipes.XLikeRecipe
 
-object ECRegistry: HollowRegistry(ModId) {
+object ECRRegistry: HollowRegistry(ModId) {
     private val defaultBlockProperties = BlockBehaviour.Properties.of().strength(3f, 3f).requiresCorrectToolForDrops()
     private val clusterProperties = BlockBehaviour.Properties.of().noOcclusion().strength(1.5F).requiresCorrectToolForDrops()
 
     // Item tabs
-    val tabItems by register("tab_items") {
-        creativeTabBuilder
-            .icon { ItemStack(elementalGem) }
-            .title(Component.translatable("itemGroup.$ModId.items"))
-            .build()
+    val tabItems by creativeTab("tab_items") {
+        icon { ItemStack(elementalGem) }
+        title(Component.translatable("itemGroup.$ModId.items"))
     }
 
-    val tabBlocks by register("tab_blocks") {
-        creativeTabBuilder
-            .title(Component.translatable("itemGroup.$ModId.blocks"))
-            .icon { ItemStack(mithrilineFurnace) }
-            //? if forge
-            /*.withTabsBefore("tab_items".ecRL)*/
-            .build()
+    val tabBlocks by creativeTab("tab_blocks") {
+        title(Component.translatable("itemGroup.$ModId.blocks"))
+        icon { ItemStack(mithrilineFurnace) }
+        //? if forge
+        /*withTabsBefore("tab_items".ecRL)*/
     }
 
     // items

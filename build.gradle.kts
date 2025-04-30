@@ -76,7 +76,7 @@ dependencies {
     compileOnly(libs.mixinextras.common)
     install(libs.mixinextras.asProvider().replace("platform", container.modPlatform), true)
 
-    modImplementation(libs.jei.mcReplace(container.minecraftVersion).replace("platform", container.modPlatform))
+    modCompileOnly(libs.jei.mcReplace(container.minecraftVersion).replace("platform", container.modPlatform))
     modImplementation(libs.crafttweaker.asProvider().mcReplace(container.minecraftVersion).replace("platform", container.modPlatform))
     modImplementation(libs.jade.replace("platform", container.modPlatform))
     modImplementation(libs.kubejs.replace("platform", container.modPlatform))
