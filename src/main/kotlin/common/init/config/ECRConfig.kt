@@ -7,6 +7,9 @@ import ru.hollowhorizon.hc.common.config.HollowConfig
 
 @Serializable
 class ECRConfig: HollowConfig() {
+    @TomlComments(
+
+    )
     @SerialName("mithriline_furnace")
     val mithrilineFurnaceConfig = MithrilineFurnace()
     @SerialName("soul_stone")
@@ -38,7 +41,7 @@ class ECRConfig: HollowConfig() {
         @SerialName("crystal_disabled_generation")
         val receiveESPEWhenCrystalsInUnavailable: Int = 0,
         @TomlComments(
-            "",
+            "Number, by how many times ESPE generation will be reduced, when the block is running",
             inline = "Default: 4"
         )
         @SerialName("reduce_generation")

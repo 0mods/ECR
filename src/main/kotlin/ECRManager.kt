@@ -18,7 +18,7 @@ val commonConfig by hollowConfig(::ECRConfig, "essential-craft/common")
 
 @JvmName("init")
 fun initCommon() {
-    commonConfig // Initialize config
+    commonConfig.save() // Initialize config
     HollowSoundHandler.MODS.add(ModId)
 }
 
