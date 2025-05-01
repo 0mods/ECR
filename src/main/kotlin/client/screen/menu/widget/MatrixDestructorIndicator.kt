@@ -4,7 +4,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.network.chat.Component
-import team._0mods.ecr.api.client.defaultBlit
+import ru.hollowhorizon.hc.client.utils.defaultBlit
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 

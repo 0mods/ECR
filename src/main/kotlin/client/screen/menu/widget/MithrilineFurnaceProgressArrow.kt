@@ -5,7 +5,7 @@ import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.network.chat.Component
 import net.minecraft.util.Mth
-import team._0mods.ecr.api.client.defaultBlit
+import ru.hollowhorizon.hc.client.utils.defaultBlit
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.menu.MithrilineFurnaceMenu
 
@@ -15,7 +15,7 @@ class MithrilineFurnaceProgressArrow(x: Int, y: Int, private val menu: Mithrilin
     }
 
     override fun renderWidget(gg: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-        gg.defaultBlit(texture, this.x, this.y, width = 8, height = 16, textureWidth = 16, textureHeight = 16)
+        gg.defaultBlit(texture, this.x, this.y, 0f, 0f, 8, 16, 16, 16)
         renderProgressArrow(gg)
     }
 

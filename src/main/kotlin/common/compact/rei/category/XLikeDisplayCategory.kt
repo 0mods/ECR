@@ -13,6 +13,8 @@ import net.minecraft.world.level.block.Block
 import team._0mods.ecr.common.compact.rei.ENVOYER_DISPLAY
 import team._0mods.ecr.common.compact.rei.MAGIC_TABLE_DISPLAY
 import team._0mods.ecr.common.compact.rei.display.XLikeDisplay
+import team._0mods.ecr.common.compact.rei.widget.LittleArrowWidget
+import team._0mods.ecr.common.compact.rei.widget.MRULineWidget
 import team._0mods.ecr.common.init.registry.ECRRegistry
 
 abstract class XLikeDisplayCategory<T: XLikeDisplay>(
@@ -32,7 +34,8 @@ abstract class XLikeDisplayCategory<T: XLikeDisplay>(
 
         val widgets = mutableListOf<Widget>()
         widgets += Widgets.createRecipeBase(bounds)
-        widgets += Widgets.createArrow(Point(x + 42, y + 24))
+        widgets += MRULineWidget.createWidget(Point(x + 72, y), display.mru * display.time, display.time)
+        widgets += LittleArrowWidget.createHorizontal(Point(x + 60, y + 23))
 
         val slotPositions = listOf(
             Point(x, y),
@@ -43,9 +46,11 @@ abstract class XLikeDisplayCategory<T: XLikeDisplay>(
             Point(x + 18, y + 18)
         )
 
-        if (display.inputEntries.size > 4) {
+        if (display.inputEntries.size != 1) {
             for (i in 0..4) {
-                widgets += Widgets.createSlot(slotPositions[i]).entries(display.inputEntries[i])
+                widgets += Widgets.createSlot(slotPositions[i]).apply {
+                    display.inputEntries.getOrNull(i)?.let { entries(it) }
+                }
             }
         } else {
             for (i in 0..3) {
@@ -57,7 +62,7 @@ abstract class XLikeDisplayCategory<T: XLikeDisplay>(
 
         val output = display.outputEntries[0]
 
-        widgets += Widgets.createSlot(Point(x + 100, y + 16)).entries(output)
+        widgets += Widgets.createSlot(Point(x + 90, y + 18)).entries(output)
 
         return widgets
     }

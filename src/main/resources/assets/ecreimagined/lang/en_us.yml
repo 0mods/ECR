@@ -86,6 +86,8 @@ tooltip.ecreimagined:
     dimension:
       .: Dimension
       disallowed: Current Bound Gem is not supports the dimension bounds
+  need_mru: "Required MRU: %s"
+  during: "Time: %s ticks"
 
 book_type.ecreimagined:
   basic: Basics
@@ -102,7 +104,3 @@ config.jade.plugin_ecreimagined:
   mithriline_furnace:
     .: Mithriline Furnace
     espe_collector: "Active ESPE collectors: %s/%s"
-
-jei.ecreimagined:
-  need_mru: "Required MRU: %s"
-  during: "Time: %s ticks"

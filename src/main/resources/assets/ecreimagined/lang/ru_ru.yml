@@ -38,7 +38,7 @@ item.ecreimagined:
   heating_rod: Тепловой стержень
   mithriline_crystal_gem: Мифрилиновый кристалл
   mru_resonating_crystal: Резонирующий MRU кристалл
-  fading_crystal: Уведающий кристалл
+  fading_crystal: Увядающий кристалл
   weakness_elemental_axe: Ослабленный элементальный топор
   weakness_elemental_hoe: Ослабленная элементальная мотыга
   weakness_elemental_pickaxe: Ослабленная элементальная кирка
@@ -71,10 +71,12 @@ tooltip.ecreimagined:
       .: Кристалл привязки был привязан к позиции
       revoked: Кристал привязки отвязан
       pos: Привязан к позиции
-      not_mru: Кристал привязки настроен к позиции, где отсутсвуют MRU устройства
+      not_mru: Кристал привязки настроен к позиции, где отсутствуют MRU устройства
     dimension:
       .: Измерение
       disallowed: Данный кристалл привязки не поддерживает привязывания между измерениями
+  need_mru: "Требуемый MRU: %s"
+  during: "Время: %s тик(ов)"
 
 book_type.ecreimagined:
   basic: Основы
@@ -87,7 +89,3 @@ config.jade.plugin_ecreimagined:
   mithriline_furnace:
     .: Мифрилиновая печь
     espe_collector: "Активные сборщики ESPE: %s/%s"
-
-jei.ecreimagined:
-  need_mru: "Требуемый MRU: %s"
-  during: "Время: %s тик(ов)"

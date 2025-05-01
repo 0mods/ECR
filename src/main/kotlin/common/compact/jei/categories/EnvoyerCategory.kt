@@ -13,9 +13,9 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
+import ru.hollowhorizon.hc.client.utils.isCursorAtPos
 import ru.hollowhorizon.hc.common.utils.mcTranslate
 import team._0mods.ecr.api.ModId
-import team._0mods.ecr.api.client.isCursorAtPos
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.compact.jei.ECRJEIPlugin
 import team._0mods.ecr.common.init.registry.ECRRegistry
@@ -68,8 +68,8 @@ class EnvoyerCategory(guiHelper: IGuiHelper): IRecipeCategory<XLikeRecipe.Envoye
             guiGraphics.renderTooltip(
                 Minecraft.getInstance().font,
                 listOf(
-                    "jei.$ModId.need_mru".mcTranslate(recipe.mruPerTick * recipe.time).visualOrderText,
-                    "jei.$ModId.during".mcTranslate(recipe.time).visualOrderText
+                    "tooltip.$ModId.need_mru".mcTranslate(recipe.mruPerTick * recipe.time).visualOrderText,
+                    "tooltip.$ModId.during".mcTranslate(recipe.time).visualOrderText
                 ),
                 mouseX.toInt(),
                 mouseY.toInt()

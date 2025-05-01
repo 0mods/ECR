@@ -4,7 +4,7 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.network.chat.Component
-import team._0mods.ecr.api.client.defaultBlit
+import ru.hollowhorizon.hc.client.utils.defaultBlit
 import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.menu.XLikeMenu
 
@@ -12,7 +12,7 @@ class XLikeProgressArrow(x: Int, y: Int, private val menu: XLikeMenu, id: String
     private val texture = "textures/gui/widget/${id}_arrow.png".ecRL
 
     override fun renderWidget(gg: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
-        gg.defaultBlit(texture, this.x, this.y, width = 24, height = 8, textureWidth = 24, textureHeight = 16)
+        gg.defaultBlit(texture, this.x, this.y, 0f, 0f, 24, 8, 24, 16)
         renderProgressArrow(gg)
     }
 

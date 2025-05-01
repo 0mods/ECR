@@ -4,8 +4,11 @@ import net.minecraft.client.gui.GuiGraphics
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
+import ru.hollowhorizon.hc.client.utils.defaultBlit
 import ru.hollowhorizon.hc.client.utils.guiPosLeft
 import ru.hollowhorizon.hc.client.utils.guiPosTop
+import ru.hollowhorizon.hc.client.utils.xPos
+import ru.hollowhorizon.hc.client.utils.yPos
 import ru.hollowhorizon.hc.common.utils.rl
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.client.*
@@ -44,7 +47,7 @@ class MatrixDestructorScreen(
     }
 
     override fun renderBg(gg: GuiGraphics, partialTick: Float, mouseX: Int, mouseY: Int) {
-        gg.defaultBlit(texture, this.guiPosLeft, this.guiPosTop)
+        gg.defaultBlit(texture, guiPosLeft, guiPosTop)
 
         val be = menu.blockEntity
         if (be is MatrixDestructorEntity) {
