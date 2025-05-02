@@ -31,7 +31,8 @@ fun initClient() {
             ECRRegistry.waterCluster to RenderType.cutout(),
             ECRRegistry.flameCluster to RenderType.cutout(),
 
-            ECRRegistry.magicTable to RenderType.translucent()
+            ECRRegistry.magicTable to RenderType.translucent(),
+            ECRRegistry.solarPrism to RenderType.translucent()
         )
     }
 

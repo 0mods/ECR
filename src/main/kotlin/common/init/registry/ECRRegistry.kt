@@ -115,6 +115,7 @@ object ECRRegistry: HollowRegistry(ModId) {
     val waterCluster by register("water_cluster", null) { ClusterBlock(clusterProperties) }
     val earthCluster by register("earth_cluster", null) { ClusterBlock(clusterProperties) }
     val airCluster by register("air_cluster", null) { ClusterBlock(clusterProperties) }
+    val solarPrism by register("solar_prism", null) { SolarPrism(defaultBlockProperties.noOcclusion()) }
 
     // blockEntity
     val mithrilineFurnaceEntity by register("mithriline_furnace") { simpleBlockEntityType(::MithrilineFurnaceEntity, mithrilineFurnace) }
