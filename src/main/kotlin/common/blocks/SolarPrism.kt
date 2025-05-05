@@ -12,6 +12,7 @@ import net.minecraft.world.level.LevelAccessor
 import net.minecraft.world.level.block.BeaconBeamBlock
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.CrossCollisionBlock
+import net.minecraft.world.level.block.SupportType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.material.Fluid
@@ -63,7 +64,7 @@ class SolarPrism(properties: Properties): CrossCollisionBlock(
 
     override fun updateShape(state: BlockState, direction: Direction, neighborState: BlockState, level: LevelAccessor, pos: BlockPos, neighborPos: BlockPos): BlockState {
         if (direction.axis.isHorizontal) {
-            val newValue = attach(neighborState, neighborState.isFaceSturdy(level, neighborPos, direction.opposite))
+            val newValue = attach(neighborState)
             return state.setValue(PROPERTY_BY_DIRECTION[direction], newValue)
         }
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos)
@@ -90,11 +91,12 @@ class SolarPrism(properties: Properties): CrossCollisionBlock(
         val southState = blockGetter.getBlockState(south)
         val westState = blockGetter.getBlockState(west)
         val eastState = blockGetter.getBlockState(east)
+
         return this.defaultBlockState()
-            .setValue(NORTH, attach(northState, northState.isFaceSturdy(blockGetter, north, Direction.SOUTH)))
-            .setValue(SOUTH, attach(southState, southState.isFaceSturdy(blockGetter, south, Direction.NORTH)))
-            .setValue(WEST, attach(westState, westState.isFaceSturdy(blockGetter, west, Direction.EAST)))
-            .setValue(EAST, attach(eastState, eastState.isFaceSturdy(blockGetter, east, Direction.WEST)))
+            .setValue(NORTH, attach(northState))
+            .setValue(SOUTH, attach(southState))
+            .setValue(WEST, attach(westState))
+            .setValue(EAST, attach(eastState))
     }
 
     override fun getColor(): DyeColor = DyeColor.YELLOW
@@ -106,17 +108,12 @@ class SolarPrism(properties: Properties): CrossCollisionBlock(
         context: CollisionContext
     ): VoxelShape {
         var shape = sideShape
-        if (!state.getValue(NORTH)) {
-            shape = Shapes.or(shape, northShape)
-        }
-        if (!state.getValue(EAST)) {
-            shape = Shapes.or(shape, eastShape)
-        }
-        if (!state.getValue(SOUTH)) {
-            shape = Shapes.or(shape, southShape)
-        }
-        if (!state.getValue(WEST)) {
-            shape = Shapes.or(shape, westShape)
+
+        shape = when {
+            !state.getValue(EAST) -> Shapes.or(shape, eastShape)
+            !state.getValue(SOUTH) -> Shapes.or(shape, southShape)
+            !state.getValue(WEST) -> Shapes.or(shape, westShape)
+            else -> Shapes.or(shape, northShape)
         }
 
         return shape
@@ -131,8 +128,11 @@ class SolarPrism(properties: Properties): CrossCollisionBlock(
         return getShape(state, level, pos, context)
     }
 
+    private fun isFaceSturdy(state: BlockState, blockGetter: BlockGetter, pos: BlockPos, direction: Direction) =
+        state.isFaceSturdy(blockGetter, pos, direction, SupportType.RIGID)
+
     companion object {
         @JvmStatic
-        fun attach(state: BlockState, solid: Boolean) = state.block is SolarPrism && solid
+        fun attach(state: BlockState) = state.block is SolarPrism
     }
 }
