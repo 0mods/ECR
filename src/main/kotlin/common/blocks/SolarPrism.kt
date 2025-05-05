@@ -128,9 +128,6 @@ class SolarPrism(properties: Properties): CrossCollisionBlock(
         return getShape(state, level, pos, context)
     }
 
-    private fun isFaceSturdy(state: BlockState, blockGetter: BlockGetter, pos: BlockPos, direction: Direction) =
-        state.isFaceSturdy(blockGetter, pos, direction, SupportType.RIGID)
-
     companion object {
         @JvmStatic
         fun attach(state: BlockState) = state.block is SolarPrism
