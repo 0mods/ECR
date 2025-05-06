@@ -1,29 +1,15 @@
 package team._0mods.ecr.common.blocks
 
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Direction
-import net.minecraft.sounds.SoundEvent
 import net.minecraft.world.item.DyeColor
-import net.minecraft.world.item.Item
-import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.context.BlockPlaceContext
 import net.minecraft.world.level.BlockGetter
-import net.minecraft.world.level.LevelAccessor
 import net.minecraft.world.level.block.BeaconBeamBlock
-import net.minecraft.world.level.block.Block
-import net.minecraft.world.level.block.CrossCollisionBlock
-import net.minecraft.world.level.block.SupportType
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.block.state.StateDefinition
-import net.minecraft.world.level.material.Fluid
-import net.minecraft.world.level.material.FluidState
-import net.minecraft.world.level.material.Fluids
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import ru.hollowhorizon.hc.common.objects.blocks.BlockItemProperties
 import team._0mods.ecr.common.api.SideBlock
-import java.util.*
 
 class SolarPrism(properties: Properties): SideBlock(properties), BlockItemProperties, BeaconBeamBlock {
     private val northShape = Shapes.box(0.0, 0.4375, 0.0, 1.0, 0.5625, 0.125)
@@ -56,6 +42,6 @@ class SolarPrism(properties: Properties): SideBlock(properties), BlockItemProper
         pos: BlockPos,
         context: CollisionContext
     ): VoxelShape {
-        return getShape(state, level, pos, context)
+        return this.getShape(state, level, pos, context)
     }
 }
