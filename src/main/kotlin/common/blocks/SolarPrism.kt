@@ -109,13 +109,10 @@ class SolarPrism(properties: Properties): CrossCollisionBlock(
     ): VoxelShape {
         var shape = sideShape
 
-        shape = when {
-            !state.getValue(NORTH) -> Shapes.or(shape, northShape)
-            !state.getValue(EAST) -> Shapes.or(shape, eastShape)
-            !state.getValue(SOUTH) -> Shapes.or(shape, southShape)
-            !state.getValue(WEST) -> Shapes.or(shape, westShape)
-            else -> Shapes.empty()
-        }
+        if (!state.getValue(NORTH)) shape = Shapes.or(shape, northShape)
+        if (!state.getValue(EAST)) shape = Shapes.or(shape, eastShape)
+        if (!state.getValue(SOUTH)) shape = Shapes.or(shape, southShape)
+        if (!state.getValue(WEST)) shape = Shapes.or(shape, westShape)
 
         return shape
     }
