@@ -110,10 +110,11 @@ class SolarPrism(properties: Properties): CrossCollisionBlock(
         var shape = sideShape
 
         shape = when {
+            !state.getValue(NORTH) -> Shapes.or(shape, northShape)
             !state.getValue(EAST) -> Shapes.or(shape, eastShape)
             !state.getValue(SOUTH) -> Shapes.or(shape, southShape)
             !state.getValue(WEST) -> Shapes.or(shape, westShape)
-            else -> Shapes.or(shape, northShape)
+            else -> Shapes.empty()
         }
 
         return shape
