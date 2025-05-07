@@ -63,7 +63,7 @@ setupResources(sourceSets, container, mapOf("hcVersion" to libs.versions.hc.get(
 
 repositories {
     maven("https://maven.blamejared.com/") // CT
-    maven("https://maven.saps.dev/releases") // Kubejs
+    maven("https://maven.latvian.dev/releases") // Kubejs
     maven("https://api.modrinth.com/maven") // Modrinth maven for some mods
     maven("https://maven.shedaniel.me/") // REI
     maven("https://maven.architectury.dev/")
@@ -76,7 +76,7 @@ dependencies {
     compileOnly(libs.mixinextras.common)
     install(libs.mixinextras.asProvider().replace("platform", container.modPlatform), true)
 
-    modCompileOnly(libs.jei.mcReplace(container.minecraftVersion).replace("platform", container.modPlatform))
+    modImplementation(libs.jei.mcReplace(container.minecraftVersion).replace("platform", container.modPlatform))
     modImplementation(libs.crafttweaker.asProvider().mcReplace(container.minecraftVersion).replace("platform", container.modPlatform))
     modImplementation(libs.jade.replace("platform", container.modPlatform))
     modImplementation(libs.kubejs.replace("platform", container.modPlatform))
