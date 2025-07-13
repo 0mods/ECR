@@ -21,6 +21,7 @@ import team._0mods.ecr.api.block.client.LowSizeBreakParticle
 import team._0mods.ecr.api.utils.prepareDrops
 import team._0mods.ecr.api.utils.simpleTicker
 import team._0mods.ecr.common.api.PropertiedEntityBlock
+import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 import team._0mods.ecr.common.blocks.entity.XLikeBlockEntity
 import team._0mods.ecr.common.init.registry.ECRRegistry
 import java.util.function.Predicate
@@ -42,42 +43,38 @@ class MagicTable(properties: Properties): PropertiedEntityBlock(properties), Low
         hand: InteractionHand,
         hit: BlockHitResult
     ): InteractionResult {
-        val defaultResult = checkAndOpenMenu<XLikeBlockEntity.MagicTable>(player, level, pos)
-        val item = player.getItemInHand(hand)
-        val blockEntity = level.getBlockEntity(pos, ECRRegistry.magicTableEntity).orElse(null) ?: return defaultResult
+        val itemStack = player.getItemInHand(hand)
+        val blockEntity = level.getBlockEntity(pos, ECRRegistry.magicTableEntity).orElse(null) ?: return checkAndOpenMenu<XLikeBlockEntity.MagicTable>(player, level, pos)
 
-        val inv = blockEntity[XLikeBlockEntity.ItemContainer::class].items
+        val inv = blockEntity[XLikeBlockEntity.MagicTableItemContainer::class].items
         val slotItem = inv.getItem(7)
 
-        return when {
-            increaseItems.any { it.matcher(item) } -> {
-                if (!slotItem.isEmpty) return defaultResult
-                if (!level.isClientSide) {
-                    inv.setItem(7, item)
-                    item.shrink(1)
+        if (player.isShiftKeyDown) {
+            if (slotItem.isEmpty) return InteractionResult.CONSUME
+            if (!level.isClientSide) {
+                val ie = ItemEntity(level, pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, slotItem.copyAndClear()).apply {
+                    setNoPickUpDelay()
+                    setThrower(player.uuid)
                 }
-                InteractionResult.SUCCESS
+                level.addFreshEntity(ie)
             }
-
-            player.isShiftKeyDown -> {
-                if (slotItem.isEmpty) return InteractionResult.CONSUME
-                if (!level.isClientSide) {
-                    val ie = ItemEntity(level, pos.x + 0.5, pos.y + 0.5, pos.z + 0.5, slotItem).apply {
-                        setNoPickUpDelay()
-                        setThrower(player.uuid)
-                    }
-                    slotItem.shrink(1)
-                    level.addFreshEntity(ie)
-                }
-                InteractionResult.SUCCESS
-            }
-
-            else -> defaultResult
+            return InteractionResult.SUCCESS
         }
+
+        if (increaseItems.any { it.matcher(itemStack) }) {
+            if (!slotItem.isEmpty) return checkAndOpenMenu<XLikeBlockEntity.MagicTable>(player, level, pos)
+            if (!level.isClientSide) {
+                inv.setItem(7, ItemStack(itemStack.item))
+                itemStack.shrink(1)
+            }
+            return InteractionResult.SUCCESS
+        }
+
+        return checkAndOpenMenu<XLikeBlockEntity.MagicTable>(player, level, pos)
     }
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
-        prepareDrops<XLikeBlockEntity.MagicTable>({ it[XLikeBlockEntity.ItemContainer::class].items },state, level, pos, newState)
+        prepareDrops<XLikeBlockEntity.MagicTable>({ it[XLikeBlockEntity.MagicTableItemContainer::class].items }, state, level, pos, newState)
 
         super.onRemove(state, level, pos, newState, isMoving)
     }

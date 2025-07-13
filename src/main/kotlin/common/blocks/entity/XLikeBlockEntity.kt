@@ -75,9 +75,9 @@ abstract class XLikeBlockEntity(
 
     override fun getDisplayName(): Component = Component.empty()
 
-    fun <T: XLikeRecipe, X: XLikeBlockEntity> processRecipeIfPresent(level: Level, recipeType: RecipeType<T>, be: X, needEmptySlot: Boolean = false) {
+    fun <T: XLikeRecipe, X: XLikeBlockEntity> processRecipeIfPresent(container: HollowContainer, level: Level, recipeType: RecipeType<T>, be: X, needEmptySlot: Boolean = false) {
         if (level.isClientSide) return
-        val container = this[ItemContainer::class].items
+        if ((0 ..< 5).all { container.getItem(it).isEmpty }) return
         val list = NonNullList.withSize(5, ItemStack.EMPTY)
         (0 ..< 5).forEach {
             if (!container.getItem(it).isEmpty)
@@ -139,66 +139,59 @@ abstract class XLikeBlockEntity(
         override val mruType: MRUTypes = MRUTypes.RADIATION_UNIT
     }
 
-    @HollowCapability(XLikeBlockEntity::class)
-    class ItemContainer: CapabilityInstance(), ItemStorage {
-        internal var stackSize by syncable(64)
-        internal var containerSize by syncable(7)
-        override val items by container(SizeableContainer(stackSize))
-
-        inner class SizeableContainer(private val stackSize: Int): HollowContainer(this, containerSize, { slot, _ -> slot == 5 }) {
-            override fun getContainerSize(): Int = stackSize
-        }
-    }
-
     class Envoyer(pos: BlockPos, state: BlockState): XLikeBlockEntity(ECRRegistry.envoyerEntity, pos, state) {
-        init {
-            this[ItemContainer::class].stackSize = 1
-        }
-
         override fun createMenu(
             id: Int,
             inv: Inventory,
             player: Player
         ): AbstractContainerMenu? {
-            return XLikeMenu.Envoyer(id, inv, this[ItemContainer::class].items, this, ContainerLevelAccess(this.level ?: return null, this.blockPos), containerData)
+            return XLikeMenu.Envoyer(id, inv, this[EnvoyerItemContainer::class].items, this, ContainerLevelAccess(this.level ?: return null, this.blockPos), containerData)
         }
 
         companion object {
             @JvmStatic
             fun onTick(level: Level, pos: BlockPos, state: BlockState, be: Envoyer) {
                 be.processReceive(level)
-                be.processRecipeIfPresent(level, ECRRegistry.envoyerRecipe, be, true)
+                be.processRecipeIfPresent(be[EnvoyerItemContainer::class].items, level, ECRRegistry.envoyerRecipe, be, true)
             }
         }
 
         override val mruContainer: MRUStorage by lazy { this@Envoyer[MRUContainer::class] }
 
-        override val locator: MRUHolder.LocatorData = MRUHolder.LocatorData(this[ItemContainer::class], 6)
+        override val locator: MRUHolder.LocatorData = MRUHolder.LocatorData(this[EnvoyerItemContainer::class], 6)
     }
 
     class MagicTable(pos: BlockPos, state: BlockState): XLikeBlockEntity(ECRRegistry.magicTableEntity, pos, state) {
-        init {
-            this[ItemContainer::class].containerSize = 8
-        }
-
         override fun createMenu(
             id: Int,
             inv: Inventory,
             player: Player
         ): AbstractContainerMenu? {
-            return XLikeMenu.MagicTable(id, inv, this[ItemContainer::class].items, this, ContainerLevelAccess(this.level ?: return null, this.blockPos), containerData)
+            return XLikeMenu.MagicTable(id, inv, this[MagicTableItemContainer::class].items, this, ContainerLevelAccess(this.level ?: return null, this.blockPos), containerData)
         }
 
         companion object {
             @JvmStatic
             fun onTick(level: Level, pos: BlockPos, state: BlockState, be: MagicTable) {
                 be.processReceive(level)
-                be.processRecipeIfPresent(level, ECRRegistry.magicTableRecipe, be)
+                be.processRecipeIfPresent(be[MagicTableItemContainer::class].items, level, ECRRegistry.magicTableRecipe, be)
             }
         }
 
         override val mruContainer: MRUStorage by lazy { this@MagicTable[MRUContainer::class] }
 
-        override val locator: MRUHolder.LocatorData = MRUHolder.LocatorData(this[ItemContainer::class], 6)
+        override val locator: MRUHolder.LocatorData = MRUHolder.LocatorData(this[MagicTableItemContainer::class], 6)
+    }
+
+    @HollowCapability(XLikeBlockEntity::class)
+    class EnvoyerItemContainer: CapabilityInstance(), ItemStorage {
+        override val items by container(object : HollowContainer(this, 7, { slot, _ -> slot == 5 }) {
+            override fun getMaxStackSize(): Int = 1
+        })
+    }
+
+    @HollowCapability(MagicTable::class)
+    class MagicTableItemContainer: CapabilityInstance(), ItemStorage {
+        override val items by container(HollowContainer(this, 8, { slot, _ -> slot == 5 }))
     }
 }

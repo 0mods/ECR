@@ -42,7 +42,7 @@ class Envoyer(properties: Properties) : PropertiedEntityBlock(properties), LowSi
     ): InteractionResult = checkAndOpenMenu<XLikeBlockEntity.Envoyer>(player, level, pos)
 
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
-        prepareDrops<XLikeBlockEntity.Envoyer>({ it[XLikeBlockEntity.ItemContainer::class].items }, state, level, pos, newState)
+        prepareDrops<XLikeBlockEntity.Envoyer>({ it[XLikeBlockEntity.EnvoyerItemContainer::class].items }, state, level, pos, newState)
 
         super.onRemove(state, level, pos, newState, isMoving)
     }

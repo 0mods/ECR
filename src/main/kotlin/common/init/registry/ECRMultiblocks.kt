@@ -9,7 +9,7 @@ import team._0mods.ecr.api.ModId
 object ECRMultiblocks : HollowRegistry(ModId) {
     val mithrilineFurnace by register("mithriline_furnace") {
         Multiblock {
-            size(5, 5, 3)
+            /*size(5, 5, 3)
             val a = block(ECRRegistry.mithrilinePlating.defaultBlockState())
             val b = block(ECRRegistry.mithrilineFurnace.defaultBlockState())
 
@@ -31,7 +31,7 @@ object ECRMultiblocks : HollowRegistry(ModId) {
                 null, null, null, null, null,
                 null, null, null, null, null,
                 a, null, null, null, a,
-            )
+            )*/
         }
     }
 
@@ -68,10 +68,10 @@ object ECRMultiblocks : HollowRegistry(ModId) {
     private fun Multiblock.makeRecipeMB(left: Multiblock.Matcher, center: Multiblock.Matcher) {
         this.size(3, 3, 1)
 
-        pattern(
+        /*pattern(
             null, left, null,
             left, center, left,
             null, left, null
-        )
+        )*/
     }
 }
