@@ -11,10 +11,11 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import team._0mods.ecr.api.container.AbstractMenu
 import team._0mods.ecr.api.container.slot.VanillaSpecialSlot
 import team._0mods.ecr.api.item.SoulStoneLike
+import team._0mods.ecr.api.utils.SoulStoneUtils.isCreative
 import team._0mods.ecr.api.utils.SoulStoneUtils.owner
 import team._0mods.ecr.common.init.registry.ECRRegistry
 
-class MatrixDestructorMenu(
+class   MatrixDestructorMenu(
     containerId: Int,
     inv: Inventory,
     container: Container,
@@ -29,7 +30,7 @@ class MatrixDestructorMenu(
 
     init {
         addSlot(VanillaSpecialSlot(container, 0, 80, 60, {
-            if (it.item is SoulStoneLike) it.owner != null
+            if (it.item is SoulStoneLike) it.owner != null || it.isCreative
             else false
         }))
         inv.make()

@@ -66,7 +66,7 @@ class ECParticle(
             RenderSystem.depthMask(false)
             RenderSystem.enableBlend()
             RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE)
-            textureManager.getTexture(atlas).blurMipmap(true, false)
+            textureManager.getTexture(atlas).blurMipmap(blur = true, mipmap = false)
             builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.PARTICLE)
         }
 

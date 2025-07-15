@@ -25,4 +25,7 @@ class VanillaSpecialSlot(
     override fun mayPickup(player: Player): Boolean = this.pickup?.let { it(player) } ?: super.mayPickup(player)
 
     override fun isHighlightable(): Boolean = this.isHighlightable?.let { it() } ?: super.isHighlightable()
+
+    override fun safeInsert(stack: ItemStack, increment: Int): ItemStack? =
+        if (this.getMaxStackSize() < increment) ItemStack.EMPTY else super.safeInsert(stack, increment)
 }

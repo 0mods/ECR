@@ -3,6 +3,7 @@ package team._0mods.ecr.common.items
 import net.minecraft.ChatFormatting
 import net.minecraft.network.chat.Component
 import net.minecraft.world.InteractionHand
+import net.minecraft.world.InteractionResult
 import net.minecraft.world.InteractionResultHolder
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EntityType
@@ -36,46 +37,44 @@ class SoulStone: Item(Properties()), SoulStoneLike {
     override fun use(level: Level, player: Player, usedHand: InteractionHand): InteractionResultHolder<ItemStack> {
         val stack = player.getItemInHand(usedHand)
 
-        if (!level.isClientSide) {
-            if (!player.isShiftKeyDown) {
-                if (stack.owner == null) {
-                    if (stack.count > 1) {
-                        val copiedStack = stack.copy().apply {
-                            count = 1
-                            owner = player.uuid
-                        }
-                        stack.shrink(1)
+        if (level.isClientSide) return super.use(level, player, usedHand)
 
-                        val ent = ItemEntity(level, player.x, player.y, player.z, copiedStack).apply {
-                            setNoPickUpDelay()
-                            this.setThrower(player.uuid)
-                        }
+        val isSneaking = player.isShiftKeyDown
+        val isOwner = stack.owner == player.uuid
 
-                        level.addFreshEntity(ent)
-                    } else {
-                        stack.owner = player.uuid
-                    }
-
-                    player.displayClientMessage(
-                        Component.translatable("tooltip.$ModId.soul_stone.bounded", player.name),
-                        true
-                    )
+        if (isSneaking) {
+            when {
+                stack.owner == null -> return super.use(level, player, usedHand)
+                !isOwner -> {
+                    player.displayClientMessage("tooltip.$ModId.soul_stone.can_not_unbound".mcTranslate, true)
+                    return InteractionResultHolder.fail(stack)
+                }
+                else -> {
+                    stack.owner = null
+                    player.displayClientMessage("tooltip.$ModId.soul_stone.unbounded".mcTranslate(player.name), true)
                     return InteractionResultHolder.success(stack)
                 }
-            } else {
-                if (stack.owner != null) {
-                    if (stack.owner != player.uuid) {
-                        player.displayClientMessage(
-                            Component.translatable("tooltip.$ModId.soul_stone.can_not_unbound"),
-                            true
-                        )
-                        return InteractionResultHolder.fail(stack)
-                    } else {
-                        stack.owner = null
-                        player.displayClientMessage(Component.translatable("tooltip.$ModId.soul_stone.unbounded"), true)
-                        return InteractionResultHolder.fail(stack)
+            }
+        } else {
+            if (stack.isCreative) return super.use(level, player, usedHand)
+            if (stack.owner == null) {
+                if (stack.count > 1) {
+                    val copiedStack = stack.copy().apply {
+                        count = 1
+                        owner = player.uuid
                     }
-                }
+                    stack.shrink(1)
+
+                    val ent = ItemEntity(level, player.x, player.y, player.z, copiedStack).apply {
+                        setNoPickUpDelay()
+                        setThrower(player.uuid)
+                    }
+
+                    level.addFreshEntity(ent)
+                } else stack.owner = player.uuid
+
+                player.displayClientMessage("tooltip.$ModId.soul_stone.bounded".mcTranslate(player.name), true)
+                return InteractionResultHolder.success(stack)
             }
         }
 
