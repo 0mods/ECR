@@ -9,7 +9,7 @@ import team._0mods.ecr.api.ModId
 object ECRMultiblocks : HollowRegistry(ModId) {
     val mithrilineFurnace by register("mithriline_furnace") {
         Multiblock {
-            /*size(5, 5, 3)
+            size(5, 5, 3)
             val a = block(ECRRegistry.mithrilinePlating.defaultBlockState())
             val b = block(ECRRegistry.mithrilineFurnace.defaultBlockState())
 
@@ -31,7 +31,7 @@ object ECRMultiblocks : HollowRegistry(ModId) {
                 null, null, null, null, null,
                 null, null, null, null, null,
                 a, null, null, null, a,
-            )*/
+            )
         }
     }
 
@@ -65,13 +65,77 @@ object ECRMultiblocks : HollowRegistry(ModId) {
         }
     }
 
+    val lightningCollector by register("lightning_collector") {
+        Multiblock {
+            size(11, 11, 4)
+
+            val voidStone = this.block(ECRRegistry.voidStone.defaultBlockState())
+            val mithrilinePlating = this.block(ECRRegistry.mithrilinePlating.defaultBlockState())
+            val copperSlabs = this.tag(ECTags.copperSlabs)
+            val copperBlocks = this.tag(ECTags.copperBlocks)
+            val center = this.block(ECRRegistry.mithrilineFurnace.defaultBlockState())
+            val mithrilineCrystal = this.block(ECRRegistry.mithrilineCrystal.defaultBlockState())
+            val lightningRod = this.block(Blocks.LIGHTNING_ROD.defaultBlockState())
+
+            pattern(
+                null, null, null, voidStone, voidStone, null, voidStone, voidStone, null, null, null,
+                null, null, mithrilinePlating, null, null, voidStone, null, null, mithrilinePlating, null, null,
+                null, mithrilinePlating, null, null, voidStone, null, voidStone, null, null, mithrilinePlating, null,
+                voidStone, null, null, voidStone, null, voidStone, null, voidStone, null, null, voidStone,
+                voidStone, null, voidStone, null, null, null, null, null, voidStone, null, voidStone,
+                null, voidStone, null, voidStone, null, null, null, voidStone, null, voidStone, null,
+                voidStone, null, voidStone, null, null, null, null, null, voidStone, null, voidStone,
+                voidStone, null, null, voidStone, null, voidStone, null, voidStone, null, null, voidStone,
+                null, mithrilinePlating, null, null, voidStone, null, voidStone, null, null, mithrilinePlating, null,
+                null, null, mithrilinePlating, null, null, voidStone, null, null, mithrilinePlating, null, null,
+                null, null, null, voidStone, voidStone, null, voidStone, voidStone, null, null, null,
+
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, mithrilinePlating, null, null, null, null, null, null, null, mithrilinePlating, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, copperSlabs, null, copperSlabs, null, null, null, null,
+                null, null, null, copperSlabs, copperBlocks, voidStone, copperBlocks, copperSlabs, null, null, null,
+                null, null, null, null, voidStone, null, voidStone, null, null, null, null,
+                null, null, null, copperSlabs, copperBlocks, voidStone, copperBlocks, copperSlabs, null, null, null,
+                null, null, null, null, copperSlabs, null, copperSlabs, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, mithrilinePlating, null, null, null, null, null, null, null, mithrilinePlating, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, center, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, mithrilineCrystal, null, null, null, null, null, null, null, mithrilineCrystal, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, lightningRod, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+                null, mithrilineCrystal, null, null, null, null, null, null, null, mithrilineCrystal, null,
+                null, null, null, null, null, null, null, null, null, null, null,
+            )
+        }
+    }
+
     private fun Multiblock.makeRecipeMB(left: Multiblock.Matcher, center: Multiblock.Matcher) {
         this.size(3, 3, 1)
 
-        /*pattern(
+        pattern(
             null, left, null,
             left, center, left,
             null, left, null
-        )*/
+        )
     }
 }

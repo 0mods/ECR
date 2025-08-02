@@ -10,7 +10,7 @@ import kotlin.random.Random
 
 @Serializable
 @HollowPacketHandler(HollowPacketHandler.Direction.TO_CLIENT)
-class FinishCraftParticle(val x: Double, val y: Double, val z: Double, val count: Int): HollowPacket<FinishCraftParticle> {
+class FinishCraftParticle(val x: Double, val y: Double, val z: Double, val count: Int): HollowPacket {
     override fun handle(player: Player) {
         val level = Minecraft.getInstance().level ?: return
         val rand = Random

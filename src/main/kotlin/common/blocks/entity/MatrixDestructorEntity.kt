@@ -49,11 +49,11 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
         progress = tag.getInt("InjectionProgress")
         if (tag.contains("Status")) {
             val t = tag.getString("Status")
-            if (MatrixDestructorStatus.entries.any { it.name == t })
-                status = MatrixDestructorStatus.valueOf(t)
-            else {
-                status = null
+            status = try {
+                MatrixDestructorStatus.valueOf(t)
+            } catch (e: Exception) {
                 tag.remove("Status")
+                null
             }
         }
         super.load(tag)
@@ -112,6 +112,12 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
             container.synchronize()
 
             val stack = container.items.getItem(0)
+
+            when {
+                be.mruContainer.isEmpty -> be.disable()
+                be.mruContainer.hasMRU && stack.isEmpty -> be.waiting()
+            }
+
             if (stack.isEmpty) return
 
             val storage = stack.capacity
@@ -119,8 +125,13 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
             val convertCost = i.extractCount
             val receiveCost = i.receiveCount
             val hasEnoughStorage = storage >= receiveCost || stack.isCreative
+            val hasPower = storage > 0 || stack.isCreative
 
-            switchStatus(be, storage, stack)
+            when {
+                !be.mruContainer.isFilled && !hasPower -> be.stopped()
+                be.progress > 0 && hasPower -> be.working()
+                be.mruContainer.isFilled && hasPower -> be.warning()
+            }
 
             if (!hasEnoughStorage) return
 
@@ -132,23 +143,6 @@ class MatrixDestructorEntity(pos: BlockPos, blockState: BlockState) :
                 be.progress = 0
                 be.mruContainer.receiveMru(receiveCost)
                 be.setChanged()
-            }
-        }
-
-        @JvmStatic
-        private fun switchStatus(
-            be: MatrixDestructorEntity,
-            storage: Int,
-            stack: ItemStack
-        ) {
-            val hasPower = storage > 0 || stack.isCreative
-
-            when {
-                be.mruContainer.isEmpty -> be.disable()
-                !be.mruContainer.isFilled && !hasPower -> be.stopped()
-                be.progress > 0 && hasPower -> be.working()
-                be.mruContainer.isFilled && hasPower -> be.warning()
-                be.mruContainer.hasMRU && stack.isEmpty -> be.waiting()
             }
         }
     }

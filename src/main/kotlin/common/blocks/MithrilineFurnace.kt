@@ -16,6 +16,7 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 import ru.hollowhorizon.hc.common.utils.get
+import ru.hollowhorizon.hc.common.utils.literal
 import team._0mods.ecr.api.utils.checkAndOpenMenu
 import team._0mods.ecr.api.utils.prepareDrops
 import team._0mods.ecr.api.utils.simpleTicker
@@ -40,9 +41,16 @@ class MithrilineFurnace(properties: Properties) : PropertiedEntityBlock(properti
         player: Player,
         hand: InteractionHand,
         hit: BlockHitResult
-    ): InteractionResult = if (ECRMultiblocks.mithrilineFurnace.isValid(level, pos)) {
-        checkAndOpenMenu<MithrilineFurnaceEntity>(player, level, pos)
-    } else InteractionResult.FAIL
+    ): InteractionResult {
+        if (ECRMultiblocks.lightningCollector.isValid(level, pos)) {
+            player.displayClientMessage("structure checked".literal, false)
+            return InteractionResult.SUCCESS
+        }
+
+        return if (ECRMultiblocks.mithrilineFurnace.isValid(level, pos)) {
+            checkAndOpenMenu<MithrilineFurnaceEntity>(player, level, pos)
+        } else InteractionResult.FAIL
+    }
 
     override fun onRemove(
         state: BlockState,

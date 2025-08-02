@@ -9,10 +9,8 @@ import ru.hollowhorizon.hc.client.utils.guiPosLeft
 import ru.hollowhorizon.hc.client.utils.guiPosTop
 import ru.hollowhorizon.hc.client.utils.xPos
 import ru.hollowhorizon.hc.client.utils.yPos
-import ru.hollowhorizon.hc.common.utils.rl
-import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.client.*
-import team._0mods.ecr.client.screen.menu.widget.MatrixDestructorIndicator
+import team._0mods.ecr.api.utils.ecRL
 import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 import team._0mods.ecr.common.menu.MatrixDestructorMenu
 
@@ -26,18 +24,8 @@ class MatrixDestructorScreen(
     title
 ) {
     companion object {
-        private val texture = "$ModId:textures/gui/matrix_destructor.png".rl
-    }
-
-    override fun init() {
-        super.init()
-
-        val entity = this.menu.blockEntity as? MatrixDestructorEntity
-        if (entity != null) {
-            if (entity.status != null) {
-                this.addRenderableOnly(MatrixDestructorIndicator(xPos(83), yPos(36), entity.status!!))
-            }
-        }
+        private val texture = "textures/gui/matrix_destructor.png".ecRL
+        private val textureIndicator = "textures/gui/widget/matrix_destructor_indicators.png".ecRL
     }
 
     override fun render(gg: GuiGraphics, mouseX: Int, mouseY: Int, partialTick: Float) {
@@ -52,7 +40,24 @@ class MatrixDestructorScreen(
         val be = menu.blockEntity
         if (be is MatrixDestructorEntity) {
             val mru = be.mruContainer
+            val status = be.status
             this.drawMRULine(gg, mru, 37, 17, 102, 10, mouseX, mouseY)
+
+            if (status != null) {
+                val x = when (status) {
+                    MatrixDestructorEntity.MatrixDestructorStatus.WORKING -> 10f
+                    MatrixDestructorEntity.MatrixDestructorStatus.STOPPED -> 10f
+                    else -> 0f
+                }
+
+                val y = when (status) {
+                    MatrixDestructorEntity.MatrixDestructorStatus.WARNING -> 10f
+                    MatrixDestructorEntity.MatrixDestructorStatus.STOPPED -> 10f
+                    else -> 0f
+                }
+
+                gg.defaultBlit(textureIndicator, xPos(83), yPos(36), x, y, 10, 10, 20, 20)
+            }
         }
     }
 }
