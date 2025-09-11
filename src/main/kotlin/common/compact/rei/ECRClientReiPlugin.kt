@@ -4,7 +4,6 @@ import me.shedaniel.rei.api.client.plugins.REIClientPlugin
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry
 import me.shedaniel.rei.api.common.util.EntryStacks
-import ru.hollowhorizon.hc.common.objects.recipe.ingredient.DefaultHollowIngredient
 import team._0mods.ecr.common.compact.rei.category.MithrilineFurnaceDisplayCategory
 import team._0mods.ecr.common.compact.rei.category.XLikeDisplayCategory
 import team._0mods.ecr.common.compact.rei.display.MithrilineFurnaceDisplay

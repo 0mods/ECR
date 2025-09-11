@@ -8,8 +8,7 @@ import team._0mods.ecr.api.ModId
 
 object ECRMultiblocks : HollowRegistry(ModId) {
     val mithrilineFurnace by register("mithriline_furnace") {
-        Multiblock {
-            size(5, 5, 3)
+        Multiblock(5, 5, 3) {
             val a = block(ECRRegistry.mithrilinePlating.defaultBlockState())
             val b = block(ECRRegistry.mithrilineFurnace.defaultBlockState())
 
@@ -36,39 +35,37 @@ object ECRMultiblocks : HollowRegistry(ModId) {
     }
 
     val soulStone by register("soul_stone") {
-        Multiblock {
+        Multiblock(3, 3, 1) {
             this.makeRecipeMB(this.tag(BlockTags.SOUL_SPEED_BLOCKS), this.block(Blocks.EMERALD_BLOCK.defaultBlockState()))
         }
     }
 
     val flameCrystal by register("flame_crystal") {
-        Multiblock {
+        Multiblock(3, 3, 1) {
             this.makeRecipeMB(this.block(Blocks.LAVA.defaultBlockState()), this.tag(BlockTags.INFINIBURN_NETHER))
         }
     }
 
     val waterCrystal by register("water_crystal") {
-        Multiblock {
+        Multiblock(3, 3, 1) {
             this.makeRecipeMB(this.block(Blocks.WATER.defaultBlockState()), this.tag(BlockTags.ICE))
         }
     }
 
     val earthCrystal by register("earth_crystal") {
-        Multiblock {
+        Multiblock(3, 3, 1) {
             this.makeRecipeMB(this.block(Blocks.MOSSY_COBBLESTONE.defaultBlockState()), this.block(Blocks.MOSS_BLOCK.defaultBlockState()))
         }
     }
 
     val airCrystal by register("air_crystal") {
-        Multiblock {
+        Multiblock(3, 3, 1) {
             this.makeRecipeMB(this.block(Blocks.END_STONE_BRICKS.defaultBlockState()), this.block(Blocks.PURPUR_BLOCK.defaultBlockState()))
         }
     }
 
     val lightningCollector by register("lightning_collector") {
-        Multiblock {
-            size(11, 11, 4)
-
+        Multiblock(11, 11, 4) {
             val voidStone = this.block(ECRRegistry.voidStone.defaultBlockState())
             val mithrilinePlating = this.block(ECRRegistry.mithrilinePlating.defaultBlockState())
             val copperSlabs = this.tag(ECTags.copperSlabs)
@@ -79,7 +76,7 @@ object ECRMultiblocks : HollowRegistry(ModId) {
 
             pattern(
                 null, null, null, voidStone, voidStone, null, voidStone, voidStone, null, null, null,
-                null, null, mithrilinePlating, null, null, voidStone, null, null, mithrilinePlating, null, null,
+                null, mithrilinePlating, mithrilinePlating, null, null, voidStone, null, null, mithrilinePlating, mithrilinePlating, null,
                 null, mithrilinePlating, null, null, voidStone, null, voidStone, null, null, mithrilinePlating, null,
                 voidStone, null, null, voidStone, null, voidStone, null, voidStone, null, null, voidStone,
                 voidStone, null, voidStone, null, null, null, null, null, voidStone, null, voidStone,
@@ -87,7 +84,7 @@ object ECRMultiblocks : HollowRegistry(ModId) {
                 voidStone, null, voidStone, null, null, null, null, null, voidStone, null, voidStone,
                 voidStone, null, null, voidStone, null, voidStone, null, voidStone, null, null, voidStone,
                 null, mithrilinePlating, null, null, voidStone, null, voidStone, null, null, mithrilinePlating, null,
-                null, null, mithrilinePlating, null, null, voidStone, null, null, mithrilinePlating, null, null,
+                null, mithrilinePlating, mithrilinePlating, null, null, voidStone, null, null, mithrilinePlating, mithrilinePlating, null,
                 null, null, null, voidStone, voidStone, null, voidStone, voidStone, null, null, null,
 
                 null, null, null, null, null, null, null, null, null, null, null,
@@ -130,8 +127,6 @@ object ECRMultiblocks : HollowRegistry(ModId) {
     }
 
     private fun Multiblock.makeRecipeMB(left: Multiblock.Matcher, center: Multiblock.Matcher) {
-        this.size(3, 3, 1)
-
         pattern(
             null, left, null,
             left, center, left,

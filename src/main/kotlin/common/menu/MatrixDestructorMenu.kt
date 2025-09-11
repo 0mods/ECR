@@ -15,15 +15,13 @@ import team._0mods.ecr.api.utils.SoulStoneUtils.isCreative
 import team._0mods.ecr.api.utils.SoulStoneUtils.owner
 import team._0mods.ecr.common.init.registry.ECRRegistry
 
-class   MatrixDestructorMenu(
+class MatrixDestructorMenu(
     containerId: Int,
     inv: Inventory,
     container: Container,
     val blockEntity: BlockEntity?,
     access: ContainerLevelAccess
-) : AbstractMenu(
-    ECRRegistry.matrixDestructorMenu, containerId, access
-) {
+) : AbstractMenu(ECRRegistry.matrixDestructorMenu, containerId, access) {
     constructor(containerId: Int, inv: Inventory, buf: FriendlyByteBuf): this(
         containerId, inv, SimpleContainer(1), inv.player.commandSenderWorld.getBlockEntity(buf.readBlockPos()), ContainerLevelAccess.NULL
     )

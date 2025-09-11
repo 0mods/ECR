@@ -7,13 +7,14 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.block.state.BlockBehaviour
 import ru.hollowhorizon.hc.common.registry.AutoModelType
 import ru.hollowhorizon.hc.common.registry.HollowRegistry
-import ru.hollowhorizon.hc.common.utils.simpleMenuFactory
 import team._0mods.ecr.api.ModId
 import team._0mods.ecr.api.utils.simpleBlockEntityType
 import team._0mods.ecr.api.utils.ecRL
+import team._0mods.ecr.api.utils.simpleMenuFactory
 import team._0mods.ecr.api.utils.simpleRecipeType
 import team._0mods.ecr.common.api.PropertiedBlock
 import team._0mods.ecr.common.blocks.*
+import team._0mods.ecr.common.blocks.entity.ColdDistillerEntity
 import team._0mods.ecr.common.blocks.entity.MatrixDestructorEntity
 import team._0mods.ecr.common.blocks.entity.MithrilineFurnaceEntity
 import team._0mods.ecr.common.blocks.entity.XLikeBlockEntity
@@ -116,12 +117,14 @@ object ECRRegistry: HollowRegistry(ModId) {
     val earthCluster by register("earth_cluster", null) { ClusterBlock(clusterProperties) }
     val airCluster by register("air_cluster", null) { ClusterBlock(clusterProperties) }
     val solarPrism by register("solar_prism", null) { SolarPrism(defaultBlockProperties.noOcclusion()) }
+    val coldDistiller by register("cold_distiller", null) { ColdDistiller(defaultBlockProperties.noOcclusion()) }
 
     // blockEntity
     val mithrilineFurnaceEntity by register("mithriline_furnace") { simpleBlockEntityType(::MithrilineFurnaceEntity, mithrilineFurnace) }
     val matrixDestructorEntity by register("matrix_destructor") { simpleBlockEntityType(::MatrixDestructorEntity, matrixDestructor) }
     val envoyerEntity by register("envoyer") { simpleBlockEntityType(XLikeBlockEntity::Envoyer, envoyer) }
     val magicTableEntity by register("magic_table") { simpleBlockEntityType(XLikeBlockEntity::MagicTable, magicTable) }
+    val coldDistillerEntity by register("cold_distiller") { simpleBlockEntityType(::ColdDistillerEntity, coldDistiller) }
 
     // menu types
     val mithrilineFurnaceMenu by register("mithriline_furnace") { simpleMenuFactory(::MithrilineFurnaceMenu) }

@@ -1,6 +1,5 @@
 //? if forge {
 /*@file:Mod.EventBusSubscriber(Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
-
 package team._0mods.ecr.common.init.events.client
 
 import net.minecraftforge.api.distmarker.Dist

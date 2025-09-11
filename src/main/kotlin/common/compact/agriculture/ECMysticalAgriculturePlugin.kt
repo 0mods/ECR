@@ -1,5 +1,4 @@
 //? if forge {
-
 /*package team._0mods.ecr.common.compact.agriculture
 
 import com.blakebr0.mysticalagriculture.api.IMysticalAgriculturePlugin
