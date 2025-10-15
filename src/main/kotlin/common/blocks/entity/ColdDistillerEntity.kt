@@ -25,7 +25,7 @@ class ColdDistillerEntity(
         @JvmStatic
         fun tick(level: Level, pos: BlockPos, state: BlockState, be: ColdDistillerEntity) {
             if (level.isClientSide) return
-
+//            val rad = radiusIceBlock(level, pos, )
         }
 
         fun radiusIceBlock(level: Level, pos: BlockPos, radius: Int): List<BlockState> {

@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.register
+
 val modId: String by project
 val modName: String by project
 val modVersion: String by project
@@ -31,6 +33,9 @@ sourceSets {
     }
 }
 
+val String.fromProperties
+    get() = project.properties[this].toString()
+
 val container = ModContainer(
     minecraftVersion = stonecutter.current.project.substringBeforeLast('-'),
     modPlatform = stonecutter.current.project.substringAfterLast('-'),
@@ -43,12 +48,22 @@ val container = ModContainer(
     author = if (stonecutter.current.project.substringAfterLast('-') == "fabric") "modAuthors".fromProperties.multilineJson else "modAuthors".fromProperties
 )
 
-val String.fromProperties
-    get() = project.properties[this].toString()
-
 group = "modGroupId".fromProperties
 version = modVersion
 base.archivesName = "${"archivesName".fromProperties}-${container.modPlatform}-${container.minecraftVersion}"
+
+fun DependencyHandlerScope.prepareHCDeps() {
+    minecraftRuntimeLibraries(libs.imageio.apng)
+    minecraftRuntimeLibraries(libs.joml)
+    minecraftRuntimeLibraries(libs.kotgl.matrix)
+
+    compileOnlyMinecraft(libs.kool.editor)
+    compileOnlyMinecraft(libs.kool.editor.model)
+    compileOnlyMinecraft(libs.kool.core)
+    compileOnlyMinecraft(libs.ktoml.core.jvm)
+
+    platformImplementation(Platform.FABRIC, container.modPlatform, "io.github.classgraph:classgraph:4.8.173")
+}
 
 setupEnvironment(
     container,
@@ -93,25 +108,12 @@ dependencies {
     annotationProcessor(libs.crafttweaker.annotationProcessor)
 }
 
-fun DependencyHandlerScope.prepareHCDeps() {
-    minecraftRuntimeLibraries(libs.imageio.apng)
-    minecraftRuntimeLibraries(libs.joml)
-    minecraftRuntimeLibraries(libs.kotgl.matrix)
-
-    compileOnlyMinecraft(libs.kool.editor)
-    compileOnlyMinecraft(libs.kool.editor.model)
-    compileOnlyMinecraft(libs.kool.core)
-    compileOnlyMinecraft(libs.ktoml.core.jvm)
-
-    platformImplementation(Platform.FABRIC, container.modPlatform, "io.github.classgraph:classgraph:4.8.173")
-}
-
 tasks {
     jar {
         from(sourceSets["api"].output)
     }
 
-    task("removeOldJar") {
+    register("removeOldJar") {
         val buildDirs = listOf(
             rootProject.layout.buildDirectory.file("libs").get().asFile,
             project.layout.buildDirectory.file("libs").get().asFile,
@@ -125,13 +127,13 @@ tasks {
         }
     }
 
-    val apiJar = task<Jar>("apiJar") {
+    val apiJar = register<Jar>("apiJar") {
         archiveClassifier = "api"
         from(sourceSets["api"].output)
         dependsOn("removeOldJar")
     }
 
-    val apiSourcesJar = task<Jar>("apiSourcesJar") {
+    val apiSourcesJar = register<Jar>("apiSourcesJar") {
         archiveClassifier = "api-sources"
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         from(sourceSets["api"].allSource)

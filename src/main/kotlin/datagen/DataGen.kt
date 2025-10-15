@@ -16,7 +16,7 @@ object DataGen {
 
         LOGGER.info("Loaded datagen")
 
-        gen.addProvider(e.includeServer(), ECRecipeProvider(gen))
+        gen.addProvider(e.includeServer(), ECRecipeProvider(gen.packOutput))
     }
 }
 *///?}
