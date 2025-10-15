@@ -24,8 +24,7 @@ class ECRConfig: HollowConfig() {
 
     @Serializable
     data class MithrilineFurnace(
-        /*@SerialName("crystal_position")*/
-        @Transient
+        @SerialName("crystal_position")
         val crystalPositions: Array<Offset> = arrayOf(
             Offset(2, 2, 2), Offset(-2, 2, -2),
             Offset(-2, 2, 2), Offset(2, 2, -2),
