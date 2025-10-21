@@ -15,16 +15,14 @@ import team._0mods.ecr.common.compact.rei.widget.LittleArrowWidget
 import team._0mods.ecr.common.init.registry.ECRRegistry
 
 object MithrilineFurnaceDisplayCategory: DisplayCategory<MithrilineFurnaceDisplay> {
-    private val block = ECRRegistry.mithrilineFurnace
-
-    override fun getCategoryIdentifier(): CategoryIdentifier<out MithrilineFurnaceDisplay?>? =
+    override fun getCategoryIdentifier(): CategoryIdentifier<out MithrilineFurnaceDisplay?> =
         MITHRILINE_FURNACE_DISPLAY
 
-    override fun getTitle(): Component? = block.name
+    override fun getTitle(): Component? = ECRRegistry.mithrilineFurnace.name
 
-    override fun getIcon(): Renderer? = EntryStacks.of(block)
+    override fun getIcon(): Renderer? = EntryStacks.of(ECRRegistry.mithrilineFurnace)
 
-    override fun setupDisplay(display: MithrilineFurnaceDisplay, bounds: Rectangle): List<Widget?>? {
+    override fun setupDisplay(display: MithrilineFurnaceDisplay, bounds: Rectangle): List<Widget?> {
         val x = bounds.centerX - 8
         val y = bounds.centerY - 26
 

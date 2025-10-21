@@ -16,7 +16,7 @@ import team._0mods.ecr.api.utils.simpleTicker
 import team._0mods.ecr.common.api.PropertiedEntityBlock
 import team._0mods.ecr.common.blocks.entity.ColdDistillerEntity
 
-class ColdDistiller(properties: Properties) : PropertiedEntityBlock(properties), LowSizeBreakParticle {
+class ColdDistiller(properties: Properties): PropertiedEntityBlock(properties), LowSizeBreakParticle {
     override fun newBlockEntity(
         pos: BlockPos,
         state: BlockState

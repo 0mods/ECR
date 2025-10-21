@@ -42,7 +42,6 @@ class MatrixDestructor(properties: Properties) : PropertiedEntityBlock(propertie
         hit: BlockHitResult,
     ): InteractionResult = checkAndOpenMenu<MatrixDestructorEntity>(player, level, pos)
 
-
     override fun onRemove(state: BlockState, level: Level, pos: BlockPos, newState: BlockState, isMoving: Boolean) {
         prepareDrops<MatrixDestructorEntity>({ it[MatrixDestructorEntity.ItemContainer::class].items }, state, level, pos, newState)
 

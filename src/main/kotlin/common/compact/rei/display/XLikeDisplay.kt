@@ -42,7 +42,7 @@ abstract class XLikeDisplay(
 
         constructor(recipe: XLikeRecipe.Envoyer): this(
             EntryIngredients.ofIngredients(recipe.ingredients),
-            listOf(EntryIngredients.of(recipe.getResultItem(registryAccess()) )),
+            listOf(EntryIngredients.of(recipe.getResultItem(registryAccess()))),
             recipe,
             recipe.time,
             recipe.mruPerTick

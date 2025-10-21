@@ -13,6 +13,8 @@ class ECRConfig: HollowConfig() {
     @SerialName("soul_stone")
     @TomlComments("Soul stone settings")
     val soulStoneConfig = SoulStone()
+    @SerialName("cold_distiller")
+    val coldDistiller = ColdDistiller()
 
     @Serializable
     data class SoulStone(
@@ -25,7 +27,7 @@ class ECRConfig: HollowConfig() {
     @Serializable
     data class MithrilineFurnace(
         @SerialName("crystal_position")
-        val crystalPositions: Array<Offset> = arrayOf(
+        val crystalPositions: List<Offset> = listOf(
             Offset(2, 2, 2), Offset(-2, 2, -2),
             Offset(-2, 2, 2), Offset(2, 2, -2),
             Offset(2, 1, 0), Offset(0, 1, 2),
@@ -51,18 +53,11 @@ class ECRConfig: HollowConfig() {
             val y: Int,
             val z: Int
         )
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) return true
-            if (javaClass != other?.javaClass) return false
-
-            other as MithrilineFurnace
-
-            return crystalPositions.contentEquals(other.crystalPositions)
-        }
-
-        override fun hashCode(): Int {
-            return crystalPositions.contentHashCode()
-        }
     }
+
+    @Serializable
+    data class ColdDistiller(
+        @SerialName("find_radius")
+        val findRadius: Int = 3
+    )
 }

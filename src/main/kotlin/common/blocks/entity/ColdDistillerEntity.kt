@@ -13,6 +13,7 @@ import team._0mods.ecr.api.mru.MRUHolder
 import team._0mods.ecr.api.mru.MRUStorage
 import team._0mods.ecr.api.mru.MRUTypes
 import team._0mods.ecr.common.init.registry.ECRRegistry
+import team._0mods.ecr.commonConfig
 
 class ColdDistillerEntity(
     pos: BlockPos,
@@ -22,10 +23,12 @@ class ColdDistillerEntity(
     override val holderType: MRUHolder.MRUHolderType = MRUHolder.MRUHolderType.TRANSLATOR
 
     companion object {
+        private val coldDistillerConfig = commonConfig.coldDistiller
         @JvmStatic
         fun tick(level: Level, pos: BlockPos, state: BlockState, be: ColdDistillerEntity) {
             if (level.isClientSide) return
-//            val rad = radiusIceBlock(level, pos, )
+            val rad = radiusIceBlock(level, pos, coldDistillerConfig.findRadius)
+            team._0mods.ecr.api.LOGGER.debug("blocks: ${rad.size}")
         }
 
         fun radiusIceBlock(level: Level, pos: BlockPos, radius: Int): List<BlockState> {
@@ -35,8 +38,8 @@ class ColdDistillerEntity(
                     for (y in -radius .. radius) {
                         val state = level.getBlockState(BlockPos(pos.x + x, pos.y + y, pos.z + z))
                         val tag = BuiltInRegistries.BLOCK.getTag(BlockTags.ICE)
-                        if (!tag.isPresent) return emptyList()
-                        if (!tag.get().contains(state.blockHolder)) return emptyList()
+                        if (!tag.isPresent) continue
+                        if (!tag.get().contains(state.blockHolder)) continue
                         list += state
                     }
                 }
