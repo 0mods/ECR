@@ -1,0 +1,21 @@
+[versions]
+neoforge = "26.2.0.7-beta"
+kotlin-serialization = "1.11.0"
+kotlin-coroutines = "1.11.0"
+fabric-api = "0.154.0+26.2"
+fabric-loader = "0.19.3"
+fabric-language-kotlin = "1.13.12+kotlin.2.4.0"
+
+[libraries]
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlin-serialization" }
+koltinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+neoforge = { module = "net.neoforged:neoforge", version.ref = "neoforge" }
+fabric-api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric-api" }
+fabric-loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric-loader" }
+fabric-language-kotlin = { module = "net.fabricmc:fabric-language-kotlin", version.ref = "fabric-language-kotlin" }
+
+[bundles]
+kotlinx-serialization = ["koltinx-serialization-json", "kotlinx-serialization-core"]
+kotlinx-coroutines = ["kotlinx-coroutines-core"]
+fabricmc = ["fabric-api", "fabric-loader"]

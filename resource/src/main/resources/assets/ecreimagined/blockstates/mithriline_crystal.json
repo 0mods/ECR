@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "part=crystal_up": {
+      "model": "ecreimagined:block/mithriline_crystal/up"
+    },
+    "part=crystal_down": {
+      "model": "ecreimagined:block/mithriline_crystal/down"
+    }
+  }
+}
