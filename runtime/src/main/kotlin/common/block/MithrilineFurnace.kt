@@ -1,0 +1,69 @@
+package com.algorithmlx.ecr.common.blocks
+
+import com.algorithmlx.ecr.api.block.FullBlockParticles
+import net.minecraft.core.BlockPos
+import net.minecraft.server.level.ServerLevel
+import net.minecraft.world.InteractionResult
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.EntityBlock
+import net.minecraft.world.level.block.FurnaceBlock
+import net.minecraft.world.level.block.RenderShape
+import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.entity.BlockEntityTicker
+import net.minecraft.world.level.block.entity.BlockEntityType
+import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.phys.shapes.BooleanOp
+import net.minecraft.world.phys.shapes.CollisionContext
+import net.minecraft.world.phys.shapes.Shapes
+import net.minecraft.world.phys.shapes.VoxelShape
+
+class MithrilineFurnace(properties: Properties): Block(properties), EntityBlock, FullBlockParticles {
+    override fun newBlockEntity(
+        worldPosition: BlockPos,
+        blockState: BlockState
+    ): BlockEntity? = null
+
+    override fun <T : BlockEntity> getTicker(
+        level: Level,
+        blockState: BlockState,
+        type: BlockEntityType<T>
+    ): BlockEntityTicker<T>? {
+        return super.getTicker(level, blockState, type)
+    }
+
+    override fun useWithoutItem(
+        state: BlockState,
+        level: Level,
+        pos: BlockPos,
+        player: Player,
+        hitResult: BlockHitResult
+    ): InteractionResult {
+        return super.useWithoutItem(state, level, pos, player, hitResult)
+    }
+
+    override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape = shape
+
+    private val shape by lazy {
+        var shape = Shapes.empty()
+        shape = Shapes.join(shape, Shapes.box(0.125, 0.875, 0.125, 0.875, 0.9375, 0.875), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.0, 1.0, 0.125, 0.125), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.875, 1.0, 0.125, 1.0), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.125, 0.125, 0.125, 0.875), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.875, 0.0, 0.125, 1.0, 0.125, 0.875), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.0, 0.875, 0.0, 1.0, 1.0, 0.125), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.0, 0.875, 0.875, 1.0, 1.0, 1.0), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.0, 0.875, 0.125, 0.125, 1.0, 0.875), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.875, 0.875, 0.125, 1.0, 1.0, 0.875), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.0, 0.125, 0.875, 0.125, 0.875, 1.0), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.0, 0.125, 0.0, 0.125, 0.875, 0.125), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.875, 0.125, 0.0, 1.0, 0.875, 0.125), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.875, 0.125, 0.875, 1.0, 0.875, 1.0), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.125, 0.0625, 0.125, 0.875, 0.125, 0.875), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.0, 0.375, 0.0, 1.0, 0.625, 1.0), BooleanOp.OR)
+        shape
+    }
+}
