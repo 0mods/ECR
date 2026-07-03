@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.api.research
 
+import com.mojang.serialization.Codec
 import net.minecraft.network.chat.Component
 
 interface BookLevel {
@@ -8,4 +9,6 @@ interface BookLevel {
      * @return [Component] of name
      */
     val translate: Component
+
+    val codec: Codec<BookLevel>
 }

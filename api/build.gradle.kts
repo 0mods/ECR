@@ -4,6 +4,11 @@ plugins {
     kotlin("plugin.serialization")
 }
 
+base {
+    version = "${providers.gradleProperty("mod.version").get()}+mc${providers.gradleProperty("libs.minecraft").get()}"
+    archivesName = "${rootProject.base.archivesName.get()}-API"
+}
+
 val minecraftVersion = rootProject.providers.gradleProperty("libs.minecraft").get()
 val modPlatforms = rootProject.providers
     .gradleProperty("mod.platforms")

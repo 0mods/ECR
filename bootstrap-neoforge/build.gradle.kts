@@ -12,6 +12,12 @@ val modPlatforms = rootProject.providers
     .map(String::trim)
     .toTypedArray()
 
+base {
+    version = "${providers.gradleProperty("mod.version").get()}+mc${providers.gradleProperty("libs.minecraft").get()}"
+    archivesName = "${rootProject.base.archivesName.get()}-bootstrap-neoforge"
+}
+
+
 repositories {
     maven("https://maven.neoforged.net/releases/")
 }

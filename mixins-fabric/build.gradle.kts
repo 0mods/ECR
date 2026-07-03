@@ -10,6 +10,11 @@ val modPlatforms = rootProject.providers
     .map(String::trim)
     .toTypedArray()
 
+base {
+    version = "${providers.gradleProperty("mod.version").get()}+mc${providers.gradleProperty("libs.minecraft").get()}"
+    archivesName = "${rootProject.base.archivesName.get()}-mixins-fabric"
+}
+
 repositories {
     maven("https://maven.fabricmc.net/")
 }
