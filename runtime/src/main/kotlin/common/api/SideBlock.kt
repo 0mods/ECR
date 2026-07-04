@@ -1,7 +1,6 @@
 package com.algorithmlx.ecr.common.api
 
-import com.algorithmlx.ecr.common.blocks.SolarPrism
-import com.mojang.serialization.MapCodec
+import com.algorithmlx.ecr.common.block.SolarPrism
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.sounds.SoundEvent

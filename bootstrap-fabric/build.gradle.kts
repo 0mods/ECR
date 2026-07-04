@@ -18,6 +18,7 @@ base {
 }
 
 repositories {
+    maven("https://repo.spongepowered.org/repository/maven-public/")
     maven("https://maven.fabricmc.net/")
 }
 
@@ -27,9 +28,10 @@ dependencies {
     implementation(libs.fabric.language.kotlin)
 
     implementation(project(":runtime"))
-    implementation(project(":mixins-fabric"))
     implementation(project(":resource"))
 
     compileOnly(libs.bundles.kotlinx.serialization)
     compileOnly(libs.bundles.kotlinx.coroutines)
+
+    implementation("org.spongepowered:mixin:0.8.7")
 }

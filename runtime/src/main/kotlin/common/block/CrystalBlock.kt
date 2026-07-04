@@ -1,9 +1,9 @@
-package com.algorithmlx.ecr.common.blocks
+package com.algorithmlx.ecr.common.block
 
 import com.algorithmlx.ecr.api.block.FullBlockParticles
 import com.algorithmlx.ecr.api.block.Multipart
-import com.algorithmlx.ecr.common.blocks.part.CrystalPart
-import com.algorithmlx.ecr.common.init.Registry
+import com.algorithmlx.ecr.common.block.part.CrystalPart
+import com.algorithmlx.ecr.common.init.BlockCodecRegistry
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -25,7 +25,7 @@ import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 
 class CrystalBlock(properties: Properties) : Block(properties), Multipart<CrystalPart>, FullBlockParticles {
-    override fun codec(): MapCodec<out Block> = Registry.instance.crystalBlockCodec
+    override fun codec(): MapCodec<out Block> = BlockCodecRegistry.instance.crystalBlockCodec
 
     init {
         this.registerDefaultState(

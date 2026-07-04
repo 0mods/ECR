@@ -17,6 +17,10 @@ val modPlatforms = rootProject.providers
     .map(String::trim)
     .toTypedArray()
 
+repositories {
+    maven("https://repo.spongepowered.org/repository/maven-public/")
+}
+
 dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
 

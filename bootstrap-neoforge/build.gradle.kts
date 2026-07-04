@@ -17,8 +17,8 @@ base {
     archivesName = "${rootProject.base.archivesName.get()}-bootstrap-neoforge"
 }
 
-
 repositories {
+    maven("https://repo.spongepowered.org/repository/maven-public/")
     maven("https://maven.neoforged.net/releases/")
 }
 
@@ -28,9 +28,10 @@ dependencies {
 
     implementation(project(":api"))
     implementation(project(":runtime"))
-    implementation(project(":mixins-neoforge"))
     implementation(project(":resource"))
 
     compileOnly(libs.bundles.kotlinx.serialization)
     compileOnly(libs.bundles.kotlinx.coroutines)
+
+    implementation("org.spongepowered:mixin:0.8.7")
 }

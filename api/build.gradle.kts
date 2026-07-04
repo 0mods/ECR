@@ -1,4 +1,5 @@
 plugins {
+    java
     id("dev.architectury.loom-no-remap")
     kotlin("jvm")
     kotlin("plugin.serialization")
@@ -17,9 +18,15 @@ val modPlatforms = rootProject.providers
     .map(String::trim)
     .toTypedArray()
 
+repositories {
+    maven("https://repo.spongepowered.org/repository/maven-public/")
+}
+
 dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
 
     compileOnly(libs.bundles.kotlinx.serialization)
     compileOnly(libs.bundles.kotlinx.coroutines)
+
+    implementation("org.spongepowered:mixin:0.8.7")
 }

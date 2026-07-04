@@ -19,7 +19,7 @@ interface MRUHolder {
      *
      * @return an instance of [MRUStorage] representing the stored MRU.
      */
-    val mruContainer: MRUStorage
+    val mruStorage: MRUStorage
 
     /**
      * Provides locator data used for slot-based MRU access.

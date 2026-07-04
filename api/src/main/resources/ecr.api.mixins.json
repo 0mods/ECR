@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.algorithmlx.ecr.mixin",
+  "client": [],
+  "mixins": [
+    "GameRendererAccessor",
+    "GuiGraphicsExtractorAccessor",
+    "GuiRendererAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

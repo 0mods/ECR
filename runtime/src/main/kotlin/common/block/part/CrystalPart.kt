@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.common.blocks.part
+package com.algorithmlx.ecr.common.block.part
 
 import com.algorithmlx.ecr.api.block.PartRepresentable
 

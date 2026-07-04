@@ -38,8 +38,5 @@ include(
     "bootstrap-fabric",
     "bootstrap-neoforge",
     "resource",
-    "runtime",
-    "mixins",
-    "mixins-neoforge",
-    "mixins-fabric"
+    "runtime"
 )

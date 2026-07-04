@@ -54,7 +54,3 @@ inline fun <T: BlockEntity, reified V: BlockEntity> simpleTicker(crossinline onT
 // INITIALIZED ON PLATFORM
 lateinit var openMenuScreenInternal: (player: Player, provider: MenuProvider, level: Level, pos: BlockPos) -> Unit
 fun Player.openMenuScreen(provider: MenuProvider, level: Level, pos: BlockPos) = openMenuScreenInternal(this, provider, level, pos)
-
-lateinit var simpleMenuFactoryInternal: ((Int, Inventory, FriendlyByteBuf) -> AbstractContainerMenu) -> MenuType<*>
-inline fun <reified T: AbstractContainerMenu> simpleMenuFactory(noinline factory: (containerId: Int, inventory: Inventory, buf: FriendlyByteBuf) -> T): MenuType<T> =
-    simpleMenuFactoryInternal(factory) as MenuType<T>
