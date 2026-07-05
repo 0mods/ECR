@@ -1,7 +1,7 @@
 package com.algorithmlx.ecr.common.item
 
 import com.algorithmlx.ecr.common.components.SoulStoneComponent
-import com.algorithmlx.ecr.common.init.DataComponentRegistry
+import com.algorithmlx.ecr.common.init.registry.DataComponentRegistry
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EquipmentSlot
@@ -11,7 +11,7 @@ import java.util.UUID
 
 class SoulStone(properties: Properties): Item(
     properties.component(
-        DataComponentRegistry.instance.soulStoneComponent,
+        DataComponentRegistry.instance.soulStone,
         SoulStoneComponent(UUID(0L, 0L), "", -1)
     )
 ) {

@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.client
+package com.algorithmlx.ecr.client.screen
 
 import com.algorithmlx.ecr.api.client.drawMRULine
 import com.algorithmlx.ecr.api.ecRL

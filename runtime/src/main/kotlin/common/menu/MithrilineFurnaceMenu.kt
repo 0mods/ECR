@@ -2,8 +2,9 @@ package com.algorithmlx.ecr.common.menu
 
 import com.algorithmlx.ecr.api.container.AbstractMenu
 import com.algorithmlx.ecr.api.container.slot.VanillaSpecialSlot
-import com.algorithmlx.ecr.common.init.BlockRegistry
-import com.algorithmlx.ecr.common.init.MenuTypeRegistry
+import com.algorithmlx.ecr.api.menu.MenuTypeData
+import com.algorithmlx.ecr.common.init.registry.BlockRegistry
+import com.algorithmlx.ecr.common.init.registry.MenuTypeRegistry
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.world.Container
 import net.minecraft.world.SimpleContainer
@@ -22,12 +23,12 @@ class MithrilineFurnaceMenu(
     val blockEntity: BlockEntity?,
     access: ContainerLevelAccess,
     val data: ContainerData
-): AbstractMenu(MenuTypeRegistry.instance.mithrilineFurnaceMenu, containerId, access) {
-    constructor(containerId: Int, inventory: Inventory, buffer: FriendlyByteBuf): this(
+): AbstractMenu(MenuTypeRegistry.instance.mithrilineFurnace, containerId, access) {
+    constructor(containerId: Int, inventory: Inventory, typeData: MenuTypeData): this(
         containerId,
         inventory,
         SimpleContainer(2),
-        inventory.player.level().getBlockEntity(buffer.readBlockPos()),
+        inventory.player.level().getBlockEntity(typeData.pos),
         ContainerLevelAccess.NULL,
         SimpleContainerData(2)
     )

@@ -27,6 +27,7 @@ dependencies {
     implementation(libs.bundles.fabricmc)
     implementation(libs.fabric.language.kotlin)
 
+    implementation(project(":api"))
     implementation(project(":runtime"))
     implementation(project(":resource"))
 

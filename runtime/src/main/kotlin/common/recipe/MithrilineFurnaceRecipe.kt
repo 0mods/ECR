@@ -1,8 +1,8 @@
 package com.algorithmlx.ecr.common.recipe
 
 import com.algorithmlx.ecr.api.ModId
-import com.algorithmlx.ecr.common.init.RecipeSerializerRegistry
-import com.algorithmlx.ecr.common.init.RecipeTypeRegistry
+import com.algorithmlx.ecr.common.init.registry.RecipeSerializerRegistry
+import com.algorithmlx.ecr.common.init.registry.RecipeTypeRegistry
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
@@ -42,8 +42,8 @@ class MithrilineFurnaceRecipe(
 
     override fun showNotification(): Boolean = false
     override fun group(): String = "$ModId:mithriline_furnace"
-    override fun getSerializer(): RecipeSerializer<out Recipe<CraftingInput>> = RecipeSerializerRegistry.instance.mithrilineRecipeSerializer
-    override fun getType(): RecipeType<out Recipe<CraftingInput>> = RecipeTypeRegistry.instance.mithrilineRecipeType
+    override fun getSerializer(): RecipeSerializer<out Recipe<CraftingInput>> = RecipeSerializerRegistry.instance.mithrilineFurnace
+    override fun getType(): RecipeType<out Recipe<CraftingInput>> = RecipeTypeRegistry.instance.mithrilineFurnace
     override fun placementInfo(): PlacementInfo = PlacementInfo.NOT_PLACEABLE
     override fun recipeBookCategory(): RecipeBookCategory = RecipeBookCategories.FURNACE_MISC
 

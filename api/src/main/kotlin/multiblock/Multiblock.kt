@@ -19,22 +19,13 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.lighting.LevelLightEngine
 import net.minecraft.world.level.material.FluidState
 
-class Multiblock(block: Multiblock.() -> Unit): BlockAndTintGetter {
+open class Multiblock(val xSize: Int, val ySize: Int, val zSize: Int, block: Multiblock.() -> Unit): BlockAndTintGetter {
     private val blockEntities = hashMapOf<BlockPos, BlockEntity>()
     lateinit var registryAccess: RegistryAccess
-    var xSize: Int = 0
-    var ySize: Int = 0
-    var zSize: Int = 0
     val blocks = arrayListOf<MultiblockMatcher>()
 
     init {
         block()
-    }
-
-    fun size(xSize: Int, zSize: Int, ySize: Int) {
-        this.xSize = xSize
-        this.zSize = zSize
-        this.ySize = ySize
     }
 
     fun pattern(vararg blocks: MultiblockMatcher?) {

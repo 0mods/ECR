@@ -5,22 +5,21 @@ import com.algorithmlx.ecr.api.mru.MRUHolder
 import com.algorithmlx.ecr.api.recipe.CachedRecipe
 import com.algorithmlx.ecr.api.utils.StackHelper
 import com.algorithmlx.ecr.common.components.MRUStorageContainer
-import com.algorithmlx.ecr.common.init.BlockEntityTypeRegistry
-import com.algorithmlx.ecr.common.init.RecipeTypeRegistry
-import com.algorithmlx.ecr.common.init.ResourceKeys
+import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
+import com.algorithmlx.ecr.common.init.registry.BlockRegistry
+import com.algorithmlx.ecr.common.init.registry.MultiblockRegistry
+import com.algorithmlx.ecr.common.init.registry.RecipeTypeRegistry
 import com.algorithmlx.ecr.common.menu.MithrilineFurnaceMenu
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.HolderLookup
 import net.minecraft.core.NonNullList
-import net.minecraft.core.registries.Registries
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
 import net.minecraft.world.ContainerHelper
-import net.minecraft.world.SimpleContainer
 import net.minecraft.world.WorldlyContainer
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.AbstractContainerMenu
@@ -29,7 +28,6 @@ import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.CraftingInput
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.storage.ValueInput
@@ -39,7 +37,7 @@ import kotlin.math.floor
 class MithrilineFurnaceEntity(
     worldPosition: BlockPos,
     blockState: BlockState
-): BaseContainerBlockEntity(BlockEntityTypeRegistry.instance.mithrilineFurnaceEntity, worldPosition, blockState), MRUHolder, WorldlyContainer {
+): BaseContainerBlockEntity(BlockEntityTypeRegistry.instance.mithrilineFurnace, worldPosition, blockState), MRUHolder, WorldlyContainer {
     @all:JvmName("items")
     private var items = NonNullList.withSize(2, ItemStack.EMPTY)
     private val containerData: ContainerData = object : ContainerData {
@@ -59,13 +57,13 @@ class MithrilineFurnaceEntity(
         override fun getCount(): Int = 2
     }
 
-    val recipe = CachedRecipe(RecipeTypeRegistry.instance.mithrilineRecipeType)
+    val recipe = CachedRecipe(RecipeTypeRegistry.instance.mithrilineFurnace)
 
     var structureIsValid = false
-    var receivingTicks = 0
     var craftProgress = 0
     var maxCraftProgress = 0
     var slownessGeneration = false
+    var espeGenerationRemainder = 0.0
     // Client Only
     var coreRotationPrevious = 0f
     var coreRotationAngle = 0f
@@ -76,6 +74,7 @@ class MithrilineFurnaceEntity(
         output.putBoolean("slow_generation", this.slownessGeneration)
         output.putInt("progress", this.craftProgress)
         output.putInt("max_progress", this.maxCraftProgress)
+        output.putDouble("espe_fraction", this.espeGenerationRemainder)
         mruStorage.save(output)
         super.saveAdditional(output)
     }
@@ -86,6 +85,7 @@ class MithrilineFurnaceEntity(
         slownessGeneration = input.getBooleanOr("slow_generation", false)
         craftProgress = input.getIntOr("progress", 0)
         maxCraftProgress = input.getIntOr("max_progress", 0)
+        espeGenerationRemainder = input.getDoubleOr("espe_fraction", 0.0)
         mruStorage.load(input)
         super.loadAdditional(input)
     }
@@ -132,7 +132,69 @@ class MithrilineFurnaceEntity(
     override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag = this.saveWithFullMetadata(registries)
 
     companion object {
-        private fun MithrilineFurnaceEntity.generateESPE(level: Level, pos: BlockPos) {}
+        @JvmStatic
+        fun onTick(level: Level, pos: BlockPos, be: MithrilineFurnaceEntity) {
+            val oldValid = be.structureIsValid
+            val newValid = MultiblockRegistry.instance.mithrilineFurnace.isValid(level, pos)
+            if (oldValid != newValid) {
+                be.structureIsValid = newValid
+                be.setChanged()
+            }
+
+            if (level.isClientSide) {
+                be.processRotation()
+                return
+            }
+
+            if (be.structureIsValid) {
+                be.generateESPE(level, pos)
+                be.processRecipeIfPresent(level)
+            } else be.resetProgress()
+        }
+
+        @JvmStatic
+        private fun MithrilineFurnaceEntity.generateESPE(level: Level, pos: BlockPos) {
+            var downCrystalCount = 0
+            var upCrystalCount = 0
+
+            for (x in -2..2) {
+                for (z in -2..2) {
+                    val xo = pos.x + x
+                    val zo = pos.z + z
+                    val bpDown = BlockPos(xo, pos.y + 1, zo)
+                    val bsDown = level.getBlockState(bpDown)
+
+                    if (bsDown.`is`(BlockRegistry.instance.mithrilineCrystal) && downCrystalCount + 1 <= 12)
+                        downCrystalCount++
+
+                    val bpUp = BlockPos(xo, pos.y + 3, zo)
+                    val bsUp = level.getBlockState(bpUp)
+
+                    if (bsUp.`is`(BlockRegistry.instance.mithrilineCrystal) && upCrystalCount + 1 <= 4)
+                        upCrystalCount++
+                }
+            }
+
+            val crystalCount = downCrystalCount + upCrystalCount
+            if (crystalCount <= 0 || this.mruStorage.isFilled) {
+                this.espeGenerationRemainder = 0.0
+                return
+            }
+
+            this.espeGenerationRemainder += crystalCount * 0.05
+
+            val generateAmount = this.espeGenerationRemainder.toInt()
+            if (generateAmount <= 0) return
+
+            val inserted = this.mruStorage.insert(generateAmount)
+            if (inserted <= 0 || inserted < generateAmount) {
+                this.espeGenerationRemainder = 0.0
+            } else {
+                this.espeGenerationRemainder -= inserted.toDouble()
+            }
+
+            this.setChanged()
+        }
 
         @JvmStatic
         private fun MithrilineFurnaceEntity.processRecipeIfPresent(level: Level) {
