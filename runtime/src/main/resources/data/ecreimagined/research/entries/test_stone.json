@@ -1,0 +1,45 @@
+{
+  "title": {
+    "text": "Stone Collection"
+  },
+  "dependencies": [
+    "ecreimagined:welcome"
+  ],
+  "align": [
+    "down"
+  ],
+  "icon": {
+    "item": "minecraft:cobblestone"
+  },
+  "automatic": true,
+  "tasks": [
+    {
+      "type": "item",
+      "item": "minecraft:cobblestone",
+      "count": 16,
+      "consume": false
+    }
+  ],
+  "pages": [
+    {
+      "elements": [
+        {
+          "type": "text",
+          "text": {
+            "text": "Collect 16 cobblestone. The items remain in the inventory after completing the research."
+          },
+          "width": 208
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "item",
+          "item": "minecraft:cobblestone",
+          "count": 16
+        }
+      ]
+    }
+  ]
+}

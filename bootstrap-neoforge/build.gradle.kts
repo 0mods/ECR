@@ -28,10 +28,15 @@ dependencies {
 
     implementation(project(":api"))
     implementation(project(":runtime"))
-    implementation(project(":resource"))
 
     compileOnly(libs.bundles.kotlinx.serialization)
     compileOnly(libs.bundles.kotlinx.coroutines)
 
     implementation("org.spongepowered:mixin:0.8.7")
+}
+
+tasks.jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(project(":api").tasks.jar.map { zipTree(it.archiveFile) })
+    from(project(":runtime").tasks.jar.map { zipTree(it.archiveFile) })
 }

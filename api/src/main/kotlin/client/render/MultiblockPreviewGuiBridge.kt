@@ -6,7 +6,7 @@ import com.algorithmlx.ecr.mixin.GuiRendererAccessor
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphicsExtractor
 
-internal object MultiblockPreviewGuiBridge {
+object MultiblockPreviewGuiBridge {
     fun add(graphics: GuiGraphicsExtractor, state: MultiblockPreviewRenderState) {
         ensureRendererRegistered()
         (graphics as GuiGraphicsExtractorAccessor).guiRenderState().addPicturesInPictureState(state)

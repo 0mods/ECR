@@ -1,0 +1,208 @@
+package com.algorithmlx.ecr.api.research
+
+import com.algorithmlx.ecr.api.ModId
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.*
+import net.minecraft.resources.Identifier
+
+object ResearchJson {
+    fun decodeCategory(id: Identifier, json: JsonObject): BookCategory {
+        val dto = researchJson.decodeFromJsonElement<CategoryDto>(json)
+        return BookCategory(
+            id = id,
+            title = dto.title.toBookText(),
+            icon = dto.icon.toModel(),
+            order = dto.order,
+            background = dto.background?.let(Identifier::parse),
+            dependencies = dto.dependencies.mapTo(LinkedHashSet()) { parseReference(it, id) },
+            bookLevel = dto.bookLevel?.let(Identifier::parse),
+            shader = dto.shader?.toShader(),
+            titleShadow = dto.shadow
+        )
+    }
+
+    fun decodeEntry(id: Identifier, json: JsonObject): BookEntry {
+        val dto = researchJson.decodeFromJsonElement<EntryDto>(json)
+        val tasks = dto.tasks.map { ResearchSerializers.decodeTask(it.typeIdentifier(), it) }
+        return BookEntry(
+            id = id,
+            title = dto.title.toBookText(),
+            category = dto.category?.let { parseReference(it, id) },
+            icon = dto.icon.toModel(),
+            frame = dto.frame.toFrame(),
+            position = dto.position?.let { BookPosition(it.x, it.y) },
+            dependencies = dto.dependencies.map { parseReference(it, id) },
+            pages = dto.pages.map { page -> BookPage(page.elements.map(::decodeElement)) },
+            tasks = tasks,
+            locks = dto.locks.map { it.toModel() },
+            automatic = dto.automatic ?: tasks.isEmpty(),
+            hiddenUntilAvailable = dto.hiddenUntilAvailable,
+            titleShadow = dto.shadow,
+            align = dto.align.mapTo(LinkedHashSet()) { BookEntryAlign.valueOf(it.uppercase()) }
+        )
+    }
+
+    fun encodeCategory(category: BookCategory): JsonObject = researchJson.encodeToJsonElement(
+        CategoryDto(
+            title = category.title.toJsonElement(),
+            icon = category.icon.toDto(),
+            order = category.order,
+            background = category.background?.toString(),
+            dependencies = category.dependencies.map(Identifier::toString),
+            bookLevel = category.bookLevel?.toString(),
+            shader = category.shader?.toJsonElement(),
+            shadow = category.titleShadow
+        )
+    ).jsonObject
+
+    fun encodeEntry(entry: BookEntry): JsonObject = researchJson.encodeToJsonElement(
+        EntryDto(
+            title = entry.title.toJsonElement(),
+            category = entry.category?.toString(),
+            icon = entry.icon.toDto(),
+            frame = entry.frame.toJsonElement(),
+            position = entry.position?.let { PositionDto(it.x, it.y) },
+            dependencies = entry.dependencies.map(Identifier::toString),
+            pages = entry.pages.map { page -> PageDto(page.elements.map(::encodeElement)) },
+            tasks = entry.tasks.map { task -> ResearchSerializers.encodeTask(task).with("type", JsonPrimitive(task.type.toString())) },
+            locks = entry.locks.map(ResearchLock::toDto),
+            automatic = entry.automatic,
+            hiddenUntilAvailable = entry.hiddenUntilAvailable,
+            shadow = entry.titleShadow,
+            align = entry.align.mapTo(LinkedHashSet()) { it.name.lowercase() }
+        )
+    ).jsonObject
+
+    fun encodeCatalog(categories: Collection<BookCategory>, entries: Collection<BookEntry>): String = researchJson.encodeToString(
+        CatalogDto(
+            categories.associate { it.id.toString() to encodeCategory(it) },
+            entries.associate { it.id.toString() to encodeEntry(it) }
+        )
+    )
+
+    fun decodeCatalog(json: String): Pair<List<BookCategory>, List<BookEntry>> {
+        val dto = researchJson.decodeFromString<CatalogDto>(json)
+        return dto.categories.map { (id, value) -> decodeCategory(Identifier.parse(id), value) } to
+            dto.entries.map { (id, value) -> decodeEntry(Identifier.parse(id), value) }
+    }
+
+    private fun decodeElement(json: JsonObject): BookElementSpec = BookElementSpec(
+        ResearchSerializers.decodeElement(json.typeIdentifier(), json),
+        json["width"]?.jsonPrimitive?.intOrNull,
+        json["height"]?.jsonPrimitive?.intOrNull
+    )
+
+    private fun encodeElement(spec: BookElementSpec): JsonObject = ResearchSerializers.encodeElement(spec.content)
+        .with("type", JsonPrimitive(spec.content.type.toString()))
+        .let { value -> spec.width?.let { value.with("width", JsonPrimitive(it)) } ?: value }
+        .let { value -> spec.height?.let { value.with("height", JsonPrimitive(it)) } ?: value }
+
+    private fun JsonObject.typeIdentifier(): Identifier {
+        val value = getValue("type").jsonPrimitive.content
+        return Identifier.parse(if (':' in value) value else "$ModId:$value")
+    }
+
+    private fun parseReference(value: String, owner: Identifier): Identifier =
+        Identifier.parse(if (':' in value) value else "${owner.namespace}:$value")
+
+    private fun JsonElement.toFrame(): BookFrame? = when {
+        this is JsonNull -> null
+        this is JsonPrimitive && booleanOrNull == false -> null
+        this is JsonPrimitive && booleanOrNull == true -> BookFrame()
+        else -> researchJson.decodeFromJsonElement<FrameDto>(this).toModel()
+    }
+
+    private fun BookFrame?.toJsonElement(): JsonElement = this?.let {
+        researchJson.encodeToJsonElement(FrameDto(it.texture.toString(), it.width, it.height, it.itemX, it.itemY, it.itemSize))
+    } ?: JsonNull
+
+    private fun JsonElement.toShader(): BookShader = when (this) {
+        is JsonPrimitive -> BookShader(Identifier.parse(content))
+        else -> researchJson.decodeFromJsonElement<ShaderDto>(this).let {
+            val vertex = Identifier.parse(it.vertex ?: it.fragment ?: error("Shader requires vertex or fragment"))
+            BookShader(vertex, Identifier.parse(it.fragment ?: it.vertex ?: error("Shader requires vertex or fragment")))
+        }
+    }
+
+    private fun BookShader.toJsonElement(): JsonElement = researchJson.encodeToJsonElement(
+        ShaderDto(vertex.toString(), fragment.toString())
+    )
+
+    private fun JsonObject.with(name: String, value: JsonElement): JsonObject = JsonObject(this + (name to value))
+}
+
+@Serializable
+private data class CatalogDto(
+    val categories: Map<String, JsonObject>,
+    val entries: Map<String, JsonObject>
+)
+
+@Serializable
+private data class CategoryDto(
+    val title: JsonElement,
+    val icon: IconDto = IconDto(),
+    val order: Int = 0,
+    val background: String? = null,
+    val dependencies: List<String> = emptyList(),
+    @SerialName("book_level") val bookLevel: String? = null,
+    val shader: JsonElement? = null,
+    val shadow: Boolean = false
+)
+
+@Serializable
+private data class EntryDto(
+    val title: JsonElement,
+    val category: String? = null,
+    val icon: IconDto = IconDto(),
+    val frame: JsonElement = JsonPrimitive(true),
+    val position: PositionDto? = null,
+    val align: Set<String> = emptySet(),
+    val dependencies: List<String> = emptyList(),
+    val pages: List<PageDto> = emptyList(),
+    val tasks: List<JsonObject> = emptyList(),
+    val locks: List<LockDto> = emptyList(),
+    val automatic: Boolean? = null,
+    @SerialName("hidden_until_available") val hiddenUntilAvailable: Boolean = false,
+    val shadow: Boolean = false
+)
+
+@Serializable
+private data class IconDto(val item: String? = null, val texture: String? = null) {
+    fun toModel() = BookIcon(item?.let(Identifier::parse), texture?.let(Identifier::parse))
+}
+
+@Serializable
+private data class PositionDto(val x: Int = 0, val y: Int = 0)
+
+@Serializable
+private data class PageDto(val elements: List<JsonObject> = emptyList())
+
+@Serializable
+private data class FrameDto(
+    val texture: String = ResearchIds.DEFAULT_FRAME.toString(),
+    val width: Int = 32,
+    val height: Int = 32,
+    @SerialName("item_x") val itemX: Int = 8,
+    @SerialName("item_y") val itemY: Int = 8,
+    @SerialName("item_size") val itemSize: Int = 16
+) {
+    fun toModel() = BookFrame(Identifier.parse(texture), width, height, itemX, itemY, itemSize)
+}
+
+@Serializable
+private data class LockDto(val type: String, val id: String, val actions: Set<String> = emptySet()) {
+    fun toModel() = ResearchLock(
+        ResearchTargetType.valueOf(type.uppercase()),
+        Identifier.parse(id),
+        actions.mapTo(LinkedHashSet()) { ResearchAction.valueOf(it.uppercase()) }
+            .ifEmpty { setOf(ResearchAction.USE, ResearchAction.INTERACT) }
+    )
+}
+
+@Serializable
+private data class ShaderDto(val vertex: String? = null, val fragment: String? = null)
+
+private fun BookIcon.toDto() = IconDto(item?.toString(), texture?.toString())
+private fun ResearchLock.toDto() = LockDto(targetType.name.lowercase(), target.toString(), actions.mapTo(LinkedHashSet()) { it.name.lowercase() })

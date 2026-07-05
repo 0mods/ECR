@@ -12,13 +12,16 @@ object ECRegistryInit {
     fun registrate() {
         register(ECRegistryKeys.MRU_TYPE_KEY, ECRegistries.MRU_TYPE)
         register(ECRegistryKeys.MULTIBLOCK_KEY, ECRegistries.MULTIBLOCK)
+        register(ECRegistryKeys.BOOK_LEVEL_KEY, ECRegistries.BOOK_LEVEL)
 
         BlockCodecRegistry.instance = FabricBlockCodecRegistry
-        BlockEntityTypeRegistry.instance = FabricBlockEntityTypeRegistry
+        BookLevelRegistry.instance = FabricBookLevelRegistry
         BlockRegistry.instance = FabricBlockRegistry
+        BlockEntityTypeRegistry.instance = FabricBlockEntityTypeRegistry
         DataComponentRegistry.instance = FabricDataComponentRegistry
         ItemRegistry.instance = FabricItemRegistry
         MenuTypeRegistry.instance = FabricMenuTypeRegistry
+        MRUTypeRegistry.instance = FabricMRUTypeRegistry
         MultiblockRegistry.instance = FabricMultiblockRegistry
         RecipeSerializerRegistry.instance = FabricRecipeSerializerRegistry
         RecipeTypeRegistry.instance = FabricRecipeTypeRegistry

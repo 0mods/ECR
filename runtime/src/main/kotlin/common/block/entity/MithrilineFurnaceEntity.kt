@@ -7,6 +7,7 @@ import com.algorithmlx.ecr.api.utils.StackHelper
 import com.algorithmlx.ecr.common.components.MRUStorageContainer
 import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.BlockRegistry
+import com.algorithmlx.ecr.common.init.registry.MRUTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.MultiblockRegistry
 import com.algorithmlx.ecr.common.init.registry.RecipeTypeRegistry
 import com.algorithmlx.ecr.common.menu.MithrilineFurnaceMenu
@@ -105,7 +106,7 @@ class MithrilineFurnaceEntity(
 
     override fun getContainerSize(): Int = this.items.size
 
-    override val mruStorage: MRUStorageContainer = MRUStorageContainer(10000, TODO("Not yet implemented"))
+    override val mruStorage: MRUStorageContainer = MRUStorageContainer(10000, MRUTypeRegistry.instance.espe)
     override val holderType: MRUHolder.MRUHolderType = MRUHolder.MRUHolderType.RECEIVER
 
     override fun getSlotsForFace(direction: Direction): IntArray = intArrayOf(0, 1)

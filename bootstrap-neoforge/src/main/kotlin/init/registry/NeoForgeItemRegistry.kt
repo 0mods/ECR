@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.neoforge.init.registry
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.common.init.registry.ItemRegistry
 import com.algorithmlx.ecr.common.item.SoulStone
+import com.algorithmlx.ecr.common.item.ResearchBookItem
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.Identifier
 import net.minecraft.resources.ResourceKey
@@ -19,8 +20,10 @@ class NeoForgeItemRegistry(bus: IEventBus): ItemRegistry {
     }
 
     private val soulStoneItem = registerItem("soul_stone", ::SoulStone)
+    private val researchBookItem = registerItem("research_book", ::ResearchBookItem)
 
     override val soulStone: SoulStone by lazy { soulStoneItem.get() }
+    override val researchBook: ResearchBookItem by lazy { researchBookItem.get() }
 
     private fun <I: Item> registerItem(
         id: String,

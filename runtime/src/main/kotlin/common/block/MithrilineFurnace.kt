@@ -1,6 +1,8 @@
 package com.algorithmlx.ecr.common.block
 
 import com.algorithmlx.ecr.api.block.FullBlockParticles
+import com.algorithmlx.ecr.api.utils.simpleTicker
+import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
 import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
@@ -22,14 +24,14 @@ class MithrilineFurnace(properties: Properties): Block(properties), EntityBlock,
     override fun newBlockEntity(
         worldPosition: BlockPos,
         blockState: BlockState
-    ): BlockEntity? = null
+    ): BlockEntity = MithrilineFurnaceEntity(worldPosition, blockState)
 
     override fun <T : BlockEntity> getTicker(
         level: Level,
         blockState: BlockState,
         type: BlockEntityType<T>
-    ): BlockEntityTicker<T>? {
-        return super.getTicker(level, blockState, type)
+    ): BlockEntityTicker<T> = simpleTicker<T, MithrilineFurnaceEntity> { level, pos, _, v ->
+        MithrilineFurnaceEntity.onTick(level, pos, v)
     }
 
     override fun useWithoutItem(

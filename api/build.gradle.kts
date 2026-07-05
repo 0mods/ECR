@@ -28,5 +28,5 @@ dependencies {
     compileOnly(libs.bundles.kotlinx.serialization)
     compileOnly(libs.bundles.kotlinx.coroutines)
 
-    implementation("org.spongepowered:mixin:0.8.7")
+    compileOnly("org.spongepowered:mixin:0.8.7")
 }

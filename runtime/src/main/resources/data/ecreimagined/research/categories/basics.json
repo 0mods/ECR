@@ -1,0 +1,10 @@
+{
+  "title": {
+    "text": "Basics"
+  },
+  "icon": {
+    "item": "ecreimagined:research_book"
+  },
+  "order": 0,
+  "book_level": "ecreimagined:basic"
+}

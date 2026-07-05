@@ -1,0 +1,53 @@
+{
+  "title": {
+    "text": "Combined Trial"
+  },
+  "dependencies": [
+    "ecreimagined:test_stone",
+    "ecreimagined:test_experience"
+  ],
+  "align": [
+    "down",
+    "right"
+  ],
+  "icon": {
+    "item": "minecraft:diamond"
+  },
+  "automatic": false,
+  "tasks": [
+    {
+      "type": "item",
+      "item": "minecraft:diamond",
+      "count": 2,
+      "consume": false
+    },
+    {
+      "type": "experience",
+      "amount": 8,
+      "levels": true,
+      "consume": false
+    }
+  ],
+  "pages": [
+    {
+      "elements": [
+        {
+          "type": "text",
+          "text": {
+            "text": "Complete both parent researches, carry 2 diamonds, and reach experience level 8. This longer paragraph also verifies automatic text measurement and ensures the following element is positioned after the final wrapped line instead of using a fixed text height."
+          },
+          "width": 208
+        },
+        {
+          "type": "space",
+          "height": 16
+        },
+        {
+          "type": "item",
+          "item": "minecraft:diamond",
+          "count": 2
+        }
+      ]
+    }
+  ]
+}

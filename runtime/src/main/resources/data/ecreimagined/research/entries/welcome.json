@@ -1,0 +1,31 @@
+{
+  "title": {
+    "text": "Research"
+  },
+  "category": "ecreimagined:basics",
+  "icon": {
+    "item": "ecreimagined:research_book"
+  },
+  "automatic": true,
+  "pages": [
+    {
+      "elements": [
+        {
+          "type": "text",
+          "text": {
+            "text": "Knowledge is arranged by dependency. Complete a task to unlock the research that follows it."
+          },
+          "width": 208
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "item",
+          "item": "ecreimagined:research_book"
+        }
+      ]
+    }
+  ]
+}

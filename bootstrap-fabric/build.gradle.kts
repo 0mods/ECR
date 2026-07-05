@@ -29,10 +29,33 @@ dependencies {
 
     implementation(project(":api"))
     implementation(project(":runtime"))
-    implementation(project(":resource"))
 
     compileOnly(libs.bundles.kotlinx.serialization)
     compileOnly(libs.bundles.kotlinx.coroutines)
 
-    implementation("org.spongepowered:mixin:0.8.7")
+    compileOnly("org.spongepowered:mixin:0.8.7")
+}
+
+val modMetadata = mapOf(
+    "modId" to providers.gradleProperty("mod.id").get(),
+    "modVersion" to providers.gradleProperty("mod.version").get(),
+    "modName" to providers.gradleProperty("mod.name").get(),
+    "modDesc" to providers.gradleProperty("mod.description").get(),
+    "modAuthors" to "AlgorithmLX",
+    "modLicense" to providers.gradleProperty("mod.license").get(),
+    "fabricLoaderVersion" to libs.versions.fabric.loader.get(),
+    "minecraftVersion" to minecraftVersion
+)
+
+tasks.processResources {
+    inputs.properties(modMetadata)
+    filesMatching("fabric.mod.json") {
+        expand(modMetadata)
+    }
+}
+
+tasks.jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    from(project(":api").tasks.jar.map { zipTree(it.archiveFile) })
+    from(project(":runtime").tasks.jar.map { zipTree(it.archiveFile) })
 }

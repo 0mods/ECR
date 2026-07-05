@@ -3,7 +3,6 @@ import com.google.gson.Gson
 plugins {
     base
     idea
-    id("com.gradleup.shadow") apply false
     id("me.modmuss50.mod-publish-plugin")
     kotlin("jvm") apply false
     kotlin("plugin.serialization") apply false
@@ -29,7 +28,9 @@ val generatedMetaDir = layout.buildDirectory.dir("generated-meta")
 val generateModMetadata = tasks.register("generateModMetadata") {
     outputs.dir(generatedMetaDir)
 
-    val jarNameProviders = subprojects.associate { sub ->
+    val bootstrapProjects = subprojects.filter { it.name.startsWith("bootstrap") }
+
+    val jarNameProviders = bootstrapProjects.associate { sub ->
         val provider = sub.tasks.named<Jar>("jar").flatMap { it.archiveFileName }
         inputs.property("${sub.name}JarName", provider)
         sub.name to provider
@@ -42,21 +43,13 @@ val generateModMetadata = tasks.register("generateModMetadata") {
         val fabricJars = mutableListOf<Map<String, String>>()
         val neoForgeJars = mutableListOf<Map<String, Any>>()
 
-        subprojects.forEach { sub ->
+        bootstrapProjects.forEach { sub ->
             val jarName = jarNameProviders[sub.name]?.get() ?: return@forEach
             val path = "META-INF/jarjar/$jarName"
 
             if (sub.name.contains("fabric")) {
                 fabricJars.add(mapOf("file" to path))
             } else if (sub.name.contains("neoforge")) {
-                neoForgeJars.add(mapOf(
-                    "identifier" to mapOf("group" to sub.group.toString(), "artifact" to sub.name),
-                    "version" to mapOf("range" to "[${sub.version},)", "artifactVersion" to sub.version.toString()),
-                    "path" to path,
-                    "isObfuscated" to false
-                ))
-            } else {
-                fabricJars.add(mapOf("file" to path))
                 neoForgeJars.add(mapOf(
                     "identifier" to mapOf("group" to sub.group.toString(), "artifact" to sub.name),
                     "version" to mapOf("range" to "[${sub.version},)", "artifactVersion" to sub.version.toString()),
@@ -78,13 +71,15 @@ val generateModMetadata = tasks.register("generateModMetadata") {
     }
 }
 
-val buildUniversalFatJar = tasks.register<Jar>("buildUniversalFatJar") {
+val buildUniversalFatJar = tasks.register<Jar>("buildFatJar") {
     destinationDirectory.set(layout.buildDirectory.dir("libs"))
 
     dependsOn(generateModMetadata)
     from(generateModMetadata)
 
-    subprojects.forEach { sub ->
+    val bootstrapProjects = subprojects.filter { it.name.startsWith("bootstrap") }
+
+    bootstrapProjects.forEach { sub ->
         val jarTask = sub.tasks.named<Jar>("jar")
         dependsOn(jarTask)
         from(jarTask.map { it.archiveFile }) {

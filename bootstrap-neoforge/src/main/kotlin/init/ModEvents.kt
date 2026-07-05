@@ -11,4 +11,5 @@ fun initEvents(bus: IEventBus) {
 fun onNewRegistry(event: NewRegistryEvent) {
     event.register(ECRegistries.MULTIBLOCK)
     event.register(ECRegistries.MRU_TYPE)
+    event.register(ECRegistries.BOOK_LEVEL)
 }

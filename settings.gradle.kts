@@ -20,7 +20,6 @@ pluginManagement {
         kotlin("jvm") version kotlinVersion
         kotlin("plugin.serialization") version kotlinVersion
         id("dev.architectury.loom-no-remap") version architecturyLoom
-        id("com.gradleup.shadow") version shadow
         id("me.fallenbreath.yamlang") version yamlang
         id("me.modmuss50.mod-publish-plugin") version modPublishPlugin
     }
@@ -37,6 +36,5 @@ include(
     "api",
     "bootstrap-fabric",
     "bootstrap-neoforge",
-    "resource",
     "runtime"
 )

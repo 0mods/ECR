@@ -1,32 +1,34 @@
 package com.algorithmlx.ecr.api.research
 
-import kotlinx.serialization.Serializable
 import net.minecraft.resources.Identifier
-import net.minecraft.world.item.ItemStack
 
-@Serializable
-sealed interface BookCategory {
-    /**
-     * Binds the current category to the one listed here
-     * @return [BookCategory] to which the `this` category will be bound
-     */
-    val previousCategory: BookCategory?
+data class BookCategory(
+    val id: Identifier,
+    val title: BookText,
+    val icon: BookIcon = BookIcon(),
+    val order: Int = 0,
+    val background: Identifier? = null,
+    val dependencies: Set<Identifier> = emptySet(),
+    val bookLevel: Identifier? = null,
+    val shader: BookShader? = null,
+    val titleShadow: Boolean = false
+)
 
-    val icon: BookCategoryIcon
+data class BookShader(
+    val vertex: Identifier,
+    val fragment: Identifier = vertex
+)
 
-    val includedCategories: List<BookCategory>
-
-    val pages: List<BookEntry>
-
-    val bookLevel: BookLevel
-}
-
-class BookCategoryIcon(val item: ItemStack?, val texture: Identifier?) {
-    companion object {
-        @JvmStatic
-        fun item(item: ItemStack) = BookCategoryIcon(item, null)
-
-        @JvmStatic
-        fun texture(texture: Identifier) = BookCategoryIcon(null, texture)
+data class BookIcon(
+    val item: Identifier? = null,
+    val texture: Identifier? = null
+) {
+    init {
+        require(item == null || texture == null)
     }
 }
+
+data class BookText(
+    val value: String,
+    val translated: Boolean = true
+)
