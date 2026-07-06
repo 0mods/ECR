@@ -25,7 +25,7 @@ object ResearchJson {
 
     fun decodeEntry(id: Identifier, json: JsonObject): BookEntry {
         val dto = researchJson.decodeFromJsonElement<EntryDto>(json)
-        val tasks = dto.tasks.map { ResearchSerializers.decodeTask(it.typeIdentifier(), it) }
+        val taskLevels = decodeTaskLevels(dto)
         return BookEntry(
             id = id,
             title = dto.title.toBookText(),
@@ -34,10 +34,12 @@ object ResearchJson {
             frame = dto.frame.toFrame(),
             position = dto.position?.let { BookPosition(it.x, it.y) },
             dependencies = dto.dependencies.map { parseReference(it, id) },
+            requirements = dto.requirements.map { parseRequirement(it, id) },
             pages = dto.pages.map { page -> BookPage(page.elements.map(::decodeElement)) },
-            tasks = tasks,
+            taskLevels = taskLevels,
+            taskIcons = dto.taskIcons.mapValues { it.value.toModel() },
             locks = dto.locks.map { it.toModel() },
-            automatic = dto.automatic ?: tasks.isEmpty(),
+            automatic = dto.automatic ?: taskLevels.isEmpty(),
             hiddenUntilAvailable = dto.hiddenUntilAvailable,
             titleShadow = dto.shadow,
             align = dto.align.mapTo(LinkedHashSet()) { BookEntryAlign.valueOf(it.uppercase()) }
@@ -65,8 +67,19 @@ object ResearchJson {
             frame = entry.frame.toJsonElement(),
             position = entry.position?.let { PositionDto(it.x, it.y) },
             dependencies = entry.dependencies.map(Identifier::toString),
+            requirements = entry.requirements.map { it.toReference(entry.id) },
             pages = entry.pages.map { page -> PageDto(page.elements.map(::encodeElement)) },
-            tasks = entry.tasks.map { task -> ResearchSerializers.encodeTask(task).with("type", JsonPrimitive(task.type.toString())) },
+            taskLevels = entry.taskLevels.map { level ->
+                TaskLevelDto(
+                    level.id,
+                    level.tasks.map { definition ->
+                        ResearchSerializers.encodeTask(definition.task)
+                            .with("type", JsonPrimitive(definition.task.type.toString()))
+                            .with("id", JsonPrimitive(definition.id))
+                    }
+                )
+            },
+            taskIcons = entry.taskIcons.mapValues { it.value.toDto() },
             locks = entry.locks.map(ResearchLock::toDto),
             automatic = entry.automatic,
             hiddenUntilAvailable = entry.hiddenUntilAvailable,
@@ -88,6 +101,41 @@ object ResearchJson {
             dto.entries.map { (id, value) -> decodeEntry(Identifier.parse(id), value) }
     }
 
+    fun decodeTaskIcons(json: JsonObject): Map<String, BookIcon> {
+        val source = json["icons"]?.jsonObject ?: json
+        return source.mapValues { (_, value) -> researchJson.decodeFromJsonElement<IconDto>(value).toModel() }
+    }
+
+    fun parseRequirement(value: String, owner: Identifier?): ResearchRequirement {
+        if (':' !in value) return ResearchRequirement(owner, value)
+        val separator = value.lastIndexOf('.')
+        val colon = value.indexOf(':')
+        return if (separator > colon) {
+            ResearchRequirement(Identifier.parse(value.substring(0, separator)), value.substring(separator + 1))
+        } else {
+            ResearchRequirement(Identifier.parse(value))
+        }
+    }
+
+    private fun decodeTaskLevels(dto: EntryDto): List<ResearchTaskLevel> {
+        val levels = if (dto.taskLevels.isNotEmpty()) {
+            dto.taskLevels
+        } else if (dto.tasks.isNotEmpty()) {
+            listOf(TaskLevelDto("default", dto.tasks))
+        } else {
+            emptyList()
+        }
+        return levels.mapIndexed { levelIndex, level ->
+            ResearchTaskLevel(
+                level.id,
+                level.tasks.mapIndexed { taskIndex, task ->
+                    val taskId = task["id"]?.jsonPrimitive?.content ?: "task_${levelIndex}_$taskIndex"
+                    ResearchTaskDefinition(taskId, ResearchSerializers.decodeTask(task.typeIdentifier(), task))
+                }
+            )
+        }
+    }
+
     private fun decodeElement(json: JsonObject): BookElementSpec = BookElementSpec(
         ResearchSerializers.decodeElement(json.typeIdentifier(), json),
         json["width"]?.jsonPrimitive?.intOrNull,
@@ -106,6 +154,12 @@ object ResearchJson {
 
     private fun parseReference(value: String, owner: Identifier): Identifier =
         Identifier.parse(if (':' in value) value else "${owner.namespace}:$value")
+
+    private fun ResearchRequirement.toReference(owner: Identifier): String = when {
+        research == null || research == owner -> taskId ?: owner.toString()
+        taskId == null -> research.toString()
+        else -> "$research.$taskId"
+    }
 
     private fun JsonElement.toFrame(): BookFrame? = when {
         this is JsonNull -> null
@@ -160,8 +214,11 @@ private data class EntryDto(
     val position: PositionDto? = null,
     val align: Set<String> = emptySet(),
     val dependencies: List<String> = emptyList(),
+    val requirements: List<String> = emptyList(),
     val pages: List<PageDto> = emptyList(),
     val tasks: List<JsonObject> = emptyList(),
+    @SerialName("task_levels") val taskLevels: List<TaskLevelDto> = emptyList(),
+    @SerialName("task_icons") val taskIcons: Map<String, IconDto> = emptyMap(),
     val locks: List<LockDto> = emptyList(),
     val automatic: Boolean? = null,
     @SerialName("hidden_until_available") val hiddenUntilAvailable: Boolean = false,
@@ -178,6 +235,12 @@ private data class PositionDto(val x: Int = 0, val y: Int = 0)
 
 @Serializable
 private data class PageDto(val elements: List<JsonObject> = emptyList())
+
+@Serializable
+private data class TaskLevelDto(
+    val id: String,
+    val tasks: List<JsonObject>
+)
 
 @Serializable
 private data class FrameDto(

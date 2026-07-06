@@ -26,6 +26,7 @@ object BookDefaultRenderers {
         BookElementRenderers.register(ResearchIds.BLOCK, ::renderBlock)
         BookElementRenderers.register(ResearchIds.MULTIBLOCK, ::renderMultiblock)
         BookElementRenderers.register(ResearchIds.CRAFTING, ::renderCrafting)
+        BookElementRenderers.register(ResearchIds.TASK_LIST, BookTaskRenderer::render)
     }
 
     private fun renderText(context: BookElementRenderContext, element: TextBookElement) {

@@ -4,3 +4,5 @@ run/
 build/
 merged/
 .architectury-transformer/
+.kotlin/
+.tmp/

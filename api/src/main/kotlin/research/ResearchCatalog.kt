@@ -90,11 +90,33 @@ private object ResearchLayout {
         entries.values.forEach { entry ->
             entry.category?.let { require(it in categories) { "Unknown category $it in ${entry.id}" } }
             entry.dependencies.forEach { require(it in entries) { "Unknown dependency $it in ${entry.id}" } }
+            entry.requirements.forEach { validateRequirement(entry.id, it, entries) }
+            validateTextRequirements(entry, entries)
         }
         val result = LinkedHashMap<Identifier, ResolvedBookEntry>()
         val visiting = HashSet<Identifier>()
         entries.keys.forEach { resolveEntry(it, categories, entries, result, visiting) }
         return result
+    }
+
+    private fun validateTextRequirements(entry: BookEntry, entries: Map<Identifier, BookEntry>) {
+        entry.pages.asSequence()
+            .flatMap { it.elements.asSequence() }
+            .mapNotNull { it.content as? TextBookElement }
+            .flatMap { element ->
+                sequenceOf(element.requirement) + element.variants.asSequence().map(BookTextVariant::requirement)
+            }
+            .filterNotNull()
+            .forEach { validateRequirement(entry.id, it, entries) }
+    }
+
+    private fun validateRequirement(owner: Identifier, requirement: ResearchRequirement, entries: Map<Identifier, BookEntry>) {
+        val targetId = requirement.researchId(owner)
+        val target = entries[targetId] ?: error("Unknown research $targetId in $owner")
+        requirement.taskId?.let { taskId ->
+            val ids = target.taskLevels.map(ResearchTaskLevel::id) + target.taskDefinitions.map(ResearchTaskDefinition::id)
+            require(taskId in ids) { "Unknown task ID $taskId in $targetId, referenced by $owner" }
+        }
     }
 
     private fun resolveEntry(

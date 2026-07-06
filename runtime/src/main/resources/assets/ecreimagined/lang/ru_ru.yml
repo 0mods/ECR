@@ -95,4 +95,5 @@ config.jade.plugin_ecreimagined:
 
 screen.ecreimagined:
   research_book: Книга исследований
+  complete_task: Завершить задание
   complete_research: Завершить исследование

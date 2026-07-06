@@ -19,14 +19,30 @@ data object SpaceBookElement : BookElement {
     override val type: Identifier = ResearchIds.SPACE
 }
 
+data class TaskListBookElement(
+    val research: Identifier,
+    val level: Int
+) : BookElement {
+    override val type: Identifier = ResearchIds.TASK_LIST
+}
+
 data class TextBookElement(
     val text: BookText,
     val color: Int = 0xFF202020.toInt(),
     val centered: Boolean = false,
-    val shadow: Boolean = false
+    val shadow: Boolean = false,
+    val requirement: BookTextRequirement? = null,
+    val variants: List<BookTextVariant> = emptyList()
 ) : BookElement {
     override val type: Identifier = ResearchIds.TEXT
 }
+
+data class BookTextVariant(
+    val text: BookText,
+    val requirement: BookTextRequirement? = null
+)
+
+typealias BookTextRequirement = ResearchRequirement
 
 data class ItemBookElement(
     val item: Identifier,

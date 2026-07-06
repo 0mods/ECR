@@ -14,7 +14,7 @@ object FabricResearchClient {
             context.client().execute { ClientResearchState.apply(payload) }
         }
         ResearchNetwork.completeResearch = { ClientPlayNetworking.send(CompleteResearchPayload(it)) }
-        ResearchNetwork.updateFavorite = { research, color -> ClientPlayNetworking.send(FavoriteResearchPayload(research, color)) }
+        ResearchNetwork.updateFavorite = { research, spread, color -> ClientPlayNetworking.send(FavoriteResearchPayload(research, spread, color)) }
         ResearchNetwork.updateView = { state ->
             runCatching {
                 if (ClientPlayNetworking.canSend(UpdateBookViewPayload.TYPE)) {

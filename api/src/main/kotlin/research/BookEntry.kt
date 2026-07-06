@@ -10,14 +10,54 @@ data class BookEntry(
     val frame: BookFrame? = BookFrame(),
     val position: BookPosition? = null,
     val dependencies: List<Identifier> = emptyList(),
+    val requirements: List<ResearchRequirement> = emptyList(),
     val pages: List<BookPage> = emptyList(),
-    val tasks: List<ResearchTask> = emptyList(),
+    val taskLevels: List<ResearchTaskLevel> = emptyList(),
+    val taskIcons: Map<String, BookIcon> = emptyMap(),
     val locks: List<ResearchLock> = emptyList(),
-    val automatic: Boolean = tasks.isEmpty(),
+    val automatic: Boolean = taskLevels.isEmpty(),
     val hiddenUntilAvailable: Boolean = false,
     val titleShadow: Boolean = false,
     val align: Set<BookEntryAlign> = emptySet()
-)
+) {
+    val taskDefinitions: List<ResearchTaskDefinition> = taskLevels.flatMap(ResearchTaskLevel::tasks)
+    val tasks: List<ResearchTask> = taskDefinitions.map(ResearchTaskDefinition::task)
+
+    init {
+        val ids = taskLevels.map(ResearchTaskLevel::id) + taskDefinitions.map(ResearchTaskDefinition::id)
+        require(ids.distinct().size == ids.size) { "Task level and task IDs must be unique in $id" }
+    }
+}
+
+data class ResearchRequirement(
+    val research: Identifier? = null,
+    val taskId: String? = null
+) {
+    init {
+        require(research != null || !taskId.isNullOrBlank())
+    }
+
+    fun researchId(owner: Identifier): Identifier = research ?: owner
+}
+
+data class ResearchTaskLevel(
+    val id: String,
+    val tasks: List<ResearchTaskDefinition>
+) {
+    init {
+        require(id.isNotBlank())
+        require(tasks.isNotEmpty())
+    }
+}
+
+data class ResearchTaskDefinition(
+    val id: String,
+    val task: ResearchTask
+) {
+    init {
+        require(id.isNotBlank())
+    }
+}
 
 enum class BookEntryAlign {
     UP,

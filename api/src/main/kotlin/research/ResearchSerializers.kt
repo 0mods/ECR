@@ -25,6 +25,7 @@ object ResearchSerializers {
         registerElement(CraftingElementSerializer)
         registerTask(ItemTaskSerializer)
         registerTask(ExperienceTaskSerializer)
+        registerTask(CraftingTaskSerializer)
     }
 
     @JvmStatic
@@ -65,7 +66,22 @@ private data class TextElementDto(
     val text: JsonElement,
     val color: Int = 0xFF202020.toInt(),
     val centered: Boolean = false,
-    val shadow: Boolean = false
+    val shadow: Boolean = false,
+    val requirement: TextRequirementDto? = null,
+    val variants: List<TextVariantDto> = emptyList()
+)
+
+@Serializable
+private data class TextVariantDto(
+    val text: JsonElement,
+    val requirement: TextRequirementDto? = null
+)
+
+@Serializable
+private data class TextRequirementDto(
+    val taskid: String? = null,
+    val research: String? = null,
+    val requirement: String? = null
 )
 
 @Serializable
@@ -96,6 +112,9 @@ private data class ItemTaskDto(val item: String, val count: Int = 1, val consume
 @Serializable
 private data class ExperienceTaskDto(val amount: Int = 1, val levels: Boolean = false, val consume: Boolean = false)
 
+@Serializable
+private data class CraftingTaskDto(val recipe: String)
+
 private object SpaceElementSerializer : BookElementSerializer<SpaceBookElement> {
     override val type = ResearchIds.SPACE
     override val defaultWidth = 0
@@ -109,10 +128,24 @@ private object TextElementSerializer : BookElementSerializer<TextBookElement> {
     override val defaultWidth = 208
     override val defaultHeight = 18
     override fun decode(json: JsonObject): TextBookElement = researchJson.decodeFromJsonElement<TextElementDto>(json).let {
-        TextBookElement(it.text.toBookText(), it.color, it.centered, it.shadow)
+        TextBookElement(
+            it.text.toBookText(),
+            it.color,
+            it.centered,
+            it.shadow,
+            it.requirement?.toModel(),
+            it.variants.map { variant -> BookTextVariant(variant.text.toBookText(), variant.requirement?.toModel()) }
+        )
     }
     override fun encode(value: TextBookElement): JsonObject = researchJson.encodeToJsonElement(
-        TextElementDto(value.text.toJsonElement(), value.color, value.centered, value.shadow)
+        TextElementDto(
+            value.text.toJsonElement(),
+            value.color,
+            value.centered,
+            value.shadow,
+            value.requirement?.toDto(),
+            value.variants.map { TextVariantDto(it.text.toJsonElement(), it.requirement?.toDto()) }
+        )
     ).jsonObject
 }
 
@@ -165,10 +198,20 @@ private object CraftingElementSerializer : BookElementSerializer<CraftingBookEle
 private object ItemTaskSerializer : ResearchTaskSerializer<ItemResearchTask> {
     override val type = ResearchIds.ITEM_TASK
     override fun decode(json: JsonObject): ItemResearchTask = researchJson.decodeFromJsonElement<ItemTaskDto>(json).let {
-        ItemResearchTask(Identifier.parse(it.item), it.count.coerceAtLeast(1), it.consume)
+        ItemResearchTask(it.item, it.count.coerceAtLeast(1), it.consume)
     }
     override fun encode(value: ItemResearchTask): JsonObject = researchJson.encodeToJsonElement(
-        ItemTaskDto(value.item.toString(), value.count, value.consumeItems)
+        ItemTaskDto(value.item, value.count, value.consumeItems)
+    ).jsonObject
+}
+
+private object CraftingTaskSerializer : ResearchTaskSerializer<CraftingResearchTask> {
+    override val type = ResearchIds.CRAFTING_TASK
+    override fun decode(json: JsonObject): CraftingResearchTask = researchJson.decodeFromJsonElement<CraftingTaskDto>(json).let {
+        CraftingResearchTask(Identifier.parse(it.recipe))
+    }
+    override fun encode(value: CraftingResearchTask): JsonObject = researchJson.encodeToJsonElement(
+        CraftingTaskDto(value.recipe.toString())
     ).jsonObject
 }
 
@@ -196,3 +239,9 @@ internal fun BookText.toJsonElement(): JsonElement = buildJsonObject {
 
 private fun ItemElementDto.toElement() = ItemBookElement(Identifier.parse(item), count)
 private fun ItemBookElement.toDto() = ItemElementDto(item.toString(), count)
+private fun TextRequirementDto.toModel(): BookTextRequirement {
+    requirement?.let { return ResearchJson.parseRequirement(it, null) }
+    if (research == null && taskid?.contains(':') == true) return ResearchJson.parseRequirement(taskid, null)
+    return BookTextRequirement(research?.let(Identifier::parse), taskid)
+}
+private fun BookTextRequirement.toDto() = TextRequirementDto(taskid = taskId, research = research?.toString())

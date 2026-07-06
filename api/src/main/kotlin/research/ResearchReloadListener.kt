@@ -12,7 +12,9 @@ class ResearchReloadListener(
 ) : ResourceManagerReloadListener {
     override fun onResourceManagerReload(resourceManager: ResourceManager) {
         val categories = read(resourceManager, FileToIdConverter.json("research/categories"), ResearchJson::decodeCategory)
+        val icons = readMap(resourceManager, FileToIdConverter.json("research/icons"), ResearchJson::decodeTaskIcons)
         val entries = read(resourceManager, FileToIdConverter.json("research/entries"), ResearchJson::decodeEntry)
+            .map { entry -> entry.copy(taskIcons = entry.taskIcons + icons[entry.id].orEmpty()) }
         ResearchCatalog.replace(categories, entries)
         afterReload()
     }
@@ -24,4 +26,12 @@ class ResearchReloadListener(
     ): List<T> = converter.listMatchingResources(resourceManager).map { (file, resource) ->
         resource.openAsReader().use { decoder(converter.fileToId(file), researchJson.parseToJsonElement(it.readText()).jsonObject) }
     }
+
+    private fun <T> readMap(
+        resourceManager: ResourceManager,
+        converter: FileToIdConverter,
+        decoder: (JsonObject) -> T
+    ): Map<Identifier, T> = converter.listMatchingResources(resourceManager).mapValues { (_, resource) ->
+        resource.openAsReader().use { decoder(researchJson.parseToJsonElement(it.readText()).jsonObject) }
+    }.mapKeys { converter.fileToId(it.key) }
 }

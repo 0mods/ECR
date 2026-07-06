@@ -10,12 +10,14 @@ import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.common.NeoForge
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent
 import net.neoforged.neoforge.event.OnDatapackSyncEvent
+import net.neoforged.neoforge.event.RegisterCommandsEvent
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent
 import net.neoforged.neoforge.event.tick.PlayerTickEvent
 import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 import net.neoforged.neoforge.resource.ListenerKey
+import com.algorithmlx.ecr.common.research.ResearchCommands
 
 object NeoForgeResearch {
     fun init(modBus: IEventBus) {
@@ -29,8 +31,13 @@ object NeoForgeResearch {
         NeoForge.EVENT_BUS.addListener(::entityInteractSpecific)
         NeoForge.EVENT_BUS.addListener(::attackEntity)
         NeoForge.EVENT_BUS.addListener(::playerTick)
+        NeoForge.EVENT_BUS.addListener(::registerCommands)
         ResearchNetwork.sendToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
         ResearchNetwork.sendProgressToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
+    }
+
+    private fun registerCommands(event: RegisterCommandsEvent) {
+        ResearchCommands.register(event.dispatcher)
     }
 
     private fun registerPayloads(event: RegisterPayloadHandlersEvent) {
@@ -46,7 +53,7 @@ object NeoForgeResearch {
         registrar.playToServer(FavoriteResearchPayload.TYPE, FavoriteResearchPayload.STREAM_CODEC) { payload, context ->
             context.enqueueWork {
                 val player = context.player() as? ServerPlayer ?: return@enqueueWork
-                ResearchProgress.setFavorite(player, payload.research, payload.color)
+                ResearchProgress.setBookmark(player, payload.research, payload.spread, payload.color)
             }
         }
         registrar.playToServer(UpdateBookViewPayload.TYPE, UpdateBookViewPayload.STREAM_CODEC) { payload, context ->

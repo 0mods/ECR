@@ -110,6 +110,7 @@ config.jade.plugin_ecreimagined:
 
 screen.ecreimagined:
   research_book: Research Book
+  complete_task: Complete task
   complete_research: Complete research
 
 message.ecreimagined:

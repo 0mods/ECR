@@ -11,7 +11,7 @@ object NeoForgeResearchClient {
         ResearchBookClient.init()
         modBus.addListener(::registerClientPayloads)
         ResearchNetwork.completeResearch = { ClientPacketDistributor.sendToServer(CompleteResearchPayload(it)) }
-        ResearchNetwork.updateFavorite = { research, color -> ClientPacketDistributor.sendToServer(FavoriteResearchPayload(research, color)) }
+        ResearchNetwork.updateFavorite = { research, spread, color -> ClientPacketDistributor.sendToServer(FavoriteResearchPayload(research, spread, color)) }
         ResearchNetwork.updateView = { state -> runCatching { ClientPacketDistributor.sendToServer(UpdateBookViewPayload(state)) } }
     }
 

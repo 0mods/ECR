@@ -4,6 +4,7 @@ import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.api.research.*
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.player.*
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking
@@ -11,6 +12,7 @@ import net.fabricmc.fabric.api.resource.v1.ResourceLoader
 import net.minecraft.server.packs.PackType
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.item.BlockItem
+import com.algorithmlx.ecr.common.research.ResearchCommands
 
 object FabricResearch {
     fun init() {
@@ -18,6 +20,7 @@ object FabricResearch {
         registerReloadListener()
         registerProgressEvents()
         registerAccessEvents()
+        CommandRegistrationCallback.EVENT.register { dispatcher, _, _ -> ResearchCommands.register(dispatcher) }
         ResearchNetwork.sendToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
         ResearchNetwork.sendProgressToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
     }
@@ -32,7 +35,7 @@ object FabricResearch {
             context.server().execute { ResearchProgress.tryUnlock(context.player(), payload.research) }
         }
         ServerPlayNetworking.registerGlobalReceiver(FavoriteResearchPayload.TYPE) { payload, context ->
-            context.server().execute { ResearchProgress.setFavorite(context.player(), payload.research, payload.color) }
+            context.server().execute { ResearchProgress.setBookmark(context.player(), payload.research, payload.spread, payload.color) }
         }
         ServerPlayNetworking.registerGlobalReceiver(UpdateBookViewPayload.TYPE) { payload, context ->
             context.server().execute { ResearchProgress.updateView(context.player(), payload.state) }
