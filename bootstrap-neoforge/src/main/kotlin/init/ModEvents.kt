@@ -11,5 +11,7 @@ fun initEvents(bus: IEventBus) {
 fun onNewRegistry(event: NewRegistryEvent) {
     event.register(ECRegistries.MULTIBLOCK)
     event.register(ECRegistries.MRU_TYPE)
-    event.register(ECRegistries.BOOK_LEVEL)
+    event.register(ECRegistries.BOOK_TYPES)
+    event.register(ECRegistries.BOOK_ELEMENT_SERIALIZER)
+    event.register(ECRegistries.RESEARCH_TASK_SERIALIZER)
 }

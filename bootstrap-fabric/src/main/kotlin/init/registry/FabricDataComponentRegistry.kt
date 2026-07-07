@@ -1,6 +1,7 @@
 package com.algorithmlx.ecr.fabric.init.registry
 
 import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.research.BookType
 import com.algorithmlx.ecr.common.components.SoulStoneComponent
 import com.algorithmlx.ecr.common.init.registry.DataComponentRegistry
 import net.minecraft.core.Registry
@@ -13,6 +14,12 @@ object FabricDataComponentRegistry: DataComponentRegistry {
         DataComponentType.builder<SoulStoneComponent>()
             .persistent(SoulStoneComponent.codec)
             .networkSynchronized(SoulStoneComponent.codecStream)
+            .build()
+    )
+    override val bookType: DataComponentType<BookType> = register(
+        "book_type", DataComponentType.builder<BookType>()
+            .persistent(BookType.codec)
+            .networkSynchronized(BookType.codecStream)
             .build()
     )
 

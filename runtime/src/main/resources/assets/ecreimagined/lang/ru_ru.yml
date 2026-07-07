@@ -1,3 +1,4 @@
+#$json_flat
 itemGroup.ecreimagined:
   items: "Essential Craft: Предметы"
   blocks: "Essential Craft: Блоки"
@@ -92,6 +93,10 @@ config.jade.plugin_ecreimagined:
   mithriline_furnace:
     .: Мифрилиновая печь
     espe_collector: "Активные сборщики ESPE: %s/%s"
+
+toast.ecreimagined:
+  research_unlocked: Исследование открыто
+  research_completed: Исследование завершено
 
 screen.ecreimagined:
   research_book: Книга исследований

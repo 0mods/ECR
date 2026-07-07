@@ -4,6 +4,7 @@ plugins {
     base
     idea
     id("me.modmuss50.mod-publish-plugin")
+    id("team.0mods.yaml2json") apply false
     kotlin("jvm") apply false
     kotlin("plugin.serialization") apply false
 }

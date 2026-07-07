@@ -19,6 +19,7 @@
     ]
   },
   "mixins": [
+    "ecr.mixins.json",
     "ecr.api.mixins.json",
     "ecr.fabric.mixins.json"
   ],

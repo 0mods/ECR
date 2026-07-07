@@ -1,3 +1,7 @@
 package com.algorithmlx.ecr.fabric
 
-fun initClient() {}
+import com.algorithmlx.ecr.fabric.research.FabricResearchClient
+
+fun initClient() {
+    FabricResearchClient.init()
+}

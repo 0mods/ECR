@@ -1,11 +1,17 @@
 package com.algorithmlx.ecr.api.research
 
 import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.research.content.BookCategory
+import com.algorithmlx.ecr.api.research.content.BookEntry
+import com.algorithmlx.ecr.api.research.content.ResearchRequirement
+import com.algorithmlx.ecr.api.research.content.ResearchTaskDefinition
 import net.minecraft.network.FriendlyByteBuf
+import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.resources.Identifier
 import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.item.crafting.Recipe
 
 data class ResearchSyncPayload(
     val catalog: String,
@@ -14,13 +20,14 @@ data class ResearchSyncPayload(
     val taskProgress: Map<Identifier, List<ResearchTaskProgress>>,
     val completedTaskLevels: Map<Identifier, Int>,
     val bookLevel: Identifier?,
+    val recipes: Map<Identifier, Recipe<*>>,
     val viewState: BookViewState
 ) : CustomPacketPayload {
     override fun type() = TYPE
 
     companion object {
         @JvmField val TYPE = CustomPacketPayload.Type<ResearchSyncPayload>("research_sync".ecRL)
-        @JvmField val STREAM_CODEC: StreamCodec<FriendlyByteBuf, ResearchSyncPayload> = StreamCodec.of(
+        @JvmField val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, ResearchSyncPayload> = StreamCodec.of(
             { buffer, value ->
                 buffer.writeUtf(value.catalog, MAX_CATALOG_SIZE)
                 buffer.writeVarInt(value.unlocked.size)
@@ -47,6 +54,11 @@ data class ResearchSyncPayload(
                 }
                 buffer.writeBoolean(value.bookLevel != null)
                 value.bookLevel?.let(buffer::writeIdentifier)
+                buffer.writeVarInt(value.recipes.size)
+                value.recipes.forEach { (id, recipe) ->
+                    buffer.writeIdentifier(id)
+                    Recipe.STREAM_CODEC.encode(buffer, recipe)
+                }
                 buffer.writeViewState(value.viewState)
             },
             { buffer ->
@@ -67,7 +79,10 @@ data class ResearchSyncPayload(
                     repeat(buffer.readVarInt()) { put(buffer.readIdentifier(), buffer.readVarInt()) }
                 }
                 val bookLevel = if (buffer.readBoolean()) buffer.readIdentifier() else null
-                ResearchSyncPayload(catalog, unlocked, bookmarks, progress, completedTaskLevels, bookLevel, buffer.readViewState())
+                val recipes = LinkedHashMap<Identifier, Recipe<*>>().apply {
+                    repeat(buffer.readVarInt()) { put(buffer.readIdentifier(), Recipe.STREAM_CODEC.decode(buffer)) }
+                }
+                ResearchSyncPayload(catalog, unlocked, bookmarks, progress, completedTaskLevels, bookLevel, recipes, buffer.readViewState())
             }
         )
         private const val MAX_CATALOG_SIZE = 8 * 1024 * 1024
@@ -135,6 +150,8 @@ object ResearchNetwork {
     @JvmField var completeResearch: (Identifier) -> Unit = {}
     @JvmField var updateFavorite: (Identifier, Int, Int?) -> Unit = { _, _, _ -> }
     @JvmField var updateView: (BookViewState) -> Unit = {}
+    @JvmField var researchUnlocked: (Identifier) -> Unit = {}
+    @JvmField var taskCompleted: (Identifier, ResearchTaskDefinition) -> Unit = { _, _ -> }
 }
 
 object ClientResearchState {
@@ -143,22 +160,32 @@ object ClientResearchState {
     @Volatile private var progress = emptyMap<Identifier, List<ResearchTaskProgress>>()
     @Volatile private var completedTaskLevels = emptyMap<Identifier, Int>()
     @Volatile private var currentBookLevel: Identifier? = null
+    @Volatile private var recipes = emptyMap<Identifier, Recipe<*>>()
     @Volatile private var savedViewState = BookViewState()
     @Volatile private var stateRevision = 0L
 
     @JvmStatic fun apply(payload: ResearchSyncPayload) {
+        val previous = unlockedResearch
+        val previousProgress = progress
         ResearchCatalog.importJson(payload.catalog)
-        unlockedResearch = payload.unlocked.toSet()
+        val nextUnlocked = payload.unlocked.toSet()
+        val added = if (stateRevision == 0L && previous.isEmpty()) emptySet() else nextUnlocked - previous
+        unlockedResearch = nextUnlocked
         bookmarks = payload.bookmarks.toList()
         progress = payload.taskProgress.toMap()
         completedTaskLevels = payload.completedTaskLevels.toMap()
         currentBookLevel = payload.bookLevel
+        recipes = payload.recipes.toMap()
         savedViewState = payload.viewState
+        notifyCompletedTasks(previousProgress, progress)
         stateRevision++
+        added.forEach(ResearchNetwork.researchUnlocked)
     }
 
     @JvmStatic fun apply(payload: ResearchProgressPayload) {
+        val previousProgress = progress
         progress = payload.taskProgress.toMap()
+        notifyCompletedTasks(previousProgress, progress)
         stateRevision++
     }
 
@@ -192,9 +219,10 @@ object ClientResearchState {
     }
     @JvmStatic fun requirementMet(owner: Identifier, requirement: ResearchRequirement): Boolean {
         val research = requirement.researchId(owner)
-        return requirement.taskId?.let { taskComplete(research, it) } ?: has(research)
+        return requirement.task?.let { taskComplete(research, it) } ?: has(research)
     }
     @JvmStatic fun bookLevel(): Identifier? = currentBookLevel
+    @JvmStatic fun recipe(id: Identifier): Recipe<*>? = recipes[id]
     @JvmStatic fun viewState(): BookViewState = savedViewState
     @JvmStatic fun revision(): Long = stateRevision
     @JvmStatic fun updateLocalView(state: BookViewState) {
@@ -210,6 +238,22 @@ object ClientResearchState {
             ?: return false
         return categoryAvailable(category) && entry.dependencies.all(::has) &&
             entry.requirements.all { requirementMet(entry.id, it) }
+    }
+
+    private fun notifyCompletedTasks(
+        previous: Map<Identifier, List<ResearchTaskProgress>>,
+        next: Map<Identifier, List<ResearchTaskProgress>>
+    ) {
+        if (stateRevision == 0L && previous.isEmpty()) return
+        ResearchCatalog.snapshot().entries.values.forEach { entry ->
+            val before = previous[entry.id].orEmpty()
+            val after = next[entry.id].orEmpty()
+            entry.taskDefinitions.forEachIndexed { index, definition ->
+                val old = before.getOrNull(index)
+                val current = after.getOrNull(index) ?: return@forEachIndexed
+                if (old?.complete != true && current.complete) ResearchNetwork.taskCompleted(entry.id, definition)
+            }
+        }
     }
 }
 

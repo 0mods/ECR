@@ -12,13 +12,17 @@ object ECRegistryInit {
     fun registrate() {
         register(ECRegistryKeys.MRU_TYPE_KEY, ECRegistries.MRU_TYPE)
         register(ECRegistryKeys.MULTIBLOCK_KEY, ECRegistries.MULTIBLOCK)
-        register(ECRegistryKeys.BOOK_LEVEL_KEY, ECRegistries.BOOK_LEVEL)
+        register(ECRegistryKeys.BOOK_TYPE_KEY, ECRegistries.BOOK_TYPES)
+        register(ECRegistryKeys.BOOK_ELEMENT_SERIALIZER_KEY, ECRegistries.BOOK_ELEMENT_SERIALIZER)
+        register(ECRegistryKeys.RESEARCH_TASK_SERIALIZER_KEY, ECRegistries.RESEARCH_TASK_SERIALIZER)
 
+        FabricResearchSerializerRegistry.register()
+
+        DataComponentRegistry.instance = FabricDataComponentRegistry
         BlockCodecRegistry.instance = FabricBlockCodecRegistry
         BookLevelRegistry.instance = FabricBookLevelRegistry
         BlockRegistry.instance = FabricBlockRegistry
         BlockEntityTypeRegistry.instance = FabricBlockEntityTypeRegistry
-        DataComponentRegistry.instance = FabricDataComponentRegistry
         ItemRegistry.instance = FabricItemRegistry
         MenuTypeRegistry.instance = FabricMenuTypeRegistry
         MRUTypeRegistry.instance = FabricMRUTypeRegistry
@@ -27,6 +31,7 @@ object ECRegistryInit {
         RecipeTypeRegistry.instance = FabricRecipeTypeRegistry
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun <T: Registry<*>> register(resourceKey: ResourceKey<T>, t: T): T =
         Registry.register(BuiltInRegistries.REGISTRY as Registry<Registry<*>>, resourceKey.identifier(), t)
 }

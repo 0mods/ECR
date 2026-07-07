@@ -1,7 +1,5 @@
 package com.algorithmlx.ecr.api.utils
 
-import net.minecraft.core.Registry
-import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.item.ItemStack
 
 object StackHelper {

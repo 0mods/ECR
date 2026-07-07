@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.mixin;
+package com.algorithmlx.ecr.api.mixin;
 
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.state.gui.GuiRenderState;

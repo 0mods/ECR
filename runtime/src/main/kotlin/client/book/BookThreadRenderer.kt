@@ -7,7 +7,7 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 
 object BookThreadRenderer {
-    fun render(graphics: GuiGraphicsExtractor, from: Pair<Int, Int>, to: Pair<Int, Int>, completed: Boolean) {
+    fun render(graphics: GuiGraphicsExtractor, from: Pair<Int, Int>, to: Pair<Int, Int>, completed: Boolean, baseColor: Int? = null) {
         val dx = (to.first - from.first).toFloat()
         val dy = (to.second - from.second).toFloat()
         val distance = hypot(dx.toDouble(), dy.toDouble()).toFloat()
@@ -32,11 +32,29 @@ object BookThreadRenderer {
                 }
                 val x = Mth.lerp(progress, from.first.toFloat(), to.first.toFloat()) + normalX * wave
                 val y = Mth.lerp(progress, from.second.toFloat(), to.second.toFloat()) + normalY * wave
-                val color = if (completed) 0xFFEAF8FF.toInt() else COLORS[strand]
+                val color = if (baseColor == null) {
+                    if (completed) DEFAULT_COMPLETED else DEFAULT_UNFINISHED[strand]
+                } else {
+                    threadColor(baseColor, strand, progress, completed)
+                }
                 graphics.fill(BookRenderPipelines.THREAD, x.toInt(), y.toInt(), x.toInt() + 2, y.toInt() + 2, color)
             }
         }
     }
 
-    private val COLORS = intArrayOf(0xFF7184A4.toInt(), 0xFF8B78A8.toInt(), 0xFF657B96.toInt())
+    private fun threadColor(baseColor: Int, strand: Int, progress: Float, completed: Boolean): Int {
+        val alpha = if (baseColor ushr 24 == 0) 0xFF else baseColor ushr 24
+        val red = (baseColor ushr 16) and 0xFF
+        val green = (baseColor ushr 8) and 0xFF
+        val blue = baseColor and 0xFF
+        val wave = if (completed) progress else (progress + strand * 0.22f).let { it - it.toInt() }
+        val factor = if (completed) 1.18f + wave * 0.18f else 0.72f + wave * 0.32f + strand * 0.08f
+        return (alpha.coerceIn(0, 255) shl 24) or
+            ((red * factor).toInt().coerceIn(0, 255) shl 16) or
+            ((green * factor).toInt().coerceIn(0, 255) shl 8) or
+            (blue * factor).toInt().coerceIn(0, 255)
+    }
+
+    private const val DEFAULT_COMPLETED = 0xFFEAF8FF.toInt()
+    private val DEFAULT_UNFINISHED = intArrayOf(0xFF7184A4.toInt(), 0xFF8B78A8.toInt(), 0xFF657B96.toInt())
 }

@@ -1,5 +1,6 @@
-package com.algorithmlx.ecr.api.research
+package com.algorithmlx.ecr.api.research.content
 
+import com.algorithmlx.ecr.api.research.ResearchIds
 import kotlinx.serialization.json.JsonObject
 import net.minecraft.resources.Identifier
 
@@ -61,22 +62,16 @@ data class BlockBookElement(val block: Identifier) : BookElement {
 
 data class MultiblockBookElement(
     val multiblock: Identifier,
-    val scale: Float = 0.9f,
-    val rotationX: Float = 25f,
-    val rotationY: Float = -30f,
+    val scale: Float = 0.9F,
+    val rotationX: Float = 25F,
+    val rotationY: Float = -30F,
     val layer: Int = Int.MAX_VALUE
 ) : BookElement {
     override val type: Identifier = ResearchIds.MULTIBLOCK
 }
 
 data class CraftingBookElement(
-    val pattern: List<String>,
-    val key: Map<Char, ItemBookElement>,
-    val result: ItemBookElement
+    val recipe: Identifier
 ) : BookElement {
     override val type: Identifier = ResearchIds.CRAFTING
-
-    init {
-        require(pattern.size in 1..3 && pattern.all { it.length in 1..3 })
-    }
 }

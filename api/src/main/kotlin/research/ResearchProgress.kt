@@ -2,21 +2,29 @@ package com.algorithmlx.ecr.api.research
 
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.research.content.BookCategory
+import com.algorithmlx.ecr.api.research.content.BookEntry
+import com.algorithmlx.ecr.api.research.content.CraftingBookElement
+import com.algorithmlx.ecr.api.research.content.ResearchRequirement
+import com.algorithmlx.ecr.api.research.serializer.researchJson
 import com.mojang.serialization.Codec
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
+import net.minecraft.core.registries.Registries
 import net.minecraft.resources.Identifier
+import net.minecraft.resources.ResourceKey
 import net.minecraft.server.MinecraftServer
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.util.datafix.DataFixTypes
+import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.level.saveddata.SavedData
 import net.minecraft.world.level.saveddata.SavedDataType
 import java.util.UUID
 
 data class PlayerResearchData(
     val unlocked: MutableSet<Identifier> = LinkedHashSet(),
+    val opened: MutableSet<Identifier> = LinkedHashSet(),
     val bookmarks: MutableList<BookBookmark> = mutableListOf(),
     var bookLevel: Identifier? = null,
     var viewState: BookViewState = BookViewState(),
@@ -28,9 +36,9 @@ data class BookViewState(
     val category: Identifier? = null,
     val entry: Identifier? = null,
     val spread: Int = 0,
-    val panX: Float = 0f,
-    val panY: Float = 0f,
-    val zoom: Float = 1f,
+    val panX: Float = 0F,
+    val panY: Float = 0F,
+    val zoom: Float = 1F,
     val pickerX: Int = -1,
     val pickerY: Int = -1
 )
@@ -74,6 +82,7 @@ private data class ResearchStoreDto(val players: Map<String, PlayerResearchDataD
 @Serializable
 private data class PlayerResearchDataDto(
     val unlocked: Set<String> = emptySet(),
+    val opened: Set<String> = emptySet(),
     val favorites: Map<String, Int> = emptyMap(),
     val bookmarks: List<BookBookmarkDto> = emptyList(),
     val bookLevel: String? = null,
@@ -86,9 +95,9 @@ private data class BookViewStateDto(
     val category: String? = null,
     val entry: String? = null,
     val spread: Int = 0,
-    val panX: Float = 0f,
-    val panY: Float = 0f,
-    val zoom: Float = 1f,
+    val panX: Float = 0F,
+    val panY: Float = 0F,
+    val zoom: Float = 1F,
     val pickerX: Int = -1,
     val pickerY: Int = -1
 )
@@ -98,6 +107,7 @@ private data class BookBookmarkDto(val research: String, val spread: Int = 0, va
 
 private fun PlayerResearchData.toDto() = PlayerResearchDataDto(
     unlocked = unlocked.mapTo(LinkedHashSet(), Identifier::toString),
+    opened = opened.mapTo(LinkedHashSet(), Identifier::toString),
     bookmarks = bookmarks.map { BookBookmarkDto(it.research.toString(), it.spread, it.color) },
     bookLevel = bookLevel?.toString(),
     viewState = viewState.toDto(),
@@ -106,6 +116,7 @@ private fun PlayerResearchData.toDto() = PlayerResearchDataDto(
 
 private fun PlayerResearchDataDto.toModel() = PlayerResearchData(
     unlocked = unlocked.mapTo(LinkedHashSet(), Identifier::parse),
+    opened = opened.mapTo(LinkedHashSet(), Identifier::parse),
     bookmarks = (bookmarks.map { BookBookmark(Identifier.parse(it.research), it.spread.coerceAtLeast(0), it.color) } +
         favorites.map { (research, color) -> BookBookmark(Identifier.parse(research), (color ushr 24) and 0xFF, color) })
         .distinctBy { it.research to it.spread }
@@ -120,9 +131,9 @@ private fun BookViewStateDto.toModel() = BookViewState(
     category?.let(Identifier::parse),
     entry?.let(Identifier::parse),
     spread.coerceAtLeast(0),
-    panX.takeIf { it.isFinite() } ?: 0f,
-    panY.takeIf { it.isFinite() } ?: 0f,
-    zoom.takeIf { it.isFinite() }?.coerceIn(0.5f, 2f) ?: 1f,
+    panX.takeIf { it.isFinite() } ?: 0F,
+    panY.takeIf { it.isFinite() } ?: 0F,
+    zoom.takeIf { it.isFinite() }?.coerceIn(0.5F, 2F) ?: 1F,
     pickerX,
     pickerY
 )
@@ -153,7 +164,7 @@ object ResearchProgress {
 
     @JvmStatic
     fun setBookLevel(player: ServerPlayer, level: Identifier): Boolean {
-        if (!ECRegistries.BOOK_LEVEL.containsKey(level)) return false
+        if (!ECRegistries.BOOK_TYPES.containsKey(level)) return false
         val playerData = data(player)
         playerData.bookLevel = level
         storage(player.level().server).setDirty()
@@ -168,21 +179,25 @@ object ResearchProgress {
         val entry = state.entry?.takeIf { id ->
             ResearchCatalog.snapshot().entries[id]?.let { available(player, it) } == true
         }
+        val openedChanged = entry?.let(playerData.opened::add) == true
         playerData.viewState = state.copy(
             category = category,
             entry = entry,
             spread = state.spread.coerceAtLeast(0),
-            panX = state.panX.takeIf { it.isFinite() } ?: 0f,
-            panY = state.panY.takeIf { it.isFinite() } ?: 0f,
-            zoom = state.zoom.takeIf { it.isFinite() }?.coerceIn(0.5f, 2f) ?: 1f
+            panX = state.panX.takeIf { it.isFinite() } ?: 0F,
+            panY = state.panY.takeIf { it.isFinite() } ?: 0F,
+            zoom = state.zoom.takeIf { it.isFinite() }?.coerceIn(0.5F, 2F) ?: 1F
         )
         storage(player.level().server).setDirty()
+        if (openedChanged) {
+            if (unlockAutomatic(player)) sync(player) else syncProgress(player)
+        }
     }
 
     @JvmStatic
     fun tryUnlock(player: ServerPlayer, research: Identifier): Boolean {
         val entry = ResearchCatalog.snapshot().entries[research] ?: return false
-        if (entry.automatic) return false
+        if (entry.automatic || entry.currentLevelOpenOnly(data(player))) return false
         val playerData = data(player)
         if (research in playerData.unlocked || !available(player, entry)) return false
         if (!advanceTaskLevel(player, playerData, entry)) return false
@@ -201,7 +216,8 @@ object ResearchProgress {
         do {
             changed = false
             ResearchCatalog.snapshot().entries.values.forEach { entry ->
-                if (entry.automatic && entry.id !in advanced && entry.id !in playerData.unlocked && available(player, entry) &&
+                if ((entry.automatic || entry.currentLevelOpenOnly(playerData)) &&
+                    entry.id !in advanced && entry.id !in playerData.unlocked && available(player, entry) &&
                     advanceTaskLevel(player, playerData, entry)
                 ) {
                     advanced += entry.id
@@ -256,6 +272,7 @@ object ResearchProgress {
                 progress,
                 playerData.completedTaskLevels,
                 playerData.bookLevel,
+                collectBookRecipes(player.level().server),
                 playerData.viewState
             )
         )
@@ -279,6 +296,7 @@ object ResearchProgress {
     fun reset(player: ServerPlayer) {
         val playerData = data(player)
         playerData.unlocked.clear()
+        playerData.opened.clear()
         playerData.bookmarks.clear()
         playerData.completedTaskLevels.clear()
         playerData.lastSyncedProgress = emptyMap()
@@ -325,14 +343,14 @@ object ResearchProgress {
     @JvmStatic
     fun requirementMet(player: ServerPlayer, owner: Identifier, requirement: ResearchRequirement): Boolean {
         val research = requirement.researchId(owner)
-        val taskId = requirement.taskId ?: return has(player, research)
+        val taskId = requirement.task ?: return has(player, research)
         val entry = ResearchCatalog.snapshot().entries[research] ?: return false
         if (has(player, research)) return entry.hasTask(taskId)
         val completedLevel = data(player).completedTaskLevels[research] ?: 0
         entry.taskLevels.forEachIndexed { levelIndex, level ->
-            if (level.id == taskId) return levelIndex < completedLevel || level.tasks.all { it.task.progress(player).complete }
+            if (level.id == taskId) return levelIndex < completedLevel || level.tasks.all { it.task.progress(player, entry.id).complete }
             level.tasks.forEach { definition ->
-                if (definition.id == taskId) return levelIndex < completedLevel || definition.task.progress(player).complete
+                if (definition.id == taskId) return levelIndex < completedLevel || definition.task.progress(player, entry.id).complete
             }
         }
         return false
@@ -340,15 +358,28 @@ object ResearchProgress {
 
     private fun storage(server: MinecraftServer): ResearchSavedData = server.overworld().dataStorage.computeIfAbsent(ResearchSavedData.TYPE)
 
-    private fun defaultBookLevel(): Identifier? = ECRegistries.BOOK_LEVEL.entrySet()
+    private fun defaultBookLevel(): Identifier? = ECRegistries.BOOK_TYPES.entrySet()
         .minByOrNull { it.value.order }
         ?.key
         ?.identifier()
 
     private fun collectProgress(player: ServerPlayer): Map<Identifier, List<ResearchTaskProgress>> =
         ResearchCatalog.snapshot().entries.values.associate { entry ->
-            entry.id to entry.tasks.map { it.progress(player) }
+            entry.id to entry.tasks.map { it.progress(player, entry.id) }
         }
+
+    private fun collectBookRecipes(server: MinecraftServer): Map<Identifier, Recipe<*>> =
+        ResearchCatalog.snapshot().entries.values.asSequence()
+            .flatMap { entry -> entry.pages.asSequence() }
+            .flatMap { page -> page.elements.asSequence() }
+            .mapNotNull { it.content as? CraftingBookElement }
+            .map(CraftingBookElement::recipe)
+            .distinct()
+            .mapNotNull { id ->
+                val key = ResourceKey.create(Registries.RECIPE, id)
+                server.recipeManager.byKey(key).orElse(null)?.value()?.let { id to it }
+            }
+            .toMap(LinkedHashMap())
 
     private fun advanceTaskLevel(player: ServerPlayer, data: PlayerResearchData, entry: BookEntry): Boolean {
         if (entry.taskLevels.isEmpty()) {
@@ -358,7 +389,7 @@ object ResearchProgress {
         }
         val levelIndex = data.completedTaskLevels[entry.id]?.coerceIn(0, entry.taskLevels.lastIndex) ?: 0
         val level = entry.taskLevels[levelIndex]
-        if (level.tasks.any { !it.task.progress(player).complete }) return false
+        if (level.tasks.any { !it.task.progress(player, entry.id).complete }) return false
         level.tasks.forEach { it.task.consume(player) }
         val nextLevel = levelIndex + 1
         if (nextLevel >= entry.taskLevels.size) {
@@ -372,11 +403,25 @@ object ResearchProgress {
 
     internal fun meetsBookLevel(current: Identifier?, required: Identifier?): Boolean {
         if (required == null) return true
-        val requiredLevel = ECRegistries.BOOK_LEVEL.getOptional(required).orElse(null) ?: return false
-        val currentLevel = current?.let { ECRegistries.BOOK_LEVEL.getOptional(it).orElse(null) } ?: return false
-        return currentLevel.order >= requiredLevel.order
+        val requiredLevel = ECRegistries.BOOK_TYPES.getOptional(required).orElse(null) ?: return false
+        val currentLevel = current?.let { ECRegistries.BOOK_TYPES.getOptional(it).orElse(null) } ?: return false
+        return currentLevel.order >= requiredLevel.order || inheritsBookLevel(current, required, HashSet())
+    }
+
+    private fun inheritsBookLevel(current: Identifier, required: Identifier, visited: MutableSet<Identifier>): Boolean {
+        if (current == required) return true
+        if (!visited.add(current)) return false
+        val level = ECRegistries.BOOK_TYPES.getOptional(current).orElse(null) ?: return false
+        return level.inheritedTypes.any { inherited -> inheritsBookLevel(inherited.identifier(), required, visited) }
     }
 }
 
 private fun BookEntry.hasTask(taskId: String): Boolean =
     taskLevels.any { it.id == taskId || it.tasks.any { definition -> definition.id == taskId } }
+
+private fun BookEntry.currentLevelOpenOnly(data: PlayerResearchData): Boolean {
+    if (taskLevels.isEmpty()) return false
+    val levelIndex = data.completedTaskLevels[id]?.coerceIn(0, taskLevels.lastIndex) ?: 0
+    val level = taskLevels.getOrNull(levelIndex) ?: return false
+    return level.tasks.isNotEmpty() && level.tasks.all { it.task is OpenResearchTask }
+}

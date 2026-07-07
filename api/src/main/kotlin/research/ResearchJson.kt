@@ -1,9 +1,28 @@
 package com.algorithmlx.ecr.api.research
 
 import com.algorithmlx.ecr.api.ModId
+import com.algorithmlx.ecr.api.research.content.BookCategory
+import com.algorithmlx.ecr.api.research.content.BookElementAlign
+import com.algorithmlx.ecr.api.research.content.BookElementSpec
+import com.algorithmlx.ecr.api.research.content.BookEntry
+import com.algorithmlx.ecr.api.research.content.BookEntryAlign
+import com.algorithmlx.ecr.api.research.content.BookFrame
+import com.algorithmlx.ecr.api.research.content.BookIcon
+import com.algorithmlx.ecr.api.research.content.BookPage
+import com.algorithmlx.ecr.api.research.content.BookPosition
+import com.algorithmlx.ecr.api.research.content.BookShader
+import com.algorithmlx.ecr.api.research.content.ResearchAction
+import com.algorithmlx.ecr.api.research.content.ResearchLock
+import com.algorithmlx.ecr.api.research.content.ResearchRequirement
+import com.algorithmlx.ecr.api.research.content.ResearchTargetType
+import com.algorithmlx.ecr.api.research.content.ResearchTaskDefinition
+import com.algorithmlx.ecr.api.research.content.ResearchTaskLevel
+import com.algorithmlx.ecr.api.research.serializer.ResearchSerializers
+import com.algorithmlx.ecr.api.research.serializer.researchJson
+import com.algorithmlx.ecr.api.research.serializer.toBookText
+import com.algorithmlx.ecr.api.research.serializer.toJsonElement
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.*
 import net.minecraft.resources.Identifier
 
@@ -19,6 +38,7 @@ object ResearchJson {
             dependencies = dto.dependencies.mapTo(LinkedHashSet()) { parseReference(it, id) },
             bookLevel = dto.bookLevel?.let(Identifier::parse),
             shader = dto.shader?.toShader(),
+            threadColor = dto.threadColor?.toColor(),
             titleShadow = dto.shadow
         )
     }
@@ -55,6 +75,7 @@ object ResearchJson {
             dependencies = category.dependencies.map(Identifier::toString),
             bookLevel = category.bookLevel?.toString(),
             shader = category.shader?.toJsonElement(),
+            threadColor = category.threadColor?.let { JsonPrimitive("#%08X".format(it)) },
             shadow = category.titleShadow
         )
     ).jsonObject
@@ -76,6 +97,9 @@ object ResearchJson {
                         ResearchSerializers.encodeTask(definition.task)
                             .with("type", JsonPrimitive(definition.task.type.toString()))
                             .with("id", JsonPrimitive(definition.id))
+                            .withOptional("title", definition.title?.toJsonElement())
+                            .withOptional("description", definition.description?.toJsonElement())
+                            .with("hidden", JsonPrimitive(definition.hidden))
                     }
                 )
             },
@@ -130,7 +154,14 @@ object ResearchJson {
                 level.id,
                 level.tasks.mapIndexed { taskIndex, task ->
                     val taskId = task["id"]?.jsonPrimitive?.content ?: "task_${levelIndex}_$taskIndex"
-                    ResearchTaskDefinition(taskId, ResearchSerializers.decodeTask(task.typeIdentifier(), task))
+                    val decoded = ResearchSerializers.decodeTask(task.typeIdentifier(), task)
+                    ResearchTaskDefinition(
+                        taskId,
+                        decoded,
+                        task["title"]?.toBookText(),
+                        task["description"]?.toBookText(),
+                        task["hidden"]?.jsonPrimitive?.booleanOrNull ?: (decoded is OpenResearchTask)
+                    )
                 }
             )
         }
@@ -139,13 +170,20 @@ object ResearchJson {
     private fun decodeElement(json: JsonObject): BookElementSpec = BookElementSpec(
         ResearchSerializers.decodeElement(json.typeIdentifier(), json),
         json["width"]?.jsonPrimitive?.intOrNull,
-        json["height"]?.jsonPrimitive?.intOrNull
+        json["height"]?.jsonPrimitive?.intOrNull,
+        json["align"]?.jsonPrimitive?.content
+            ?.let { BookElementAlign.valueOf(it.uppercase()) }
+            ?: BookElementAlign.LEFT
     )
 
     private fun encodeElement(spec: BookElementSpec): JsonObject = ResearchSerializers.encodeElement(spec.content)
         .with("type", JsonPrimitive(spec.content.type.toString()))
         .let { value -> spec.width?.let { value.with("width", JsonPrimitive(it)) } ?: value }
         .let { value -> spec.height?.let { value.with("height", JsonPrimitive(it)) } ?: value }
+        .let { value ->
+            if (spec.align == BookElementAlign.LEFT) value
+            else value.with("align", JsonPrimitive(spec.align.name.lowercase()))
+        }
 
     private fun JsonObject.typeIdentifier(): Identifier {
         val value = getValue("type").jsonPrimitive.content
@@ -156,15 +194,15 @@ object ResearchJson {
         Identifier.parse(if (':' in value) value else "${owner.namespace}:$value")
 
     private fun ResearchRequirement.toReference(owner: Identifier): String = when {
-        research == null || research == owner -> taskId ?: owner.toString()
-        taskId == null -> research.toString()
-        else -> "$research.$taskId"
+        research == null || research == owner -> task ?: owner.toString()
+        task == null -> research.toString()
+        else -> "$research.$task"
     }
 
-    private fun JsonElement.toFrame(): BookFrame? = when {
-        this is JsonNull -> null
-        this is JsonPrimitive && booleanOrNull == false -> null
-        this is JsonPrimitive && booleanOrNull == true -> BookFrame()
+    private fun JsonElement.toFrame(): BookFrame? = when (this) {
+        is JsonNull -> null
+        is JsonPrimitive if booleanOrNull == false -> null
+        is JsonPrimitive if booleanOrNull == true -> BookFrame()
         else -> researchJson.decodeFromJsonElement<FrameDto>(this).toModel()
     }
 
@@ -176,7 +214,10 @@ object ResearchJson {
         is JsonPrimitive -> BookShader(Identifier.parse(content))
         else -> researchJson.decodeFromJsonElement<ShaderDto>(this).let {
             val vertex = Identifier.parse(it.vertex ?: it.fragment ?: error("Shader requires vertex or fragment"))
-            BookShader(vertex, Identifier.parse(it.fragment ?: it.vertex ?: error("Shader requires vertex or fragment")))
+            BookShader(
+                vertex,
+                Identifier.parse(it.fragment ?: it.vertex ?: error("Shader requires vertex or fragment"))
+            )
         }
     }
 
@@ -184,7 +225,23 @@ object ResearchJson {
         ShaderDto(vertex.toString(), fragment.toString())
     )
 
+    private fun JsonElement.toColor(): Int = when (this) {
+        is JsonPrimitive -> {
+            intOrNull ?: content.removePrefix("#").let { hex ->
+                val value = hex.toLong(16)
+                when (hex.length) {
+                    6 -> (0xFF000000L or value).toInt()
+                    8 -> value.toInt()
+                    else -> error("Color must be #RRGGBB, #AARRGGBB, or integer")
+                }
+            }
+        }
+        else -> error("Color must be #RRGGBB, #AARRGGBB, or integer")
+    }
+
     private fun JsonObject.with(name: String, value: JsonElement): JsonObject = JsonObject(this + (name to value))
+    private fun JsonObject.withOptional(name: String, value: JsonElement?): JsonObject =
+        value?.let { with(name, it) } ?: this
 }
 
 @Serializable
@@ -202,6 +259,7 @@ private data class CategoryDto(
     val dependencies: List<String> = emptyList(),
     @SerialName("book_level") val bookLevel: String? = null,
     val shader: JsonElement? = null,
+    @SerialName("thread_color") val threadColor: JsonElement? = null,
     val shadow: Boolean = false
 )
 

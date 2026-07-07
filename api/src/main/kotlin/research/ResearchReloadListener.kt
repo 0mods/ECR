@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.api.research
 
+import com.algorithmlx.ecr.api.research.serializer.researchJson
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import net.minecraft.resources.FileToIdConverter

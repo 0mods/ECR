@@ -1,21 +1,30 @@
 package com.algorithmlx.ecr.api.research
 
+import com.algorithmlx.ecr.api.utils.StackHelper
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonNull
 import com.mojang.brigadier.StringReader
 import net.minecraft.commands.arguments.item.ItemParser
 import net.minecraft.core.registries.Registries
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.HolderLookup
 import net.minecraft.resources.ResourceKey
 import net.minecraft.resources.Identifier
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.crafting.Recipe
 
 interface ResearchTask {
     val type: Identifier
     fun progress(player: ServerPlayer): ResearchTaskProgress
     fun consume(player: ServerPlayer) = Unit
 }
+
+interface OwnerAwareResearchTask : ResearchTask {
+    fun progress(player: ServerPlayer, owner: Identifier): ResearchTaskProgress
+}
+
+fun ResearchTask.progress(player: ServerPlayer, owner: Identifier): ResearchTaskProgress =
+    if (this is OwnerAwareResearchTask) progress(player, owner) else progress(player)
 
 interface ResearchTaskSerializer<T : ResearchTask> {
     val type: Identifier
@@ -30,14 +39,15 @@ data class ResearchTaskProgress(val current: Int, val required: Int) {
 data class ItemResearchTask(
     val item: String,
     val count: Int,
-    val consumeItems: Boolean = false
+    val consumeItems: Boolean = false,
+    val components: JsonObject = JsonObject(emptyMap())
 ) : ResearchTask {
     override val type: Identifier = ResearchIds.ITEM_TASK
 
     override fun progress(player: ServerPlayer): ResearchTaskProgress {
         val required = createStack(player, 1)
 
-        val current = player.inventoryItems().filter { ItemStack.isSameItemSameComponents(it, required) }.sumOf(ItemStack::getCount)
+        val current = player.inventoryItems().filter { StackHelper.areStacksEqual(it, required) }.sumOf(ItemStack::getCount)
         return ResearchTaskProgress(current.coerceAtMost(count), count)
     }
 
@@ -47,7 +57,7 @@ data class ItemResearchTask(
         val required = createStack(player, 1)
         for (slot in 0 until player.inventory.containerSize) {
             val stack = player.inventory.getItem(slot)
-            if (!ItemStack.isSameItemSameComponents(stack, required)) continue
+            if (!StackHelper.areStacksEqual(stack, required)) continue
             val removed = remaining.coerceAtMost(stack.count)
             stack.shrink(removed)
             remaining -= removed
@@ -57,16 +67,56 @@ data class ItemResearchTask(
 
     fun createStack(player: ServerPlayer, stackCount: Int = count): ItemStack = createStack(player.registryAccess(), stackCount)
 
-    fun createStack(provider: HolderLookup.Provider, stackCount: Int = count): ItemStack =
-        ItemParser(provider).parse(StringReader(item)).createItemStack(stackCount.coerceAtLeast(1))
+    fun createStack(provider: HolderLookup.Provider, stackCount: Int = count): ItemStack {
+        val amount = stackCount.coerceAtLeast(1)
+        val stack = ItemParser(provider).parse(StringReader(item)).createItemStack(amount)
+        if (components.isEmpty()) return stack
+
+        val itemId = BuiltInRegistries.ITEM.getKey(stack.item)
+        val componentStack = ItemParser(provider)
+            .parse(StringReader(componentItemDefinition(itemId.toString())))
+            .createItemStack(amount)
+        stack.applyComponentsAndValidate(componentStack.componentsPatch)
+        return stack
+    }
+
+    private fun componentItemDefinition(itemId: String): String = buildString {
+        append(itemId)
+        append('[')
+        components.entries.forEachIndexed { index, (component, value) ->
+            if (index > 0) append(',')
+            if (value is JsonNull) {
+                append('!')
+                append(component)
+            } else {
+                append(component)
+                append('=')
+                append(value)
+            }
+        }
+        append(']')
+    }
 }
 
 data class CraftingResearchTask(val recipe: Identifier) : ResearchTask {
     override val type: Identifier = ResearchIds.CRAFTING_TASK
 
     override fun progress(player: ServerPlayer): ResearchTaskProgress {
-        val key = ResourceKey.create<Recipe<*>>(Registries.RECIPE, recipe)
+        val key = ResourceKey.create(Registries.RECIPE, recipe)
         return ResearchTaskProgress(if (player.recipeBook.contains(key)) 1 else 0, 1)
+    }
+}
+
+data class OpenResearchTask(val research: Identifier? = null) : OwnerAwareResearchTask {
+    override val type: Identifier = ResearchIds.OPEN_TASK
+
+    override fun progress(player: ServerPlayer): ResearchTaskProgress =
+        ResearchTaskProgress(0, 1)
+
+    override fun progress(player: ServerPlayer, owner: Identifier): ResearchTaskProgress {
+        val target = research ?: owner
+        val data = ResearchProgress.data(player)
+        return ResearchTaskProgress(if (target in data.opened || target in data.unlocked) 1 else 0, 1)
     }
 }
 

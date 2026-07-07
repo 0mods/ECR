@@ -1,6 +1,8 @@
 package com.algorithmlx.ecr.api.research
 
 import com.algorithmlx.ecr.api.ModId
+import com.algorithmlx.ecr.api.research.content.ResearchAction
+import com.algorithmlx.ecr.api.research.content.ResearchTargetType
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier

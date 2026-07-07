@@ -6,7 +6,11 @@
   "icon": {
     "item": "ecreimagined:research_book"
   },
-  "automatic": true,
+  "tasks": [
+    {
+      "type": "open"
+    }
+  ],
   "pages": [
     {
       "elements": [
@@ -24,6 +28,11 @@
         {
           "type": "item",
           "item": "ecreimagined:research_book"
+        },
+        {
+          "type": "crafting",
+          "recipe": "minecraft:iron_block",
+          "align": "center"
         }
       ]
     }

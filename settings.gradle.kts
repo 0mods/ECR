@@ -12,16 +12,14 @@ pluginManagement {
 
     val kotlinVersion = providers.gradleProperty("libs.kotlin").get()
     val architecturyLoom = providers.gradleProperty("plugins.architectury_loom").get()
-    val shadow = providers.gradleProperty("plugins.shadow").get()
-    val yamlang = providers.gradleProperty("plugins.yamlang").get()
     val modPublishPlugin = providers.gradleProperty("plugins.mod_publish_plugin").get()
 
     plugins {
         kotlin("jvm") version kotlinVersion
         kotlin("plugin.serialization") version kotlinVersion
         id("dev.architectury.loom-no-remap") version architecturyLoom
-        id("me.fallenbreath.yamlang") version yamlang
         id("me.modmuss50.mod-publish-plugin") version modPublishPlugin
+        id("team.0mods.yaml2json") version "1.0.0"
     }
 }
 

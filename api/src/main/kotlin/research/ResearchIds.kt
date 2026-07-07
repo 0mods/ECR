@@ -12,6 +12,7 @@ object ResearchIds {
     @JvmField val ITEM_TASK = "item".ecRL
     @JvmField val EXPERIENCE_TASK = "experience".ecRL
     @JvmField val CRAFTING_TASK = "crafting".ecRL
+    @JvmField val OPEN_TASK = "open".ecRL
     @JvmField val TASK_LIST = "task_list".ecRL
     @JvmField val DEFAULT_FRAME = "textures/gui/book/frame.png".ecRL
 }

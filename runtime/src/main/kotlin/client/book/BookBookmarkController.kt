@@ -2,7 +2,8 @@ package com.algorithmlx.ecr.client.book
 
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.api.research.*
-import net.minecraft.client.Minecraft
+import com.algorithmlx.ecr.api.research.content.BookEntry
+import com.algorithmlx.ecr.api.research.content.BookText
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
@@ -17,6 +18,8 @@ class BookBookmarkController {
     private val progress = mutableMapOf<BookBookmarkKey, Float>()
     private var pageHover = 0f
     private var target: BookBookmarkKey? = null
+    private var targetHadBookmark = false
+    private var draftColor = 0xFFFFFFFF.toInt()
     private var hue = 0f
     private var saturation = 0f
     private var value = 1f
@@ -77,6 +80,7 @@ class BookBookmarkController {
     }
 
     fun renderPage(graphics: GuiGraphicsExtractor, entry: BookEntry, spread: Int, hovered: Boolean, dt: Float) {
+        if (!ClientResearchState.has(entry.id)) return
         pageHover = approach(pageHover, if (hovered) 1f else 0f, dt)
         val bookmark = ClientResearchState.bookmark(entry.id, spread)
         val color = bookmark?.let { 0xFF000000.toInt() or (it.color and 0xFFFFFF) }
@@ -96,9 +100,22 @@ class BookBookmarkController {
         )
     }
 
-    fun open(entry: BookEntry, spread: Int) {
+    fun activate(entry: BookEntry, spread: Int, editImmediately: Boolean): Boolean {
+        if (!ClientResearchState.has(entry.id)) return false
+        val bookmark = ClientResearchState.bookmark(entry.id, spread)
+        if (bookmark == null && !editImmediately) {
+            ResearchNetwork.updateFavorite(entry.id, spread, DEFAULT_COLOR)
+            return true
+        }
+        open(entry, spread)
+        return true
+    }
+
+    private fun open(entry: BookEntry, spread: Int) {
         target = BookBookmarkKey(entry.id, spread)
         val color = ClientResearchState.bookmark(entry.id, spread)?.color
+        targetHadBookmark = color != null
+        draftColor = color ?: DEFAULT_COLOR
         if (color == null) {
             hue = 0f
             saturation = 0f
@@ -113,6 +130,7 @@ class BookBookmarkController {
 
     fun close() {
         target = null
+        targetHadBookmark = false
         stopDragging()
     }
 
@@ -121,7 +139,9 @@ class BookBookmarkController {
         val svX = pickerX + PADDING
         val svY = pickerY + HEADER_HEIGHT + PADDING
         val hueX = svX + SV_SIZE + PADDING
-        val clearY = svY + HUE_HEIGHT + PADDING
+        val buttonsY = svY + HUE_HEIGHT + PADDING
+        val saveX = hueX
+        val cancelX = hueX + CLEAR_SIZE + 4
         when {
             mouseX in pickerX until pickerX + PICKER_WIDTH && mouseY in pickerY until pickerY + HEADER_HEIGHT -> draggingPicker = true
             mouseX in svX until svX + SV_SIZE && mouseY in svY until svY + SV_SIZE -> {
@@ -132,8 +152,12 @@ class BookBookmarkController {
                 draggingHue = true
                 updateHue(mouseY - svY)
             }
-            mouseX in hueX until hueX + CLEAR_SIZE && mouseY in clearY until clearY + CLEAR_SIZE -> {
-                target?.let { ResearchNetwork.updateFavorite(it.research, it.spread, null) }
+            mouseX in saveX until saveX + CLEAR_SIZE && mouseY in buttonsY until buttonsY + CLEAR_SIZE -> {
+                target?.let { ResearchNetwork.updateFavorite(it.research, it.spread, draftColor) }
+                close()
+            }
+            mouseX in cancelX until cancelX + CLEAR_SIZE && mouseY in buttonsY until buttonsY + CLEAR_SIZE -> {
+                if (targetHadBookmark) target?.let { ResearchNetwork.updateFavorite(it.research, it.spread, null) }
                 close()
             }
             else -> close()
@@ -189,9 +213,9 @@ class BookBookmarkController {
         }
         val hueY = svY + (hue * HUE_HEIGHT).toInt()
         graphics.fill(hueX - 1, hueY, hueX + HUE_WIDTH + 1, hueY + 1, 0xFFFFFFFF.toInt())
-        val clearY = svY + HUE_HEIGHT + PADDING
-        graphics.fill(hueX, clearY, hueX + CLEAR_SIZE, clearY + CLEAR_SIZE, 0xFF2A323E.toInt())
-        graphics.outline(hueX, clearY, CLEAR_SIZE, CLEAR_SIZE, 0xFFFF6B7A.toInt())
+        val buttonsY = svY + HUE_HEIGHT + PADDING
+        renderButton(graphics, hueX, buttonsY, 0xFF70D18A.toInt(), true)
+        renderButton(graphics, hueX + CLEAR_SIZE + 4, buttonsY, 0xFFFF6B7A.toInt(), false)
     }
 
     fun appendTo(state: BookViewState): BookViewState = state.copy(pickerX = pickerX, pickerY = pickerY)
@@ -208,8 +232,26 @@ class BookBookmarkController {
     }
 
     private fun applyColor() {
-        val color = 0xFF000000.toInt() or (Color.HSBtoRGB(hue, saturation, value) and 0xFFFFFF)
-        target?.let { ResearchNetwork.updateFavorite(it.research, it.spread, color) }
+        draftColor = 0xFF000000.toInt() or (Color.HSBtoRGB(hue, saturation, value) and 0xFFFFFF)
+    }
+
+    private fun renderButton(graphics: GuiGraphicsExtractor, x: Int, y: Int, color: Int, check: Boolean) {
+        graphics.fill(x, y, x + CLEAR_SIZE, y + CLEAR_SIZE, 0xFF2A323E.toInt())
+        graphics.outline(x, y, CLEAR_SIZE, CLEAR_SIZE, color)
+        if (check) {
+            graphics.fill(x + 2, y + 5, x + 4, y + 7, color)
+            graphics.fill(x + 4, y + 7, x + 6, y + 9, color)
+            graphics.fill(x + 6, y + 3, x + 8, y + 7, color)
+        } else {
+            graphics.fill(x + 3, y + 3, x + 4, y + 4, color)
+            graphics.fill(x + 4, y + 4, x + 5, y + 5, color)
+            graphics.fill(x + 5, y + 5, x + 6, y + 6, color)
+            graphics.fill(x + 6, y + 6, x + 7, y + 7, color)
+            graphics.fill(x + 6, y + 3, x + 7, y + 4, color)
+            graphics.fill(x + 5, y + 4, x + 6, y + 5, color)
+            graphics.fill(x + 4, y + 5, x + 5, y + 6, color)
+            graphics.fill(x + 3, y + 6, x + 4, y + 7, color)
+        }
     }
 
     private fun constrain(screenWidth: Int, screenHeight: Int) {
@@ -236,7 +278,8 @@ class BookBookmarkController {
         private const val HUE_WIDTH = 10
         private const val HUE_HEIGHT = 46
         private const val CLEAR_SIZE = 10
-        private const val PICKER_WIDTH = PADDING * 3 + SV_SIZE + HUE_WIDTH
+        private const val PICKER_WIDTH = PADDING * 3 + SV_SIZE + HUE_WIDTH + CLEAR_SIZE + 4
         private const val PICKER_HEIGHT = HEADER_HEIGHT + PADDING * 2 + HUE_HEIGHT + PADDING + CLEAR_SIZE
+        private const val DEFAULT_COLOR = 0xFFFFFFFF.toInt()
     }
 }

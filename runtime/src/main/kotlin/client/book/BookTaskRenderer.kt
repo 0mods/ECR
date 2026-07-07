@@ -2,6 +2,12 @@ package com.algorithmlx.ecr.client.book
 
 import com.algorithmlx.ecr.api.client.research.BookElementRenderContext
 import com.algorithmlx.ecr.api.research.*
+import com.algorithmlx.ecr.api.research.content.BookEntry
+import com.algorithmlx.ecr.api.research.content.BookIcon
+import com.algorithmlx.ecr.api.research.content.BookText
+import com.algorithmlx.ecr.api.research.content.ResearchTaskDefinition
+import com.algorithmlx.ecr.api.research.content.TaskListBookElement
+import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.core.registries.BuiltInRegistries
@@ -19,12 +25,15 @@ object BookTaskRenderer {
         val offset = entry.taskLevels.take(element.level).sumOf { it.tasks.size }
         val progress = ClientResearchState.taskProgress(entry.id)
         val levelComplete = ClientResearchState.has(entry.id) || element.level < ClientResearchState.completedTaskLevels(entry.id)
+        var visibleIndex = 0
         level.tasks.forEachIndexed { index, definition ->
-            val x = context.x + index % TASKS_PER_ROW * TASK_CELL_SIZE
-            val y = context.y + index / TASKS_PER_ROW * TASK_CELL_SIZE
+            if (definition.hidden) return@forEachIndexed
+            val x = context.x + visibleIndex % TASKS_PER_ROW * TASK_CELL_SIZE
+            val y = context.y + visibleIndex / TASKS_PER_ROW * TASK_CELL_SIZE
             val sourceProgress = progress.getOrNull(offset + index) ?: ResearchTaskProgress(0, 1)
             val taskProgress = if (levelComplete) sourceProgress.copy(current = sourceProgress.required) else sourceProgress
             renderTask(context, entry, definition, taskProgress, x, y)
+            visibleIndex++
         }
     }
 
@@ -46,7 +55,6 @@ object BookTaskRenderer {
         }
 
         if (progress.complete) {
-            context.graphics.fill(x, y, x + 16, y + 16, 0x98D8C9A8.toInt())
             context.graphics.blitSprite(RenderPipelines.GUI_TEXTURED, checkmark, x + 8, y + 8, 8, 8)
         }
 
@@ -78,13 +86,17 @@ object BookTaskRenderer {
         stack: ItemStack?,
         progress: ResearchTaskProgress
     ): List<Component> = buildList {
-        when (val task = definition.task) {
-            is CraftingResearchTask -> add(Component.literal(task.recipe.toString()))
-            is ExperienceResearchTask -> add(Component.literal(if (task.levels) "Experience levels" else "Experience"))
-            else -> add(stack?.hoverName ?: Component.literal(definition.id))
-        }
+        add(taskTitle(definition, stack))
+        definition.description?.let { add(it.component().copy().withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)) }
         add(Component.literal("${progress.current}/${progress.required}"))
     }
+
+    private fun taskTitle(definition: ResearchTaskDefinition, stack: ItemStack?): Component =
+        definition.title?.component() ?: when (val task = definition.task) {
+            is CraftingResearchTask -> Component.literal(task.recipe.toString())
+            is ExperienceResearchTask -> Component.literal(if (task.levels) "Experience levels" else "Experience")
+            else -> stack?.hoverName ?: Component.literal("Task")
+        }
 
     private fun renderIcon(context: BookElementRenderContext, icon: BookIcon?, x: Int, y: Int) {
         icon ?: return
@@ -99,3 +111,6 @@ object BookTaskRenderer {
     private const val TASK_CELL_SIZE = 20
     private const val TASKS_PER_ROW = 11
 }
+
+private fun BookText.component(): Component =
+    if (translated) Component.translatable(value) else Component.literal(value)

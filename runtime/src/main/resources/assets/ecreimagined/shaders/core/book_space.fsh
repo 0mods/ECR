@@ -12,6 +12,24 @@ float hash21(vec2 point) {
     return fract(point.x * point.y);
 }
 
+float starTwinkle(vec2 cell, int layer, float random, float gameTime) {
+    float layerF = float(layer);
+
+    float twinkleChance = 0.34 + layerF * 0.12;
+    float animated = step(1.0 - twinkleChance, hash21(cell + vec2(73.1, 19.7 + layerF * 31.0)));
+
+    float speed = mix(0.8, 2.8, hash21(cell + vec2(12.4 + layerF, 88.8)));
+    float phase = hash21(cell + vec2(41.0, 9.0 + layerF)) * 6.2831853;
+    float depth = mix(0.12, 0.75, hash21(cell + vec2(5.0 + layerF, 67.0)));
+
+    float wave = sin(gameTime * speed + phase) * 0.5 + 0.5;
+    float softPulse = smoothstep(0.08, 1.0, wave);
+    float pulse = mix(1.0 - depth, 1.0, softPulse);
+
+    float staticBrightness = mix(0.72, 1.0, random);
+    return mix(staticBrightness, pulse, animated);
+}
+
 void main() {
     vec2 offset = (scrollOffset - 0.5) * 0.75;
     float rawZ = (zoom - 4.0) / 24.0;
@@ -26,7 +44,7 @@ void main() {
     uv = uv / localZoom + offset;
 
     vec3 color = vec3(0.008, 0.012, 0.035);
-    float gameTime = time / 1200.0;
+    float gameTime = time;
 
     for (int layer = 0; layer < 3; layer++) {
         float scale = 26.0 + float(layer) * 22.0;
@@ -38,7 +56,7 @@ void main() {
         float random = hash21(cell + float(layer) * 19.7);
         float radius = mix(0.025, 0.14, random * random);
         float star = smoothstep(radius, 0.0, length(local));
-        float twinkle = 0.65 + 0.35 * sin(gameTime * 180.0 + random * 31.0);
+        float twinkle = starTwinkle(cell, layer, random, gameTime);
         vec3 tint = mix(vec3(0.45, 0.65, 1.0), vec3(1.0, 0.65, 0.45), random);
         color += tint * star * twinkle * (0.35 + float(layer) * 0.18);
     }

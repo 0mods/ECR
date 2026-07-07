@@ -9,6 +9,7 @@ import net.minecraft.commands.Commands
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
+import net.minecraft.world.item.Items
 
 object ResearchCommands {
     fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {
@@ -63,6 +64,6 @@ object ResearchCommands {
 
     private fun parseTarget(value: String): Pair<Identifier, String?>? = runCatching {
         val requirement = ResearchJson.parseRequirement(value, null)
-        requirement.researchId(Identifier.parse(value.substringBeforeLast('.', value))) to requirement.taskId
+        requirement.researchId(Identifier.parse(value.substringBeforeLast('.', value))) to requirement.task
     }.getOrNull()
 }

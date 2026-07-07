@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.neoforge.research
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.api.research.*
+import com.algorithmlx.ecr.api.research.content.ResearchAction
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.item.BlockItem

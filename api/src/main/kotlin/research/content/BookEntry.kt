@@ -1,5 +1,8 @@
-package com.algorithmlx.ecr.api.research
+package com.algorithmlx.ecr.api.research.content
 
+import com.algorithmlx.ecr.api.research.OpenResearchTask
+import com.algorithmlx.ecr.api.research.ResearchIds
+import com.algorithmlx.ecr.api.research.ResearchTask
 import net.minecraft.resources.Identifier
 
 data class BookEntry(
@@ -31,10 +34,10 @@ data class BookEntry(
 
 data class ResearchRequirement(
     val research: Identifier? = null,
-    val taskId: String? = null
+    val task: String? = null
 ) {
     init {
-        require(research != null || !taskId.isNullOrBlank())
+        require(research != null || !task.isNullOrBlank())
     }
 
     fun researchId(owner: Identifier): Identifier = research ?: owner
@@ -52,7 +55,10 @@ data class ResearchTaskLevel(
 
 data class ResearchTaskDefinition(
     val id: String,
-    val task: ResearchTask
+    val task: ResearchTask,
+    val title: BookText? = null,
+    val description: BookText? = null,
+    val hidden: Boolean = task is OpenResearchTask
 ) {
     init {
         require(id.isNotBlank())
@@ -86,8 +92,15 @@ data class BookPage(val elements: List<BookElementSpec>)
 data class BookElementSpec(
     val content: BookElement,
     val width: Int? = null,
-    val height: Int? = null
+    val height: Int? = null,
+    val align: BookElementAlign = BookElementAlign.LEFT
 )
+
+enum class BookElementAlign {
+    LEFT,
+    CENTER,
+    RIGHT
+}
 
 data class ResolvedBookEntry(
     val entry: BookEntry,

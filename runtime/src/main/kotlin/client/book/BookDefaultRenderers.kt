@@ -5,17 +5,20 @@ import com.algorithmlx.ecr.api.client.render.MultiblockPreviewRenderState
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewTransform
 import com.algorithmlx.ecr.api.client.research.BookElementRenderContext
 import com.algorithmlx.ecr.api.client.research.BookElementRenderers
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.client.research.BookRecipeRenderers
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.research.*
+import com.algorithmlx.ecr.api.research.content.BlockBookElement
+import com.algorithmlx.ecr.api.research.content.ItemBookElement
+import com.algorithmlx.ecr.api.research.content.MultiblockBookElement
+import com.algorithmlx.ecr.api.research.content.TextBookElement
 import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.crafting.RecipeType
 
 object BookDefaultRenderers {
-    private val frameTexture = "textures/gui/book/frame.png".ecRL
     private var initialized = false
 
     fun init() {
@@ -25,8 +28,10 @@ object BookDefaultRenderers {
         BookElementRenderers.register(ResearchIds.ITEM, ::renderItem)
         BookElementRenderers.register(ResearchIds.BLOCK, ::renderBlock)
         BookElementRenderers.register(ResearchIds.MULTIBLOCK, ::renderMultiblock)
-        BookElementRenderers.register(ResearchIds.CRAFTING, ::renderCrafting)
+        BookElementRenderers.register(ResearchIds.CRAFTING, BookRecipeElementRenderer::render)
         BookElementRenderers.register(ResearchIds.TASK_LIST, BookTaskRenderer::render)
+
+        BookRecipeRenderers.register(RecipeType.CRAFTING, CraftingTableRecipeRenderer)
     }
 
     private fun renderText(context: BookElementRenderContext, element: TextBookElement) {
@@ -75,27 +80,4 @@ object BookDefaultRenderers {
         )
     }
 
-    private fun renderCrafting(context: BookElementRenderContext, element: CraftingBookElement) {
-        val graphics = context.graphics
-        element.pattern.forEachIndexed { row, line ->
-            line.forEachIndexed { column, symbol ->
-                val x = context.x + column * 18
-                val y = context.y + row * 18
-                graphics.blit(RenderPipelines.GUI_TEXTURED, frameTexture, x, y, 0f, 0f, 18, 18, 32, 32)
-                element.key[symbol]?.let { ingredient ->
-                    val item = BuiltInRegistries.ITEM.getOptional(ingredient.item).orElse(null) ?: return@let
-                    val stack = ItemStack(item, ingredient.count)
-                    graphics.item(stack, x + 1, y + 1)
-                    if (ingredient.count > 1) graphics.itemDecorations(Minecraft.getInstance().font, stack, x + 1, y + 1)
-                }
-            }
-        }
-        val resultX = context.x + 96
-        val resultY = context.y + 18
-        graphics.blit(RenderPipelines.GUI_TEXTURED, frameTexture, resultX, resultY, 0f, 0f, 22, 22, 32, 32)
-        val resultItem = BuiltInRegistries.ITEM.getOptional(element.result.item).orElse(null) ?: return
-        val result = ItemStack(resultItem, element.result.count)
-        graphics.item(result, resultX + 3, resultY + 3)
-        if (element.result.count > 1) graphics.itemDecorations(Minecraft.getInstance().font, result, resultX + 3, resultY + 3)
-    }
 }

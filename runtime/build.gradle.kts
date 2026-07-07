@@ -1,5 +1,8 @@
+import groovy.json.JsonOutput
+
 plugins {
     id("dev.architectury.loom-no-remap")
+    id("team.0mods.yaml2json")
     kotlin("jvm")
     kotlin("plugin.serialization")
 }
@@ -28,4 +31,10 @@ dependencies {
 
     compileOnly(libs.bundles.kotlinx.serialization)
     compileOnly(libs.bundles.kotlinx.coroutines)
+
+    compileOnly("org.spongepowered:mixin:0.8.7")
+}
+
+tasks.yaml2json {
+    flatJsonMarker = $$"#$json_flat"
 }

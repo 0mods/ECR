@@ -1,6 +1,7 @@
 package com.algorithmlx.ecr.api.client.research
 
-import com.algorithmlx.ecr.api.research.BookElement
+import com.algorithmlx.ecr.api.research.content.BookElement
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.resources.Identifier
 import net.minecraft.util.FormattedCharSequence
@@ -21,7 +22,9 @@ data class BookElementRenderContext(
     val screenHeight: Int = height,
     val scale: Float = 1f,
     val textLines: List<FormattedCharSequence>? = null
-)
+) {
+    val mc: Minecraft = Minecraft.getInstance()
+}
 
 fun interface BookElementRenderer<T : BookElement> {
     fun render(context: BookElementRenderContext, element: T)

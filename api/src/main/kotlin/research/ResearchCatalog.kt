@@ -1,6 +1,16 @@
 package com.algorithmlx.ecr.api.research
 
 import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.research.content.BookCategory
+import com.algorithmlx.ecr.api.research.content.BookEntry
+import com.algorithmlx.ecr.api.research.content.BookEntryAlign
+import com.algorithmlx.ecr.api.research.content.BookPosition
+import com.algorithmlx.ecr.api.research.content.BookTextVariant
+import com.algorithmlx.ecr.api.research.content.ResearchRequirement
+import com.algorithmlx.ecr.api.research.content.ResearchTaskDefinition
+import com.algorithmlx.ecr.api.research.content.ResearchTaskLevel
+import com.algorithmlx.ecr.api.research.content.ResolvedBookEntry
+import com.algorithmlx.ecr.api.research.content.TextBookElement
 import net.minecraft.resources.Identifier
 import java.util.Collections
 import java.util.concurrent.CopyOnWriteArrayList
@@ -85,7 +95,7 @@ private object ResearchLayout {
         if (entries.isNotEmpty()) require(categories.isNotEmpty()) { "Research entries require at least one category" }
         categories.values.forEach { category ->
             category.dependencies.forEach { require(it in entries) { "Unknown dependency $it in category ${category.id}" } }
-            category.bookLevel?.let { require(ECRegistries.BOOK_LEVEL.containsKey(it)) { "Unknown book level $it in category ${category.id}" } }
+            category.bookLevel?.let { require(ECRegistries.BOOK_TYPES.containsKey(it)) { "Unknown book level $it in category ${category.id}" } }
         }
         entries.values.forEach { entry ->
             entry.category?.let { require(it in categories) { "Unknown category $it in ${entry.id}" } }
@@ -113,7 +123,7 @@ private object ResearchLayout {
     private fun validateRequirement(owner: Identifier, requirement: ResearchRequirement, entries: Map<Identifier, BookEntry>) {
         val targetId = requirement.researchId(owner)
         val target = entries[targetId] ?: error("Unknown research $targetId in $owner")
-        requirement.taskId?.let { taskId ->
+        requirement.task?.let { taskId ->
             val ids = target.taskLevels.map(ResearchTaskLevel::id) + target.taskDefinitions.map(ResearchTaskDefinition::id)
             require(taskId in ids) { "Unknown task ID $taskId in $targetId, referenced by $owner" }
         }

@@ -1,8 +1,8 @@
 package com.algorithmlx.ecr.api.client.render
 
-import com.algorithmlx.ecr.mixin.GameRendererAccessor
-import com.algorithmlx.ecr.mixin.GuiGraphicsExtractorAccessor
-import com.algorithmlx.ecr.mixin.GuiRendererAccessor
+import com.algorithmlx.ecr.api.mixin.GameRendererAccessor
+import com.algorithmlx.ecr.api.mixin.GuiGraphicsExtractorAccessor
+import com.algorithmlx.ecr.api.mixin.GuiRendererAccessor
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphicsExtractor
 

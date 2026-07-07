@@ -1,3 +1,4 @@
+#$json_flat
 itemGroup.ecreimagined:
   items: "Essential Craft: Items"
   blocks: "Essential Craft: Blocks"
@@ -91,6 +92,7 @@ tooltip.ecreimagined:
       disallowed: Current Bound Gem is not supports the dimension bounds
   need_mru: "Required MRU: %s"
   during: "Time: %s ticks"
+  recipe: Recipe
 
 book_type.ecreimagined:
   basic: Basics
@@ -112,6 +114,10 @@ screen.ecreimagined:
   research_book: Research Book
   complete_task: Complete task
   complete_research: Complete research
+
+toast.ecreimagined:
+  research_unlocked: Research unlocked
+  research_completed: Research completed
 
 message.ecreimagined:
   research_required: "Required research: %s"

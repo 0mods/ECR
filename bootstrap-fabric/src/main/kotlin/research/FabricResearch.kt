@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.fabric.research
 
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.api.research.*
+import com.algorithmlx.ecr.api.research.content.ResearchAction
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback

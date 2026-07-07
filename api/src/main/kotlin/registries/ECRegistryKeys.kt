@@ -3,7 +3,9 @@ package com.algorithmlx.ecr.api.registries
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.api.mru.MRUType
 import com.algorithmlx.ecr.api.multiblock.Multiblock
-import com.algorithmlx.ecr.api.research.BookLevel
+import com.algorithmlx.ecr.api.research.BookType
+import com.algorithmlx.ecr.api.research.content.BookElementSerializer
+import com.algorithmlx.ecr.api.research.ResearchTaskSerializer
 import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceKey
 
@@ -13,5 +15,11 @@ object ECRegistryKeys {
     @JvmField
     val MULTIBLOCK_KEY: ResourceKey<Registry<Multiblock>> = ResourceKey.createRegistryKey("multiblock".ecRL)
     @JvmField
-    val BOOK_LEVEL_KEY: ResourceKey<Registry<BookLevel>> = ResourceKey.createRegistryKey("book_level".ecRL)
+    val BOOK_TYPE_KEY: ResourceKey<Registry<BookType>> = ResourceKey.createRegistryKey(("book_type").ecRL)
+    @JvmField
+    val BOOK_ELEMENT_SERIALIZER_KEY: ResourceKey<Registry<BookElementSerializer<*>>> =
+        ResourceKey.createRegistryKey("book_element_serializer".ecRL)
+    @JvmField
+    val RESEARCH_TASK_SERIALIZER_KEY: ResourceKey<Registry<ResearchTaskSerializer<*>>> =
+        ResourceKey.createRegistryKey("research_task_serializer".ecRL)
 }

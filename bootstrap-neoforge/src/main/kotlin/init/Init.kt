@@ -15,6 +15,7 @@ import net.neoforged.fml.loading.FMLEnvironment
 fun forgeStarter(bus: IEventBus) {
     BlockCodecRegistry.instance = NeoForgeBlockCodecRegistry(bus)
     BookLevelRegistry.instance = NeoForgeBookLevelRegistry(bus)
+    NeoForgeResearchSerializerRegistry(bus)
     BlockRegistry.instance = NeoForgeBlockRegistry(bus)
     BlockEntityTypeRegistry.instance = NeoForgeBlockEntityTypeRegistry(bus)
     DataComponentRegistry.instance = NeoForgeDataComponentRegistry(bus)

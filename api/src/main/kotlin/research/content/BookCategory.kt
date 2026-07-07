@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.api.research
+package com.algorithmlx.ecr.api.research.content
 
 import net.minecraft.resources.Identifier
 
@@ -11,6 +11,7 @@ data class BookCategory(
     val dependencies: Set<Identifier> = emptySet(),
     val bookLevel: Identifier? = null,
     val shader: BookShader? = null,
+    val threadColor: Int? = null,
     val titleShadow: Boolean = false
 )
 
