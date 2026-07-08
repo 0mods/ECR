@@ -1,12 +1,12 @@
 package com.algorithmlx.ecr.common.init.registry
 
-import com.algorithmlx.ecr.common.recipe.ItemInStructureRecipe
+import com.algorithmlx.ecr.common.recipe.StructureRecipe
 import com.algorithmlx.ecr.common.recipe.MithrilineFurnaceRecipe
 import net.minecraft.world.item.crafting.RecipeSerializer
 
 interface RecipeSerializerRegistry {
     val mithrilineFurnace: RecipeSerializer<MithrilineFurnaceRecipe>
-    val itemInStructure: RecipeSerializer<ItemInStructureRecipe>
+    val itemInStructure: RecipeSerializer<StructureRecipe>
 
     companion object {
         lateinit var instance: RecipeSerializerRegistry

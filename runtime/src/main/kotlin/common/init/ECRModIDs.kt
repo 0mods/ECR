@@ -76,7 +76,7 @@ object ECRModIDs {
     const val BLOCK = "block"
 
     // Recipes
-    const val ITEM_IN_STRUCTURE = "item_in_structure"
+    const val STRUCTURE = "structure"
 
     // Creative Tabs
     const val TAB_ITEMS = "tab_items"
