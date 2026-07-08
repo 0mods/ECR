@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.fabric.init
 
+import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.registries.ECRegistryKeys
 import com.algorithmlx.ecr.common.init.registry.*
@@ -15,6 +16,7 @@ object ECRegistryInit {
         register(ECRegistryKeys.BOOK_TYPE_KEY, ECRegistries.BOOK_TYPES)
         register(ECRegistryKeys.BOOK_ELEMENT_SERIALIZER_KEY, ECRegistries.BOOK_ELEMENT_SERIALIZER)
         register(ECRegistryKeys.RESEARCH_TASK_SERIALIZER_KEY, ECRegistries.RESEARCH_TASK_SERIALIZER)
+        register(ECRegistryKeys.MULTIBLOCK_MATCHER_TYPE_KEY, ECRegistries.MULTIBLOCK_MATCHER_TYPE)
 
         FabricResearchSerializerRegistry.register()
 
@@ -26,6 +28,7 @@ object ECRegistryInit {
         ItemRegistry.instance = FabricItemRegistry
         MenuTypeRegistry.instance = FabricMenuTypeRegistry
         MRUTypeRegistry.instance = FabricMRUTypeRegistry
+        MultiblockMatcherTypes.instance = FabricMultiblockMatcherTypes
         MultiblockRegistry.instance = FabricMultiblockRegistry
         RecipeSerializerRegistry.instance = FabricRecipeSerializerRegistry
         RecipeTypeRegistry.instance = FabricRecipeTypeRegistry

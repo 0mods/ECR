@@ -1,10 +1,11 @@
 package com.algorithmlx.ecr.api.multiblock
 
+import com.mojang.serialization.Codec
+import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.client.renderer.block.BlockAndTintGetter
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.core.RegistryAccess
-import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.core.registries.Registries
 import net.minecraft.tags.TagKey
 import net.minecraft.world.level.CardinalLighting
@@ -20,36 +21,114 @@ import net.minecraft.world.level.lighting.LevelLightEngine
 import net.minecraft.world.level.material.FluidState
 
 open class Multiblock(val xSize: Int, val ySize: Int, val zSize: Int, block: Multiblock.() -> Unit): BlockAndTintGetter {
+    constructor(xSize: Int, ySize: Int, zSize: Int, blocks: List<MultiblockMatcher>): this(xSize, ySize, zSize, {}) {
+        require(blocks.size == xSize * ySize * zSize) { "Blocks must have the same size: expected ${xSize * ySize * zSize} got ${blocks.size}" }
+        this.blocks.clear()
+        this.blocks.addAll(blocks)
+    }
+
+    companion object {
+        @JvmField
+        val CODEC: Codec<Multiblock> = RecordCodecBuilder.create {
+            it.group(
+                Codec.INT.fieldOf("x_size").forGetter(Multiblock::xSize),
+                Codec.INT.fieldOf("y_size").forGetter(Multiblock::ySize),
+                Codec.INT.fieldOf("z_size").forGetter(Multiblock::zSize),
+                MultiblockMatcher.CODEC.listOf().fieldOf("blocks")
+                    .forGetter { mb -> mb.blocks }
+            ).apply(it, ::Multiblock)
+        }
+    }
+
     private val blockEntities = hashMapOf<BlockPos, BlockEntity>()
     lateinit var registryAccess: RegistryAccess
     val blocks = arrayListOf<MultiblockMatcher>()
+
+    private val volume = xSize * ySize * zSize
 
     init {
         block()
     }
 
     fun pattern(vararg blocks: MultiblockMatcher?) {
-        assert(blocks.size != xSize * ySize * zSize) { "Blocks must have the same size" }
+        require(blocks.size == volume) { "Blocks must have the same size: expected $volume got ${blocks.size}" }
 
         this.blocks.clear()
         this.blocks.addAll(blocks.map { it ?: empty() })
     }
 
-    fun isValid(level: Level, basePos: BlockPos) = listOf(Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST).any {
-        checkStructureForDirection(level, basePos, it)
-    }
-
-    private fun checkStructureForDirection(level: Level, basePos: BlockPos, direction: Direction): Boolean {
-        for (offsetX in 0 ..< xSize) {
-            for (offsetY in 0 ..< ySize) {
-                for (offsetZ in 0 ..< zSize) {
-                    if (checkFromBase(level, basePos, direction, offsetX, offsetY, offsetZ)) return true
+    fun findPlacement(level: Level, basePos: BlockPos): MultiblockPlacement? {
+        listOf(Direction.NORTH, Direction.SOUTH, Direction.WEST, Direction.EAST).forEach { direction ->
+            (0 ..< xSize).forEach { startX ->
+                (0 ..< ySize).forEach { startY ->
+                    (0 ..< zSize).forEach { startZ ->
+                        if (checkFromBase(level, basePos, direction, startX, startY, startZ)) return MultiblockPlacement(
+                            basePos, direction, startX, startY, startZ
+                        )
+                    }
                 }
             }
         }
 
-        return false
+        return null
     }
+
+    fun replaceInWorld(
+        level: Level,
+        placement: MultiblockPlacement,
+        transform: (BlockState) -> BlockState,
+        replaceAir: Boolean = false
+    ) {
+        (0 ..< ySize).forEach { y ->
+            (0 ..< zSize).forEach { z ->
+                (0 ..< xSize).forEach fe@{ x ->
+                    val oldDefaultState = blocks[indexOf(x, y, z)].default()
+
+                    if (!replaceAir && oldDefaultState.isAir) return@fe
+
+                    val newState = transform(oldDefaultState)
+                    val pos = getRotatedPos(
+                        placement.basePos,
+                        x - placement.startX, y - placement.startY, z - placement.startZ,
+                        placement.direction
+                    )
+
+                    level.setBlock(pos, newState, Block.UPDATE_ALL)
+                }
+            }
+        }
+    }
+
+    fun replaceCurrentBlocks(
+        level: Level,
+        placement: MultiblockPlacement,
+        transform: (BlockState) -> BlockState,
+        replaceAir: Boolean
+    ) {
+        (0 ..< ySize).forEach { y ->
+            (0 ..< zSize).forEach { z ->
+                (0 ..< xSize).forEach fe@{ x ->
+                    val matcher = blocks[indexOf(x, y, z)]
+
+                    if (!replaceAir && matcher.default().isAir) return@fe
+
+                    val pos = getRotatedPos(
+                        placement.basePos,
+                        x - placement.startX, y - placement.startY, z - placement.startZ,
+                        placement.direction
+                    )
+
+                    val currentState = level.getBlockState(pos)
+
+                    if (!matcher.matches(currentState)) return@fe
+
+                    level.setBlock(pos, transform(currentState), Block.UPDATE_ALL)
+                }
+            }
+        }
+    }
+
+    private fun indexOf(x: Int, y: Int, z: Int): Int = x + z * xSize + y * xSize *zSize
 
     private fun checkFromBase(
         level: Level,
@@ -108,8 +187,11 @@ open class Multiblock(val xSize: Int, val ySize: Int, val zSize: Int, block: Mul
     }
 
     override fun getBlockState(pos: BlockPos): BlockState {
-        val id = pos.x + pos.z * zSize + pos.y * zSize * xSize
+        if (pos.x !in 0 ..< xSize || pos.y !in 0 ..< ySize || pos.z in 0 ..< zSize) return Blocks.LIGHT.defaultBlockState()
+
+        val id = indexOf(pos.x, pos.y, pos.z)
         if (id !in blocks.indices) return Blocks.LIGHT.defaultBlockState()
+
         return blocks[id].default()
     }
 
@@ -120,27 +202,14 @@ open class Multiblock(val xSize: Int, val ySize: Int, val zSize: Int, block: Mul
     override fun getMinY(): Int = 0
 
     fun empty() = block(Blocks.AIR.defaultBlockState())
-
-    fun block(state: BlockState, ignoreTag: Boolean = false) = object : MultiblockMatcher {
-        override fun matches(block: BlockState): Boolean {
-            return if (ignoreTag) block.`is`(state.block) else block == state
-        }
-
-        override fun default() = state
-    }
-
-    fun tag(tag: TagKey<Block>) = object : MultiblockMatcher {
-        override fun matches(block: BlockState) = block.`is`(tag)
-
-        override fun default(): BlockState = BuiltInRegistries.BLOCK
-            .getTagOrEmpty(tag)
-            .firstOrNull()?.value()
-            ?.defaultBlockState() ?: Blocks.AIR.defaultBlockState()
-    }
+    fun block(state: BlockState, ignoreTag: Boolean = false) = BlockMultiblockMatcher(state, ignoreTag)
+    fun tag(tag: TagKey<Block>) = TagMultiblockMatcher(tag)
 }
 
-interface MultiblockMatcher {
-    fun matches(block: BlockState): Boolean
-
-    fun default(): BlockState
-}
+data class MultiblockPlacement(
+    val basePos: BlockPos,
+    val direction: Direction,
+    val startX: Int,
+    val startY: Int,
+    val startZ: Int
+)

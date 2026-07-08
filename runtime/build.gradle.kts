@@ -1,5 +1,3 @@
-import groovy.json.JsonOutput
-
 plugins {
     id("dev.architectury.loom-no-remap")
     id("team.0mods.yaml2json")

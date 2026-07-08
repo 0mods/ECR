@@ -15,4 +15,5 @@ fun onNewRegistry(event: NewRegistryEvent) {
     event.register(ECRegistries.BOOK_TYPES)
     event.register(ECRegistries.BOOK_ELEMENT_SERIALIZER)
     event.register(ECRegistries.RESEARCH_TASK_SERIALIZER)
+    event.register(ECRegistries.MULTIBLOCK_MATCHER_TYPE)
 }

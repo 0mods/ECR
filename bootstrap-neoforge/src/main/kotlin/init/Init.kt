@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.neoforge.init
 
+import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
 import com.algorithmlx.ecr.api.utils.openMenuScreenInternal
 import com.algorithmlx.ecr.common.init.registry.*
 import com.algorithmlx.ecr.neoforge.init.registry.*
@@ -22,6 +23,7 @@ fun forgeStarter(bus: IEventBus) {
     ItemRegistry.instance = NeoForgeItemRegistry(bus)
     MenuTypeRegistry.instance = NeoForgeMenuTypeRegistry(bus)
     MRUTypeRegistry.instance = NeoForgeMRUTypeRegistry(bus)
+    MultiblockMatcherTypes.instance = NeoForgeMultiblockMatcherTypes(bus)
     MultiblockRegistry.instance = NeoForgeMultiblockRegistry(bus)
     RecipeSerializerRegistry.instance = NeoForgeRecipeSerializerRegistry(bus)
     RecipeTypeRegistry.instance = NeoForgeRecipeTypeRegistry(bus)

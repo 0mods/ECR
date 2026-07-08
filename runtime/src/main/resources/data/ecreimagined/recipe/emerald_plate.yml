@@ -1,0 +1,13 @@
+type: minecraft:crafting_shaped
+pattern:
+  - "a a"
+  - "bcb"
+  - "a a"
+key:
+  a: minecraft:iron_ingot
+  b: minecraft:emerald
+  c: ecreimagined:elemental_gem
+
+result:
+  id: ecreimagined:emerald_plate
+  count: 1

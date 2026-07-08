@@ -1,0 +1,11 @@
+type: minecraft:crafting_shaped
+pattern:
+  - " a "
+  - "aba"
+  - " a "
+key:
+  a: ecreimagined:mithriline_dust
+  b: ecreimagined:magical_ingot
+result:
+  id: ecreimagined:mithriline_ingot
+  count: 1

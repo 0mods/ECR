@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.api.registries
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.api.mru.MRUType
 import com.algorithmlx.ecr.api.multiblock.Multiblock
+import com.algorithmlx.ecr.api.multiblock.MultiblockMatcherType
 import com.algorithmlx.ecr.api.research.BookType
 import com.algorithmlx.ecr.api.research.content.BookElementSerializer
 import com.algorithmlx.ecr.api.research.ResearchTaskSerializer
@@ -22,4 +23,7 @@ object ECRegistryKeys {
     @JvmField
     val RESEARCH_TASK_SERIALIZER_KEY: ResourceKey<Registry<ResearchTaskSerializer<*>>> =
         ResourceKey.createRegistryKey("research_task_serializer".ecRL)
+    @JvmField
+    val MULTIBLOCK_MATCHER_TYPE_KEY: ResourceKey<Registry<MultiblockMatcherType<*>>> =
+        ResourceKey.createRegistryKey("multiblock_matcher_type".ecRL)
 }
