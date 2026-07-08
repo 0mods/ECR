@@ -3,11 +3,8 @@ itemGroup.ecreimagined:
   items: "Essential Craft: Предметы"
   blocks: "Essential Craft: Блоки"
 
-book_level.ecreimagined:
-  basic: Базовый
-
 item.ecreimagined:
-  book: Книга исследований
+  research_book: Книга исследований
   elemental_gem: Элементальный кристалл
   flame_gem: Пылающий кристалл
   water_gem: Водный кристалл
@@ -50,9 +47,20 @@ item.ecreimagined:
   weakness_elemental_sword: Ослабленный элементальный меч
 
 block.ecreimagined:
-  mithriline_furnace: Мифрилиновая печь
   mithriline_plating: Мифрилиновое покрытие
+  mithriline_furnace: Мифрилиновая печь
+  matrix_destructor: Matrix Destructor
+  envoyer: Envoyer
   mithriline_crystal: Мифрилиновый кристалл
+  void_stone: Void Stone
+  pale_block: Pale Block
+  pale_plating: Pale Plating
+  magic_plating: Magic Plating
+  demonic_plating: Demonic Plating
+  flame_cluster: Flame Cluster
+  water_cluster: Water Cluster
+  earth_cluster: Earth Cluster
+  air_cluster: Air Cluster
 
 tooltip.ecreimagined:
   sword_multiplier: Бонус получения MRU
@@ -63,6 +71,7 @@ tooltip.ecreimagined:
     knowledge_contains: Содержит знания
     more: И еще %s знаний
   soul_stone:
+    error: Не удалось загрузить данные для камня души
     tracking: Отслеживается MRU матрица %s
     detected_ubmru: Обнаружено %s UBMRU энергии
     matrix: Матрица MRU пульсирует %s энергией
@@ -81,6 +90,7 @@ tooltip.ecreimagined:
       disallowed: Данный кристалл привязки не поддерживает привязывания между измерениями
   need_mru: "Требуемый MRU: %s"
   during: "Время: %s тик(ов)"
+  recipe: Рецепт
 
 book_type.ecreimagined:
   basic: Основы
@@ -89,16 +99,23 @@ book_type.ecreimagined:
   hoana: Хоаны
   shade: Тени
 
+matrix.ecreimagined:
+  neutral: Нейтральная
+
 config.jade.plugin_ecreimagined:
+  mru_component: MRU девайсы
   mithriline_furnace:
     .: Мифрилиновая печь
     espe_collector: "Активные сборщики ESPE: %s/%s"
-
-toast.ecreimagined:
-  research_unlocked: Исследование открыто
-  research_completed: Исследование завершено
 
 screen.ecreimagined:
   research_book: Книга исследований
   complete_task: Завершить задание
   complete_research: Завершить исследование
+
+toast.ecreimagined:
+  research_unlocked: Исследование открыто
+  research_completed: Исследование завершено
+
+message.ecreimagined:
+  research_required: "Требуемое(ые) исследования: %s"

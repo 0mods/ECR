@@ -15,6 +15,9 @@ data class SoulStoneComponent(
     val capacity: Int
 ) {
     companion object {
+        @JvmField
+        val EMPTY = SoulStoneComponent(UUID(0, 0), "", -1)
+
         val codec: Codec<SoulStoneComponent> = RecordCodecBuilder.create { instance ->
             instance.group(
                 UUIDUtil.CODEC.fieldOf("owner").forGetter(SoulStoneComponent::owner),

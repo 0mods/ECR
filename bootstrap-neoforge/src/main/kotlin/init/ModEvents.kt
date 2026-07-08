@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.neoforge.init
 
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import net.neoforged.bus.api.IEventBus
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent
 import net.neoforged.neoforge.registries.NewRegistryEvent
 
 fun initEvents(bus: IEventBus) {

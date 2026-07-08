@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.fabric.init.registry
 
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.api.research.BookType
+import com.algorithmlx.ecr.common.components.BoundGemComponent
 import com.algorithmlx.ecr.common.components.SoulStoneComponent
 import com.algorithmlx.ecr.common.init.registry.DataComponentRegistry
 import net.minecraft.core.Registry
@@ -20,6 +21,13 @@ object FabricDataComponentRegistry: DataComponentRegistry {
         "book_type", DataComponentType.builder<BookType>()
             .persistent(BookType.codec)
             .networkSynchronized(BookType.codecStream)
+            .build()
+    )
+    override val boundGem: DataComponentType<BoundGemComponent> = register(
+        "bound_gem",
+        DataComponentType.builder<BoundGemComponent>()
+            .persistent(BoundGemComponent.codec)
+            .networkSynchronized(BoundGemComponent.streamCodec)
             .build()
     )
 

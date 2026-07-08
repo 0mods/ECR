@@ -3,17 +3,19 @@ itemGroup.ecreimagined:
   items: "Essential Craft: Items"
   blocks: "Essential Craft: Blocks"
 
-book_level.ecreimagined:
-  basic: Basic
-
 item.ecreimagined:
+  soul_stone: Soul Stone
   research_book: Research Book
+  weakness_elemental_axe: Weakness Elemental Axe
+  weakness_elemental_hoe: Weakness Elemental Hoe
+  weakness_elemental_pickaxe: Weakness Elemental Pickaxe
+  weakness_elemental_shovel: Weakness Elemental Shovel
+  weakness_elemental_sword: Weakness Elemental Sword
   elemental_gem: Elemental Gem
   flame_gem: Flame Gem
   water_gem: Water Gem
   earth_gem: Earth Gem
   air_gem: Air Gem
-  soul_stone: Soul Stone
   bound_gem: Bound Gem
   elemental_core: Elemental Core
   combined_magic_alloys: Combined Magic Alloys
@@ -43,11 +45,6 @@ item.ecreimagined:
   mithriline_crystal_gem: Mithriline Crystal
   mru_resonating_crystal: MRU Resonating Crystal
   fading_crystal: Fading Crystal
-  weakness_elemental_axe: Weakness Elemental Axe
-  weakness_elemental_hoe: Weakness Elemental Hoe
-  weakness_elemental_pickaxe: Weakness Elemental Pickaxe
-  weakness_elemental_shovel: Weakness Elemental Shovel
-  weakness_elemental_sword: Weakness Elemental Sword
 
 block.ecreimagined:
   mithriline_plating: Mithriline Plating
@@ -74,6 +71,7 @@ tooltip.ecreimagined:
     knowledge_contains: Contains Knowledge
     more: And %s more knowledge
   soul_stone:
+    error: Failed to load metadata for soul stone
     tracking: Tracking MRU Matrix of %s
     detected_ubmru: Detected %s UBMRU Energy
     matrix: MRU Matrix twists with %s Energies

@@ -1,21 +1,42 @@
 package com.algorithmlx.ecr.common.item
 
+import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.common.components.SoulStoneComponent
 import com.algorithmlx.ecr.common.init.registry.DataComponentRegistry
 import net.minecraft.server.level.ServerLevel
+import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.EquipmentSlot
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
-import java.util.UUID
 
 class SoulStone(properties: Properties): Item(
     properties.component(
         DataComponentRegistry.instance.soulStone,
-        SoulStoneComponent(UUID(0L, 0L), "", -1)
+        SoulStoneComponent.EMPTY
     )
 ) {
+    override fun onCraftedBy(itemStack: ItemStack, player: Player) {
+        itemStack.set(
+            DataComponentRegistry.instance.soulStone,
+            SoulStoneComponent(
+                player.uuid,
+                player.name.toString(),
+                0
+            )
+        )
+
+        super.onCraftedBy(itemStack, player)
+    }
+
     override fun inventoryTick(itemStack: ItemStack, level: ServerLevel, owner: Entity, slot: EquipmentSlot?) {
-        super.inventoryTick(itemStack, level, owner, slot)
+        if (owner is ServerPlayer) {
+            val component = itemStack.getOrDefault(DataComponentRegistry.instance.soulStone, SoulStoneComponent.EMPTY)
+            if (component == SoulStoneComponent.EMPTY) return
+
+            if (owner.name.string == component.ownerName) return
+            itemStack.set(DataComponentRegistry.instance.soulStone, component.copy(ownerName = owner.name.string))
+        }
     }
 }
