@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.fabric.init.registry
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.BlockRegistry
 import com.algorithmlx.ecr.common.item.NamedBlockItem
 import net.minecraft.core.Registry
@@ -15,9 +16,9 @@ import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockBehaviour
 
 object FabricBlockRegistry: BlockRegistry {
-    override val mithrilineFurnace: MithrilineFurnace = register("mithriline_furnace", ::MithrilineFurnace)
-    override val mithrilineCrystal: CrystalBlock = register("mithriline_crystal", ::CrystalBlock)
-    override val mithrilinePlating: Block = register("mithriline_plating", ::Block)
+    override val mithrilineFurnace: MithrilineFurnace = register(ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnace)
+    override val mithrilineCrystal: CrystalBlock = register(ECRModIDs.MITHRILINE_CRYSTAL, ::CrystalBlock)
+    override val mithrilinePlating: Block = register(ECRModIDs.MITHRILINE_PLATING, ::Block)
     
     private fun <B: Block> register(
         id: String,

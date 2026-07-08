@@ -1,0 +1,3 @@
+parent: minecraft:block/cross
+textures:
+  cross: ecreimagined:block/water_cluster

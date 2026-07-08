@@ -4,16 +4,17 @@ import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.registries.ECRegistryKeys
 import com.algorithmlx.ecr.api.research.BookType
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.BookLevelRegistry
 import net.minecraft.core.Registry
 import net.minecraft.resources.ResourceKey
 
 object FabricBookLevelRegistry : BookLevelRegistry {
-    private val basicKey = key("basic")
-    private val mruKey = key("mru")
-    private val engineerKey = key("engineer")
-    private val hoanaKey = key("hoana")
-    private val shadeKey = key("shade")
+    private val basicKey = key(ECRModIDs.BASIC)
+    private val mruKey = key(ECRModIDs.MRU)
+    private val engineerKey = key(ECRModIDs.ENGINEER)
+    private val hoanaKey = key(ECRModIDs.HOANA)
+    private val shadeKey = key(ECRModIDs.SHADE)
 
     override val basic = register(basicKey, simple(0))
     override val mru = register(mruKey, simple(1, setOf(basicKey)))

@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.fabric.init.registry
 
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.api.menu.MenuTypeData
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.MenuTypeRegistry
 import com.algorithmlx.ecr.common.menu.MithrilineFurnaceMenu
 import net.fabricmc.fabric.api.menu.v1.ExtendedMenuType
@@ -14,7 +15,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.MenuType
 
 object FabricMenuTypeRegistry: MenuTypeRegistry {
-    override val mithrilineFurnace: MenuType<MithrilineFurnaceMenu> = register("mithriline_furnace", createDefaulted(::MithrilineFurnaceMenu))
+    override val mithrilineFurnace: MenuType<MithrilineFurnaceMenu> = register(ECRModIDs.MITHRILINE_FURNACE, createDefaulted(::MithrilineFurnaceMenu))
 
     private fun <T: MenuType<*>> register(id: String, menu: T): T = Registry.register(BuiltInRegistries.MENU, id.ecRL, menu)
 

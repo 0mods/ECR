@@ -1,6 +1,7 @@
 package com.algorithmlx.ecr.neoforge.init.registry
 
 import com.algorithmlx.ecr.api.ModId
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.ItemRegistry
 import com.algorithmlx.ecr.common.item.SoulStone
 import com.algorithmlx.ecr.common.item.ResearchBookItem
@@ -24,49 +25,49 @@ class NeoForgeItemRegistry(bus: IEventBus): ItemRegistry {
         items.register(bus)
     }
 
-    private val soulStoneItem = registerItem("soul_stone", ::SoulStone)
-    private val researchBookItem = registerItem("research_book", ::ResearchBookItem)
+    private val soulStoneItem = registerItem(ECRModIDs.SOUL_STONE, ::SoulStone)
+    private val researchBookItem = registerItem(ECRModIDs.RESEARCH_BOOK, ::ResearchBookItem)
 
-    private val weakAxeItem = registerItem("weakness_elemental_axe", ::WeakAxe)
-    private val weakHoeItem = registerItem("weakness_elemental_hoe", ::WeakHoe)
-    private val weakPickaxeItem = registerItem("weakness_elemental_pickaxe", ::WeakPickaxe)
-    private val weakShovelItem = registerItem("weakness_elemental_shovel", ::WeakShovel)
-    private val weakSwordItem = registerItem("weakness_elemental_sword", ::WeakSword)
+    private val weakAxeItem = registerItem(ECRModIDs.WEAKNESS_ELEMENTAL_AXE, ::WeakAxe)
+    private val weakHoeItem = registerItem(ECRModIDs.WEAKNESS_ELEMENTAL_HOE, ::WeakHoe)
+    private val weakPickaxeItem = registerItem(ECRModIDs.WEAKNESS_ELEMENTAL_PICKAXE, ::WeakPickaxe)
+    private val weakShovelItem = registerItem(ECRModIDs.WEAKNESS_ELEMENTAL_SHOVEL, ::WeakShovel)
+    private val weakSwordItem = registerItem(ECRModIDs.WEAKNESS_ELEMENTAL_SWORD, ::WeakSword)
 
-    val elementalGemItem = basicItem("elemental_gem")
-    val flameGemItem = basicItem("flame_gem")
-    val waterGemItem = basicItem("water_gem")
-    val earthGemItem = basicItem("earth_gem")
-    val airGemItem = basicItem("air_gem")
+    val elementalGemItem = basicItem(ECRModIDs.ELEMENTAL_GEM)
+    val flameGemItem = basicItem(ECRModIDs.FLAME_GEM)
+    val waterGemItem = basicItem(ECRModIDs.WATER_GEM)
+    val earthGemItem = basicItem(ECRModIDs.EARTH_GEM)
+    val airGemItem = basicItem(ECRModIDs.AIR_GEM)
 
-    val elementalCoreItem = basicItem("elemental_core")
-    val combinedMagicAlloysItem = basicItem("combined_magic_alloys")
-    val demonicCoreItem = basicItem("demonic_core")
-    val diamondPlateItem = basicItem("diamond_plate")
-    val emeraldPlateItem = basicItem("emerald_plate")
-    val enderScaleAlloyItem = basicItem("ender_scale_alloy")
-    val forcefieldCoreItem = basicItem("forcefield_core")
-    val forcefieldPlationgItem = basicItem("forcefield_plating")
-    val fortifiedFrameItem = basicItem("fortified_frame")
-    val magicFortifiedPlatingItem = basicItem("magic_fortified_plating")
-    val magicPlateItem = basicItem("magic_plate")
-    val magicPurifiedBlazeAlloyItem = basicItem("magic_purified_blaze_alloy")
-    val magicPurifiedEnderScaleAlloyItem = basicItem("magic_purified_ender_scale_alloy")
-    val magicPurifiedGlassAlloyItem = basicItem("magic_purified_glass_alloy")
-    val obsidianPlateItem = basicItem("obsidian_plate")
-    val paleCoreItem = basicItem("pale_core")
-    val palePlateItem = basicItem("pale_plate")
-    val particleCatcherItem = basicItem("particle_catcher")
-    val particleEmitterItem = basicItem("particle_emitter")
-    val sunImbuedGlassItem = basicItem("sun_imbued_glass")
-    val voidPlatingItem = basicItem("void_plating")
-    val mithrilineIngotItem = basicItem("mithriline_ingot")
-    val magicalIngotItem = basicItem("magical_ingot")
-    val mithrilineDustItem = basicItem("mithriline_dust")
-    val heatingRodItem = basicItem("heating_rod")
-    val mithrilineCrystalGemItem = basicItem("mithriline_crystal_gem")
-    val mruResonatingCrystalItem = basicItem("mru_resonating_crystal")
-    val fadingCrystalItem = basicItem("fading_crystal")
+    val elementalCoreItem = basicItem(ECRModIDs.ELEMENTAL_CORE)
+    val combinedMagicAlloysItem = basicItem(ECRModIDs.COMBINED_MAGIC_ALLOYS)
+    val demonicCoreItem = basicItem(ECRModIDs.DEMONIC_CORE)
+    val diamondPlateItem = basicItem(ECRModIDs.DIAMOND_PLATE)
+    val emeraldPlateItem = basicItem(ECRModIDs.EMERALD_PLATE)
+    val enderScaleAlloyItem = basicItem(ECRModIDs.ENDER_SCALE_ALLOY)
+    val forcefieldCoreItem = basicItem(ECRModIDs.FORCEFIELD_CORE)
+    val forcefieldPlationgItem = basicItem(ECRModIDs.FORCIFIELD_PLATING)
+    val fortifiedFrameItem = basicItem(ECRModIDs.FORTIFIED_FRAME)
+    val magicFortifiedPlatingItem = basicItem(ECRModIDs.MAGIC_FORTIFIED_PLATING)
+    val magicPlateItem = basicItem(ECRModIDs.MAGIC_PLATE)
+    val magicPurifiedBlazeAlloyItem = basicItem(ECRModIDs.MAGIC_PURIFIED_BLAZE_ALLOY)
+    val magicPurifiedEnderScaleAlloyItem = basicItem(ECRModIDs.MAGIC_PURIFIED_ENDER_SCALE_ALLOY)
+    val magicPurifiedGlassAlloyItem = basicItem(ECRModIDs.MAGIC_PURIFIED_GLASS_ALLOY)
+    val obsidianPlateItem = basicItem(ECRModIDs.OBSIDIAN_PLATE)
+    val paleCoreItem = basicItem(ECRModIDs.PALE_CORE)
+    val palePlateItem = basicItem(ECRModIDs.PALE_PLATE)
+    val particleCatcherItem = basicItem(ECRModIDs.PARTICLE_CATCHER)
+    val particleEmitterItem = basicItem(ECRModIDs.PARTICLE_EMITTER)
+    val sunImbuedGlassItem = basicItem(ECRModIDs.SUN_IMBUED_GLASS)
+    val voidPlatingItem = basicItem(ECRModIDs.VOID_PLATING)
+    val mithrilineIngotItem = basicItem(ECRModIDs.MITHRILINE_INGOT)
+    val magicalIngotItem = basicItem(ECRModIDs.MAGICAL_INGOT)
+    val mithrilineDustItem = basicItem(ECRModIDs.MITHRILINE_DUST)
+    val heatingRodItem = basicItem(ECRModIDs.HEATING_ROD)
+    val mithrilineCrystalGemItem = basicItem(ECRModIDs.MITHRILINE_CRYSTAL_GEM)
+    val mruResonatingCrystalItem = basicItem(ECRModIDs.MRU_RESONATING_CRYSTAL)
+    val fadingCrystalItem = basicItem(ECRModIDs.FADING_CRYSTAL)
 
     // implements
     override val soulStone: SoulStone by lazy { soulStoneItem.get() }
@@ -91,7 +92,7 @@ class NeoForgeItemRegistry(bus: IEventBus): ItemRegistry {
     override val emeraldPlate: Item by lazy { emeraldPlateItem.get() }
     override val enderScaleAlloy: Item by lazy { enderScaleAlloyItem.get() }
     override val forcefieldCore: Item by lazy { forcefieldCoreItem.get() }
-    override val forcefieldPlationg: Item by lazy { forcefieldPlationgItem.get() }
+    override val forcefieldPlating: Item by lazy { forcefieldPlationgItem.get() }
     override val fortifiedFrame: Item by lazy { fortifiedFrameItem.get() }
     override val magicFortifiedPlating: Item by lazy { magicFortifiedPlatingItem.get() }
     override val magicPlate: Item by lazy { magicPlateItem.get() }

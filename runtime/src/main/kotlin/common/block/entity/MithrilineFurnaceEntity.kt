@@ -136,7 +136,7 @@ class MithrilineFurnaceEntity(
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, be: MithrilineFurnaceEntity) {
             val oldValid = be.structureIsValid
-            val newValid = MultiblockRegistry.instance.mithrilineFurnace.isValid(level, pos)
+            val newValid = MultiblockRegistry.instance.mithrilineFurnace.findPlacement(level, pos) != null
             if (oldValid != newValid) {
                 be.structureIsValid = newValid
                 be.setChanged()

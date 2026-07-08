@@ -4,6 +4,7 @@ import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.research.BookType
 import com.algorithmlx.ecr.common.components.BoundGemComponent
 import com.algorithmlx.ecr.common.components.SoulStoneComponent
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.DataComponentRegistry
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.Registries
@@ -17,15 +18,15 @@ class NeoForgeDataComponentRegistry(bus: IEventBus): DataComponentRegistry {
         dataComponents.register(bus)
     }
 
-    private val soulStoneComponent = dataComponents.registerComponentType("soul_stone") { builder ->
+    private val soulStoneComponent = dataComponents.registerComponentType(ECRModIDs.SOUL_STONE) { builder ->
         builder.persistent(SoulStoneComponent.codec).networkSynchronized(SoulStoneComponent.codecStream)
     }
 
-    private val bookTypeComponent = dataComponents.registerComponentType("book_type") { builder ->
+    private val bookTypeComponent = dataComponents.registerComponentType(ECRModIDs.BOOK_TYPE) { builder ->
         builder.persistent(BookType.codec).networkSynchronized(BookType.codecStream)
     }
 
-    private val boundGemComponent = dataComponents.registerComponentType("bound_gem") { builder ->
+    private val boundGemComponent = dataComponents.registerComponentType(ECRModIDs.BOUND_GEM) { builder ->
         builder.persistent(BoundGemComponent.codec).networkSynchronized(BoundGemComponent.streamCodec)
     }
 

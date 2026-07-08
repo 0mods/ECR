@@ -5,6 +5,7 @@ import com.algorithmlx.ecr.common.api.ClusterBlock
 import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
 import com.algorithmlx.ecr.common.block.SolarPrism
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.BlockCodecRegistry
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.registries.BuiltInRegistries
@@ -19,10 +20,10 @@ class NeoForgeBlockCodecRegistry(bus: IEventBus): BlockCodecRegistry {
         blockTypes.register(bus)
     }
 
-    private val solarPrismCodec = blockTypes.register("solar_prism") { _ -> BlockBehaviour.simpleCodec(::SolarPrism) }
-    private val clusterBlockCodec = blockTypes.register("cluster") { _ -> BlockBehaviour.simpleCodec(::ClusterBlock) }
-    private val crystalBlockCodec = blockTypes.register("crystal") { _ -> BlockBehaviour.simpleCodec(::CrystalBlock) }
-    private val mithrilineFurnaceCodec = blockTypes.register("mithriline_furnace") { _ -> BlockBehaviour.simpleCodec(::MithrilineFurnace) }
+    private val solarPrismCodec = blockTypes.register(ECRModIDs.SOLAR_PRISM) { _ -> BlockBehaviour.simpleCodec(::SolarPrism) }
+    private val clusterBlockCodec = blockTypes.register(ECRModIDs.CLUSTER) { _ -> BlockBehaviour.simpleCodec(::ClusterBlock) }
+    private val crystalBlockCodec = blockTypes.register(ECRModIDs.CRYSTAL) { _ -> BlockBehaviour.simpleCodec(::CrystalBlock) }
+    private val mithrilineFurnaceCodec = blockTypes.register(ECRModIDs.MITHRILINE_FURNACE) { _ -> BlockBehaviour.simpleCodec(::MithrilineFurnace) }
 
     override val solarPrism: MapCodec<SolarPrism> by lazy { solarPrismCodec.get() }
     override val clusterBlock: MapCodec<ClusterBlock> by lazy { clusterBlockCodec.get() }

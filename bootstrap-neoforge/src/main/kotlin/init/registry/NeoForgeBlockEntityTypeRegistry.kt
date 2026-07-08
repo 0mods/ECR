@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.neoforge.init.registry
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.BlockRegistry
 import net.minecraft.core.registries.BuiltInRegistries
@@ -16,7 +17,7 @@ class NeoForgeBlockEntityTypeRegistry(bus: IEventBus): BlockEntityTypeRegistry {
         blockEntityType.register(bus)
     }
 
-    private val mithrilineFurnaceEntity = blockEntityType.register("mithriline_furnace") { _ ->
+    private val mithrilineFurnaceEntity = blockEntityType.register(ECRModIDs.MITHRILINE_FURNACE) { _ ->
         BlockEntityType(::MithrilineFurnaceEntity, setOf(BlockRegistry.instance.mithrilineFurnace))
     }
 

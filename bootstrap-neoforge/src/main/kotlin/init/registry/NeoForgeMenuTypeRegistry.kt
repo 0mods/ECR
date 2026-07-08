@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.neoforge.init.registry
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.menu.MenuTypeData
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.MenuTypeRegistry
 import com.algorithmlx.ecr.common.menu.MithrilineFurnaceMenu
 import net.minecraft.core.registries.BuiltInRegistries
@@ -21,7 +22,7 @@ class NeoForgeMenuTypeRegistry(bus: IEventBus): MenuTypeRegistry {
         menuType.register(bus)
     }
 
-    private val mithrilineFurnaceMenu = menuType.register("mithriline_furnace") { _ -> createDefaulted(::MithrilineFurnaceMenu) }
+    private val mithrilineFurnaceMenu = menuType.register(ECRModIDs.MITHRILINE_FURNACE) { _ -> createDefaulted(::MithrilineFurnaceMenu) }
 
     override val mithrilineFurnace: MenuType<MithrilineFurnaceMenu> by lazy { mithrilineFurnaceMenu.get() }
 

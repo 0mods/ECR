@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.fabric.init.registry
 
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.BlockRegistry
 import net.minecraft.core.Registry
@@ -11,7 +12,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 
 object FabricBlockEntityTypeRegistry: BlockEntityTypeRegistry {
     override val mithrilineFurnace: BlockEntityType<MithrilineFurnaceEntity> = register(
-        "mithriline_furnace",
+        ECRModIDs.MITHRILINE_FURNACE,
         BlockEntityType(::MithrilineFurnaceEntity, setOf(BlockRegistry.instance.mithrilineFurnace))
     )
 

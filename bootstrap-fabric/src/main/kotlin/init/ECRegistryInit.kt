@@ -26,6 +26,7 @@ object ECRegistryInit {
         BlockRegistry.instance = FabricBlockRegistry
         BlockEntityTypeRegistry.instance = FabricBlockEntityTypeRegistry
         ItemRegistry.instance = FabricItemRegistry
+        CreativeTabs.instance = FabricCreativeTabs
         MenuTypeRegistry.instance = FabricMenuTypeRegistry
         MRUTypeRegistry.instance = FabricMRUTypeRegistry
         MultiblockMatcherTypes.instance = FabricMultiblockMatcherTypes

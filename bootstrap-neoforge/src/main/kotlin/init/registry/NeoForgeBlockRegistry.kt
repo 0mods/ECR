@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.neoforge.init.registry
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.BlockRegistry
 import com.algorithmlx.ecr.common.item.NamedBlockItem
 import net.minecraft.core.registries.Registries
@@ -24,9 +25,9 @@ class NeoForgeBlockRegistry(bus: IEventBus): BlockRegistry {
         blockItems.register(bus)
     }
 
-    private val mithrilineFurnaceBlock = registerBlock("mithriline_furnace", ::MithrilineFurnace)
-    private val mithrilineCrystalBlock = registerBlock("mithriline_crystal", ::CrystalBlock)
-    private val mithrilinePlatingBlock = registerBlock("mithriline_plating", ::Block)
+    private val mithrilineFurnaceBlock = registerBlock(ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnace)
+    private val mithrilineCrystalBlock = registerBlock(ECRModIDs.MITHRILINE_CRYSTAL, ::CrystalBlock)
+    private val mithrilinePlatingBlock = registerBlock(ECRModIDs.MITHRILINE_PLATING, ::Block)
 
     override val mithrilineFurnace: MithrilineFurnace by lazy { mithrilineFurnaceBlock.get() }
     override val mithrilineCrystal: CrystalBlock by lazy { mithrilineCrystalBlock.get() }

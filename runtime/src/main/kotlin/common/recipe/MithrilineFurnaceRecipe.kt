@@ -48,7 +48,8 @@ class MithrilineFurnaceRecipe(
     override fun recipeBookCategory(): RecipeBookCategory = RecipeBookCategories.FURNACE_MISC
 
     companion object {
-        val codec: MapCodec<MithrilineFurnaceRecipe> = RecordCodecBuilder.mapCodec {
+        @JvmField
+        val CODEC: MapCodec<MithrilineFurnaceRecipe> = RecordCodecBuilder.mapCodec {
             it.group(
                 Ingredient.CODEC.fieldOf("input").forGetter(MithrilineFurnaceRecipe::input),
                 Codec.intRange(1, 64).fieldOf("ingredient_count").forGetter(MithrilineFurnaceRecipe::ingredientCount),
@@ -57,7 +58,8 @@ class MithrilineFurnaceRecipe(
             ).apply(it, ::MithrilineFurnaceRecipe)
         }
 
-        val streamCodec: StreamCodec<RegistryFriendlyByteBuf, MithrilineFurnaceRecipe> = StreamCodec.of(
+        @JvmField
+        val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, MithrilineFurnaceRecipe> = StreamCodec.of(
             ::toNetwork, ::fromNetwork
         )
 

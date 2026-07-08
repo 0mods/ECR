@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.neoforge.init.registry
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.MultiblockRegistry
 import com.algorithmlx.ecr.common.multiblocks.MithrilineFurnaceMultiblock
 import net.neoforged.bus.api.IEventBus
@@ -15,7 +16,7 @@ class NeoForgeMultiblockRegistry(bus: IEventBus): MultiblockRegistry {
         multiblocks.register(bus)
     }
 
-    private val mithrilineFurnaceMultiblock = multiblocks.register("mithriline_furnace") { _ -> MithrilineFurnaceMultiblock }
+    private val mithrilineFurnaceMultiblock = multiblocks.register(ECRModIDs.MITHRILINE_FURNACE) { _ -> MithrilineFurnaceMultiblock }
 
     override val mithrilineFurnace: Multiblock by lazy { mithrilineFurnaceMultiblock.get() }
 }
