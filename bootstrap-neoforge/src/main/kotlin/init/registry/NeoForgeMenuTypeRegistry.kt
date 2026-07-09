@@ -4,6 +4,7 @@ import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.menu.MenuTypeData
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.MenuTypeRegistry
+import com.algorithmlx.ecr.common.menu.EnvoyerMenu
 import com.algorithmlx.ecr.common.menu.MithrilineFurnaceMenu
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.RegistryFriendlyByteBuf
@@ -23,8 +24,10 @@ class NeoForgeMenuTypeRegistry(bus: IEventBus): MenuTypeRegistry {
     }
 
     private val mithrilineFurnaceMenu = menuType.register(ECRModIDs.MITHRILINE_FURNACE) { _ -> createDefaulted(::MithrilineFurnaceMenu) }
+    private val envoyerMenu = menuType.register(ECRModIDs.ENVOYER) { _ -> createDefaulted(::EnvoyerMenu) }
 
     override val mithrilineFurnace: MenuType<MithrilineFurnaceMenu> by lazy { mithrilineFurnaceMenu.get() }
+    override val envoyer: MenuType<EnvoyerMenu> by lazy { envoyerMenu.get() }
 
     private fun <T: AbstractContainerMenu> createDefaulted(
         factory: (Int, Inventory, MenuTypeData) -> T

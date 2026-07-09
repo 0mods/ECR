@@ -20,8 +20,8 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.lighting.LevelLightEngine
 import net.minecraft.world.level.material.FluidState
 
-open class Multiblock(val xSize: Int, val ySize: Int, val zSize: Int, block: Multiblock.() -> Unit): BlockAndTintGetter {
-    constructor(xSize: Int, ySize: Int, zSize: Int, blocks: List<MultiblockMatcher>): this(xSize, ySize, zSize, {}) {
+open class Multiblock(val xSize: Int, val zSize: Int, val ySize: Int, block: Multiblock.() -> Unit): BlockAndTintGetter {
+    constructor(xSize: Int, zSize: Int, ySize: Int, blocks: List<MultiblockMatcher>): this(xSize, ySize, zSize, {}) {
         require(blocks.size == xSize * ySize * zSize) { "Blocks must have the same size: expected ${xSize * ySize * zSize} got ${blocks.size}" }
         this.blocks.clear()
         this.blocks.addAll(blocks)
@@ -32,8 +32,8 @@ open class Multiblock(val xSize: Int, val ySize: Int, val zSize: Int, block: Mul
         val CODEC: Codec<Multiblock> = RecordCodecBuilder.create {
             it.group(
                 Codec.INT.fieldOf("x_size").forGetter(Multiblock::xSize),
-                Codec.INT.fieldOf("y_size").forGetter(Multiblock::ySize),
                 Codec.INT.fieldOf("z_size").forGetter(Multiblock::zSize),
+                Codec.INT.fieldOf("y_size").forGetter(Multiblock::ySize),
                 MultiblockMatcher.CODEC.listOf().fieldOf("blocks")
                     .forGetter { mb -> mb.blocks }
             ).apply(it, ::Multiblock)
@@ -141,7 +141,7 @@ open class Multiblock(val xSize: Int, val ySize: Int, val zSize: Int, block: Mul
         for (y in 0..<ySize) {
             for (z in 0..<zSize) {
                 for (x in 0..<xSize) {
-                    val expectedBlock = blocks[x + z * zSize + y * zSize * xSize]
+                    val expectedBlock = blocks[indexOf(x, y, z)]
                     if (expectedBlock.default().isAir) continue
 
                     val rotatedPos = getRotatedPos(basePos, x - startX, y - startY, z - startZ, direction)
@@ -187,7 +187,7 @@ open class Multiblock(val xSize: Int, val ySize: Int, val zSize: Int, block: Mul
     }
 
     override fun getBlockState(pos: BlockPos): BlockState {
-        if (pos.x !in 0 ..< xSize || pos.y !in 0 ..< ySize || pos.z in 0 ..< zSize) return Blocks.LIGHT.defaultBlockState()
+        if (pos.x !in 0 ..< xSize || pos.y !in 0 ..< ySize || pos.z !in 0 ..< zSize) return Blocks.LIGHT.defaultBlockState()
 
         val id = indexOf(pos.x, pos.y, pos.z)
         if (id !in blocks.indices) return Blocks.LIGHT.defaultBlockState()

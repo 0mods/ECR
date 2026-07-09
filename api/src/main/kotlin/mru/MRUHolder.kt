@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.api.mru
 
+import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import net.minecraft.world.Container
 import net.minecraft.world.level.Level
 
@@ -17,9 +18,9 @@ interface MRUHolder {
     /**
      * Returns the current MRU storage associated with this holder.
      *
-     * @return an instance of [MRUStorage] representing the stored MRU.
+     * @return an instance of [IOMRUStorage] representing the stored MRU.
      */
-    val mruStorage: MRUStorage
+    val mruStorage: IOMRUStorage
 
     /**
      * Provides locator data used for slot-based MRU access.

@@ -1,8 +1,10 @@
 package com.algorithmlx.ecr.common.block
 
 import com.algorithmlx.ecr.api.block.FullBlockParticles
+import com.algorithmlx.ecr.api.utils.checkAndOpenMenu
 import com.algorithmlx.ecr.api.utils.simpleTicker
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
+import com.algorithmlx.ecr.common.init.registry.MultiblockRegistry
 import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
@@ -40,9 +42,9 @@ class MithrilineFurnace(properties: Properties): Block(properties), EntityBlock,
         pos: BlockPos,
         player: Player,
         hitResult: BlockHitResult
-    ): InteractionResult {
-        return super.useWithoutItem(state, level, pos, player, hitResult)
-    }
+    ): InteractionResult = if (MultiblockRegistry.instance.mithrilineFurnace.findPlacement(level, pos) != null) {
+        checkAndOpenMenu<MithrilineFurnaceEntity>(player, level, pos)
+    } else InteractionResult.FAIL
 
     override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape = shape
 
@@ -51,7 +53,7 @@ class MithrilineFurnace(properties: Properties): Block(properties), EntityBlock,
         shape = Shapes.join(shape, Shapes.box(0.125, 0.875, 0.125, 0.875, 0.9375, 0.875), BooleanOp.OR)
         shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.0, 1.0, 0.125, 0.125), BooleanOp.OR)
         shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.875, 1.0, 0.125, 1.0), BooleanOp.OR)
-        shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.125, 0.125, 0.125, 0.875), BooleanOp.OR);
+        shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.125, 0.125, 0.125, 0.875), BooleanOp.OR)
         shape = Shapes.join(shape, Shapes.box(0.875, 0.0, 0.125, 1.0, 0.125, 0.875), BooleanOp.OR)
         shape = Shapes.join(shape, Shapes.box(0.0, 0.875, 0.0, 1.0, 1.0, 0.125), BooleanOp.OR)
         shape = Shapes.join(shape, Shapes.box(0.0, 0.875, 0.875, 1.0, 1.0, 1.0), BooleanOp.OR)

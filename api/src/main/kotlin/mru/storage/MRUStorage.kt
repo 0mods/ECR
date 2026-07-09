@@ -1,4 +1,6 @@
-package com.algorithmlx.ecr.api.mru
+package com.algorithmlx.ecr.api.mru.storage
+
+import com.algorithmlx.ecr.api.mru.MRUType
 
 interface MRUStorage {
     val mru: Int

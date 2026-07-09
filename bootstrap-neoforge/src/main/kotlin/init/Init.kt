@@ -21,7 +21,7 @@ fun forgeStarter(bus: IEventBus) {
     BlockEntityTypeRegistry.instance = NeoForgeBlockEntityTypeRegistry(bus)
     DataComponentRegistry.instance = NeoForgeDataComponentRegistry(bus)
     ItemRegistry.instance = NeoForgeItemRegistry(bus)
-    CreativeTabs.instance = NeoForgeCreativeTabs(bus)
+    CreativeTabRegistry.instance = NeoForgeCreativeTabRegistry(bus)
     MenuTypeRegistry.instance = NeoForgeMenuTypeRegistry(bus)
     MRUTypeRegistry.instance = NeoForgeMRUTypeRegistry(bus)
     MultiblockMatcherTypes.instance = NeoForgeMultiblockMatcherTypes(bus)

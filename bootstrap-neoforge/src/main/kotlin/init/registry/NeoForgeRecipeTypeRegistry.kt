@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.neoforge.init.registry
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.RecipeTypeRegistry
+import com.algorithmlx.ecr.common.recipe.EnvoyerRecipe
 import com.algorithmlx.ecr.common.recipe.StructureRecipe
 import com.algorithmlx.ecr.common.recipe.MithrilineFurnaceRecipe
 import net.minecraft.core.registries.BuiltInRegistries
@@ -23,7 +24,11 @@ class NeoForgeRecipeTypeRegistry(bus: IEventBus): RecipeTypeRegistry {
     private val structureRecipe = recipeTypes.register(ECRModIDs.STRUCTURE) { rk ->
         RecipeType.simple<StructureRecipe>(rk)
     }
+    private val envoyerRecipe = recipeTypes.register(ECRModIDs.ENVOYER) { rk ->
+        RecipeType.simple<EnvoyerRecipe>(rk)
+    }
 
     override val mithrilineFurnace: RecipeType<MithrilineFurnaceRecipe> by lazy { mithrilineFurnaceType.get() }
-    override val itemInStructure: RecipeType<StructureRecipe> by lazy { structureRecipe.get() }
+    override val structure: RecipeType<StructureRecipe> by lazy { structureRecipe.get() }
+    override val envoyer: RecipeType<EnvoyerRecipe> by lazy { envoyerRecipe.get() }
 }

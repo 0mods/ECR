@@ -2,7 +2,7 @@ package com.algorithmlx.ecr.neoforge.init.registry
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.common.init.registry.BlockRegistry
-import com.algorithmlx.ecr.common.init.registry.CreativeTabs
+import com.algorithmlx.ecr.common.init.registry.CreativeTabRegistry
 import com.algorithmlx.ecr.common.init.registry.ItemRegistry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.item.CreativeModeTab
@@ -10,7 +10,7 @@ import net.minecraft.world.item.ItemStack
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
 
-class NeoForgeCreativeTabs(bus: IEventBus): CreativeTabs {
+class NeoForgeCreativeTabRegistry(bus: IEventBus): CreativeTabRegistry {
     private val creativeTabs = DeferredRegister.create(BuiltInRegistries.CREATIVE_MODE_TAB, ModId)
 
     init {

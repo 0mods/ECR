@@ -1,25 +1,31 @@
 package com.algorithmlx.ecr.fabric.init.registry
 
+import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.BlockRegistry
-import com.algorithmlx.ecr.common.init.registry.CreativeTabs
+import com.algorithmlx.ecr.common.init.registry.CreativeTabRegistry
 import com.algorithmlx.ecr.common.init.registry.ItemRegistry
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.chat.Component
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.ItemStack
 
-object FabricCreativeTabs: CreativeTabs {
+object FabricCreativeTabRegistry: CreativeTabRegistry {
     override val items: CreativeModeTab = register(
-        "tab_items",
+        ECRModIDs.TAB_ITEMS,
         FabricCreativeModeTab.builder()
             .icon { ItemStack(ItemRegistry.instance.elementalGem) }
+            .title(Component.translatable("itemGroup.$ModId.items"))
             .build()
     )
     override val blocks: CreativeModeTab = register(
-        "tab_blocks",
-        FabricCreativeModeTab.builder().icon { ItemStack(BlockRegistry.instance.mithrilineFurnace) }
+        ECRModIDs.TAB_BLOCKS,
+        FabricCreativeModeTab.builder()
+            .icon { ItemStack(BlockRegistry.instance.mithrilineFurnace) }
+            .title(Component.translatable("itemGroup.$ModId.blocks"))
             .build()
     )
 

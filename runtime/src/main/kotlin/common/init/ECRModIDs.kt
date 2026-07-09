@@ -12,6 +12,7 @@ object ECRModIDs {
     const val MITHRILINE_PLATING = "mithriline_plating"
     const val SOUL_STONE = "soul_stone"
     const val BOUND_GEM = "bound_gem"
+    const val ENVOYER = "envoyer"
 
     // Data Components
     const val BOOK_TYPE = "book_type"

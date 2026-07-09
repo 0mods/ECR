@@ -1,11 +1,8 @@
 package com.algorithmlx.ecr.api.client
 
-import com.algorithmlx.ecr.api.mru.MRUStorage
-import com.algorithmlx.ecr.api.multiblock.Multiblock
-import net.minecraft.client.Minecraft
+import com.algorithmlx.ecr.api.mru.storage.MRUStorage
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.network.chat.Component
-import net.minecraft.util.RandomSource
 import java.awt.Color
 
 fun isCursorAtPos(cursorX: Int, cursorY: Int, x: Int, y: Int, width: Int, height: Int) : Boolean =

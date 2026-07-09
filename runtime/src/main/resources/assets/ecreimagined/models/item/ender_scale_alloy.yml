@@ -1,0 +1,3 @@
+parent: minecraft:item/handheld
+textures:
+  layer0: ecreimagined:item/ender_scale_alloy

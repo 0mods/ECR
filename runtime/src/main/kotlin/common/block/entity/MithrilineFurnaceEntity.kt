@@ -4,7 +4,7 @@ import com.algorithmlx.ecr.api.block.entity.syncForNearby
 import com.algorithmlx.ecr.api.mru.MRUHolder
 import com.algorithmlx.ecr.api.recipe.CachedRecipe
 import com.algorithmlx.ecr.api.utils.StackHelper
-import com.algorithmlx.ecr.common.components.MRUStorageContainer
+import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.BlockRegistry
 import com.algorithmlx.ecr.common.init.registry.MRUTypeRegistry
@@ -127,6 +127,8 @@ class MithrilineFurnaceEntity(
         super.setChanged()
         this.syncForNearby()
     }
+
+    override fun canPlaceItem(slot: Int, itemStack: ItemStack): Boolean = if (slot == 1) false else super<BaseContainerBlockEntity>.canPlaceItem(slot, itemStack)
 
     override fun getUpdatePacket(): Packet<ClientGamePacketListener> = ClientboundBlockEntityDataPacket.create(this)
 

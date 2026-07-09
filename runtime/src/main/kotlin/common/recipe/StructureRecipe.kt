@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.common.recipe
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.RecipeSerializerRegistry
 import com.algorithmlx.ecr.common.init.registry.RecipeTypeRegistry
 import com.mojang.serialization.Codec
@@ -35,11 +36,11 @@ class StructureRecipe(
     val blockForPlace: Block?,
     val consumeStructure: Boolean = false
 ): SingleItemRecipe(Recipe.CommonInfo(true), ingredient, result) {
-    override fun getSerializer(): RecipeSerializer<out SingleItemRecipe> = RecipeSerializerRegistry.instance.itemInStructure
+    override fun getSerializer(): RecipeSerializer<out SingleItemRecipe> = RecipeSerializerRegistry.instance.structure
 
-    override fun getType(): RecipeType<out SingleItemRecipe> = RecipeTypeRegistry.instance.itemInStructure
+    override fun getType(): RecipeType<out SingleItemRecipe> = RecipeTypeRegistry.instance.structure
 
-    override fun group(): String = "$ModId:structure"
+    override fun group(): String = "$ModId:${ECRModIDs.STRUCTURE}"
 
     override fun recipeBookCategory(): RecipeBookCategory = RecipeBookCategories.CAMPFIRE
 
@@ -55,7 +56,7 @@ class StructureRecipe(
                 Range.CODEC.fieldOf("chance").forGetter(StructureRecipe::chance),
                 Codec.optionalField("placement", Identifier.CODEC, true)
                     .forGetter { fg -> Optional.ofNullable(fg.blockForPlace?.let { thing -> BuiltInRegistries.BLOCK.getKey(thing) }) },
-                Codec.BOOL.fieldOf("consume_structure").forGetter(StructureRecipe::consumeStructure)
+                Codec.BOOL.fieldOf("consume_structure").orElseGet { false }.forGetter(StructureRecipe::consumeStructure)
             ).apply(it) { multiblockId, time, ingredient, result, chance, placement, consumeStructure ->
                 StructureRecipe(
                     ECRegistries.MULTIBLOCK.getOptional(multiblockId).getOrNull() ?: throw NullPointerException("Multiblock is not registered"),
@@ -69,9 +70,7 @@ class StructureRecipe(
         }
 
         @JvmField
-        val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, StructureRecipe> = StreamCodec.of(
-            ::toNetwork, ::fromNetwork
-        )
+        val STREAM_CODEC = StreamCodec.of(::toNetwork, ::fromNetwork)
 
         private fun fromNetwork(buf: RegistryFriendlyByteBuf): StructureRecipe {
             val multiblockId = Identifier.STREAM_CODEC.decode(buf)

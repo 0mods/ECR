@@ -1,6 +1,7 @@
 package com.algorithmlx.ecr.common.recipe
 
 import com.algorithmlx.ecr.api.ModId
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.RecipeSerializerRegistry
 import com.algorithmlx.ecr.common.init.registry.RecipeTypeRegistry
 import com.mojang.serialization.Codec
@@ -41,7 +42,7 @@ class MithrilineFurnaceRecipe(
     override fun assemble(input: CraftingInput): ItemStack = this.result.create()
 
     override fun showNotification(): Boolean = false
-    override fun group(): String = "$ModId:mithriline_furnace"
+    override fun group(): String = "$ModId:${ECRModIDs.MITHRILINE_FURNACE}"
     override fun getSerializer(): RecipeSerializer<out Recipe<CraftingInput>> = RecipeSerializerRegistry.instance.mithrilineFurnace
     override fun getType(): RecipeType<out Recipe<CraftingInput>> = RecipeTypeRegistry.instance.mithrilineFurnace
     override fun placementInfo(): PlacementInfo = PlacementInfo.NOT_PLACEABLE

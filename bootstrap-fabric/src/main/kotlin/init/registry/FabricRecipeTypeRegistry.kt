@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.fabric.init.registry
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.RecipeTypeRegistry
+import com.algorithmlx.ecr.common.recipe.EnvoyerRecipe
 import com.algorithmlx.ecr.common.recipe.StructureRecipe
 import com.algorithmlx.ecr.common.recipe.MithrilineFurnaceRecipe
 import net.minecraft.core.Registry
@@ -12,7 +13,8 @@ import net.minecraft.world.item.crafting.RecipeType
 
 object FabricRecipeTypeRegistry: RecipeTypeRegistry {
     override val mithrilineFurnace: RecipeType<MithrilineFurnaceRecipe> = registerSimple(ECRModIDs.MITHRILINE_FURNACE)
-    override val itemInStructure: RecipeType<StructureRecipe> = registerSimple(ECRModIDs.STRUCTURE)
+    override val structure: RecipeType<StructureRecipe> = registerSimple(ECRModIDs.STRUCTURE)
+    override val envoyer: RecipeType<EnvoyerRecipe> = registerSimple(ECRModIDs.ENVOYER)
 
     private fun <T: Recipe<*>> registerSimple(id: String): RecipeType<T> {
         val name = id.ecRL.toString()

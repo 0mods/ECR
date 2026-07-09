@@ -6,7 +6,7 @@ pattern:
 key:
   a: minecraft:iron_ingot
   b: minecraft:emerald
-  c: ecreimagined:elemental_gem.yml
+  c: ecreimagined:elemental_gem
 
 result:
   id: ecreimagined:emerald_plate

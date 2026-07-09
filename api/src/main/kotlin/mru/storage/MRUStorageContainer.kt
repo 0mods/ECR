@@ -1,6 +1,5 @@
-package com.algorithmlx.ecr.common.components
+package com.algorithmlx.ecr.api.mru.storage
 
-import com.algorithmlx.ecr.api.mru.MRUStorage
 import com.algorithmlx.ecr.api.mru.MRUType
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
@@ -11,12 +10,12 @@ data class MRUStorageContainer(
     override val mruCapacity: Int,
     override val mruType: MRUType,
     val onChange: (Int) -> Unit = {}
-): MRUStorage {
+): IOMRUStorage {
     private var mru0 = 0
 
     override val mru: Int = mru0
 
-    fun set(amount: Int) {
+    override fun set(amount: Int) {
         if (amount < 0) return
         if (this.mru == amount) return
 
@@ -25,7 +24,7 @@ data class MRUStorageContainer(
         this.onChange(prev)
     }
 
-    fun extract(amount: Int): Int {
+    override fun extract(amount: Int): Int {
         if (amount < 0) return 0
         val extracted = this.mru.coerceAtMost(amount)
         if (extracted > 0) {
@@ -38,7 +37,7 @@ data class MRUStorageContainer(
         return 0
     }
 
-    fun insert(amount: Int): Int {
+    override fun insert(amount: Int): Int {
         if (amount < 0) return 0
 
         val inserted = min(this.mruCapacity - this.mru, amount)
@@ -52,11 +51,11 @@ data class MRUStorageContainer(
         return 0
     }
 
-    fun save(output: ValueOutput) {
+    override fun save(output: ValueOutput) {
         output.putInt("mru", this.mru)
     }
 
-    fun load(input: ValueInput) {
+    override fun load(input: ValueInput) {
         this.mru0 = max(0, input.getIntOr("mru", 0))
     }
 }

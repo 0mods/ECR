@@ -3,7 +3,6 @@ package com.algorithmlx.ecr.client.renderer
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
 import com.mojang.blaze3d.vertex.PoseStack
-import net.minecraft.client.gui.screens.inventory.InventoryScreen
 import net.minecraft.client.model.geom.ModelLayerLocation
 import net.minecraft.client.model.geom.ModelPart
 import net.minecraft.client.model.geom.PartPose
@@ -11,6 +10,7 @@ import net.minecraft.client.model.geom.builders.CubeDeformation
 import net.minecraft.client.model.geom.builders.CubeListBuilder
 import net.minecraft.client.model.geom.builders.LayerDefinition
 import net.minecraft.client.model.geom.builders.MeshDefinition
+import net.minecraft.client.renderer.Sheets
 import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
@@ -19,7 +19,6 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer
 import net.minecraft.client.renderer.rendertype.RenderTypes
 import net.minecraft.client.renderer.state.level.CameraRenderState
 import net.minecraft.client.renderer.texture.OverlayTexture
-import net.minecraft.client.renderer.texture.TextureAtlas
 import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.client.resources.model.sprite.SpriteId
 import net.minecraft.world.phys.Vec3
@@ -64,17 +63,17 @@ class MithrilineFurnaceRenderer(
 
         body.yRot = Math.toRadians(state.coreRotation.toDouble()).toFloat()
 
-        InventoryScreen.INVENTORY_LOCATION
-
         submitNodeCollector.submitModelPart(
-            body, poseStack, RenderTypes.entityCutout(TextureAtlas.LOCATION_BLOCKS),
+            body, poseStack, RenderTypes.entityCutout(MF_MATERIAL.atlasLocation()),
             state.lightCoords, OverlayTexture.NO_OVERLAY, sprite
         )
+
+        poseStack.popPose()
     }
 
     companion object {
         @JvmField val MF_LAYER = ModelLayerLocation("mithriline_furnace".ecRL, "core")
-        @JvmField val MF_MATERIAL = SpriteId(TextureAtlas.LOCATION_BLOCKS, "block/mithriline_furnace".ecRL)
+        @JvmField val MF_MATERIAL = SpriteId(Sheets.BLOCKS_MAPPER.sheet, "block/mithriline_furnace".ecRL)
 
         @JvmStatic
         fun createBodyLayer(): LayerDefinition {

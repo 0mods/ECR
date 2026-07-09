@@ -10,5 +10,5 @@ key:
   d: ecreimagined:earth_gem
   e: ecreimagined:air_gem
 result:
-  id: ecreimagined:elemental_gem.yml
+  id: ecreimagined:elemental_gem
   count: 1
