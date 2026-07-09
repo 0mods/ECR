@@ -5,6 +5,7 @@ import com.algorithmlx.ecr.api.item.HasSubItem
 import com.algorithmlx.ecr.api.item.NoTab
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.common.init.registry.CreativeTabRegistry
+import com.algorithmlx.ecr.common.item.NamedBlockItem
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
@@ -29,9 +30,9 @@ fun onNewRegistry(event: NewRegistryEvent) {
 fun onCreativeTabs(event: BuildCreativeModeTabContentsEvent) {
     BuiltInRegistries.ITEM.keySet().filter { it.namespace == ModId }.forEach {
         val item = BuiltInRegistries.ITEM.getOptional(it).get()
-        if (item is BlockItem && event.tab == CreativeTabRegistry.instance.blocks) {
-            if (item.block is NoTab) return@forEach
-            event.accept(item)
+        if (event.tab == CreativeTabRegistry.instance.blocks) {
+            if ((item is BlockItem || item is NamedBlockItem)  && item.block !is NoTab)
+                event.accept(item)
             return@forEach
         }
 

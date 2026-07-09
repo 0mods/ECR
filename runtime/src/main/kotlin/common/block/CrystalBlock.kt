@@ -53,9 +53,11 @@ class CrystalBlock(properties: Properties) : Block(properties), Multipart<Crysta
         val positions = this.getAllParts(pos, Direction.NORTH)
 
         positions.forEachIndexed { i, p ->
-            level.setBlock(p, state.setValue(PART, if (i == 0) CrystalPart.DOWN else CrystalPart.UP), 3)
+            level.setBlock(p, state.setValue(PART, if (i == 0) CrystalPart.DOWN else CrystalPart.UP), UPDATE_ALL)
         }
     }
+
+    override fun isEnableForPart(state: BlockState): Boolean = state.getValue(PART) != CrystalPart.UP
 
     override fun playerWillDestroy(level: Level, pos: BlockPos, state: BlockState, player: Player): BlockState {
         val part = state.getValue(PART)
@@ -70,7 +72,6 @@ class CrystalBlock(properties: Properties) : Block(properties), Multipart<Crysta
         return super.playerWillDestroy(level, pos, state, player)
     }
 
-    @Suppress("OVERRIDE_DEPRECATION", "WHEN_ENUM_CAN_BE_NULL_IN_JAVA")
     override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape {
         val shape = state.getValue(PART)
         return when(shape) {

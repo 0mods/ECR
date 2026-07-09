@@ -1,27 +1,41 @@
 package com.algorithmlx.ecr.common.block
 
+import com.algorithmlx.ecr.api.block.FullBlockParticles
+import com.algorithmlx.ecr.api.utils.checkAndOpenMenu
 import com.algorithmlx.ecr.common.block.entity.EnvoyerBlockEntity
 import com.algorithmlx.ecr.common.init.registry.BlockCodecRegistry
 import com.algorithmlx.ecr.common.init.registry.BlockRegistry
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
+import net.minecraft.world.InteractionResult
+import net.minecraft.world.entity.player.Player
 import net.minecraft.world.level.BlockGetter
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.EntityBlock
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
+import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 
-class Envoyer(properties: Properties) : Block(properties), EntityBlock {
+class Envoyer(properties: Properties) : Block(properties), EntityBlock, FullBlockParticles {
     override fun newBlockEntity(
         worldPosition: BlockPos,
         blockState: BlockState
     ): BlockEntity = EnvoyerBlockEntity(worldPosition, blockState)
 
     override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape = shape
+
+    override fun useWithoutItem(
+        state: BlockState,
+        level: Level,
+        pos: BlockPos,
+        player: Player,
+        hitResult: BlockHitResult
+    ): InteractionResult = checkAndOpenMenu<EnvoyerBlockEntity>(player, level, pos)
 
     private val shape by lazy {
         var shape = Shapes.empty()

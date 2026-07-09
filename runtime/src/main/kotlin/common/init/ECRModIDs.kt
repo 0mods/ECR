@@ -1,5 +1,7 @@
 package com.algorithmlx.ecr.common.init
 
+import com.algorithmlx.ecr.api.ecRL
+
 object ECRModIDs {
     // Block Type Codecs
     const val CLUSTER = "cluster"
@@ -82,4 +84,6 @@ object ECRModIDs {
     // Creative Tabs
     const val TAB_ITEMS = "tab_items"
     const val TAB_BLOCKS = "tab_blocks"
+
+    fun guiLocation(id: String) = "textures/gui/$id.png".ecRL
 }

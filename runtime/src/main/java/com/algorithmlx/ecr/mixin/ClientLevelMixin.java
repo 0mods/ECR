@@ -14,8 +14,10 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 public class ClientLevelMixin {
     @ModifyVariable(method = "addDestroyBlockEffect", at = @At("STORE"), name = "shape")
     private VoxelShape lol(VoxelShape shape, BlockPos pos, BlockState blockState) {
-        if (blockState.getBlock() instanceof FullBlockParticles)
+        if (blockState.getBlock() instanceof FullBlockParticles fbp) {
+            if (!fbp.isEnableForPart(blockState)) return Shapes.empty();
             return Shapes.block();
+        }
         return shape;
     }
 }

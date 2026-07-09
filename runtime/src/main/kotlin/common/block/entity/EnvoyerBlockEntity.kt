@@ -5,12 +5,14 @@ import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.MRUTypeRegistry
+import com.algorithmlx.ecr.common.menu.EnvoyerMenu
 import net.minecraft.core.BlockPos
 import net.minecraft.core.NonNullList
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerData
+import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity
@@ -56,9 +58,11 @@ class EnvoyerBlockEntity(
     override fun createMenu(
         containerId: Int,
         inventory: Inventory
-    ): AbstractContainerMenu {
-        TODO("Not yet implemented")
-    }
+    ): AbstractContainerMenu = EnvoyerMenu(
+        containerId, inventory, this, this,
+        ContainerLevelAccess.create(this.level!!, this.blockPos),
+        containerData
+    )
 
     override fun saveAdditional(output: ValueOutput) {
         output.putInt("progress", this.progress)

@@ -173,7 +173,7 @@ class MithrilineFurnaceEntity(
                     val bpUp = BlockPos(xo, pos.y + 3, zo)
                     val bsUp = level.getBlockState(bpUp)
 
-                    if (bsUp.`is`(BlockRegistry.instance.mithrilineCrystal) && upCrystalCount + 1 <= 4)
+                    if (bsUp.`is`(BlockRegistry.instance.mithrilineCrystal) && upCrystalCount + 1 <= 5)
                         upCrystalCount++
                 }
             }
@@ -231,11 +231,16 @@ class MithrilineFurnaceEntity(
             } else resetProgress()
         }
 
-        @JvmStatic
         private fun MithrilineFurnaceEntity.processTick(mru: Int) {
             val storage = this.mruStorage
             val extractionStep = (1..1000).reversed().firstOrNull { this.canExtract(mru, it) } ?: 0
-            storage.extract(extractionStep)
+
+            if (extractionStep <= 0) return
+
+            val extracted = storage.extract(extractionStep)
+            if (extracted <= 0) return
+
+            this.craftProgress += extracted
             this.setChanged()
         }
 

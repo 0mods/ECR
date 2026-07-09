@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.common.api
 
+import com.algorithmlx.ecr.api.block.FullBlockParticles
 import com.algorithmlx.ecr.common.block.SolarPrism
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
@@ -24,7 +25,7 @@ import java.util.Optional
 abstract class SideBlock(properties: Properties): CrossCollisionBlock(
     8f, 8f, 16f, 16f, 16f,
     properties
-) {
+), FullBlockParticles {
     init {
         this.registerDefaultState(
             this.stateDefinition.any().setValue(NORTH, false)

@@ -25,13 +25,13 @@ import java.util.Optional
 
 class EnvoyerRecipe(
     val inputs: Optional<ShapedRecipePattern>,
-    val catalyst: Ingredient,
+    val catalyst: Optional<Ingredient>,
     val time: Int,
     val mruPerTick: Int,
     val result: ItemStackTemplate
 ): Recipe<CraftingInput> {
     init {
-        require(inputs.isPresent || !catalyst.isEmpty) { "Recipe must present with inputs or catalyst!" }
+        require(inputs.isPresent || catalyst.isPresent) { "Recipe must present with inputs or catalyst!" }
         require(inputs.isPresent && inputs.get().height() * inputs.get().width() < 5) { "Recipe max have only ~2x2 recipe grid" }
     }
 
@@ -46,7 +46,7 @@ class EnvoyerRecipe(
             if (!shaped.matches(craftingInput)) return false
         }
 
-        return (catalyst.isEmpty && input.items().getOrElse(4) { ItemStack.EMPTY }.isEmpty) || (input.items().size > 4 && catalyst.test(input.items()[4]))
+        return (catalyst.isEmpty && input.items().getOrElse(4) { ItemStack.EMPTY }.isEmpty) || (input.items().size > 4 && catalyst.get().test(input.items()[4]))
     }
 
     override fun assemble(input: CraftingInput): ItemStack = this.result.create()
@@ -70,7 +70,7 @@ class EnvoyerRecipe(
                 ShapedRecipePattern.MAP_CODEC.codec()
                     .optionalFieldOf("input")
                     .forGetter(EnvoyerRecipe::inputs),
-                Ingredient.CODEC.optionalFieldOf("catalyst", Ingredient.of()).forGetter(EnvoyerRecipe::catalyst),
+                Ingredient.CODEC.optionalFieldOf("catalyst").forGetter(EnvoyerRecipe::catalyst),
                 Codec.INT.fieldOf("time").forGetter(EnvoyerRecipe::time),
                 Codec.INT.fieldOf("mru").forGetter(EnvoyerRecipe::mruPerTick),
                 ItemStackTemplate.MAP_CODEC.fieldOf("result").forGetter(EnvoyerRecipe::result)
@@ -82,7 +82,7 @@ class EnvoyerRecipe(
 
         private fun fromNetwork(buf: RegistryFriendlyByteBuf): EnvoyerRecipe {
             val pattern = buf.readOptional { ShapedRecipePattern.STREAM_CODEC.decode(it as RegistryFriendlyByteBuf) }
-            val catalyst = Ingredient.CONTENTS_STREAM_CODEC.decode(buf)
+            val catalyst = Ingredient.OPTIONAL_CONTENTS_STREAM_CODEC.decode(buf)
             val time = buf.readInt()
             val mru = buf.readInt()
             val result = ItemStackTemplate.STREAM_CODEC.decode(buf)
@@ -91,7 +91,7 @@ class EnvoyerRecipe(
 
         private fun toNetwork(buf: RegistryFriendlyByteBuf, recipe: EnvoyerRecipe) {
             buf.writeOptional(recipe.inputs) { b, pattern -> ShapedRecipePattern.STREAM_CODEC.encode(b as RegistryFriendlyByteBuf, pattern) }
-            Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.catalyst)
+            Ingredient.OPTIONAL_CONTENTS_STREAM_CODEC.encode(buf, recipe.catalyst)
             buf.writeInt(recipe.time)
             buf.writeInt(recipe.mruPerTick)
             ItemStackTemplate.STREAM_CODEC.encode(buf, recipe.result)

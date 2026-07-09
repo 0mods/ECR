@@ -5,6 +5,7 @@ plugins {
 }
 
 val minecraftVersion = rootProject.providers.gradleProperty("libs.minecraft").get()
+val modId = providers.gradleProperty("mod.id").get()
 val modPlatforms = rootProject.providers
     .gradleProperty("mod.platforms")
     .get()
@@ -22,6 +23,16 @@ repositories {
     maven("https://maven.fabricmc.net/")
 }
 
+loom {
+    mods {
+        maybeCreate(modId).apply {
+            sourceSet("main")
+            sourceSet("main", ":api")
+            sourceSet("main", ":runtime")
+        }
+    }
+}
+
 dependencies {
     minecraft("com.mojang:minecraft:$minecraftVersion")
     implementation(libs.bundles.fabricmc)
@@ -37,7 +48,7 @@ dependencies {
 }
 
 val modMetadata = mapOf(
-    "modId" to providers.gradleProperty("mod.id").get(),
+    "modId" to modId,
     "modVersion" to providers.gradleProperty("mod.version").get(),
     "modName" to providers.gradleProperty("mod.name").get(),
     "modDesc" to providers.gradleProperty("mod.description").get(),

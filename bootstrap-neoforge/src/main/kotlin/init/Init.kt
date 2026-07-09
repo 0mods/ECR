@@ -29,7 +29,10 @@ fun forgeStarter(bus: IEventBus) {
     RecipeSerializerRegistry.instance = NeoForgeRecipeSerializerRegistry(bus)
     RecipeTypeRegistry.instance = NeoForgeRecipeTypeRegistry(bus)
     NeoForgeResearch.init(bus)
-    if (FMLEnvironment.getDist().isClient) NeoForgeResearchClient.init(bus)
+    if (FMLEnvironment.getDist().isClient) {
+        NeoForgeClientInit.init(bus)
+        NeoForgeResearchClient.init(bus)
+    }
 
     openMenuScreenInternal = { player: Player, provider: MenuProvider, _: Level, pos: BlockPos ->
         player.openMenu(provider, pos)

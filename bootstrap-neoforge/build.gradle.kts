@@ -5,6 +5,7 @@ plugins {
 }
 
 val minecraftVersion = rootProject.providers.gradleProperty("libs.minecraft").get()
+val modId = providers.gradleProperty("mod.id").get()
 val modPlatforms = rootProject.providers
     .gradleProperty("mod.platforms")
     .get()
@@ -20,6 +21,16 @@ base {
 repositories {
     maven("https://repo.spongepowered.org/repository/maven-public/")
     maven("https://maven.neoforged.net/releases/")
+}
+
+loom {
+    mods {
+        maybeCreate(modId).apply {
+            sourceSet("main")
+            sourceSet("main", ":api")
+            sourceSet("main", ":runtime")
+        }
+    }
 }
 
 dependencies {
