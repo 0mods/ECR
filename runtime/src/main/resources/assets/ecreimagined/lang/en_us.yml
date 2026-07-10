@@ -109,9 +109,21 @@ config.jade.plugin_ecreimagined:
     espe_collector: "Active ESPE collectors: %s/%s"
 
 screen.ecreimagined:
-  research_book: Research Book
-  complete_task: Complete task
-  complete_research: Complete research
+  research_book:
+    .: Research Book
+    complete_research: Complete research
+    experience:
+      .: Experience
+      levels: Experience Levels
+    task:
+      .: Task
+      requires: "Requires:"
+      more: and %s more...
+    research:
+      .: "Research: %s"
+    recipe:
+      failed: Failed to init recipe render for item %s because recipe render is not registered for type %s.
+    page: Page %s/%s
 
 toast.ecreimagined:
   research_unlocked: Research unlocked

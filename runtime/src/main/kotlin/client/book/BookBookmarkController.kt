@@ -180,21 +180,21 @@ class BookBookmarkController {
         val buttonsY = svY + HUE_HEIGHT + PADDING
         val cancelX = cancelButtonX(hueX)
         val saveX = confirmButtonX(cancelX)
-        when {
-            mouseX in pickerX until pickerX + PICKER_WIDTH && mouseY in pickerY until pickerY + HEADER_HEIGHT -> draggingPicker = true
-            mouseX in svX until svX + SV_SIZE && mouseY in svY until svY + SV_SIZE -> {
+        when (mouseX) {
+            in pickerX until pickerX + PICKER_WIDTH if mouseY in pickerY until pickerY + HEADER_HEIGHT -> draggingPicker = true
+            in svX until svX + SV_SIZE if mouseY in svY until svY + SV_SIZE -> {
                 draggingSaturation = true
                 updateSaturation(mouseX - svX, mouseY - svY)
             }
-            mouseX in hueX until hueX + HUE_WIDTH && mouseY in svY until svY + HUE_HEIGHT -> {
+            in hueX until hueX + HUE_WIDTH if mouseY in svY until svY + HUE_HEIGHT -> {
                 draggingHue = true
                 updateHue(mouseY - svY)
             }
-            mouseX in saveX until saveX + PICKER_BUTTON_SIZE && mouseY in buttonsY until buttonsY + PICKER_BUTTON_SIZE -> {
+            in saveX until saveX + PICKER_BUTTON_SIZE if mouseY in buttonsY until buttonsY + PICKER_BUTTON_SIZE -> {
                 target?.let { ResearchNetwork.updateFavorite(it.research, it.spread, draftColor) }
                 close()
             }
-            mouseX in cancelX until cancelX + PICKER_BUTTON_SIZE && mouseY in buttonsY until buttonsY + PICKER_BUTTON_SIZE -> {
+            in cancelX until cancelX + PICKER_BUTTON_SIZE if mouseY in buttonsY until buttonsY + PICKER_BUTTON_SIZE -> {
                 if (targetHadBookmark) target?.let { ResearchNetwork.updateFavorite(it.research, it.spread, null) }
                 close()
             }
@@ -431,7 +431,7 @@ class BookBookmarkController {
             val entry = ResearchCatalog.snapshot().entries[bookmark.research]
             val title = entry?.title?.component()
                 ?: Component.literal(bookmark.research.toString())
-            val spreadCount = entry?.let { BookPageLayout.paginate(it).size } ?: bookmark.spread + 1
+            val spreadCount = entry?.let { BookPageLayout.paginate(it).size } ?: (bookmark.spread + 1)
             listOf(title, pageTooltip(bookmark.spread, spreadCount))
         }
     }

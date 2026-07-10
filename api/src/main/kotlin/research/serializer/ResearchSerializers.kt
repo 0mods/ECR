@@ -170,11 +170,10 @@ private object BlockElementSerializer :
     override fun encode(value: BlockBookElement): JsonObject = researchJson.encodeToJsonElement(BlockElementDto(value.block.toString())).jsonObject
 }
 
-private object MultiblockElementSerializer :
-    BookElementSerializer<MultiblockBookElement> {
+private object MultiblockElementSerializer : BookElementSerializer<MultiblockBookElement> {
     override val type = ResearchIds.MULTIBLOCK
-    override val defaultWidth = 208
-    override val defaultHeight = 96
+    override val defaultWidth = 150
+    override val defaultHeight = 150
     override fun decode(json: JsonObject): MultiblockBookElement = researchJson.decodeFromJsonElement<MultiblockElementDto>(json).let {
         MultiblockBookElement(
             Identifier.parse(it.multiblock),

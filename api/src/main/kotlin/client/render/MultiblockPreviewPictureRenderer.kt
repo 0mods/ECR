@@ -1,6 +1,8 @@
 package com.algorithmlx.ecr.api.client.render
 
+import com.mojang.blaze3d.platform.Lighting
 import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer
 import net.minecraft.client.renderer.SubmitNodeCollector
 
@@ -14,6 +16,10 @@ class MultiblockPreviewPictureRenderer(
         poseStack: PoseStack,
         submitter: SubmitNodeCollector
     ) {
+        // Block models need the same directional lighting as 3D block items.
+        // Without it, every face receives nearly identical light and the model looks flat.
+        Minecraft.getInstance().gameRenderer.lighting().setupFor(Lighting.Entry.ITEMS_3D)
+
         val bounds = MultiblockPreviewBounds(
             x = -(state.x1() - state.x0()) / 2f,
             y = -(state.y1() - state.y0()) / 2f,

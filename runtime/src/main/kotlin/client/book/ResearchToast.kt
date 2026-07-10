@@ -52,7 +52,7 @@ class ResearchToast private constructor(private val entry: BookEntry) : Toast {
         if (introAlpha > 0) {
             graphics.text(
                 font,
-                Component.translatable("toast.$ModId.research_completed"),
+                Component.translatable("toast.$ModId.research_book.research_completed"),
                 TEXT_X,
                 (contentHeight - font.lineHeight) / 2,
                 (introAlpha shl 24) or 0x9FD5FF,

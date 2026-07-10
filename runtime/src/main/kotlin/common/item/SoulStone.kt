@@ -18,7 +18,10 @@ class SoulStone(properties: Properties): Item(
     override fun inventoryTick(itemStack: ItemStack, level: ServerLevel, owner: Entity, slot: EquipmentSlot?) {
         if (owner is ServerPlayer) {
             val component = itemStack.getOrDefault(DataComponentRegistry.instance.soulStone, SoulStoneComponent.EMPTY)
-            if (component == SoulStoneComponent.EMPTY) return
+            if (component == SoulStoneComponent.EMPTY) {
+                itemStack.set(DataComponentRegistry.instance.soulStone, SoulStoneComponent(owner.uuid, owner.name.string, 0))
+                return
+            }
 
             if (owner.name.string == component.ownerName) return
             itemStack.set(DataComponentRegistry.instance.soulStone, component.copy(ownerName = owner.name.string))

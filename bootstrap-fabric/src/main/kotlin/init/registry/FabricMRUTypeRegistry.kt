@@ -9,12 +9,9 @@ import net.minecraft.core.Registry
 import net.minecraft.network.chat.Component
 
 object FabricMRUTypeRegistry: MRUTypeRegistry {
-    override val espe: MRUType = register(ECRModIDs.ESPE, simple(Component.literal("ESPE")))
-    override val radiationUnit: MRUType = register(ECRModIDs.MRU, simple(Component.literal("MRU")))
+    override val espe: MRUType = register(ECRModIDs.ESPE, MRUType())
+    override val radiationUnit: MRUType = register(ECRModIDs.MRU, MRUType())
+    override val ubmru: MRUType = register(ECRModIDs.UBMRU, MRUType(radiationUnit, 10))
 
     private fun <T: MRUType> register(id: String, type: T) = Registry.register(ECRegistries.MRU_TYPE, id.ecRL, type)
-
-    private fun simple(display: Component) = object : MRUType {
-        override val name: Component = display
-    }
 }

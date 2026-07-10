@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.client.book
 
+import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.client.research.*
 import com.algorithmlx.ecr.api.ecRL
 import com.mojang.blaze3d.platform.cursor.CursorTypes
@@ -153,9 +154,7 @@ object BookRecipeElementRenderer {
     private fun missingRendererMessage(recipe: Recipe<*>, result: ItemStack): Component {
         val itemName = if (result.isEmpty) Component.literal("<unknown>") else result.hoverName
         val recipeType = BuiltInRegistries.RECIPE_TYPE.getKey(recipe.type)?.toString() ?: recipe.type.toString()
-        return Component.literal("Failed to init recipe render for item ")
-            .append(itemName)
-            .append(Component.literal(" because recipe render is not registered for type $recipeType."))
+        return Component.translatable("screen.$ModId.research_book.recipe.failed", itemName, recipeType)
     }
 
     private const val SLOT_SIZE = 32

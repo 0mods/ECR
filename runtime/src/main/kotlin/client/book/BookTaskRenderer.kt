@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.client.book
 
+import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.client.research.BookElementRenderContext
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.BookEntry
@@ -94,8 +95,8 @@ object BookTaskRenderer {
     private fun taskTitle(definition: ResearchTaskDefinition, stack: ItemStack?): Component =
         definition.title?.component() ?: when (val task = definition.task) {
             is CraftingResearchTask -> Component.literal(task.recipe.toString())
-            is ExperienceResearchTask -> Component.literal(if (task.levels) "Experience levels" else "Experience")
-            else -> stack?.hoverName ?: Component.literal("Task")
+            is ExperienceResearchTask -> Component.translatable(if (task.levels) "screen.$ModId.research_book.experience.levels" else "screen.$ModId.research_book.experience")
+            else -> stack?.hoverName ?: Component.literal("screen.$ModId.research_book.task")
         }
 
     private fun renderIcon(context: BookElementRenderContext, icon: BookIcon?, x: Int, y: Int) {

@@ -58,13 +58,13 @@ object CraftingTableRecipeRenderer : BookRecipeRenderer<CraftingRecipe> {
 
     private fun renderResult(builder: BookRecipeRenderBuilder, result: SlotDisplay) {
         builder.slotAdd(result, BookRecipeSlotType.RESULT, RESULT_X, RESULT_Y)
-        builder.item(item, RESULT_X + ITEM_OFFSET, CRAFTING_STATION_Y)
+        builder.item(item, RESULT_X + ITEM_OFFSET + 4, CRAFTING_STATION_Y)
         builder.tooltip(
             Component.empty()
                 .append(item.itemName)
                 .append(" ")
                 .append(Component.translatable("tooltip.$ModId.recipe")),
-            RESULT_X + ITEM_OFFSET,
+            RESULT_X + ITEM_OFFSET * 2,
             CRAFTING_STATION_Y,
             16
         )

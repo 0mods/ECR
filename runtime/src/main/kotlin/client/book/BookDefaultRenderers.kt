@@ -1,8 +1,5 @@
 package com.algorithmlx.ecr.client.book
 
-import com.algorithmlx.ecr.api.client.render.MultiblockPreviewGuiBridge
-import com.algorithmlx.ecr.api.client.render.MultiblockPreviewRenderState
-import com.algorithmlx.ecr.api.client.render.MultiblockPreviewTransform
 import com.algorithmlx.ecr.api.client.research.BookElementRenderContext
 import com.algorithmlx.ecr.api.client.research.BookElementRenderers
 import com.algorithmlx.ecr.api.client.research.BookRecipeRenderers
@@ -62,22 +59,6 @@ object BookDefaultRenderers {
         val multiblock = ECRegistries.MULTIBLOCK.getOptional(element.multiblock).orElse(null) ?: return
         val access = Minecraft.getInstance().level?.registryAccess() ?: return
         multiblock.registryAccess = access
-        MultiblockPreviewGuiBridge.add(
-            context.graphics,
-            MultiblockPreviewRenderState(
-                multiblock,
-                MultiblockPreviewTransform(
-                    scale = element.scale,
-                    rotationX = element.rotationX,
-                    rotationY = element.rotationY,
-                    layer = element.layer
-                ),
-                context.screenX,
-                context.screenY,
-                context.screenX + context.screenWidth,
-                context.screenY + context.screenHeight
-            )
-        )
+        MultiblockBookPreviewController.render(context, element, multiblock)
     }
-
 }

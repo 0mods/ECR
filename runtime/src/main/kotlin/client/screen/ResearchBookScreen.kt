@@ -28,6 +28,7 @@ import com.algorithmlx.ecr.client.book.BookRecipeElementRenderer
 import com.algorithmlx.ecr.client.book.BookRenderPipelines
 import com.algorithmlx.ecr.client.book.BookSpread
 import com.algorithmlx.ecr.client.book.BookThreadRenderer
+import com.algorithmlx.ecr.client.book.MultiblockBookPreviewController
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.platform.cursor.CursorTypes
 import net.minecraft.ChatFormatting
@@ -92,6 +93,7 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
 
     override fun init() {
         super.init()
+        MultiblockBookPreviewController.clear()
         val categories = categories()
         val saved = ClientResearchState.viewState()
         bookmarks.restore(saved, width, height)
@@ -146,12 +148,17 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
     }
 
     override fun mouseClicked(event: MouseButtonEvent, doubleClick: Boolean): Boolean {
-        if (event.button() != 0 && event.button() != 2) return super.mouseClicked(event, doubleClick)
+        if (event.button() != 0 && event.button() != 1 && event.button() != 2) {
+            return super.mouseClicked(event, doubleClick)
+        }
         val mouseX = event.x().toInt()
         val mouseY = event.y().toInt()
 
         if (event.button() == 0 && bookmarks.click(mouseX, mouseY)) return true
-        if (selectedEntry != null) return handleBookClick(mouseX, mouseY, event.button())
+        if (selectedEntry != null) {
+            if (MultiblockBookPreviewController.mouseClicked(mouseX, mouseY, event.button(), isShiftDown())) return true
+            return handleBookClick(mouseX, mouseY, event.button())
+        }
         if (event.button() == 0 && bookmarks.clickGlobalSlider(mouseX, mouseY, width, height)) return true
         if (event.button() != 0) return super.mouseClicked(event, doubleClick)
         bookmarks.selectGlobal(mouseX, mouseY, width, height)?.let { bookmark ->
@@ -179,8 +186,10 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
     }
 
     override fun mouseDragged(event: MouseButtonEvent, dragX: Double, dragY: Double): Boolean {
-        if (event.button() != 0) return super.mouseDragged(event, dragX, dragY)
+        if (event.button() != 0 && event.button() != 1) return super.mouseDragged(event, dragX, dragY)
 
+        if (selectedEntry != null && MultiblockBookPreviewController.mouseDragged(dragX, dragY, isShiftDown())) return true
+        if (event.button() != 0) return super.mouseDragged(event, dragX, dragY)
         if (bookmarks.drag(event.x().toInt(), event.y().toInt(), dragX, dragY, width, height)) return true
 
         if (draggingCategorySlider) {
@@ -198,17 +207,18 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
     }
 
     override fun mouseReleased(event: MouseButtonEvent): Boolean {
+        val previewReleased = MultiblockBookPreviewController.mouseReleased(event.button())
         draggingGraph = false
         draggingCategorySlider = false
         bookmarks.stopDragging()
-        return super.mouseReleased(event)
+        return previewReleased || super.mouseReleased(event)
     }
 
     override fun mouseScrolled(mouseX: Double, mouseY: Double, scrollX: Double, scrollY: Double): Boolean {
-        if (selectedEntry != null) return false
-        val window = Minecraft.getInstance().window
-        val shift = InputConstants.isKeyDown(window, InputConstants.KEY_LSHIFT) ||
-                InputConstants.isKeyDown(window, InputConstants.KEY_RSHIFT)
+        if (selectedEntry != null) {
+            return MultiblockBookPreviewController.mouseScrolled(mouseX.toInt(), mouseY.toInt(), scrollY)
+        }
+        val shift = isShiftDown()
 
         if (bookmarks.scrollGlobal(mouseX.toInt(), mouseY.toInt(), scrollY, width, height)) return true
 
@@ -248,7 +258,14 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
 
     override fun removed() {
         saveViewState()
+        MultiblockBookPreviewController.clear()
         super.removed()
+    }
+
+    private fun isShiftDown(): Boolean {
+        val window = Minecraft.getInstance().window
+        return InputConstants.isKeyDown(window, InputConstants.KEY_LSHIFT) ||
+            InputConstants.isKeyDown(window, InputConstants.KEY_RSHIFT)
     }
 
     private fun frameDelta(): Float {
@@ -395,9 +412,9 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
         if (includeTitle) add(entry.title.component(entry.titleShadow))
         val missing = missingRequirements(entry)
         if (missing.visible.isNotEmpty() || missing.hidden > 0) {
-            add(Component.literal("Requires:"))
+            add(Component.translatable("screen.$ModId.research_book.task.requires"))
             missing.visible.forEach { add(Component.literal(" - ").append(it)) }
-            if (missing.hidden > 0) add(Component.literal("and ${missing.hidden} more..."))
+            if (missing.hidden > 0) add(Component.translatable("screen.$ModId.research_book.task.more", missing.hidden))
         }
         activeTaskProgress(entry).filter { !it.first.hidden }.forEach { (definition, progress) ->
             add(Component.empty().append(taskTitle(definition)).append(Component.literal(": ${progress.current}/${progress.required}")))
@@ -450,19 +467,23 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
         val entry = ResearchCatalog.snapshot().entries[research]
         val title = entry?.title?.component(entry.titleShadow) ?: Component.literal(research.toString())
         return if (taskId == null) {
-            Component.literal("Research: ").append(title)
+            Component.translatable("screen.$ModId.research_book.research", title)
         } else {
             val taskTitle = entry?.taskDefinitions?.firstOrNull { it.id == taskId }?.let(::taskTitle)
-                ?: Component.literal(if (taskId.startsWith("task_")) "Task" else taskId)
-            Component.literal("Task: ").append(title).append(Component.literal(" / ")).append(taskTitle)
+                ?: if (taskId.startsWith("task_")) Component.translatable("screen.$ModId.research_book.task") else Component.literal(taskId)
+            Component.translatable("screen.$ModId.research_book.task")
+                .append(String.format(": %s / %s", title, taskTitle))
         }
     }
 
     private fun taskTitle(definition: ResearchTaskDefinition): Component =
         definition.title?.component() ?: when (val task = definition.task) {
             is CraftingResearchTask -> Component.literal(task.recipe.toString())
-            is ExperienceResearchTask -> Component.literal(if (task.levels) "Experience levels" else "Experience")
-            else -> Component.literal("Task")
+
+            is ExperienceResearchTask -> if (task.levels)
+                Component.translatable("screen.$ModId.research_book.experience.levels")
+            else Component.translatable("screen.$ModId.research_book.experience")
+            else -> Component.translatable("screen.$ModId.research_book.task")
         }
 
     private fun renderBook(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, partialTick: Float) {
@@ -487,7 +508,8 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
         graphics.enableScissor(0, 0, BOOK_WIDTH, BOOK_HEIGHT)
 
         BookRecipeElementRenderer.clearHoveredViewerStack()
-        spreads[spreadIndex].elements.forEach { placement ->
+        MultiblockBookPreviewController.beginFrame()
+        spreads[spreadIndex].elements.forEachIndexed { placementIndex, placement ->
             val absX = transform.x + (placement.x * transform.scale).toInt()
             val absY = transform.y + (placement.y * transform.scale).toInt()
             val absW = (placement.width * transform.scale).toInt()
@@ -509,7 +531,8 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
                     absW,
                     absH,
                     transform.scale,
-                    placement.textLines
+                    placement.textLines,
+                    "${entry.id}|$spreadIndex|$placementIndex"
                 ),
                 placement.element.content
             )
@@ -538,7 +561,8 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
     ) {
         val font = Minecraft.getInstance().font
         val title = entry.title.component(entry.titleShadow)
-        val page = Component.literal("Page ${spread + 1}/${spreadCount.coerceAtLeast(1)}")
+
+        val page = Component.translatable("screen.$ModId.research_book.page", spread + 1, spreadCount.coerceAtLeast(1))
             .withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)
         graphics.setComponentTooltipForNextFrame(font, listOf(title, page), mouseX, mouseY)
     }
