@@ -4,7 +4,6 @@ import com.algorithmlx.ecr.api.block.FullBlockParticles
 import com.algorithmlx.ecr.api.utils.checkAndOpenMenu
 import com.algorithmlx.ecr.common.block.entity.EnvoyerBlockEntity
 import com.algorithmlx.ecr.common.init.registry.BlockCodecRegistry
-import com.algorithmlx.ecr.common.init.registry.BlockRegistry
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionResult

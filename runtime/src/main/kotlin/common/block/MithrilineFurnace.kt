@@ -4,7 +4,9 @@ import com.algorithmlx.ecr.api.block.FullBlockParticles
 import com.algorithmlx.ecr.api.utils.checkAndOpenMenu
 import com.algorithmlx.ecr.api.utils.simpleTicker
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
+import com.algorithmlx.ecr.common.init.registry.BlockCodecRegistry
 import com.algorithmlx.ecr.common.init.registry.MultiblockRegistry
+import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player
@@ -67,4 +69,6 @@ class MithrilineFurnace(properties: Properties): Block(properties), EntityBlock,
         shape = Shapes.join(shape, Shapes.box(0.0, 0.375, 0.0, 1.0, 0.625, 1.0), BooleanOp.OR)
         shape
     }
+
+    override fun codec(): MapCodec<out Block> = BlockCodecRegistry.instance.mithrilineFurnace
 }

@@ -36,6 +36,8 @@ fun onCreativeTabs(event: BuildCreativeModeTabContentsEvent) {
             return@forEach
         }
 
+        if (BuiltInRegistries.BLOCK.getOptional(it).isPresent) return@forEach
+
         if (item is NoTab || event.tab != CreativeTabRegistry.instance.items) return@forEach
 
         if (item is HasSubItem) {

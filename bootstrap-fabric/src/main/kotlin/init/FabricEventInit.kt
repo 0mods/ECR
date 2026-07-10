@@ -8,6 +8,7 @@ import com.algorithmlx.ecr.common.init.registry.CreativeTabRegistry
 import com.algorithmlx.ecr.common.item.NamedBlockItem
 import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents
+import net.fabricmc.fabric.api.event.player.PlayerPickItemEvents
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
@@ -33,6 +34,8 @@ object FabricEventInit {
                         output.accept(item)
                     return@forEach
                 }
+
+                if (BuiltInRegistries.BLOCK.getOptional(it).isPresent) return@forEach
 
                 if (item is NoTab || tab != CreativeTabRegistry.instance.items) return@forEach
 

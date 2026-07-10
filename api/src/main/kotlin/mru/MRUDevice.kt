@@ -14,7 +14,7 @@ import net.minecraft.world.level.Level
  *
  * [net.minecraft.world.level.block.entity.BlockEntity]
  */
-interface MRUHolder {
+interface MRUDevice {
     /**
      * Returns the current MRU storage associated with this holder.
      *
@@ -36,14 +36,14 @@ interface MRUHolder {
      *
      * This is necessary for the MRU pick-up and distribution process.
      *
-     * @return the [MRUHolderType] of this holder.
+     * @return the [DeviceType] of this holder.
      */
-    val holderType: MRUHolderType
+    val holderType: DeviceType
 
     /**
      * Enum representing the different types of MRU Holders and their capabilities.
      */
-    enum class MRUHolderType {
+    enum class DeviceType {
         /**
          * Represents an entity that can receive MRU but does not export it.
          */
@@ -90,6 +90,6 @@ interface MRUHolder {
     data class LocatorData(val locatorStorage: Container, val locatorSlot: Int)
 }
 
-fun MRUHolder.processReceive(level: Level) {
+fun MRUDevice.processReceive(level: Level) {
     if (level.isClientSide) return
 }

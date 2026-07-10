@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.common.block.entity
 
-import com.algorithmlx.ecr.api.mru.MRUHolder
+import com.algorithmlx.ecr.api.mru.MRUDevice
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
@@ -9,6 +9,7 @@ import com.algorithmlx.ecr.common.menu.EnvoyerMenu
 import net.minecraft.core.BlockPos
 import net.minecraft.core.NonNullList
 import net.minecraft.network.chat.Component
+import net.minecraft.world.ContainerHelper
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerData
@@ -16,7 +17,6 @@ import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity
-import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
@@ -24,7 +24,7 @@ import net.minecraft.world.level.storage.ValueOutput
 class EnvoyerBlockEntity(
     worldPosition: BlockPos,
     blockState: BlockState
-) : BaseContainerBlockEntity(BlockEntityTypeRegistry.instance.envoyer, worldPosition, blockState), MRUHolder {
+) : BaseContainerBlockEntity(BlockEntityTypeRegistry.instance.envoyer, worldPosition, blockState), MRUDevice {
     private var items: NonNullList<ItemStack> = NonNullList.withSize(8, ItemStack.EMPTY)
 
     private val containerData: ContainerData = object : ContainerData {
@@ -65,6 +65,7 @@ class EnvoyerBlockEntity(
     )
 
     override fun saveAdditional(output: ValueOutput) {
+        ContainerHelper.saveAllItems(output, this.items)
         output.putInt("progress", this.progress)
         output.putInt("max_progress", this.maxProgress)
         this.mruStorage.save(output)
@@ -72,6 +73,7 @@ class EnvoyerBlockEntity(
     }
 
     override fun loadAdditional(input: ValueInput) {
+        ContainerHelper.loadAllItems(input, this.items)
         this.progress = input.getIntOr("progress", 0)
         this.maxProgress = input.getIntOr("max_progress", 0)
         this.mruStorage.load(input)
@@ -83,9 +85,9 @@ class EnvoyerBlockEntity(
     override fun canPlaceItem(slot: Int, itemStack: ItemStack): Boolean = if (slot == 5) false else super.canPlaceItem(slot, itemStack)
 
     override val mruStorage: IOMRUStorage = MRUStorageContainer(5000, MRUTypeRegistry.instance.espe) { setChanged() }
-    override val holderType: MRUHolder.MRUHolderType = MRUHolder.MRUHolderType.RECEIVER
+    override val holderType: MRUDevice.DeviceType = MRUDevice.DeviceType.RECEIVER
 
-    override val locator: MRUHolder.LocatorData = MRUHolder.LocatorData(this, 6)
+    override val locator: MRUDevice.LocatorData = MRUDevice.LocatorData(this, 6)
 
     companion object {
         fun onTick(level: Level, be: EnvoyerBlockEntity) {

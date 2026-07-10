@@ -31,6 +31,12 @@ loom {
             sourceSet("main", ":runtime")
         }
     }
+
+    runs {
+        named("client") {
+            programArguments.addAll(listOf("--username", "AlgorithmLX"))
+        }
+    }
 }
 
 dependencies {

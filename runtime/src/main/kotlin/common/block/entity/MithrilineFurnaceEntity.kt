@@ -1,7 +1,7 @@
 package com.algorithmlx.ecr.common.block.entity
 
 import com.algorithmlx.ecr.api.block.entity.syncForNearby
-import com.algorithmlx.ecr.api.mru.MRUHolder
+import com.algorithmlx.ecr.api.mru.MRUDevice
 import com.algorithmlx.ecr.api.recipe.CachedRecipe
 import com.algorithmlx.ecr.api.utils.StackHelper
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
@@ -38,7 +38,7 @@ import kotlin.math.floor
 class MithrilineFurnaceEntity(
     worldPosition: BlockPos,
     blockState: BlockState
-): BaseContainerBlockEntity(BlockEntityTypeRegistry.instance.mithrilineFurnace, worldPosition, blockState), MRUHolder, WorldlyContainer {
+): BaseContainerBlockEntity(BlockEntityTypeRegistry.instance.mithrilineFurnace, worldPosition, blockState), MRUDevice, WorldlyContainer {
     @all:JvmName("items")
     private var items = NonNullList.withSize(2, ItemStack.EMPTY)
     private val containerData: ContainerData = object : ContainerData {
@@ -107,7 +107,7 @@ class MithrilineFurnaceEntity(
     override fun getContainerSize(): Int = this.items.size
 
     override val mruStorage: MRUStorageContainer = MRUStorageContainer(10000, MRUTypeRegistry.instance.espe)
-    override val holderType: MRUHolder.MRUHolderType = MRUHolder.MRUHolderType.RECEIVER
+    override val holderType: MRUDevice.DeviceType = MRUDevice.DeviceType.RECEIVER
 
     override fun getSlotsForFace(direction: Direction): IntArray = intArrayOf(0, 1)
 
