@@ -49,6 +49,7 @@ object ResearchJson {
         return BookEntry(
             id = id,
             title = dto.title.toBookText(),
+            description = dto.description?.toBookText()?.takeUnless { it.value.isBlank() },
             category = dto.category?.let { parseReference(it, id) },
             icon = dto.icon.toModel(),
             frame = dto.frame.toFrame(),
@@ -83,6 +84,7 @@ object ResearchJson {
     fun encodeEntry(entry: BookEntry): JsonObject = researchJson.encodeToJsonElement(
         EntryDto(
             title = entry.title.toJsonElement(),
+            description = entry.description?.toJsonElement(),
             category = entry.category?.toString(),
             icon = entry.icon.toDto(),
             frame = entry.frame.toJsonElement(),
@@ -98,7 +100,6 @@ object ResearchJson {
                             .with("type", JsonPrimitive(definition.task.type.toString()))
                             .with("id", JsonPrimitive(definition.id))
                             .withOptional("title", definition.title?.toJsonElement())
-                            .withOptional("description", definition.description?.toJsonElement())
                             .with("hidden", JsonPrimitive(definition.hidden))
                     }
                 )
@@ -159,7 +160,6 @@ object ResearchJson {
                         taskId,
                         decoded,
                         task["title"]?.toBookText(),
-                        task["description"]?.toBookText(),
                         task["hidden"]?.jsonPrimitive?.booleanOrNull ?: (decoded is OpenResearchTask)
                     )
                 }
@@ -266,6 +266,7 @@ private data class CategoryDto(
 @Serializable
 private data class EntryDto(
     val title: JsonElement,
+    val description: JsonElement? = null,
     val category: String? = null,
     val icon: IconDto = IconDto(),
     val frame: JsonElement = JsonPrimitive(true),

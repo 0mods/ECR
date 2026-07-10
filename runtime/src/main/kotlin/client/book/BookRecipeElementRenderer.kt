@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.client.book
 
 import com.algorithmlx.ecr.api.client.research.*
 import com.algorithmlx.ecr.api.ecRL
+import com.mojang.blaze3d.platform.cursor.CursorTypes
 import com.algorithmlx.ecr.api.research.ClientResearchState
 import com.algorithmlx.ecr.api.research.content.CraftingBookElement
 import net.minecraft.client.Minecraft
@@ -101,7 +102,10 @@ object BookRecipeElementRenderer {
             context.graphics.itemDecorations(context.mc.font, stack, x + ITEM_OFFSET, y + ITEM_OFFSET)
         if (context.mouseX !in x ..< x + SLOT_SIZE || context.mouseY !in y ..< y + SLOT_SIZE) return
         renderStackTooltip(context, stack, slot)
-        if (viewerTarget) hoveredViewerStack = stack.copy()
+        if (viewerTarget) {
+            hoveredViewerStack = stack.copy()
+            context.graphics.requestCursor(CursorTypes.POINTING_HAND)
+        }
     }
 
     private fun renderTooltip(context: BookElementRenderContext, tooltip: BookRecipeTooltip) {

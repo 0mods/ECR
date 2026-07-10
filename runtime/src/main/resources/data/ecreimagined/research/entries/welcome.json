@@ -2,6 +2,7 @@
   "title": {
     "text": "Lorem Ipsum"
   },
+  "description": "Lorem ipsum dolor sit amet",
   "category": "ecreimagined:basics",
   "icon": {
     "item": "ecreimagined:research_book"
@@ -30,7 +31,16 @@
         },
         {
           "type": "crafting",
-          "recipe": "minecraft:iron_block",
+          "recipe": "minecraft:barrel",
+          "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 16
+        },
+        {
+          "type": "crafting",
+          "recipe": "minecraft:observer",
           "align": "center"
         }
       ]

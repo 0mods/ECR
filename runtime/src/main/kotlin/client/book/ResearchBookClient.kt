@@ -10,7 +10,7 @@ object ResearchBookClient {
     fun init() {
         BookDefaultRenderers.init()
         RecipeViewerIntegrations.init()
-        ResearchBookHooks.open = { Minecraft.getInstance().setScreenAndShow(ResearchBookScreen()) }
+        ResearchBookHooks.open = { bookType -> Minecraft.getInstance().setScreenAndShow(ResearchBookScreen(bookType)) }
         ResearchNetwork.researchUnlocked = ResearchToast::show
     }
 }

@@ -8,6 +8,7 @@ import net.minecraft.resources.Identifier
 data class BookEntry(
     val id: Identifier,
     val title: BookText,
+    val description: BookText? = null,
     val category: Identifier? = null,
     val icon: BookIcon = BookIcon(),
     val frame: BookFrame? = BookFrame(),
@@ -57,7 +58,6 @@ data class ResearchTaskDefinition(
     val id: String,
     val task: ResearchTask,
     val title: BookText? = null,
-    val description: BookText? = null,
     val hidden: Boolean = task is OpenResearchTask
 ) {
     init {

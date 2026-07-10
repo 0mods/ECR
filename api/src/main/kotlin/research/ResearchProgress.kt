@@ -401,7 +401,7 @@ object ResearchProgress {
         return true
     }
 
-    internal fun meetsBookLevel(current: Identifier?, required: Identifier?): Boolean {
+    fun meetsBookLevel(current: Identifier?, required: Identifier?): Boolean {
         if (required == null) return true
         val requiredLevel = ECRegistries.BOOK_TYPES.getOptional(required).orElse(null) ?: return false
         val currentLevel = current?.let { ECRegistries.BOOK_TYPES.getOptional(it).orElse(null) } ?: return false

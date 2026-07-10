@@ -62,19 +62,36 @@ class ResearchToast private constructor(private val entry: BookEntry) : Toast {
         if (detailsProgress <= 0f) return
 
         val alpha = (detailsProgress * 255).toInt().coerceIn(0, 255)
-        val nameLines = font.split(entry.title.component(), TEXT_WIDTH).take(2)
-        var y = (contentHeight - nameLines.size * font.lineHeight) / 2
-        nameLines.forEach { line ->
+        val titleLines = font.split(entry.title.component(), TEXT_WIDTH).take(if (description() == null) 2 else 1)
+        val descriptionLines = description()?.let { font.split(it, TEXT_WIDTH).take(2) }.orEmpty()
+        val textHeight = textBlockHeight(titleLines.size, descriptionLines.size, font)
+        var y = (contentHeight - textHeight) / 2
+        titleLines.forEach { line ->
             graphics.text(font, line, TEXT_X, y, (alpha shl 24) or 0xFFFFFF, false)
             y += font.lineHeight
+        }
+        if (descriptionLines.isNotEmpty()) {
+            y += DESCRIPTION_GAP
+            descriptionLines.forEach { line ->
+                graphics.text(font, line, TEXT_X, y, (alpha shl 24) or 0xC9D1D9, false)
+                y += font.lineHeight
+            }
         }
     }
 
     private fun contentHeight(font: Font): Int {
-        val lines = font.split(entry.title.component(), TEXT_WIDTH).take(2).size.coerceAtLeast(1)
-        val bodyHeight = max(ICON_SIZE, lines * font.lineHeight) + VERTICAL_PADDING * 2
+        val titleLines = font.split(entry.title.component(), TEXT_WIDTH).take(if (description() == null) 2 else 1).size.coerceAtLeast(1)
+        val descriptionLines = description()?.let { font.split(it, TEXT_WIDTH).take(2).size } ?: 0
+        val bodyHeight = max(ICON_SIZE, textBlockHeight(titleLines, descriptionLines, font)) + VERTICAL_PADDING * 2
         return max(MIN_CONTENT_HEIGHT, bodyHeight)
     }
+
+    private fun textBlockHeight(titleLines: Int, descriptionLines: Int, font: Font): Int =
+        titleLines * font.lineHeight + if (descriptionLines > 0) DESCRIPTION_GAP + descriptionLines * font.lineHeight else 0
+
+    private fun description(): Component? = entry.description
+        ?.takeUnless { it.value.isBlank() }
+        ?.component()
 
     private fun renderIcon(graphics: GuiGraphicsExtractor, x: Int, y: Int) {
         renderIcon(graphics, entry.icon, x, y)
@@ -106,6 +123,7 @@ class ResearchToast private constructor(private val entry: BookEntry) : Toast {
         private const val ICON_X = 7
         private const val ICON_SIZE = 16
         private const val VERTICAL_PADDING = 7
+        private const val DESCRIPTION_GAP = 3
         private const val TEXT_X = 29
         private const val TEXT_WIDTH = WIDTH - TEXT_X - 6
         private const val DISPLAY_TIME = 5000

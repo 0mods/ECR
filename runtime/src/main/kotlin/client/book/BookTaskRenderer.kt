@@ -7,7 +7,7 @@ import com.algorithmlx.ecr.api.research.content.BookIcon
 import com.algorithmlx.ecr.api.research.content.BookText
 import com.algorithmlx.ecr.api.research.content.ResearchTaskDefinition
 import com.algorithmlx.ecr.api.research.content.TaskListBookElement
-import net.minecraft.ChatFormatting
+import com.mojang.blaze3d.platform.cursor.CursorTypes
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.core.registries.BuiltInRegistries
@@ -64,6 +64,7 @@ object BookTaskRenderer {
         val top = context.screenY + ((y - context.y) * context.scale).toInt()
         val size = (16 * context.scale).toInt().coerceAtLeast(1)
         if (mouseX in left until left + size && mouseY in top until top + size) {
+            context.graphics.requestCursor(CursorTypes.POINTING_HAND)
             context.graphics.setComponentTooltipForNextFrame(
                 Minecraft.getInstance().font,
                 tooltip(definition, stack, progress),
@@ -87,7 +88,6 @@ object BookTaskRenderer {
         progress: ResearchTaskProgress
     ): List<Component> = buildList {
         add(taskTitle(definition, stack))
-        definition.description?.let { add(it.component().copy().withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC)) }
         add(Component.literal("${progress.current}/${progress.required}"))
     }
 
