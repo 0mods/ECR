@@ -11,6 +11,7 @@ import com.algorithmlx.ecr.api.research.serializer.ResearchSerializers
 import com.algorithmlx.ecr.api.research.content.SpaceBookElement
 import com.algorithmlx.ecr.api.research.content.TaskListBookElement
 import com.algorithmlx.ecr.api.research.content.TextBookElement
+import com.algorithmlx.ecr.client.book.renderer.BookRecipeElementRenderer
 import net.minecraft.client.Minecraft
 import net.minecraft.network.chat.Component
 import net.minecraft.util.FormattedCharSequence
@@ -77,14 +78,16 @@ object BookPageLayout {
         return BookElementSpec(TaskListBookElement(entry.id, level), PAGE_WIDTH, rows * TASK_CELL_SIZE + 4)
     }
 
-    private fun autoWidth(spec: BookElementSpec): Int? {
-        val text = spec.content as? TextBookElement ?: return null
-        return Minecraft.getInstance().font.width(text.text.component()).coerceIn(1, PAGE_WIDTH)
+    private fun autoWidth(spec: BookElementSpec): Int? = when (val element = spec.content) {
+        is TextBookElement -> Minecraft.getInstance().font.width(element.text.component()).coerceIn(1, PAGE_WIDTH)
+        is CraftingBookElement -> BookRecipeElementRenderer.preferredWidth(element)
+        else -> null
     }
 
-    private fun autoHeight(spec: BookElementSpec, width: Int): Int? =
-        (spec.content as? CraftingBookElement)
-            ?.let { BookRecipeElementRenderer.preferredHeight(it, width) }
+    private fun autoHeight(spec: BookElementSpec, width: Int): Int? = when (val element = spec.content) {
+        is CraftingBookElement -> BookRecipeElementRenderer.preferredHeight(element, width)
+        else -> null
+    }
 
     private fun placeText(
         spec: BookElementSpec,

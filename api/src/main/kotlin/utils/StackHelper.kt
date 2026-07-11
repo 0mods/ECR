@@ -1,6 +1,7 @@
 package com.algorithmlx.ecr.api.utils
 
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.crafting.Ingredient
 
 object StackHelper {
     @JvmStatic
@@ -24,3 +25,5 @@ object StackHelper {
     fun canCombine(result: ItemStack, hand: ItemStack, count: Int, ingredientCount: Int): Boolean =
         canCombineStacks(result, hand) && count >= ingredientCount
 }
+
+var countByIngredient: (Ingredient) -> Int = { 1 }

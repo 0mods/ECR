@@ -36,7 +36,7 @@
         },
         {
           "type": "space",
-          "height": 16
+          "height": 8
         },
         {
           "type": "crafting",
@@ -45,11 +45,65 @@
         },
         {
           "type": "space",
-          "height": 16
+          "height": 8
         },
         {
           "type": "multiblock",
           "multiblock": "ecreimagined:mithriline_furnace",
+          "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "crafting",
+          "recipe": "minecraft:baked_potato_from_campfire_cooking",
+          "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "crafting",
+          "recipe": "minecraft:baked_potato_from_smoking",
+          "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "crafting",
+          "recipe": "minecraft:iron_ingot_from_smelting_iron_ore",
+          "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "crafting",
+          "recipe": "minecraft:iron_ingot_from_blasting_iron_ore",
+          "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "crafting",
+          "recipe": "minecraft:brick_stairs_from_bricks_stonecutting",
+          "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "crafting",
+          "recipe": "ecreimagined:test",
           "align": "center"
         }
       ]

@@ -1,0 +1,10 @@
+type: ecreimagined:mithriline_furnace
+input:
+  fabric:type: &type ecreimagined:count
+  neoforge:ingredient_type: *type
+  base: minecraft:diamond
+  count: 16
+espe: 128
+result:
+  id: minecraft:emerald
+  count: 4

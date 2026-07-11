@@ -15,7 +15,7 @@ import net.minecraft.world.level.block.state.BlockState
 data class TagMultiblockMatcher(
     val tag: TagKey<Block>
 ): MultiblockMatcher {
-    override val type: MultiblockMatcherType<*> = MultiblockMatcherTypes.instance.tag
+    override val type: MultiblockMatcherType<*> get() = MultiblockMatcherTypes.instance.tag
 
     override fun matches(block: BlockState): Boolean = block.`is`(tag)
 
@@ -42,7 +42,7 @@ data class BlockMultiblockMatcher(
     val state: BlockState,
     val ignoreTag: Boolean = false
 ): MultiblockMatcher {
-    override val type: MultiblockMatcherType<*> = MultiblockMatcherTypes.instance.block
+    override val type: MultiblockMatcherType<*> get() = MultiblockMatcherTypes.instance.block
 
     override fun matches(block: BlockState): Boolean =
         if (ignoreTag) block.`is`(state.block)

@@ -12,12 +12,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.Level
 
-class ResearchBookItem(properties: Properties) : Item(
-    properties.component(
-        DataComponentRegistry.instance.bookType,
-        BookLevelRegistry.instance.basic
-    )
-) {
+class ResearchBookItem(properties: Properties) : Item(properties) {
     override fun use(level: Level, player: Player, hand: InteractionHand): InteractionResult {
         val stack = player.getItemInHand(hand)
         val bookType = stack.getOrDefault(DataComponentRegistry.instance.bookType, BookLevelRegistry.instance.basic)

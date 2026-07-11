@@ -4,10 +4,13 @@ import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
 import com.algorithmlx.ecr.api.menu.MenuTypeData
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.registries.ECRegistryKeys
+import com.algorithmlx.ecr.api.utils.countByIngredient
 import com.algorithmlx.ecr.api.utils.openMenuScreenInternal
 import com.algorithmlx.ecr.common.init.registry.*
+import com.algorithmlx.ecr.fabric.api.CountIngredient
 import com.algorithmlx.ecr.fabric.init.registry.*
 import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider
+import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
@@ -28,6 +31,8 @@ object ECRegistryInit {
 
         FabricResearchSerializerRegistry.register()
 
+        CustomIngredientSerializer.register(CountIngredient.SERIALIZER)
+
         DataComponentRegistry.instance = FabricDataComponentRegistry
         BlockCodecRegistry.instance = FabricBlockCodecRegistry
         BookLevelRegistry.instance = FabricBookLevelRegistry
@@ -38,6 +43,7 @@ object ECRegistryInit {
         MRUTypeRegistry.instance = FabricMRUTypeRegistry
         MultiblockMatcherTypes.instance = FabricMultiblockMatcherTypes
         MultiblockRegistry.instance = FabricMultiblockRegistry
+        RecipeDisplayTypeRegistry.instance = FabricRecipeDisplayTypeRegistry
         RecipeSerializerRegistry.instance = FabricRecipeSerializerRegistry
         RecipeTypeRegistry.instance = FabricRecipeTypeRegistry
         CreativeTabRegistry.instance = FabricCreativeTabRegistry
@@ -57,6 +63,8 @@ object ECRegistryInit {
                 override fun getScreenOpeningData(player: ServerPlayer): MenuTypeData = MenuTypeData(pos)
             })
         }
+
+        countByIngredient = { (it.customIngredient as? CountIngredient)?.count ?: 1 }
     }
 
     @Suppress("UNCHECKED_CAST")

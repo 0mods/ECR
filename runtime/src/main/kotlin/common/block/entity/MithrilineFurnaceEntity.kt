@@ -5,6 +5,7 @@ import com.algorithmlx.ecr.api.mru.MRUDevice
 import com.algorithmlx.ecr.api.recipe.CachedRecipe
 import com.algorithmlx.ecr.api.utils.StackHelper
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
+import com.algorithmlx.ecr.api.utils.countByIngredient
 import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.BlockRegistry
 import com.algorithmlx.ecr.common.init.registry.MRUTypeRegistry
@@ -207,21 +208,20 @@ class MithrilineFurnaceEntity(
                 return
             }
 
-            val craftingInput = CraftingInput.of(input.count, 1, listOf(input))
+            val craftingInput = CraftingInput.of(1, 1, listOf(input))
             val recipe = this.recipe.testAndGet(craftingInput, level)
 
             if (recipe != null) {
                 val espe = recipe.espe
-                val ingredientCount = recipe.ingredientCount
                 val result = recipe.assemble(craftingInput)
 
                 this.slownessGeneration = true
                 this.maxCraftProgress = recipe.espe
 
-                if (StackHelper.canCombine(result.copy(), this.getItem(1), input.count, ingredientCount)) {
+                if (StackHelper.canCombine(result.copy(), this.getItem(1), input.count, countByIngredient(recipe.input))) {
                     this.processTick(espe)
                     if (this.craftProgress >= espe) {
-                        this.removeItem(0, ingredientCount)
+                        this.removeItem(0, countByIngredient(recipe.input))
                         if (this.getItem(1).isEmpty)
                             this.setItem(1, result.copy())
                         else this.getItem(1).grow(result.count)

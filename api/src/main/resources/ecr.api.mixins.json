@@ -4,8 +4,7 @@
   "package": "com.algorithmlx.ecr.api.mixin",
   "client": [
     "GameRendererAccessor",
-    "GuiGraphicsExtractorAccessor",
-    "GuiRendererAccessor"
+    "GuiGraphicsExtractorAccessor"
   ],
   "mixins": [],
   "injectors": {

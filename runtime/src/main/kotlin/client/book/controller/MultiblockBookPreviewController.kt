@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.client.book
+package com.algorithmlx.ecr.client.book.controller
 
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewGuiBridge
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewRenderState
@@ -11,6 +11,7 @@ import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.platform.cursor.CursorTypes
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderPipelines
+import net.minecraft.resources.Identifier
 import kotlin.math.exp
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -175,7 +176,7 @@ object MultiblockBookPreviewController {
     private fun renderArrowButton(
         context: BookElementRenderContext,
         bounds: Rect,
-        texture: net.minecraft.resources.Identifier,
+        texture: Identifier,
         enabled: Boolean
     ) {
         context.graphics.blit(

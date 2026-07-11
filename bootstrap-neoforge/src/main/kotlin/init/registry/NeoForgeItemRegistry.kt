@@ -1,7 +1,10 @@
 package com.algorithmlx.ecr.neoforge.init.registry
 
 import com.algorithmlx.ecr.api.ModId
+import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.registries.ECRegistryKeys
 import com.algorithmlx.ecr.common.init.ECRModIDs
+import com.algorithmlx.ecr.common.init.registry.DataComponentRegistry
 import com.algorithmlx.ecr.common.init.registry.ItemRegistry
 import com.algorithmlx.ecr.common.item.SoulStone
 import com.algorithmlx.ecr.common.item.ResearchBookItem
@@ -26,7 +29,17 @@ class NeoForgeItemRegistry(bus: IEventBus): ItemRegistry {
     }
 
     private val soulStoneItem = registerItem(ECRModIDs.SOUL_STONE, ::SoulStone)
-    private val researchBookItem = registerItem(ECRModIDs.RESEARCH_BOOK, ::ResearchBookItem)
+    private val researchBookItem = registerItem(
+        ECRModIDs.RESEARCH_BOOK, ::ResearchBookItem
+    ) {
+        Item.Properties().delayedComponent(
+            DataComponentRegistry.instance.bookType
+        ) {
+            it.lookupOrThrow(ECRegistryKeys.BOOK_TYPE_KEY)
+                .getOrThrow(ResourceKey.create(ECRegistryKeys.BOOK_TYPE_KEY, ECRModIDs.BASIC.ecRL))
+                .value()
+        }
+    }
 
     private val weakAxeItem = registerItem(ECRModIDs.WEAKNESS_ELEMENTAL_AXE, ::WeakAxe)
     private val weakHoeItem = registerItem(ECRModIDs.WEAKNESS_ELEMENTAL_HOE, ::WeakHoe)
@@ -114,14 +127,17 @@ class NeoForgeItemRegistry(bus: IEventBus): ItemRegistry {
     override val mruResonatingCrystal: Item by lazy { mruResonatingCrystalItem.get() }
     override val fadingCrystal: Item by lazy { fadingCrystalItem.get() }
 
-    private fun basicItem(id: String, properties: Item.Properties = Item.Properties()) = registerItem(id, ::Item, properties)
+    private fun basicItem(
+        id: String,
+        properties: () -> Item.Properties = Item::Properties
+    ) = registerItem(id, ::Item, properties)
 
     private fun <I: Item> registerItem(
         id: String,
         item: (Item.Properties) -> I,
-        properties: Item.Properties = Item.Properties()
+        properties: () -> Item.Properties = Item::Properties
     ): DeferredItem<I> {
         val itemKey = { it: Identifier -> ResourceKey.create(Registries.ITEM, it) }
-        return items.register(id) { rk -> item(properties.setId(itemKey(rk))) }
+        return items.register(id) { rk -> item(properties().setId(itemKey(rk))) }
     }
 }

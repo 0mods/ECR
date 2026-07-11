@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.client.book
+package com.algorithmlx.ecr.client.book.renderer
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.client.research.*
@@ -23,7 +23,7 @@ object BookRecipeElementRenderer {
 
     fun render(context: BookElementRenderContext, element: CraftingBookElement) {
         val recipe = ClientResearchState.recipe(element.recipe) ?: return
-        val render = BookRecipeRenderers.build(element.recipe, recipe)
+        val render = BookRecipeRenderers.build(element.recipe, recipe, context)
         if (render == null) {
             renderMissingRenderer(context, recipe)
             return
@@ -31,8 +31,16 @@ object BookRecipeElementRenderer {
         render.elements.forEach { renderElement(context, it) }
     }
 
+    fun preferredWidth(element: CraftingBookElement): Int? {
+        val recipe = ClientResearchState.recipe(element.recipe) ?: return null
+        return BookRecipeRenderers.width(element.recipe, recipe)
+    }
+
     fun preferredHeight(element: CraftingBookElement, width: Int): Int? {
         val recipe = ClientResearchState.recipe(element.recipe) ?: return null
+
+        BookRecipeRenderers.height(element.recipe, recipe)?.let { return it }
+
         if (BookRecipeRenderers.hasRenderer(element.recipe, recipe)) return null
         val font = Minecraft.getInstance().font
         val lines = font.split(missingRendererMessage(recipe, resultStack(recipe)), width.coerceAtLeast(1))
@@ -60,7 +68,7 @@ object BookRecipeElementRenderer {
             )
         }
         if (result.isEmpty) return
-        val slot = BookRecipeRenderBuilder().slotAdd(
+        val slot = BookRecipeRenderBuilder(context).slot(
             result,
             BookRecipeSlotType.RESULT,
             (context.width - SLOT_SIZE) / 2,

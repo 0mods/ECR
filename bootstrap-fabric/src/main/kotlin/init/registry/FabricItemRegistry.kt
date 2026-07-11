@@ -2,6 +2,8 @@ package com.algorithmlx.ecr.fabric.init.registry
 
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.common.init.ECRModIDs
+import com.algorithmlx.ecr.common.init.registry.BookLevelRegistry
+import com.algorithmlx.ecr.common.init.registry.DataComponentRegistry
 import com.algorithmlx.ecr.common.init.registry.ItemRegistry
 import com.algorithmlx.ecr.common.item.SoulStone
 import com.algorithmlx.ecr.common.item.ResearchBookItem
@@ -19,7 +21,12 @@ import net.minecraft.world.item.Item
 
 object FabricItemRegistry: ItemRegistry {
     override val soulStone: SoulStone = register(ECRModIDs.SOUL_STONE, ::SoulStone)
-    override val researchBook: ResearchBookItem = register(ECRModIDs.RESEARCH_BOOK, ::ResearchBookItem)
+    override val researchBook: ResearchBookItem = register(
+        ECRModIDs.RESEARCH_BOOK, ::ResearchBookItem, Item.Properties().component(
+            DataComponentRegistry.instance.bookType,
+            BookLevelRegistry.instance.basic
+        )
+    )
 
     override val weaknessElementalAxe: WeakAxe = register(ECRModIDs.WEAKNESS_ELEMENTAL_AXE, ::WeakAxe)
     override val weaknessElementalHoe: WeakHoe = register(ECRModIDs.WEAKNESS_ELEMENTAL_HOE, ::WeakHoe)

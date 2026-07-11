@@ -111,8 +111,7 @@ private data class CraftingTaskDto(val recipe: String)
 @Serializable
 private data class OpenTaskDto(val research: String? = null)
 
-private object SpaceElementSerializer :
-    BookElementSerializer<SpaceBookElement> {
+private object SpaceElementSerializer: BookElementSerializer<SpaceBookElement> {
     override val type = ResearchIds.SPACE
     override val defaultWidth = 0
     override val defaultHeight = 8
@@ -120,8 +119,7 @@ private object SpaceElementSerializer :
     override fun encode(value: SpaceBookElement) = JsonObject(emptyMap())
 }
 
-private object TextElementSerializer :
-    BookElementSerializer<TextBookElement> {
+private object TextElementSerializer: BookElementSerializer<TextBookElement> {
     override val type = ResearchIds.TEXT
     override val defaultWidth = 208
     override val defaultHeight = 18
@@ -152,8 +150,7 @@ private object TextElementSerializer :
     ).jsonObject
 }
 
-private object ItemElementSerializer :
-    BookElementSerializer<ItemBookElement> {
+private object ItemElementSerializer: BookElementSerializer<ItemBookElement> {
     override val type = ResearchIds.ITEM
     override val defaultWidth = 18
     override val defaultHeight = 18
@@ -161,8 +158,7 @@ private object ItemElementSerializer :
     override fun encode(value: ItemBookElement): JsonObject = researchJson.encodeToJsonElement(value.toDto()).jsonObject
 }
 
-private object BlockElementSerializer :
-    BookElementSerializer<BlockBookElement> {
+private object BlockElementSerializer: BookElementSerializer<BlockBookElement> {
     override val type = ResearchIds.BLOCK
     override val defaultWidth = 18
     override val defaultHeight = 18
@@ -170,7 +166,7 @@ private object BlockElementSerializer :
     override fun encode(value: BlockBookElement): JsonObject = researchJson.encodeToJsonElement(BlockElementDto(value.block.toString())).jsonObject
 }
 
-private object MultiblockElementSerializer : BookElementSerializer<MultiblockBookElement> {
+private object MultiblockElementSerializer: BookElementSerializer<MultiblockBookElement> {
     override val type = ResearchIds.MULTIBLOCK
     override val defaultWidth = 150
     override val defaultHeight = 150
@@ -188,8 +184,7 @@ private object MultiblockElementSerializer : BookElementSerializer<MultiblockBoo
     ).jsonObject
 }
 
-private object CraftingElementSerializer :
-    BookElementSerializer<CraftingBookElement> {
+private object CraftingElementSerializer: BookElementSerializer<CraftingBookElement> {
     override val type = ResearchIds.CRAFTING
     override val defaultWidth = 160
     override val defaultHeight = 96
@@ -201,8 +196,7 @@ private object CraftingElementSerializer :
     ).jsonObject
 }
 
-private object ItemTaskSerializer :
-    ResearchTaskSerializer<ItemResearchTask> {
+private object ItemTaskSerializer: ResearchTaskSerializer<ItemResearchTask> {
     override val type = ResearchIds.ITEM_TASK
     override fun decode(json: JsonObject): ItemResearchTask = researchJson.decodeFromJsonElement<ItemTaskDto>(json).let {
         ItemResearchTask(
@@ -217,8 +211,7 @@ private object ItemTaskSerializer :
     ).jsonObject
 }
 
-private object CraftingTaskSerializer :
-    ResearchTaskSerializer<CraftingResearchTask> {
+private object CraftingTaskSerializer: ResearchTaskSerializer<CraftingResearchTask> {
     override val type = ResearchIds.CRAFTING_TASK
     override fun decode(json: JsonObject): CraftingResearchTask = CraftingResearchTask(
         Identifier.parse(researchJson.decodeFromJsonElement<CraftingTaskDto>(json).recipe)
@@ -228,8 +221,7 @@ private object CraftingTaskSerializer :
     ).jsonObject
 }
 
-private object OpenTaskSerializer :
-    ResearchTaskSerializer<OpenResearchTask> {
+private object OpenTaskSerializer: ResearchTaskSerializer<OpenResearchTask> {
     override val type = ResearchIds.OPEN_TASK
     override fun decode(json: JsonObject): OpenResearchTask = OpenResearchTask(
         researchJson.decodeFromJsonElement<OpenTaskDto>(json).research?.let(Identifier::parse)
@@ -239,8 +231,7 @@ private object OpenTaskSerializer :
     ).jsonObject
 }
 
-private object ExperienceTaskSerializer :
-    ResearchTaskSerializer<ExperienceResearchTask> {
+private object ExperienceTaskSerializer: ResearchTaskSerializer<ExperienceResearchTask> {
     override val type = ResearchIds.EXPERIENCE_TASK
     override fun decode(json: JsonObject): ExperienceResearchTask = researchJson.decodeFromJsonElement<ExperienceTaskDto>(json).let {
         ExperienceResearchTask(

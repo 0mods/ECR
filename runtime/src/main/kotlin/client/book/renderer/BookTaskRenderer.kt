@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.client.book
+package com.algorithmlx.ecr.client.book.renderer
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.client.research.BookElementRenderContext

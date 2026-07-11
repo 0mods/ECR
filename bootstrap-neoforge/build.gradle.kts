@@ -21,6 +21,7 @@ base {
 repositories {
     maven("https://repo.spongepowered.org/repository/maven-public/")
     maven("https://maven.neoforged.net/releases/")
+    maven("https://repo.nyon.dev/releases")
 }
 
 loom {
@@ -34,6 +35,8 @@ loom {
 }
 
 dependencies {
+    val kotlinVersion = providers.gradleProperty("libs.kotlin").get()
+
     minecraft("com.mojang:minecraft:$minecraftVersion")
     neoForge(libs.neoforge)
 
@@ -44,7 +47,33 @@ dependencies {
     compileOnly(libs.bundles.kotlinx.coroutines)
 
     implementation("org.spongepowered:mixin:0.8.7")
+
+
+    project.property("mod.depend.klf_loader_version").toString()
+    val klfVersion = project.property("mod.depend.klf_version").toString()
+    val klfLoaderVersion = project.property("mod.depend.klf_loader_version").toString()
+    implementation("dev.nyon:KotlinLangForge:$klfVersion-k$kotlinVersion-$klfLoaderVersion+neoforge")
 }
+
+val modMetadata = mapOf(
+    "modId" to modId,
+    "modVersion" to providers.gradleProperty("mod.version").get(),
+    "modName" to providers.gradleProperty("mod.name").get(),
+    "modDesc" to providers.gradleProperty("mod.description").get(),
+    "modAuthors" to "AlgorithmLX",
+    "modLicense" to providers.gradleProperty("mod.license").get(),
+    "neoforgeVersion" to libs.versions.neoforge.get(),
+    "minecraftVersion" to minecraftVersion,
+    "klfVersion" to project.property("mod.depend.klf_version").toString()
+)
+
+tasks.processResources {
+    inputs.properties(modMetadata)
+    filesMatching("**/neoforge.mods.toml") {
+        expand(modMetadata)
+    }
+}
+
 
 tasks.jar {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE

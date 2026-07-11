@@ -1,5 +1,6 @@
 plugins {
     id("dev.architectury.loom-no-remap")
+    id("team.0mods.yaml2json")
     kotlin("jvm")
     kotlin("plugin.serialization")
 }

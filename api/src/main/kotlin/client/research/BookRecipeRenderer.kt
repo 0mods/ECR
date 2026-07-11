@@ -101,17 +101,17 @@ data class BookRecipeText(
     }
 }
 
-class BookRecipeRenderBuilder {
+class BookRecipeRenderBuilder(val context: BookElementRenderContext) {
     private val mutableElements = mutableListOf<BookRecipeRenderElement>()
     val elements: List<BookRecipeRenderElement> get() = mutableElements
 
-    fun slotAdd(stack: ItemStack, slotType: BookRecipeSlotType, x: Int, y: Int): BookRecipeSlot =
-        slotAdd(listOf(stack), slotType, x, y)
+    fun slot(stack: ItemStack, slotType: BookRecipeSlotType, x: Int, y: Int): BookRecipeSlot =
+        slot(listOf(stack), slotType, x, y)
 
-    fun slotAdd(item: ItemLike, slotType: BookRecipeSlotType, x: Int, y: Int): BookRecipeSlot =
-        slotAdd(ItemStack(item), slotType, x, y)
+    fun slot(item: ItemLike, slotType: BookRecipeSlotType, x: Int, y: Int): BookRecipeSlot =
+        slot(ItemStack(item), slotType, x, y)
 
-    fun slotAdd(stacks: List<ItemStack>, slotType: BookRecipeSlotType, x: Int, y: Int): BookRecipeSlot {
+    fun slot(stacks: List<ItemStack>, slotType: BookRecipeSlotType, x: Int, y: Int): BookRecipeSlot {
         val slot = BookRecipeSlot(
             BookRecipeSlotContent.Stacks(stacks.filterNot(ItemStack::isEmpty).map(ItemStack::copy)),
             slotType,
@@ -122,7 +122,7 @@ class BookRecipeRenderBuilder {
         return slot
     }
 
-    fun slotAdd(display: SlotDisplay, slotType: BookRecipeSlotType, x: Int, y: Int): BookRecipeSlot {
+    fun slot(display: SlotDisplay, slotType: BookRecipeSlotType, x: Int, y: Int): BookRecipeSlot {
         val slot = BookRecipeSlot(BookRecipeSlotContent.Display(display), slotType, x, y)
         mutableElements += slot
         return slot
@@ -158,6 +158,9 @@ class BookRecipeRenderBuilder {
 
 fun interface BookRecipeRenderer<T : Recipe<*>> {
     fun build(recipe: T, builder: BookRecipeRenderBuilder)
+
+    fun width(recipe: T): Int = 160
+    fun height(recipe: T): Int = 96
 }
 
 object BookRecipeRenderers {
@@ -175,12 +178,17 @@ object BookRecipeRenderers {
     }
 
     @Suppress("UNCHECKED_CAST")
-    fun build(recipeId: Identifier, recipe: Recipe<*>): BookRecipeRenderBuilder? {
-        val builder = BookRecipeRenderBuilder()
-        val renderer = recipeRenderers[recipeId] ?: typeRenderers[recipe.type] ?: return null
-        (renderer as BookRecipeRenderer<Recipe<*>>).build(recipe, builder)
-        return builder
+    private fun renderer(recipeId: Identifier, recipe: Recipe<*>) = (recipeRenderers[recipeId]
+        ?: typeRenderers[recipe.type]) as? BookRecipeRenderer<Recipe<*>>
+
+    fun build(recipeId: Identifier, recipe: Recipe<*>, context: BookElementRenderContext): BookRecipeRenderBuilder? {
+        val renderer = renderer(recipeId, recipe) ?: return null
+        return BookRecipeRenderBuilder(context).also { renderer.build(recipe, it) }
     }
+
+    fun width(recipeId: Identifier, recipe: Recipe<*>): Int? = renderer(recipeId, recipe)?.width(recipe)
+
+    fun height(recipeId: Identifier, recipe: Recipe<*>): Int? = renderer(recipeId, recipe)?.height(recipe)
 
     @JvmStatic
     fun hasRenderer(recipeId: Identifier, recipe: Recipe<*>): Boolean =

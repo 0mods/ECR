@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.client.book
+package com.algorithmlx.ecr.client.book.renderer
 
 import com.algorithmlx.ecr.api.client.research.BookElementRenderContext
 import com.algorithmlx.ecr.api.client.research.BookElementRenderers
@@ -9,6 +9,12 @@ import com.algorithmlx.ecr.api.research.content.BlockBookElement
 import com.algorithmlx.ecr.api.research.content.ItemBookElement
 import com.algorithmlx.ecr.api.research.content.MultiblockBookElement
 import com.algorithmlx.ecr.api.research.content.TextBookElement
+import com.algorithmlx.ecr.client.book.controller.MultiblockBookPreviewController
+import com.algorithmlx.ecr.client.book.recipe.mod.MithrilineFurnaceRenderer
+import com.algorithmlx.ecr.client.book.recipe.vanilla.CookingRecipeRenderer
+import com.algorithmlx.ecr.client.book.recipe.vanilla.CraftingTableRecipeRenderer
+import com.algorithmlx.ecr.client.book.recipe.vanilla.StonecutterRecipeRenderer
+import com.algorithmlx.ecr.common.init.registry.RecipeTypeRegistry
 import net.minecraft.client.Minecraft
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
@@ -29,6 +35,12 @@ object BookDefaultRenderers {
         BookElementRenderers.register(ResearchIds.TASK_LIST, BookTaskRenderer::render)
 
         BookRecipeRenderers.register(RecipeType.CRAFTING, CraftingTableRecipeRenderer)
+        BookRecipeRenderers.register(RecipeType.SMELTING, CookingRecipeRenderer.Smelting)
+        BookRecipeRenderers.register(RecipeType.BLASTING, CookingRecipeRenderer.Blasting)
+        BookRecipeRenderers.register(RecipeType.SMOKING, CookingRecipeRenderer.Smoking)
+        BookRecipeRenderers.register(RecipeType.CAMPFIRE_COOKING, CookingRecipeRenderer.CampfireCooking)
+        BookRecipeRenderers.register(RecipeType.STONECUTTING, StonecutterRecipeRenderer)
+        BookRecipeRenderers.register(RecipeTypeRegistry.instance.mithrilineFurnace, MithrilineFurnaceRenderer)
     }
 
     private fun renderText(context: BookElementRenderContext, element: TextBookElement) {

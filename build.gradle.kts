@@ -48,10 +48,9 @@ val generateModMetadata = tasks.register("generateModMetadata") {
             val jarName = jarNameProviders[sub.name]?.get() ?: return@forEach
             val path = "META-INF/jarjar/$jarName"
 
-            if (sub.name.contains("fabric")) {
-                fabricJars.add(mapOf("file" to path))
-            } else if (sub.name.contains("neoforge")) {
-                neoForgeJars.add(mapOf(
+            when {
+                sub.name.contains("fabric", ignoreCase = true) -> fabricJars.add(mapOf("file" to path))
+                sub.name.contains("neoforge", ignoreCase = true) -> neoForgeJars.add(mapOf(
                     "identifier" to mapOf("group" to sub.group.toString(), "artifact" to sub.name),
                     "version" to mapOf("range" to "[${sub.version},)", "artifactVersion" to sub.version.toString()),
                     "path" to path,
@@ -69,6 +68,41 @@ val generateModMetadata = tasks.register("generateModMetadata") {
             "name" to "${base.archivesName.get()} Wrapper",
             "jars" to fabricJars
         )))
+
+        val neoForgeMeta = File(baseDir, "META-INF/jarjar/metadata.json")
+        neoForgeMeta.parentFile.mkdirs()
+        neoForgeMeta.writeText(
+            gson.toJson(
+                mapOf("jars" to neoForgeJars)
+            )
+        )
+
+        val modId = providers.gradleProperty("mod.id").get()
+        val modName = base.archivesName.get()
+        val modVersion = project.version.toString()
+        val modLicense = providers.gradleProperty("mod.license")
+            .orElse("All Rights Reserved")
+            .get()
+
+        val neoForgeModMetadata = File(
+            baseDir,
+            "META-INF/neoforge.mods.toml"
+        )
+
+        neoForgeModMetadata.parentFile.mkdirs()
+        neoForgeModMetadata.writeText(
+            """
+                modLoader="javafml"
+                loaderVersion="[1,)"
+                license="$modLicense"
+
+                [[mods]]
+                modId="${modId}_loader"
+                version="$modVersion"
+                displayName="$modName Wrapper"
+                description='''Universal loader wrapper for $modName.'''
+            """.trimIndent()
+        )
     }
 }
 

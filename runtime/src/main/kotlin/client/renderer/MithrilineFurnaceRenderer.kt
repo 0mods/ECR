@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.client.renderer
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
 import com.mojang.blaze3d.vertex.PoseStack
+import com.mojang.math.Axis
 import net.minecraft.client.model.geom.ModelLayerLocation
 import net.minecraft.client.model.geom.ModelPart
 import net.minecraft.client.model.geom.PartPose
@@ -35,7 +36,11 @@ class MithrilineFurnaceRenderer(
 
     init {
         val mp = ctx.bakeLayer(MF_LAYER)
-        body = mp.getChild("core")
+        body = mp.getChild("core").also {
+            it.xRot = 0F
+            it.yRot = 0F
+            it.zRot = 0F
+        }
         sprite = ctx.sprites().get(MF_MATERIAL)
     }
 
@@ -61,7 +66,7 @@ class MithrilineFurnaceRenderer(
         poseStack.pushPose()
         poseStack.translate(0.5, 0.5, 0.5)
 
-        body.yRot = Math.toRadians(state.coreRotation.toDouble()).toFloat()
+        poseStack.mulPose(Axis.YP.rotationDegrees(state.coreRotation))
 
         submitNodeCollector.submitModelPart(
             body, poseStack, RenderTypes.entityCutout(MF_MATERIAL.atlasLocation()),

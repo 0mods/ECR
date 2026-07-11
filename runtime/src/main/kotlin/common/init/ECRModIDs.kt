@@ -85,5 +85,9 @@ object ECRModIDs {
     const val TAB_ITEMS = "tab_items"
     const val TAB_BLOCKS = "tab_blocks"
 
+    // Ingredients
+
+    const val COUNT = "count"
+
     fun guiLocation(id: String) = "textures/gui/$id.png".ecRL
 }

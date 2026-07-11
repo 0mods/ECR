@@ -1,11 +1,8 @@
-package com.algorithmlx.ecr.client.book
+package com.algorithmlx.ecr.client.book.recipe.vanilla
 
-import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.client.research.BookRecipeRenderBuilder
 import com.algorithmlx.ecr.api.client.research.BookRecipeRenderer
 import com.algorithmlx.ecr.api.client.research.BookRecipeSlotType
-import net.minecraft.client.multiplayer.ClientLevel
-import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.CraftingRecipe
@@ -13,7 +10,7 @@ import net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay
 import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay
 import net.minecraft.world.item.crafting.display.SlotDisplay
 
-object CraftingTableRecipeRenderer : BookRecipeRenderer<CraftingRecipe> {
+object CraftingTableRecipeRenderer: BookRecipeRenderer<CraftingRecipe> {
     private val item by lazy { ItemStack(Items.CRAFTING_TABLE) }
     override fun build(recipe: CraftingRecipe, builder: BookRecipeRenderBuilder) {
         when (val display = recipe.display().firstOrNull { it is ShapedCraftingRecipeDisplay || it is ShapelessCraftingRecipeDisplay }) {
@@ -48,24 +45,22 @@ object CraftingTableRecipeRenderer : BookRecipeRenderer<CraftingRecipe> {
                 val y = row * SLOT_SIZE
                 val ingredient = ingredientAt(row, column)
                 if (ingredient == null) {
-                    builder.slotAdd(emptyList(), BookRecipeSlotType.INPUT, x, y)
+                    builder.slot(emptyList(), BookRecipeSlotType.INPUT, x, y)
                 } else {
-                    builder.slotAdd(ingredient, BookRecipeSlotType.INPUT, x, y)
+                    builder.slot(ingredient, BookRecipeSlotType.INPUT, x, y)
                 }
             }
         }
     }
 
     private fun renderResult(builder: BookRecipeRenderBuilder, result: SlotDisplay) {
-        builder.slotAdd(result, BookRecipeSlotType.RESULT, RESULT_X, RESULT_Y)
-        builder.item(item, RESULT_X + ITEM_OFFSET + 4, CRAFTING_STATION_Y)
+        builder.slot(result, BookRecipeSlotType.RESULT, RESULT_X, RESULT_Y)
+        val itemX = RESULT_X - (SLOT_SIZE / 2 + ITEM_OFFSET)
+        val itemY = RESULT_Y + ITEM_OFFSET
+        builder.item(item, itemX, itemY)
         builder.tooltip(
-            Component.empty()
-                .append(item.itemName)
-                .append(" ")
-                .append(Component.translatable("tooltip.$ModId.recipe")),
-            RESULT_X + ITEM_OFFSET * 2,
-            CRAFTING_STATION_Y,
+            item.itemName,
+            itemX, itemY,
             16
         )
     }
@@ -75,6 +70,5 @@ object CraftingTableRecipeRenderer : BookRecipeRenderer<CraftingRecipe> {
     private const val GRID_SIZE = SLOT_SIZE * GRID_WIDTH
     private const val RESULT_X = GRID_SIZE + SLOT_SIZE
     private const val RESULT_Y = (GRID_SIZE - SLOT_SIZE) / 2
-    private const val ITEM_OFFSET = 4
-    private const val CRAFTING_STATION_Y = RESULT_Y + SLOT_SIZE + ITEM_OFFSET
+    private const val ITEM_OFFSET = 8
 }

@@ -1,9 +1,10 @@
-package com.algorithmlx.ecr.client.book
+package com.algorithmlx.ecr.client.book.controller
 
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.BookEntry
 import com.algorithmlx.ecr.api.research.content.BookText
+import com.algorithmlx.ecr.client.book.BookPageLayout
 import com.mojang.blaze3d.platform.cursor.CursorTypes
 import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft

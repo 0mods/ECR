@@ -1,5 +1,6 @@
-package com.algorithmlx.ecr.client.book
+package com.algorithmlx.ecr.client.book.renderer
 
+import com.algorithmlx.ecr.client.book.BookRenderPipelines
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.util.Mth
 import kotlin.math.hypot
