@@ -46,21 +46,17 @@ class EnvoyerRecipe(
             if (!shaped.matches(craftingInput)) return false
         }
 
-        return (catalyst.isEmpty && input.items().getOrElse(4) { ItemStack.EMPTY }.isEmpty) || (input.items().size > 4 && catalyst.get().test(input.items()[4]))
+        val catalystIsEmpty = catalyst.isEmpty && input.items().getOrElse(4) { ItemStack.EMPTY }.isEmpty
+        val catalystTest = input.items().size > 4 && catalyst.get().test(input.items()[4])
+        return catalystIsEmpty || catalystTest
     }
 
     override fun assemble(input: CraftingInput): ItemStack = this.result.create()
-
     override fun showNotification(): Boolean = true
-
     override fun group(): String = "$ModId:${ECRModIDs.ENVOYER}"
-
     override fun getSerializer(): RecipeSerializer<out Recipe<CraftingInput>> = RecipeSerializerRegistry.instance.envoyer
-
     override fun getType(): RecipeType<out Recipe<CraftingInput>> = RecipeTypeRegistry.instance.envoyer
-
     override fun placementInfo(): PlacementInfo = PlacementInfo.NOT_PLACEABLE
-
     override fun recipeBookCategory(): RecipeBookCategory = RecipeBookCategories.CAMPFIRE
 
     companion object {
@@ -68,8 +64,7 @@ class EnvoyerRecipe(
         val CODEC: MapCodec<EnvoyerRecipe> = RecordCodecBuilder.mapCodec {
             it.group(
                 ShapedRecipePattern.MAP_CODEC.codec()
-                    .optionalFieldOf("input")
-                    .forGetter(EnvoyerRecipe::inputs),
+                    .optionalFieldOf("input").forGetter(EnvoyerRecipe::inputs),
                 Ingredient.CODEC.optionalFieldOf("catalyst").forGetter(EnvoyerRecipe::catalyst),
                 Codec.INT.fieldOf("time").forGetter(EnvoyerRecipe::time),
                 Codec.INT.fieldOf("mru").forGetter(EnvoyerRecipe::mruPerTick),

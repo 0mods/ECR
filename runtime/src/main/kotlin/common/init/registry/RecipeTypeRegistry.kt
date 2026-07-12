@@ -11,6 +11,7 @@ interface RecipeTypeRegistry {
     val envoyer: RecipeType<EnvoyerRecipe>
 
     companion object {
+        @JvmStatic
         lateinit var instance: RecipeTypeRegistry
     }
 }

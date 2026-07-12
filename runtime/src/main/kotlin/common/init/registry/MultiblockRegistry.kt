@@ -4,6 +4,7 @@ import com.algorithmlx.ecr.api.multiblock.Multiblock
 
 interface MultiblockRegistry {
     val mithrilineFurnace: Multiblock
+    val soulStone: Multiblock
 
     companion object {
         lateinit var instance: MultiblockRegistry

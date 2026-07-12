@@ -15,14 +15,19 @@ import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.Identifier
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.item.crafting.Ingredient
+import net.minecraft.world.item.crafting.PlacementInfo
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeBookCategories
 import net.minecraft.world.item.crafting.RecipeBookCategory
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.item.crafting.SingleItemRecipe
+import net.minecraft.world.item.crafting.SingleRecipeInput
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
@@ -30,18 +35,30 @@ import kotlin.jvm.optionals.getOrNull
 class StructureRecipe(
     val multiblock: Multiblock,
     val time: Int,
-    ingredient: Ingredient,
-    result: ItemStackTemplate,
+    val ingredient: Ingredient,
+    private val result: Optional<ItemStackTemplate>,
     val chance: Range,
+    val structureCenter: Block?,
     val blockForPlace: Block?,
     val consumeStructure: Boolean = false
-): SingleItemRecipe(Recipe.CommonInfo(true), ingredient, result) {
-    override fun getSerializer(): RecipeSerializer<out SingleItemRecipe> = RecipeSerializerRegistry.instance.structure
+): Recipe<SingleRecipeInput> {
+    init {
+        require(blockForPlace != null || result.isPresent) {
+            "Item result and block place is not present. One of values must exists."
+        }
+        require(!(result.isPresent && blockForPlace != null)) { "Item result and block place cannot be specified at the same time." }
+        require(structureCenter == null || multiblock.blocks.map { it.default() }.any { it.`is`(structureCenter) }) {
+            "Structure center is not contains in ${ECRegistries.MULTIBLOCK.getKey(multiblock)}"
+        }
+    }
 
-    override fun getType(): RecipeType<out SingleItemRecipe> = RecipeTypeRegistry.instance.structure
-
+    override fun getSerializer(): RecipeSerializer<StructureRecipe> = RecipeSerializerRegistry.instance.structure
+    override fun getType(): RecipeType<StructureRecipe> = RecipeTypeRegistry.instance.structure
+    override fun placementInfo(): PlacementInfo = PlacementInfo.NOT_PLACEABLE
+    override fun matches(input: SingleRecipeInput, level: Level): Boolean = ingredient.test(input.item())
+    override fun assemble(input: SingleRecipeInput): ItemStack = result.getOrNull()?.create() ?: ItemStack.EMPTY
+    override fun showNotification(): Boolean = false
     override fun group(): String = "$ModId:${ECRModIDs.STRUCTURE}"
-
     override fun recipeBookCategory(): RecipeBookCategory = RecipeBookCategories.CAMPFIRE
 
     companion object {
@@ -51,17 +68,23 @@ class StructureRecipe(
                 Identifier.CODEC.fieldOf("multiblock")
                     .forGetter { fg -> ECRegistries.MULTIBLOCK.getKey(fg.multiblock) ?: throw NullPointerException("Multiblock is not registered") },
                 Codec.INT.fieldOf("time").forGetter(StructureRecipe::time),
-                Ingredient.CODEC.fieldOf("ingredient").forGetter(StructureRecipe::input),
-                ItemStackTemplate.CODEC.fieldOf("result").forGetter(StructureRecipe::result),
-                Range.CODEC.fieldOf("chance").forGetter(StructureRecipe::chance),
+                Ingredient.CODEC.fieldOf("ingredient").forGetter(StructureRecipe::ingredient),
+                ItemStackTemplate.CODEC.optionalFieldOf("result").forGetter(StructureRecipe::result),
+                Range.CODEC.optionalFieldOf("chance", Range(0, 0)).forGetter(StructureRecipe::chance),
+                Codec.optionalField("structure_center", Identifier.CODEC, true)
+                    .forGetter { fg -> Optional.ofNullable(fg.structureCenter?.let { thing -> BuiltInRegistries.BLOCK.getKey(thing) }) },
                 Codec.optionalField("placement", Identifier.CODEC, true)
                     .forGetter { fg -> Optional.ofNullable(fg.blockForPlace?.let { thing -> BuiltInRegistries.BLOCK.getKey(thing) }) },
                 Codec.BOOL.fieldOf("consume_structure").orElseGet { false }.forGetter(StructureRecipe::consumeStructure)
-            ).apply(it) { multiblockId, time, ingredient, result, chance, placement, consumeStructure ->
+            ).apply(it) { multiblockId, time, ingredient, result, chance, center, placement, consumeStructure ->
                 StructureRecipe(
                     ECRegistries.MULTIBLOCK.getOptional(multiblockId).getOrNull() ?: throw NullPointerException("Multiblock is not registered"),
                     time, ingredient, result,
-                    chance, placement.getOrNull()?.let { l ->
+                    chance,
+                    center.getOrNull()?.let { l ->
+                        BuiltInRegistries.BLOCK.getOptional(l).getOrNull()
+                    },
+                    placement.getOrNull()?.let { l ->
                         BuiltInRegistries.BLOCK.getOptional(l).getOrNull()
                     },
                     consumeStructure
@@ -76,28 +99,37 @@ class StructureRecipe(
             val multiblockId = Identifier.STREAM_CODEC.decode(buf)
             val time = buf.readInt()
             val ingredient = Ingredient.CONTENTS_STREAM_CODEC.decode(buf)
-            val result = ItemStackTemplate.STREAM_CODEC.decode(buf)
+            val result = buf.readOptional { ItemStackTemplate.STREAM_CODEC.decode(it as RegistryFriendlyByteBuf) }
             val chance = Range.STREAM_CODEC.decode(buf)
+            val structureCenterId = buf.readNullable { Identifier.STREAM_CODEC.decode(it) }
             val blockForPlaceId = buf.readNullable { Identifier.STREAM_CODEC.decode(it) }
             val consumeStructure = buf.readBoolean()
 
-            val multiblock = ECRegistries.MULTIBLOCK.getOptional(multiblockId).getOrNull() ?: throw NullPointerException("Multiblock is not registered")
+            val multiblock = ECRegistries.MULTIBLOCK.getOptional(multiblockId).getOrNull()
+                ?: throw NullPointerException("Multiblock is not registered")
+            val structureCenter = BuiltInRegistries.BLOCK.getOptional(structureCenterId).getOrNull()
             val blockForPlace = BuiltInRegistries.BLOCK.getOptional(blockForPlaceId).getOrNull()
-            return StructureRecipe(multiblock, time, ingredient, result, chance, blockForPlace, consumeStructure)
+            return StructureRecipe(multiblock, time, ingredient, result, chance, structureCenter, blockForPlace, consumeStructure)
         }
 
         private fun toNetwork(buf: RegistryFriendlyByteBuf, recipe: StructureRecipe) {
-            Identifier.STREAM_CODEC.encode(buf, ECRegistries.MULTIBLOCK.getKey(recipe.multiblock) ?: throw NullPointerException("Multiblock is not registered"))
+            Identifier.STREAM_CODEC.encode(buf, ECRegistries.MULTIBLOCK.getKey(recipe.multiblock)
+                ?: throw NullPointerException("Multiblock is not registered"))
             buf.writeInt(recipe.time)
-            Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.input())
-            ItemStackTemplate.STREAM_CODEC.encode(buf, recipe.result())
+            Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.ingredient)
+            buf.writeOptional(recipe.result) { buffer, item ->
+                ItemStackTemplate.STREAM_CODEC.encode(buffer as RegistryFriendlyByteBuf, item)
+            }
             Range.STREAM_CODEC.encode(buf, recipe.chance)
+            buf.writeNullable(recipe.structureCenter?.let { BuiltInRegistries.BLOCK.getKey(it) }, Identifier.STREAM_CODEC)
             buf.writeNullable(recipe.blockForPlace?.let { BuiltInRegistries.BLOCK.getKey(it) }, Identifier.STREAM_CODEC)
             buf.writeBoolean(recipe.consumeStructure)
         }
     }
 
     data class Range(val min: Int, val max: Int){
+        fun isEmpty() = this.min == 0 && max == 0
+
         companion object {
             @JvmField
             val CODEC: Codec<Range> = RecordCodecBuilder.create {

@@ -3,10 +3,12 @@
   "minVersion": "0.8",
   "package": "com.algorithmlx.ecr.mixin",
   "client": [
-    "RenderPipelinesAccessor",
-    "ClientLevelMixin"
+    "client.ClientLevelMixin",
+    "client.RenderPipelinesAccessor"
   ],
-  "mixins": [],
+  "mixins": [
+    "ItemEntityMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

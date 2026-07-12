@@ -1,10 +1,11 @@
-type: ecreimagined:mithriline_furnace
-input:
-  fabric:type: &type ecreimagined:count
-  neoforge:ingredient_type: *type
-  base: minecraft:diamond
-  count: 16
-espe: 128
+type: ecreimagined:structure
+multiblock: ecreimagined:soul_stone
+structure_center: minecraft:emerald_block
+time: 40
+ingredient: minecraft:emerald
+chance:
+  min: 6
+  max: 10
 result:
-  id: minecraft:emerald
-  count: 4
+  id: ecreimagined:soul_stone
+  count: 1

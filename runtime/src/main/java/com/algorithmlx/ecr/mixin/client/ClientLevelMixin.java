@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.mixin;
+package com.algorithmlx.ecr.mixin.client;
 
 import com.algorithmlx.ecr.api.block.FullBlockParticles;
 import net.minecraft.client.multiplayer.ClientLevel;

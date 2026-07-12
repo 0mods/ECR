@@ -12,10 +12,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "com.algorithmlx.ecr.fabric.MainKt::mainCommon"
+      "com.algorithmlx.ecr.fabric.init.FabricInit::init"
     ],
     "client": [
-      "com.algorithmlx.ecr.fabric.MainKt::mainClient"
+      "com.algorithmlx.ecr.fabric.init.FabricClientInit::init"
     ]
   },
   "mixins": [

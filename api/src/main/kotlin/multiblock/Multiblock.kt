@@ -76,8 +76,8 @@ open class Multiblock(val xSize: Int, val zSize: Int, val ySize: Int, block: Mul
     fun replaceInWorld(
         level: Level,
         placement: MultiblockPlacement,
-        transform: (BlockState) -> BlockState,
-        replaceAir: Boolean = false
+        replaceAir: Boolean = false,
+        transform: (BlockState) -> BlockState
     ) {
         (0 ..< ySize).forEach { y ->
             (0 ..< zSize).forEach { z ->
