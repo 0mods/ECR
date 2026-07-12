@@ -6,6 +6,7 @@ import com.algorithmlx.ecr.api.ecRL
 import com.mojang.blaze3d.platform.cursor.CursorTypes
 import com.algorithmlx.ecr.api.research.ClientResearchState
 import com.algorithmlx.ecr.api.research.content.CraftingBookElement
+import com.algorithmlx.ecr.client.book.BookResearchLinkController
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.core.registries.BuiltInRegistries
@@ -81,8 +82,21 @@ object BookRecipeElementRenderer {
         when (element) {
             is BookRecipeSlot -> renderSlot(context, element, false)
             is BookRecipeTooltip -> renderTooltip(context, element)
+            is BookRecipeLink -> renderLink(context, element)
             else -> element.render(context)
         }
+    }
+
+    private fun renderLink(context: BookElementRenderContext, link: BookRecipeLink) {
+        val font = context.mc.font
+        val x = context.x + link.x
+        val y = context.y + link.y
+        val width = font.width(link.text)
+        val hovered = BookResearchLinkController.hover(context, link.target, x, y, width, font.lineHeight)
+        val color = if (hovered) link.hoverColor else link.color
+        context.graphics.text(font, link.text, x, y, color, link.shadow)
+        val underlineY = y + font.lineHeight - 1
+        context.graphics.fill(x, underlineY, x + width, underlineY + 1, color)
     }
 
     private fun renderSlot(context: BookElementRenderContext, slot: BookRecipeSlot, viewerTarget: Boolean) {

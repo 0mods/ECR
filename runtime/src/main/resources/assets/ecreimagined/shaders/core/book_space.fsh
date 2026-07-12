@@ -47,14 +47,14 @@ void main() {
     float gameTime = time;
 
     for (int layer = 0; layer < 3; layer++) {
-        float scale = 26.0 + float(layer) * 22.0;
+        float scale = (26.0 + float(layer) * 22.0) * starDensity;
         vec2 cell = floor(uv * scale);
 
         vec2 shift = vec2(hash21(cell + 11.1), hash21(cell + 22.2)) - 0.5;
         vec2 local = fract(uv * scale) - 0.5 - shift * 0.7;
 
         float random = hash21(cell + float(layer) * 19.7);
-        float radius = mix(0.025, 0.14, random * random);
+        float radius = mix(0.025, 0.14, random * random) * starSize;
         float star = smoothstep(radius, 0.0, length(local));
         float twinkle = starTwinkle(cell, layer, random, gameTime);
         vec3 tint = mix(vec3(0.45, 0.65, 1.0), vec3(1.0, 0.65, 0.45), random);

@@ -10,9 +10,12 @@ import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.ResearchAction
 import com.algorithmlx.ecr.api.utils.countByIngredient
 import com.algorithmlx.ecr.api.utils.openMenuScreenInternal
+import com.algorithmlx.ecr.common.init.config.ConfigManager
+import com.algorithmlx.ecr.common.init.config.ECConfig
 import com.algorithmlx.ecr.common.init.events.ECEvents
 import com.algorithmlx.ecr.common.init.registry.*
 import com.algorithmlx.ecr.common.item.NamedBlockItem
+import com.algorithmlx.ecr.common.research.ResearchConfigDisabler
 import com.algorithmlx.ecr.common.research.ResearchCommands
 import com.algorithmlx.ecr.neoforge.api.CountIngredient
 import com.algorithmlx.ecr.neoforge.init.registry.*
@@ -41,10 +44,14 @@ import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 import net.neoforged.neoforge.registries.NewRegistryEvent
 import net.neoforged.neoforge.resource.ListenerKey
+import java.io.File
 
 object NeoForgeInit {
     fun init(bus: IEventBus) {
+        ECConfig.instance = ConfigManager.saveOrLoad(File("config/ecr.json"), ECConfig())
+
         val forgeBus = NeoForge.EVENT_BUS
+        ResearchConfigDisabler.init()
 
         forgeBus.addListener(::onItemTooltip)
         forgeBus.addListener(::onRegisterPayload)

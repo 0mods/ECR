@@ -18,7 +18,8 @@ import java.util.concurrent.CopyOnWriteArrayList
 data class ResearchCatalogSnapshot(
     val categories: Map<Identifier, BookCategory>,
     val entries: Map<Identifier, BookEntry>,
-    val layout: Map<Identifier, ResolvedBookEntry>
+    val layout: Map<Identifier, ResolvedBookEntry>,
+    val disabledEntries: Set<Identifier> = emptySet()
 ) {
     fun entriesIn(category: Identifier): List<ResolvedBookEntry> =
         layout.values.filter { it.category == category }
@@ -27,6 +28,10 @@ data class ResearchCatalogSnapshot(
 object ResearchCatalog {
     private val permanentCategories = LinkedHashMap<Identifier, BookCategory>()
     private val permanentEntries = LinkedHashMap<Identifier, BookEntry>()
+    private var loadedCategories: Collection<BookCategory> = emptyList()
+    private var loadedEntries: Collection<BookEntry> = emptyList()
+    private val disabledEntries = LinkedHashSet<Identifier>()
+    private val disabledProviders = CopyOnWriteArrayList<() -> Collection<Identifier>>()
     private val reloadListeners = CopyOnWriteArrayList<(ResearchCatalogSnapshot) -> Unit>()
     @Volatile private var current = ResearchCatalogSnapshot(emptyMap(), emptyMap(), emptyMap())
 
@@ -37,14 +42,75 @@ object ResearchCatalog {
     @Synchronized
     fun register(category: BookCategory) {
         check(permanentCategories.putIfAbsent(category.id, category) == null) { "Duplicate category: ${category.id}" }
-        replace(emptyList(), emptyList())
+        refresh()
     }
 
     @JvmStatic
     @Synchronized
     fun register(entry: BookEntry) {
         check(permanentEntries.putIfAbsent(entry.id, entry) == null) { "Duplicate research: ${entry.id}" }
-        replace(emptyList(), emptyList())
+        refresh()
+    }
+
+    @JvmStatic
+    @Synchronized
+    fun disable(research: Identifier) {
+        if (disabledEntries.add(research)) refresh()
+    }
+
+    @JvmStatic
+    fun disable(research: String) {
+        disable(Identifier.parse(research))
+    }
+
+    @JvmStatic
+    @Synchronized
+    fun enable(research: Identifier) {
+        if (disabledEntries.remove(research)) refresh()
+    }
+
+    @JvmStatic
+    fun enable(research: String) {
+        enable(Identifier.parse(research))
+    }
+
+    @JvmStatic
+    fun isDisabled(research: Identifier): Boolean = research in current.disabledEntries
+
+    @JvmStatic
+    fun isDisabled(research: String): Boolean = isDisabled(Identifier.parse(research))
+
+    @JvmStatic
+    @Synchronized
+    fun setDisabled(researches: Collection<Identifier>) {
+        disabledEntries.clear()
+        disabledEntries += researches
+        refresh()
+    }
+
+    @JvmStatic
+    @Synchronized
+    fun clearDisabled() {
+        if (disabledEntries.isEmpty()) return
+        disabledEntries.clear()
+        refresh()
+    }
+
+    @JvmStatic
+    @Synchronized
+    fun addDisabledProvider(provider: () -> Collection<Identifier>) {
+        disabledProviders += provider
+        refresh()
+    }
+
+    @JvmStatic
+    @Synchronized
+    fun refresh() {
+        val categoryMap = LinkedHashMap(permanentCategories)
+        loadedCategories.forEach { check(categoryMap.put(it.id, it) == null) { "Duplicate category: ${it.id}" } }
+        val entryMap = LinkedHashMap(permanentEntries)
+        loadedEntries.forEach { check(entryMap.put(it.id, it) == null) { "Duplicate research: ${it.id}" } }
+        install(categoryMap, entryMap)
     }
 
     @JvmStatic
@@ -55,19 +121,20 @@ object ResearchCatalog {
     @JvmStatic
     @Synchronized
     fun replace(categories: Collection<BookCategory>, entries: Collection<BookEntry>) {
-        val categoryMap = LinkedHashMap(permanentCategories)
-        categories.forEach { check(categoryMap.put(it.id, it) == null) { "Duplicate category: ${it.id}" } }
-        val entryMap = LinkedHashMap(permanentEntries)
-        entries.forEach { check(entryMap.put(it.id, it) == null) { "Duplicate research: ${it.id}" } }
-        install(categoryMap, entryMap)
+        loadedCategories = categories.toList()
+        loadedEntries = entries.toList()
+        refresh()
     }
 
     private fun install(categoryMap: LinkedHashMap<Identifier, BookCategory>, entryMap: LinkedHashMap<Identifier, BookEntry>) {
-        val layout = ResearchLayout.resolve(categoryMap, entryMap)
+        val disabled = disabledResearches()
+        val filtered = filterDisabled(categoryMap, entryMap, disabled)
+        val layout = ResearchLayout.resolve(filtered.categories, filtered.entries)
         current = ResearchCatalogSnapshot(
-            Collections.unmodifiableMap(categoryMap),
-            Collections.unmodifiableMap(entryMap),
-            Collections.unmodifiableMap(layout)
+            Collections.unmodifiableMap(filtered.categories),
+            Collections.unmodifiableMap(filtered.entries),
+            Collections.unmodifiableMap(layout),
+            Collections.unmodifiableSet(filtered.disabled)
         )
         reloadListeners.forEach { it(current) }
     }
@@ -85,6 +152,58 @@ object ResearchCatalog {
             )
         }
     }
+
+    private fun disabledResearches(): Set<Identifier> = buildSet {
+        addAll(disabledEntries)
+        disabledProviders.forEach { provider -> addAll(provider()) }
+    }
+
+    private fun filterDisabled(
+        categories: LinkedHashMap<Identifier, BookCategory>,
+        entries: LinkedHashMap<Identifier, BookEntry>,
+        explicitDisabled: Set<Identifier>
+    ): FilteredResearchCatalog {
+        val activeCategories = LinkedHashMap(categories)
+        val activeEntries = LinkedHashMap(entries)
+        val disabled = LinkedHashSet(explicitDisabled)
+        val knownCategories = categories.keys.toSet()
+        val knownEntries = entries.keys.toSet()
+        var changed: Boolean
+        do {
+            changed = false
+            val removedEntries = activeEntries.values
+                .filter { entry ->
+                    entry.id in disabled ||
+                        entry.dependencies.any { it in disabled || (it in knownEntries && it !in activeEntries) } ||
+                        entry.requirements.any { requirement ->
+                            val target = requirement.researchId(entry.id)
+                            target in disabled || (target in knownEntries && target !in activeEntries)
+                        } ||
+                        entry.category?.let { it in knownCategories && it !in activeCategories } == true
+                }
+                .mapTo(LinkedHashSet(), BookEntry::id)
+            if (removedEntries.isNotEmpty()) {
+                activeEntries.keys.removeAll(removedEntries)
+                disabled += removedEntries
+                changed = true
+            }
+
+            val removedCategories = activeCategories.values
+                .filter { category -> category.dependencies.any { it in disabled || (it in knownEntries && it !in activeEntries) } }
+                .mapTo(LinkedHashSet(), BookCategory::id)
+            if (removedCategories.isNotEmpty()) {
+                activeCategories.keys.removeAll(removedCategories)
+                changed = true
+            }
+        } while (changed)
+        return FilteredResearchCatalog(activeCategories, activeEntries, disabled)
+    }
+
+    private data class FilteredResearchCatalog(
+        val categories: LinkedHashMap<Identifier, BookCategory>,
+        val entries: LinkedHashMap<Identifier, BookEntry>,
+        val disabled: Set<Identifier>
+    )
 }
 
 private object ResearchLayout {
@@ -117,6 +236,7 @@ private object ResearchLayout {
                 sequenceOf(element.requirement) + element.variants.asSequence().map(BookTextVariant::requirement)
             }
             .filterNotNull()
+            .filter { it.researchId(entry.id) in entries }
             .forEach { validateRequirement(entry.id, it, entries) }
     }
 

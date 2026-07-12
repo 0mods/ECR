@@ -18,15 +18,18 @@ import com.algorithmlx.ecr.api.research.OpenResearchTask
 import com.algorithmlx.ecr.api.research.ResearchCatalog
 import com.algorithmlx.ecr.api.research.ResearchNetwork
 import com.algorithmlx.ecr.api.research.ResearchProgress
+import com.algorithmlx.ecr.api.research.content.BookResearchLink
 import com.algorithmlx.ecr.api.research.content.ResearchTaskDefinition
 import com.algorithmlx.ecr.api.research.ResearchTaskProgress
 import com.algorithmlx.ecr.api.research.content.ResolvedBookEntry
 import com.algorithmlx.ecr.client.book.controller.BookBookmarkController
 import com.algorithmlx.ecr.client.book.renderer.BookDefaultRenderers
 import com.algorithmlx.ecr.client.book.BookPageLayout
+import com.algorithmlx.ecr.client.book.BookResearchLinkController
 import com.algorithmlx.ecr.client.book.renderer.BookRecipeElementRenderer
 import com.algorithmlx.ecr.client.book.BookRenderPipelines
 import com.algorithmlx.ecr.client.book.BookSpread
+import com.algorithmlx.ecr.client.book.ResearchBookConfigValues
 import com.algorithmlx.ecr.client.book.renderer.BookThreadRenderer
 import com.algorithmlx.ecr.client.book.controller.MultiblockBookPreviewController
 import com.mojang.blaze3d.platform.InputConstants
@@ -228,7 +231,7 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
         }
 
         val oldTargetZoom = targetZoom
-        targetZoom = (targetZoom + scrollY.toFloat() * 0.12f).coerceIn(0.5f, 2f)
+        targetZoom = (targetZoom + scrollY.toFloat() * ResearchBookConfigValues.zoomStep()).coerceIn(0.5f, 2f)
         val graphX = mouseX.toFloat() - width / 2f
         val graphY = mouseY.toFloat() - GRAPH_TOP
 
@@ -283,17 +286,7 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
     }
 
     private fun renderSpace(graphics: GuiGraphicsExtractor) {
-        val encodedX = encodeOffset(panX)
-        val encodedY = encodeOffset(panY)
-        val red = encodedX ushr OFFSET_LOW_BITS
-        val green = encodedY ushr OFFSET_LOW_BITS
-        val lowY = encodedY and OFFSET_LOW_MASK
-        val zoomBits = (((zoom - 0.5f) / 1.5f).coerceIn(0f, 1f) * ZOOM_MAX).roundToInt()
-        val blue = ((lowY ushr 3) shl 7) or zoomBits
-        val alpha = 0x80 or ((encodedX and OFFSET_LOW_MASK) shl 3) or (lowY and 0x7)
-        val color = (alpha shl 24) or (red shl 16) or (green shl 8) or blue
-
-        graphics.fill(BookRenderPipelines.forCategory(selectedCategory()), 0, 0, width, height, color)
+        graphics.fill(BookRenderPipelines.forCategory(selectedCategory()), 0, 0, width, height, ResearchBookConfigValues.spaceColor(panX, panY, zoom))
     }
 
     private fun renderGraph(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int) {
@@ -379,7 +372,8 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
     }
 
     private fun renderAvailablePulse(graphics: GuiGraphicsExtractor, entry: BookEntry) {
-        val cycle = ((System.nanoTime() / 1_000_000_000.0) % BLINK_SECONDS) / BLINK_SECONDS
+        val blinkSeconds = ResearchBookConfigValues.availableBlinkSeconds()
+        val cycle = ((System.nanoTime() / 1_000_000_000.0) % blinkSeconds) / blinkSeconds
         val alpha = (36 + (sin(cycle * Math.PI * 2.0 - Math.PI / 2.0) * 0.5 + 0.5) * 112).roundToInt()
         val color = (alpha.coerceIn(0, 255) shl 24) or 0xDCEBFF
         graphics.outline(-2, -2, nodeWidth(entry) + 4, nodeHeight(entry) + 4, color)
@@ -508,6 +502,7 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
         graphics.enableScissor(0, 0, BOOK_WIDTH, BOOK_HEIGHT)
 
         BookRecipeElementRenderer.clearHoveredViewerStack()
+        BookResearchLinkController.beginFrame()
         MultiblockBookPreviewController.beginFrame()
         spreads[spreadIndex].elements.forEachIndexed { placementIndex, placement ->
             val absX = transform.x + (placement.x * transform.scale).toInt()
@@ -532,7 +527,10 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
                     absH,
                     transform.scale,
                     placement.textLines,
-                    "${entry.id}|$spreadIndex|$placementIndex"
+                    "${entry.id}|$spreadIndex|$placementIndex",
+                    entry.id,
+                    placement.textLineStart,
+                    placement.textLineCount
                 ),
                 placement.element.content
             )
@@ -595,6 +593,8 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
         val x = ((mouseX - transform.x) / transform.scale).toInt()
         val y = ((mouseY - transform.y) / transform.scale).toInt()
 
+        if (button == 0 && openHoveredLink()) return true
+
         if (button == 0 && shouldShowCompleteButton(entry) && x in COMPLETE_BUTTON_X until COMPLETE_BUTTON_X + COMPLETE_BUTTON_WIDTH &&
             y in COMPLETE_BUTTON_Y until COMPLETE_BUTTON_Y + COMPLETE_BUTTON_HEIGHT
         ) {
@@ -617,6 +617,16 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
             return true
         }
 
+        return true
+    }
+
+    private fun openHoveredLink(): Boolean =
+        BookResearchLinkController.hovered()?.let(::openLink) == true
+
+    private fun openLink(link: BookResearchLink): Boolean {
+        val entry = ResearchCatalog.snapshot().entries[link.research] ?: return false
+        if (!isVisible(entry) || !isAvailable(entry)) return false
+        openEntry(entry, link.spread)
         return true
     }
 
@@ -811,11 +821,6 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
         targetCategoryScroll = ratio * maxCategoryScroll()
     }
 
-    private fun encodeOffset(value: Float): Int {
-        val normalized = value.coerceIn(-PARALLAX_PAN_RANGE, PARALLAX_PAN_RANGE) / PARALLAX_PAN_RANGE
-        return ((normalized * 0.5f + 0.5f) * OFFSET_MAX).roundToInt()
-    }
-
     private fun BookText.component(shadow: Boolean = false): Component {
         val component = if (translated) Component.translatable(value) else Component.literal(value)
         return if (shadow) component else component.withoutShadow()
@@ -887,12 +892,6 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
         private const val TASK_LEVEL_SIZE = 5
         private const val TASK_LEVEL_GAP = 2
         private const val TASK_LEVEL_STEP = TASK_LEVEL_SIZE + TASK_LEVEL_GAP
-        private const val PARALLAX_PAN_RANGE = 8192f
-        private const val OFFSET_LOW_BITS = 4
-        private const val OFFSET_LOW_MASK = (1 shl OFFSET_LOW_BITS) - 1
-        private const val OFFSET_MAX = (1 shl 12) - 1
-        private const val ZOOM_MAX = (1 shl 7) - 1
-        private const val BLINK_SECONDS = 3.0
         private const val NODE_TOOLTIP_DESCRIPTION_WIDTH = 160
         private const val NODE_TOOLTIP_DESCRIPTION_SCALE = 0.75f
 

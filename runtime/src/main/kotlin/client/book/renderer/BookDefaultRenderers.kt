@@ -9,6 +9,7 @@ import com.algorithmlx.ecr.api.research.content.BlockBookElement
 import com.algorithmlx.ecr.api.research.content.ItemBookElement
 import com.algorithmlx.ecr.api.research.content.MultiblockBookElement
 import com.algorithmlx.ecr.api.research.content.TextBookElement
+import com.algorithmlx.ecr.client.book.BookLinkedTextLayout
 import com.algorithmlx.ecr.client.book.controller.MultiblockBookPreviewController
 import com.algorithmlx.ecr.client.book.recipe.mod.MithrilineFurnaceRenderer
 import com.algorithmlx.ecr.client.book.recipe.vanilla.CookingRecipeRenderer
@@ -17,7 +18,6 @@ import com.algorithmlx.ecr.client.book.recipe.vanilla.StonecutterRecipeRenderer
 import com.algorithmlx.ecr.common.init.registry.RecipeTypeRegistry
 import net.minecraft.client.Minecraft
 import net.minecraft.core.registries.BuiltInRegistries
-import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.RecipeType
 
@@ -44,15 +44,7 @@ object BookDefaultRenderers {
     }
 
     private fun renderText(context: BookElementRenderContext, element: TextBookElement) {
-        val font = Minecraft.getInstance().font
-        val text = if (element.text.translated) Component.translatable(element.text.value) else Component.literal(element.text.value)
-        val lines = context.textLines ?: font.split(text, context.width.coerceAtLeast(1))
-        val lineCount = minOf(lines.size, context.height / font.lineHeight)
-        repeat(lineCount) { index ->
-            val line = lines[index]
-            val x = if (element.centered) context.x + (context.width - font.width(line)) / 2 else context.x
-            context.graphics.text(font, line, x, context.y + index * font.lineHeight, element.color, element.shadow)
-        }
+        BookLinkedTextLayout.render(context, element)
     }
 
     private fun renderItem(context: BookElementRenderContext, element: ItemBookElement) {

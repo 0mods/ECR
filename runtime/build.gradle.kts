@@ -27,6 +27,7 @@ dependencies {
 
     implementation(project(":api"))
 
+    compileOnly(kotlin("reflect", version = providers.gradleProperty("libs.kotlin").get()))
     compileOnly(libs.bundles.kotlinx.serialization)
     compileOnly(libs.bundles.kotlinx.coroutines)
 

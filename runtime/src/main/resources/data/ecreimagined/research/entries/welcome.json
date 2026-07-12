@@ -100,11 +100,6 @@
         {
           "type": "space",
           "height": 8
-        },
-        {
-          "type": "crafting",
-          "recipe": "ecreimagined:test",
-          "align": "center"
         }
       ]
     }

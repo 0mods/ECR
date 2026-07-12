@@ -3,7 +3,6 @@ package com.algorithmlx.ecr.client.book
 import com.algorithmlx.ecr.api.research.content.BookElementAlign
 import com.algorithmlx.ecr.api.research.content.BookElementSpec
 import com.algorithmlx.ecr.api.research.content.BookEntry
-import com.algorithmlx.ecr.api.research.content.BookText
 import com.algorithmlx.ecr.api.research.content.BookTextVariant
 import com.algorithmlx.ecr.api.research.ClientResearchState
 import com.algorithmlx.ecr.api.research.content.CraftingBookElement
@@ -13,7 +12,7 @@ import com.algorithmlx.ecr.api.research.content.TaskListBookElement
 import com.algorithmlx.ecr.api.research.content.TextBookElement
 import com.algorithmlx.ecr.client.book.renderer.BookRecipeElementRenderer
 import net.minecraft.client.Minecraft
-import net.minecraft.network.chat.Component
+import net.minecraft.resources.Identifier
 import net.minecraft.util.FormattedCharSequence
 import kotlin.math.ceil
 
@@ -23,7 +22,9 @@ data class BookElementPlacement(
     val y: Int,
     val width: Int,
     val height: Int,
-    val textLines: List<FormattedCharSequence>? = null
+    val textLines: List<FormattedCharSequence>? = null,
+    val textLineStart: Int = 0,
+    val textLineCount: Int = textLines?.size ?: 0
 )
 
 data class BookSpread(val elements: List<BookElementPlacement>)
@@ -49,14 +50,14 @@ object BookPageLayout {
         entry.pages.flatMap { it.elements }.forEach { originalSpec ->
             val spec = originalSpec.resolveText(entry) ?: return@forEach
             val serializer = ResearchSerializers.elementSerializer(spec.content.type)
-            val width = (spec.width ?: autoWidth(spec) ?: serializer?.defaultWidth ?: 16).coerceIn(0, PAGE_WIDTH)
+            val width = (spec.width ?: autoWidth(spec, entry) ?: serializer?.defaultWidth ?: 16).coerceIn(0, PAGE_WIDTH)
             val height = (spec.height ?: autoHeight(spec, width) ?: serializer?.defaultHeight ?: 16).coerceIn(0, PAGE_HEIGHT)
             if (spec.content === SpaceBookElement) {
                 cursor.y = (cursor.y + height).coerceAtMost(BOTTOM)
                 return@forEach
             }
             if (spec.content is TextBookElement) {
-                placeText(spec, width.coerceAtLeast(1), cursor)
+                placeText(spec, width.coerceAtLeast(1), cursor, entry.id)
                 return@forEach
             }
             if (cursor.y + height > BOTTOM) {
@@ -78,8 +79,8 @@ object BookPageLayout {
         return BookElementSpec(TaskListBookElement(entry.id, level), PAGE_WIDTH, rows * TASK_CELL_SIZE + 4)
     }
 
-    private fun autoWidth(spec: BookElementSpec): Int? = when (val element = spec.content) {
-        is TextBookElement -> Minecraft.getInstance().font.width(element.text.component()).coerceIn(1, PAGE_WIDTH)
+    private fun autoWidth(spec: BookElementSpec, entry: BookEntry): Int? = when (val element = spec.content) {
+        is TextBookElement -> BookLinkedTextLayout.singleLineWidth(element.text, Minecraft.getInstance().font, entry.id).coerceIn(1, PAGE_WIDTH)
         is CraftingBookElement -> BookRecipeElementRenderer.preferredWidth(element)
         else -> null
     }
@@ -92,32 +93,38 @@ object BookPageLayout {
     private fun placeText(
         spec: BookElementSpec,
         width: Int,
-        cursor: PageCursor
+        cursor: PageCursor,
+        owner: Identifier
     ) {
         val font = Minecraft.getInstance().font
         val element = spec.content as TextBookElement
-        val lines = font.split(element.text.component(), width)
-        if (lines.isEmpty()) return
+        val linkedLines = BookLinkedTextLayout.layout(element.text, font, width, owner)
+        if (linkedLines.isEmpty()) return
         var line = 0
-        while (line < lines.size) {
+        while (line < linkedLines.size) {
             val availableLines = (BOTTOM - cursor.y) / font.lineHeight
             if (availableLines == 0) {
                 cursor.nextSide()
                 continue
             }
-            val lineCount = minOf(availableLines, lines.size - line)
-            val chunk = lines.subList(line, line + lineCount)
-            val height = chunk.size * font.lineHeight
-            cursor.spreads.last() += BookElementPlacement(spec, cursor.alignedX(width, spec.align), cursor.y, width, height, chunk)
+            val lineCount = minOf(availableLines, linkedLines.size - line)
+            val height = lineCount * font.lineHeight
+            cursor.spreads.last() += BookElementPlacement(
+                spec,
+                cursor.alignedX(width, spec.align),
+                cursor.y,
+                width,
+                height,
+                textLineStart = line,
+                textLineCount = lineCount
+            )
             line += lineCount
             cursor.y += height
-            if (line < lines.size) {
+            if (line < linkedLines.size) {
                 cursor.nextSide()
             }
         }
     }
-
-    private fun BookText.component(): Component = if (translated) Component.translatable(value) else Component.literal(value)
 
     private fun BookElementSpec.resolveText(entry: BookEntry): BookElementSpec? {
         val element = content as? TextBookElement ?: return this

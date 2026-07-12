@@ -27,7 +27,15 @@ vec2 ecrScrollOffset() {
 }
 
 float ecrZoom() {
-    return mod(floor(vertexColor.b * 255.0 + 0.5), 128.0) / 127.0;
+    return mod(floor(vertexColor.b * 255.0 + 0.5), 32.0) / 31.0;
+}
+
+float ecrStarDensity() {
+    return 0.75 + mod(floor(floor(vertexColor.b * 255.0 + 0.5) / 32.0), 2.0) * 0.25;
+}
+
+float ecrStarSize() {
+    return 1.0 + mod(floor(floor(vertexColor.b * 255.0 + 0.5) / 64.0), 2.0) * 0.5;
 }
 
 #define size ecrLocalSize()
@@ -35,6 +43,8 @@ float ecrZoom() {
 #define scrollSize vec2(1.0)
 #define time (GameTime * 1200.0)
 #define zoom (4.0 + ecrZoom() * 24.0)
+#define starDensity ecrStarDensity()
+#define starSize ecrStarSize()
 #else
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;
@@ -43,4 +53,6 @@ uniform vec2 scrollOffset;
 uniform vec2 scrollSize;
 uniform float time;
 uniform float zoom;
+#define starDensity 1.0
+#define starSize 1.0
 #endif

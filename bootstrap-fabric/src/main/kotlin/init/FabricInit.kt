@@ -11,9 +11,12 @@ import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.ResearchAction
 import com.algorithmlx.ecr.api.utils.countByIngredient
 import com.algorithmlx.ecr.api.utils.openMenuScreenInternal
+import com.algorithmlx.ecr.common.init.config.ConfigManager
+import com.algorithmlx.ecr.common.init.config.ECConfig
 import com.algorithmlx.ecr.common.init.events.ECEvents
 import com.algorithmlx.ecr.common.init.registry.*
 import com.algorithmlx.ecr.common.item.NamedBlockItem
+import com.algorithmlx.ecr.common.research.ResearchConfigDisabler
 import com.algorithmlx.ecr.common.research.ResearchCommands
 import com.algorithmlx.ecr.fabric.api.CountIngredient
 import com.algorithmlx.ecr.fabric.init.registry.*
@@ -45,11 +48,15 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
+import java.io.File
 
 object FabricInit {
     @JvmStatic
     fun init() {
+        ECConfig.instance = ConfigManager.saveOrLoad(File("config/ecr.json"), ECConfig())
+
         initBuiltinRegistries()
+        ResearchConfigDisabler.init()
 
         registerPayloads()
         registerReloadListener()

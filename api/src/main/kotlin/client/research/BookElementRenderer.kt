@@ -22,7 +22,10 @@ data class BookElementRenderContext(
     val screenHeight: Int = height,
     val scale: Float = 1f,
     val textLines: List<FormattedCharSequence>? = null,
-    val interactionKey: String? = null
+    val interactionKey: String? = null,
+    val research: Identifier? = null,
+    val textLineStart: Int = 0,
+    val textLineCount: Int = textLines?.size ?: 0
 ) {
     val mc: Minecraft = Minecraft.getInstance()
 }

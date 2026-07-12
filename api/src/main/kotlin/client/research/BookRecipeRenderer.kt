@@ -8,6 +8,7 @@ import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.item.crafting.display.SlotDisplay
 import net.minecraft.world.level.ItemLike
+import com.algorithmlx.ecr.api.research.content.BookResearchLink
 import java.util.concurrent.ConcurrentHashMap
 
 enum class BookRecipeSlotType {
@@ -29,7 +30,7 @@ class BookRecipeSlot internal constructor(
     val slotType: BookRecipeSlotType,
     val x: Int,
     val y: Int
-) : BookRecipeRenderElement {
+): BookRecipeRenderElement {
     private val tooltipAdditions = mutableListOf<Component>()
     val additions: List<Component> get() = tooltipAdditions
 
@@ -48,7 +49,7 @@ data class BookRecipeSprite(
     val y: Int,
     val width: Int,
     val height: Int
-) : BookRecipeRenderElement {
+): BookRecipeRenderElement {
     override fun render(context: BookElementRenderContext) {
         context.graphics.blitSprite(
             RenderPipelines.GUI_TEXTURED,
@@ -88,7 +89,7 @@ data class BookRecipeText(
     val y: Int,
     val color: Int,
     val shadow: Boolean
-) : BookRecipeRenderElement {
+): BookRecipeRenderElement {
     override fun render(context: BookElementRenderContext) {
         context.graphics.text(
             context.mc.font,
@@ -97,6 +98,30 @@ data class BookRecipeText(
             context.y + this.y,
             this.color,
             this.shadow
+        )
+    }
+}
+
+data class BookRecipeLink(
+    val text: Component,
+    val target: BookResearchLink,
+    val x: Int,
+    val y: Int,
+    val color: Int,
+    val hoverColor: Int,
+    val shadow: Boolean
+): BookRecipeRenderElement {
+    override fun render(context: BookElementRenderContext) {
+        val font = context.mc.font
+        val color = this.color
+        context.graphics.text(font, this.text, context.x + this.x, context.y + this.y, color, this.shadow)
+        val underlineY = context.y + this.y + font.lineHeight - 1
+        context.graphics.fill(
+            context.x + this.x,
+            underlineY,
+            context.x + this.x + font.width(this.text),
+            underlineY + 1,
+            color
         )
     }
 }
@@ -154,6 +179,54 @@ class BookRecipeRenderBuilder(val context: BookElementRenderContext) {
         color: Int = 0xFF202020.toInt(),
         shadow: Boolean = false
     ): BookRecipeText = text(Component.literal(text), x, y, color, shadow)
+
+    fun link(
+        text: Component,
+        target: BookResearchLink,
+        x: Int,
+        y: Int,
+        color: Int = 0xFF2F67B1.toInt(),
+        hoverColor: Int = 0xFF1B4F91.toInt(),
+        shadow: Boolean = false
+    ): BookRecipeLink = BookRecipeLink(text, target, x, y, color, hoverColor, shadow).also(mutableElements::add)
+
+    fun link(
+        text: Component,
+        target: String,
+        x: Int,
+        y: Int,
+        color: Int = 0xFF2F67B1.toInt(),
+        hoverColor: Int = 0xFF1B4F91.toInt(),
+        shadow: Boolean = false
+    ): BookRecipeLink = link(
+        text,
+        requireNotNull(BookResearchLink.parse(target, context.research)) { "Invalid research link: $target" },
+        x,
+        y,
+        color,
+        hoverColor,
+        shadow
+    )
+
+    fun link(
+        text: String,
+        target: BookResearchLink,
+        x: Int,
+        y: Int,
+        color: Int = 0xFF2F67B1.toInt(),
+        hoverColor: Int = 0xFF1B4F91.toInt(),
+        shadow: Boolean = false
+    ): BookRecipeLink = link(Component.literal(text), target, x, y, color, hoverColor, shadow)
+
+    fun link(
+        text: String,
+        target: String,
+        x: Int,
+        y: Int,
+        color: Int = 0xFF2F67B1.toInt(),
+        hoverColor: Int = 0xFF1B4F91.toInt(),
+        shadow: Boolean = false
+    ): BookRecipeLink = link(Component.literal(text), target, x, y, color, hoverColor, shadow)
 }
 
 fun interface BookRecipeRenderer<T : Recipe<*>> {
