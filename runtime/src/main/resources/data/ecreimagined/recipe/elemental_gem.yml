@@ -9,6 +9,4 @@ key:
   c: minecraft:diamond
   d: ecreimagined:earth_gem
   e: ecreimagined:air_gem
-result:
-  id: ecreimagined:elemental_gem
-  count: 1
+result: ecreimagined:elemental_gem

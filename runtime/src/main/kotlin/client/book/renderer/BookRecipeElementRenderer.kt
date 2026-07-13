@@ -3,10 +3,13 @@ package com.algorithmlx.ecr.client.book.renderer
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.client.research.*
 import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.mojang.blaze3d.platform.cursor.CursorTypes
 import com.algorithmlx.ecr.api.research.ClientResearchState
 import com.algorithmlx.ecr.api.research.content.CraftingBookElement
+import com.algorithmlx.ecr.api.research.content.MultiblockBookElement
 import com.algorithmlx.ecr.client.book.BookResearchLinkController
+import com.algorithmlx.ecr.client.book.controller.MultiblockBookPreviewController
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.core.registries.BuiltInRegistries
@@ -17,6 +20,8 @@ import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.display.SlotDisplayContext
+import kotlin.math.max
+import kotlin.math.roundToInt
 
 object BookRecipeElementRenderer {
     private val frameTexture = "textures/gui/book/frame.png".ecRL
@@ -29,7 +34,7 @@ object BookRecipeElementRenderer {
             renderMissingRenderer(context, recipe)
             return
         }
-        render.elements.forEach { renderElement(context, it) }
+        render.elements.forEachIndexed { index, element -> renderElement(context, element, index) }
     }
 
     fun preferredWidth(element: CraftingBookElement): Int? {
@@ -78,13 +83,50 @@ object BookRecipeElementRenderer {
         renderSlot(context, slot, true)
     }
 
-    private fun renderElement(context: BookElementRenderContext, element: BookRecipeRenderElement) {
+    private fun renderElement(context: BookElementRenderContext, element: BookRecipeRenderElement, index: Int) {
         when (element) {
             is BookRecipeSlot -> renderSlot(context, element, false)
             is BookRecipeTooltip -> renderTooltip(context, element)
             is BookRecipeLink -> renderLink(context, element)
+            is BookRecipeMultiblock -> renderMultiblock(context, element, index)
             else -> element.render(context)
         }
+    }
+
+    private fun renderMultiblock(context: BookElementRenderContext, element: BookRecipeMultiblock, index: Int) {
+        val multiblock = ECRegistries.MULTIBLOCK.getOptional(element.multiblock).orElse(null) ?: return
+        val access = context.mc.level?.registryAccess() ?: return
+        multiblock.registryAccess = access
+
+        val x = context.x + element.x
+        val y = context.y + element.y
+        val screenX = context.screenX + (element.x * context.scale).roundToInt()
+        val screenY = context.screenY + (element.y * context.scale).roundToInt()
+        val subContext = context.copy(
+            x = x,
+            y = y,
+            width = element.width,
+            height = element.height,
+            screenX = screenX,
+            screenY = screenY,
+            screenWidth = max(1, (element.width * context.scale).roundToInt()),
+            screenHeight = max(1, (element.height * context.scale).roundToInt()),
+            textLines = null,
+            interactionKey = context.interactionKey?.let { "$it|recipe_multiblock_$index" },
+            textLineStart = 0,
+            textLineCount = 0
+        )
+        MultiblockBookPreviewController.render(
+            subContext,
+            MultiblockBookElement(
+                element.multiblock,
+                element.scale,
+                element.rotationX,
+                element.rotationY,
+                element.layer
+            ),
+            multiblock
+        )
     }
 
     private fun renderLink(context: BookElementRenderContext, link: BookRecipeLink) {

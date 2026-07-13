@@ -4,6 +4,7 @@ import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.RecipeDisplayTypeRegistry
 import com.algorithmlx.ecr.common.recipe.MithrilineFurnaceRecipe
+import com.algorithmlx.ecr.common.recipe.StructureRecipe
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.item.crafting.display.RecipeDisplay
@@ -12,6 +13,10 @@ object FabricRecipeDisplayTypeRegistry: RecipeDisplayTypeRegistry {
     override val mithrilineFurnace: RecipeDisplay.Type<MithrilineFurnaceRecipe.Display> = register(
         ECRModIDs.MITHRILINE_FURNACE,
         RecipeDisplay.Type(MithrilineFurnaceRecipe.Display.MAP_CODEC, MithrilineFurnaceRecipe.Display.STREAM_CODEC)
+    )
+    override val structure: RecipeDisplay.Type<StructureRecipe.Display> = register(
+        ECRModIDs.STRUCTURE,
+        RecipeDisplay.Type(StructureRecipe.Display.MAP_CODEC, StructureRecipe.Display.STREAM_CODEC)
     )
 
     private fun <T: RecipeDisplay.Type<*>> register(id: String, type: T): T = Registry.register(

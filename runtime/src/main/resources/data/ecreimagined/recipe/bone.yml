@@ -1,0 +1,10 @@
+type: ecreimagined:mithriline_furnace
+espe: 48
+input:
+  fabric:type: &t ecreimagined:count
+  neoforge:ingredient_type: *t
+  base: minecraft:egg
+  count: 9
+result:
+  count: 2
+  id: minecraft:bone

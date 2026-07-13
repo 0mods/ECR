@@ -27,3 +27,5 @@ object StackHelper {
 }
 
 var countByIngredient: (Ingredient) -> Int = { 1 }
+
+val Ingredient.count get() = countByIngredient(this)

@@ -1,4 +1,12 @@
 #ifdef ECR_RENDER_PIPELINE
+#ifndef ECR_STAR_DENSITY
+#define ECR_STAR_DENSITY 1.0
+#endif
+
+#ifndef ECR_STAR_SIZE
+#define ECR_STAR_SIZE 1.0
+#endif
+
 layout(std140) uniform Globals {
     ivec3 CameraBlockPos;
     vec3 CameraOffset;
@@ -27,15 +35,7 @@ vec2 ecrScrollOffset() {
 }
 
 float ecrZoom() {
-    return mod(floor(vertexColor.b * 255.0 + 0.5), 32.0) / 31.0;
-}
-
-float ecrStarDensity() {
-    return 0.75 + mod(floor(floor(vertexColor.b * 255.0 + 0.5) / 32.0), 2.0) * 0.25;
-}
-
-float ecrStarSize() {
-    return 1.0 + mod(floor(floor(vertexColor.b * 255.0 + 0.5) / 64.0), 2.0) * 0.5;
+    return mod(floor(vertexColor.b * 255.0 + 0.5), 128.0) / 127.0;
 }
 
 #define size ecrLocalSize()
@@ -43,8 +43,8 @@ float ecrStarSize() {
 #define scrollSize vec2(1.0)
 #define time (GameTime * 1200.0)
 #define zoom (4.0 + ecrZoom() * 24.0)
-#define starDensity ecrStarDensity()
-#define starSize ecrStarSize()
+#define starDensity ECR_STAR_DENSITY
+#define starSize ECR_STAR_SIZE
 #else
 uniform mat4 ModelViewMat;
 uniform mat4 ProjMat;

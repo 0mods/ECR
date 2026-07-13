@@ -1,5 +1,8 @@
 package com.algorithmlx.ecr.api.client.research
 
+import com.algorithmlx.ecr.api.multiblock.Multiblock
+import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.research.content.BookResearchLink
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
@@ -8,7 +11,6 @@ import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.item.crafting.display.SlotDisplay
 import net.minecraft.world.level.ItemLike
-import com.algorithmlx.ecr.api.research.content.BookResearchLink
 import java.util.concurrent.ConcurrentHashMap
 
 enum class BookRecipeSlotType {
@@ -126,6 +128,24 @@ data class BookRecipeLink(
     }
 }
 
+data class BookRecipeMultiblock(
+    val multiblock: Identifier,
+    val x: Int,
+    val y: Int,
+    val width: Int,
+    val height: Int,
+    val scale: Float,
+    val rotationX: Float,
+    val rotationY: Float,
+    val layer: Int
+): BookRecipeRenderElement {
+    init {
+        require(width > 0 && height > 0)
+    }
+
+    override fun render(context: BookElementRenderContext) { throw AssertionError("Used default render") }
+}
+
 class BookRecipeRenderBuilder(val context: BookElementRenderContext) {
     private val mutableElements = mutableListOf<BookRecipeRenderElement>()
     val elements: List<BookRecipeRenderElement> get() = mutableElements
@@ -227,6 +247,93 @@ class BookRecipeRenderBuilder(val context: BookElementRenderContext) {
         hoverColor: Int = 0xFF1B4F91.toInt(),
         shadow: Boolean = false
     ): BookRecipeLink = link(Component.literal(text), target, x, y, color, hoverColor, shadow)
+
+    fun multiblock(
+        multiblock: Identifier,
+        width: Int,
+        height: Int
+    ): BookRecipeMultiblock = multiblock(multiblock, 0, 0, width, height)
+
+    fun multiblock(
+        multiblock: String,
+        width: Int,
+        height: Int
+    ): BookRecipeMultiblock = multiblock(Identifier.parse(multiblock), width, height)
+
+    fun multiblock(
+        multiblock: Multiblock,
+        width: Int,
+        height: Int
+    ): BookRecipeMultiblock = multiblock(multiblock.id(), width, height)
+
+    fun multiblock(
+        multiblock: Identifier,
+        x: Int,
+        y: Int,
+        width: Int,
+        height: Int,
+        scale: Float = 0.9F,
+        rotationX: Float = 25F,
+        rotationY: Float = -30F,
+        layer: Int = Int.MAX_VALUE
+    ): BookRecipeMultiblock = BookRecipeMultiblock(
+        multiblock,
+        x,
+        y,
+        width,
+        height,
+        scale,
+        rotationX,
+        rotationY,
+        layer
+    ).also(mutableElements::add)
+
+    fun multiblock(
+        multiblock: String,
+        x: Int,
+        y: Int,
+        width: Int,
+        height: Int,
+        scale: Float = 0.9F,
+        rotationX: Float = 25F,
+        rotationY: Float = -30F,
+        layer: Int = Int.MAX_VALUE
+    ): BookRecipeMultiblock = multiblock(
+        Identifier.parse(multiblock),
+        x,
+        y,
+        width,
+        height,
+        scale,
+        rotationX,
+        rotationY,
+        layer
+    )
+
+    fun multiblock(
+        multiblock: Multiblock,
+        x: Int,
+        y: Int,
+        width: Int,
+        height: Int,
+        scale: Float = 0.9F,
+        rotationX: Float = 25F,
+        rotationY: Float = -30F,
+        layer: Int = Int.MAX_VALUE
+    ): BookRecipeMultiblock = multiblock(
+        multiblock.id(),
+        x,
+        y,
+        width,
+        height,
+        scale,
+        rotationX,
+        rotationY,
+        layer
+    )
+
+    private fun Multiblock.id(): Identifier =
+        requireNotNull(ECRegistries.MULTIBLOCK.getKey(this)) { "Multiblock is not registered" }
 }
 
 fun interface BookRecipeRenderer<T : Recipe<*>> {

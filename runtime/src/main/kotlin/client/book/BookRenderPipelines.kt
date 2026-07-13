@@ -4,10 +4,11 @@ import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.api.research.content.BookCategory
 import com.algorithmlx.ecr.mixin.client.RenderPipelinesAccessor
 import com.mojang.blaze3d.pipeline.RenderPipeline
+import net.minecraft.resources.Identifier
 import java.util.concurrent.ConcurrentHashMap
 
 object BookRenderPipelines {
-    private val custom = ConcurrentHashMap<net.minecraft.resources.Identifier, RenderPipeline>()
+    private val custom = ConcurrentHashMap<SpacePipelineKey, RenderPipeline>()
 
     @JvmField
     val SPACE: RenderPipeline = create("pipeline/book_space".ecRL, "core/book_space".ecRL, "core/book_space".ecRL)
@@ -15,25 +16,45 @@ object BookRenderPipelines {
     val THREAD: RenderPipeline = create("pipeline/book_thread".ecRL, "core/book_thread".ecRL, "core/book_thread".ecRL)
 
     fun forCategory(category: BookCategory?): RenderPipeline {
-        val shader = category?.shader ?: return SPACE
-        return custom.computeIfAbsent(category.id) {
+        val config = ResearchBookConfigValues.spaceShaderConfig()
+        if (category == null && config.isDefault) return SPACE
+
+        val shader = category?.shader
+        val key = SpacePipelineKey(category?.id, config.key)
+        return custom.computeIfAbsent(key) {
             create(
-                net.minecraft.resources.Identifier.fromNamespaceAndPath(category.id.namespace, "pipeline/book/${category.id.path}"),
-                shader.vertex,
-                shader.fragment
+                location(category?.id, config),
+                shader?.vertex ?: "core/book_space".ecRL,
+                shader?.fragment ?: "core/book_space".ecRL,
+                config
             )
         }
     }
 
+    private fun location(category: Identifier?, config: ResearchBookSpaceShaderConfig): Identifier {
+        if (category == null) return "pipeline/book_space/${config.key}".ecRL
+        return Identifier.fromNamespaceAndPath(category.namespace, "pipeline/book/${category.path}/${config.key}")
+    }
+
     private fun create(
-        location: net.minecraft.resources.Identifier,
-        vertex: net.minecraft.resources.Identifier,
-        fragment: net.minecraft.resources.Identifier
-    ): RenderPipeline = RenderPipelinesAccessor.ecrRegister(
-        RenderPipeline.builder(RenderPipelinesAccessor.ecrGuiSnippet())
+        location: Identifier,
+        vertex: Identifier,
+        fragment: Identifier,
+        config: ResearchBookSpaceShaderConfig? = null
+    ): RenderPipeline {
+        val builder = RenderPipeline.builder(RenderPipelinesAccessor.ecrGuiSnippet())
             .withLocation(location)
             .withVertexShader(vertex)
             .withFragmentShader(fragment)
-            .build()
+        if (config != null) {
+            builder.withShaderDefine("ECR_STAR_DENSITY", config.starDensity)
+            builder.withShaderDefine("ECR_STAR_SIZE", config.starSize)
+        }
+        return RenderPipelinesAccessor.ecrRegister(builder.build())
+    }
+
+    private data class SpacePipelineKey(
+        val category: Identifier?,
+        val config: String
     )
 }

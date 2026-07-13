@@ -1,8 +1,16 @@
 package com.algorithmlx.ecr.common.init.config
 
+import com.algorithmlx.ecr.api.ModId
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+@JsonComment([
+    "Hello! This is $ModId's config.",
+    "You can configure mod it however you like. If it is possible.",
+    "The config supports both single-line and multi-line comments, similar to those in compiled languages.",
+    "If config broken, it backups with current time.",
+    "Comments are not cleared when the mod is restarted."
+], multiline = true)
 @JsonDefaults
 @Serializable
 data class ECConfig(

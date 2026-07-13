@@ -4,8 +4,10 @@ import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.common.init.ECRModIDs
+import com.algorithmlx.ecr.common.init.registry.RecipeDisplayTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.RecipeSerializerRegistry
 import com.algorithmlx.ecr.common.init.registry.RecipeTypeRegistry
+import com.algorithmlx.ecr.common.recipe.StructureRecipe.Display
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
@@ -15,7 +17,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.resources.Identifier
-import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.ItemStackTemplate
 import net.minecraft.world.item.crafting.Ingredient
@@ -25,8 +26,9 @@ import net.minecraft.world.item.crafting.RecipeBookCategories
 import net.minecraft.world.item.crafting.RecipeBookCategory
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.RecipeType
-import net.minecraft.world.item.crafting.SingleItemRecipe
 import net.minecraft.world.item.crafting.SingleRecipeInput
+import net.minecraft.world.item.crafting.display.RecipeDisplay
+import net.minecraft.world.item.crafting.display.SlotDisplay
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import java.util.Optional
@@ -60,6 +62,55 @@ class StructureRecipe(
     override fun showNotification(): Boolean = false
     override fun group(): String = "$ModId:${ECRModIDs.STRUCTURE}"
     override fun recipeBookCategory(): RecipeBookCategory = RecipeBookCategories.CAMPFIRE
+    override fun display(): List<RecipeDisplay> = listOf(
+        Display(
+            this.ingredient.display(),
+            if (blockForPlace != null) SlotDisplay.ItemSlotDisplay(blockForPlace.asItem())
+            else SlotDisplay.ItemStackSlotDisplay(result.get()),
+            Optional.ofNullable(structureCenter?.let { SlotDisplay.ItemSlotDisplay(it.asItem()) })
+        )
+    )
+
+    data class Display(
+        val ingredient: SlotDisplay,
+        private val resultDisplay: SlotDisplay,
+        val structureCenter: Optional<SlotDisplay>
+    ): RecipeDisplay {
+        override fun result(): SlotDisplay = this.resultDisplay
+
+        override fun craftingStation(): SlotDisplay = this.ingredient
+
+        override fun type(): RecipeDisplay.Type<out RecipeDisplay> = RecipeDisplayTypeRegistry.instance.structure
+
+        companion object {
+            @JvmField
+            val MAP_CODEC: MapCodec<Display> = RecordCodecBuilder.mapCodec {
+                it.group(
+                    SlotDisplay.CODEC.fieldOf("input").forGetter(Display::ingredient),
+                    SlotDisplay.CODEC.fieldOf("result").forGetter(Display::resultDisplay),
+                    SlotDisplay.CODEC.optionalFieldOf("structure_center").forGetter(Display::structureCenter)
+                ).apply(it, ::Display)
+            }
+
+            @JvmField
+            val STREAM_CODEC = StreamCodec.of(::toNetwork, ::fromNetwork)
+
+            private fun fromNetwork(buf: RegistryFriendlyByteBuf): Display {
+                val input = SlotDisplay.STREAM_CODEC.decode(buf)
+                val result = SlotDisplay.STREAM_CODEC.decode(buf)
+                val center = buf.readOptional { b -> SlotDisplay.STREAM_CODEC.decode(b as RegistryFriendlyByteBuf) }
+                return Display(input, result, center)
+            }
+
+            private fun toNetwork(buf: RegistryFriendlyByteBuf, display: Display) {
+                SlotDisplay.STREAM_CODEC.encode(buf, display.ingredient)
+                SlotDisplay.STREAM_CODEC.encode(buf, display.resultDisplay)
+                buf.writeOptional(display.structureCenter) { b, slotDisplay ->
+                    SlotDisplay.STREAM_CODEC.encode(b as RegistryFriendlyByteBuf, slotDisplay)
+                }
+            }
+        }
+    }
 
     companion object {
         @JvmField

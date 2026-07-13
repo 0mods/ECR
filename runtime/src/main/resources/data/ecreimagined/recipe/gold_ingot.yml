@@ -1,0 +1,8 @@
+type: ecreimagined:mithriline_furnace
+espe: 64
+input:
+  fabric:type: &t ecreimagined:count
+  neoforge:ingredient_type: *t
+  base: minecraft:iron_ingot
+  count: 8
+result: minecraft:gold_ingot

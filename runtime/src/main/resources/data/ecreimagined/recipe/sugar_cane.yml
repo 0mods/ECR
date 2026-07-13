@@ -1,0 +1,10 @@
+type: ecreimagined:mithriline_furnace
+espe: 48
+input:
+  fabric:type: &t ecreimagined:count
+  neoforge:ingredient_type: *t
+  base: minecraft:feather
+  count: 2
+result:
+  count: 3
+  id: minecraft:sugar_cane
