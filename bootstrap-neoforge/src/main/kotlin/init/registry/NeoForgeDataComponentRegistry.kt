@@ -19,7 +19,7 @@ class NeoForgeDataComponentRegistry(bus: IEventBus): DataComponentRegistry {
     }
 
     private val soulStoneComponent = dataComponents.registerComponentType(ECRModIDs.SOUL_STONE) { builder ->
-        builder.persistent(SoulStoneComponent.codec).networkSynchronized(SoulStoneComponent.codecStream)
+        builder.persistent(SoulStoneComponent.CODEC).networkSynchronized(SoulStoneComponent.STREAM_CODEC)
     }
 
     private val bookTypeComponent = dataComponents.registerComponentType(ECRModIDs.BOOK_TYPE) { builder ->
@@ -27,7 +27,7 @@ class NeoForgeDataComponentRegistry(bus: IEventBus): DataComponentRegistry {
     }
 
     private val boundGemComponent = dataComponents.registerComponentType(ECRModIDs.BOUND_GEM) { builder ->
-        builder.persistent(BoundGemComponent.codec).networkSynchronized(BoundGemComponent.streamCodec)
+        builder.persistent(BoundGemComponent.CODEC).networkSynchronized(BoundGemComponent.STREAM_CODEC)
     }
 
     override val soulStone: DataComponentType<SoulStoneComponent> by lazy { soulStoneComponent.get() }

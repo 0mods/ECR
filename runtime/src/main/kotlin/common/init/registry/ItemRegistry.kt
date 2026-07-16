@@ -7,6 +7,7 @@ import net.minecraft.world.item.Item
 interface ItemRegistry {
     val soulStone: SoulStone
     val researchBook: ResearchBookItem
+    val boundGem: BoundGemItem
 
     val weaknessElementalAxe: WeakAxe
     val weaknessElementalHoe: WeakHoe

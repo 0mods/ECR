@@ -7,7 +7,6 @@ import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.RecipeDisplayTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.RecipeSerializerRegistry
 import com.algorithmlx.ecr.common.init.registry.RecipeTypeRegistry
-import com.algorithmlx.ecr.common.recipe.StructureRecipe.Display
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
@@ -93,21 +92,21 @@ class StructureRecipe(
             }
 
             @JvmField
-            val STREAM_CODEC = StreamCodec.of(::toNetwork, ::fromNetwork)
+            val STREAM_CODEC = StreamCodec.of(::encode, ::decode)
 
-            private fun fromNetwork(buf: RegistryFriendlyByteBuf): Display {
-                val input = SlotDisplay.STREAM_CODEC.decode(buf)
-                val result = SlotDisplay.STREAM_CODEC.decode(buf)
-                val center = buf.readOptional { b -> SlotDisplay.STREAM_CODEC.decode(b as RegistryFriendlyByteBuf) }
-                return Display(input, result, center)
-            }
-
-            private fun toNetwork(buf: RegistryFriendlyByteBuf, display: Display) {
+            private fun encode(buf: RegistryFriendlyByteBuf, display: Display) {
                 SlotDisplay.STREAM_CODEC.encode(buf, display.ingredient)
                 SlotDisplay.STREAM_CODEC.encode(buf, display.resultDisplay)
                 buf.writeOptional(display.structureCenter) { b, slotDisplay ->
                     SlotDisplay.STREAM_CODEC.encode(b as RegistryFriendlyByteBuf, slotDisplay)
                 }
+            }
+
+            private fun decode(buf: RegistryFriendlyByteBuf): Display {
+                val input = SlotDisplay.STREAM_CODEC.decode(buf)
+                val result = SlotDisplay.STREAM_CODEC.decode(buf)
+                val center = buf.readOptional { b -> SlotDisplay.STREAM_CODEC.decode(b as RegistryFriendlyByteBuf) }
+                return Display(input, result, center)
             }
         }
     }
@@ -144,9 +143,23 @@ class StructureRecipe(
         }
 
         @JvmField
-        val STREAM_CODEC = StreamCodec.of(::toNetwork, ::fromNetwork)
+        val STREAM_CODEC = StreamCodec.of(::encode, ::decode)
 
-        private fun fromNetwork(buf: RegistryFriendlyByteBuf): StructureRecipe {
+        private fun encode(buf: RegistryFriendlyByteBuf, recipe: StructureRecipe) {
+            Identifier.STREAM_CODEC.encode(buf, ECRegistries.MULTIBLOCK.getKey(recipe.multiblock)
+                ?: throw NullPointerException("Multiblock is not registered"))
+            buf.writeInt(recipe.time)
+            Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.ingredient)
+            buf.writeOptional(recipe.result) { buffer, item ->
+                ItemStackTemplate.STREAM_CODEC.encode(buffer as RegistryFriendlyByteBuf, item)
+            }
+            Range.STREAM_CODEC.encode(buf, recipe.chance)
+            buf.writeNullable(recipe.structureCenter?.let { BuiltInRegistries.BLOCK.getKey(it) }, Identifier.STREAM_CODEC)
+            buf.writeNullable(recipe.blockForPlace?.let { BuiltInRegistries.BLOCK.getKey(it) }, Identifier.STREAM_CODEC)
+            buf.writeBoolean(recipe.consumeStructure)
+        }
+
+        private fun decode(buf: RegistryFriendlyByteBuf): StructureRecipe {
             val multiblockId = Identifier.STREAM_CODEC.decode(buf)
             val time = buf.readInt()
             val ingredient = Ingredient.CONTENTS_STREAM_CODEC.decode(buf)
@@ -161,20 +174,6 @@ class StructureRecipe(
             val structureCenter = BuiltInRegistries.BLOCK.getOptional(structureCenterId).getOrNull()
             val blockForPlace = BuiltInRegistries.BLOCK.getOptional(blockForPlaceId).getOrNull()
             return StructureRecipe(multiblock, time, ingredient, result, chance, structureCenter, blockForPlace, consumeStructure)
-        }
-
-        private fun toNetwork(buf: RegistryFriendlyByteBuf, recipe: StructureRecipe) {
-            Identifier.STREAM_CODEC.encode(buf, ECRegistries.MULTIBLOCK.getKey(recipe.multiblock)
-                ?: throw NullPointerException("Multiblock is not registered"))
-            buf.writeInt(recipe.time)
-            Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.ingredient)
-            buf.writeOptional(recipe.result) { buffer, item ->
-                ItemStackTemplate.STREAM_CODEC.encode(buffer as RegistryFriendlyByteBuf, item)
-            }
-            Range.STREAM_CODEC.encode(buf, recipe.chance)
-            buf.writeNullable(recipe.structureCenter?.let { BuiltInRegistries.BLOCK.getKey(it) }, Identifier.STREAM_CODEC)
-            buf.writeNullable(recipe.blockForPlace?.let { BuiltInRegistries.BLOCK.getKey(it) }, Identifier.STREAM_CODEC)
-            buf.writeBoolean(recipe.consumeStructure)
         }
     }
 

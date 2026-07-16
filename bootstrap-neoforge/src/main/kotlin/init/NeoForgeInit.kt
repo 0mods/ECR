@@ -3,8 +3,10 @@ package com.algorithmlx.ecr.neoforge.init
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
+import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.item.HasSubItem
 import com.algorithmlx.ecr.api.item.NoTab
+import com.algorithmlx.ecr.api.mru.MRUDevice
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.ResearchAction
@@ -22,9 +24,11 @@ import com.algorithmlx.ecr.neoforge.init.registry.*
 import com.algorithmlx.ecr.network.FinishCraftParticle
 import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.MenuProvider
+import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
@@ -174,19 +178,65 @@ object NeoForgeInit {
     }
 
     private fun onRightClickItemInteract(event: PlayerInteractEvent.RightClickItem) {
-        if (!ResearchAccess.canAccess(event.entity, event.itemStack, ResearchAction.USE)) {
+        val stack = event.itemStack
+        if (!ResearchAccess.canAccess(event.entity, stack, ResearchAction.USE)) {
             event.isCanceled = true
             event.cancellationResult = InteractionResult.FAIL
+            return
+        }
+
+        val item = stack.item
+        if (item is BoundGem) {
+            if (!event.entity.isShiftKeyDown) return
+
+            event.entity.sendOverlayMessage(Component.translatable("tooltip.$ModId.bound_gem.revoke"))
+            item.setBoundPos(stack, null)
+            event.cancellationResult = InteractionResult.SUCCESS
         }
     }
 
     private fun onRightClickBlockInteract(event: PlayerInteractEvent.RightClickBlock) {
+        val stack = event.itemStack
+        val level = event.level
+        val pos = event.pos
+
         val blockAllowed = ResearchAccess.canAccess(event.entity, event.level.getBlockState(event.pos), ResearchAction.INTERACT)
         val action = if (event.itemStack.item is BlockItem) ResearchAction.PLACE else ResearchAction.USE
-        val itemAllowed = ResearchAccess.canAccess(event.entity, event.itemStack, action)
+        val itemAllowed = ResearchAccess.canAccess(event.entity, stack, action)
         if (!blockAllowed || !itemAllowed) {
             event.isCanceled = true
             event.cancellationResult = InteractionResult.FAIL
+            return
+        }
+
+        val item = stack.item
+        if (item is BoundGem) {
+            val blockEntity = level.getBlockEntity(pos)
+            if (blockEntity !is MRUDevice || !blockEntity.holderType.isExporter || item.getBoundPos(stack) == null) return
+
+            event.entity.sendOverlayMessage(
+                Component.translatable("tooltip.$ModId.linked")
+                    .append(": ")
+                    .append("X: ${pos.x} Y: ${pos.y} Z: ${pos.z}")
+            )
+
+            if (stack.count > 1) {
+                val copied = stack.copy().apply {
+                    this.count = 1
+                    item.setBoundPos(this, pos)
+                }
+
+                stack.shrink(1)
+
+                val itemEntity = ItemEntity(level, event.entity.x, event.entity.y, event.entity.z, copied).apply {
+                    this.setNoPickUpDelay()
+                    this.setThrower(event.entity)
+                }
+
+                event.level.addFreshEntity(itemEntity)
+            } else item.setBoundPos(stack, pos)
+
+            event.cancellationResult = InteractionResult.SUCCESS
         }
     }
 

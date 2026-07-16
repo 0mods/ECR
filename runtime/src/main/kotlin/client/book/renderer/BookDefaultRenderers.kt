@@ -12,6 +12,7 @@ import com.algorithmlx.ecr.api.research.content.TextBookElement
 import com.algorithmlx.ecr.client.book.BookLinkedTextLayout
 import com.algorithmlx.ecr.client.book.controller.MultiblockBookPreviewController
 import com.algorithmlx.ecr.client.book.recipe.mod.MithrilineFurnaceRenderer
+import com.algorithmlx.ecr.client.book.recipe.mod.StructureRecipeRenderer
 import com.algorithmlx.ecr.client.book.recipe.vanilla.CookingRecipeRenderer
 import com.algorithmlx.ecr.client.book.recipe.vanilla.CraftingTableRecipeRenderer
 import com.algorithmlx.ecr.client.book.recipe.vanilla.StonecutterRecipeRenderer
@@ -41,6 +42,7 @@ object BookDefaultRenderers {
         BookRecipeRenderers.register(RecipeType.CAMPFIRE_COOKING, CookingRecipeRenderer.CampfireCooking)
         BookRecipeRenderers.register(RecipeType.STONECUTTING, StonecutterRecipeRenderer)
         BookRecipeRenderers.register(RecipeTypeRegistry.instance.mithrilineFurnace, MithrilineFurnaceRenderer)
+        BookRecipeRenderers.register(RecipeTypeRegistry.instance.structure, StructureRecipeRenderer)
     }
 
     private fun renderText(context: BookElementRenderContext, element: TextBookElement) {

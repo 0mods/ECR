@@ -5,6 +5,7 @@ import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.BookLevelRegistry
 import com.algorithmlx.ecr.common.init.registry.DataComponentRegistry
 import com.algorithmlx.ecr.common.init.registry.ItemRegistry
+import com.algorithmlx.ecr.common.item.BoundGemItem
 import com.algorithmlx.ecr.common.item.SoulStone
 import com.algorithmlx.ecr.common.item.ResearchBookItem
 import com.algorithmlx.ecr.common.item.tool.WeakAxe
@@ -27,6 +28,7 @@ object FabricItemRegistry: ItemRegistry {
             BookLevelRegistry.instance.basic
         )
     )
+    override val boundGem: BoundGemItem = register(ECRModIDs.BOUND_GEM, ::BoundGemItem)
 
     override val weaknessElementalAxe: WeakAxe = register(ECRModIDs.WEAKNESS_ELEMENTAL_AXE, ::WeakAxe)
     override val weaknessElementalHoe: WeakHoe = register(ECRModIDs.WEAKNESS_ELEMENTAL_HOE, ::WeakHoe)

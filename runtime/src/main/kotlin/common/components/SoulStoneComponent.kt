@@ -18,7 +18,8 @@ data class SoulStoneComponent(
         @JvmField
         val EMPTY = SoulStoneComponent(UUID(0, 0), "", -1)
 
-        val codec: Codec<SoulStoneComponent> = RecordCodecBuilder.create { instance ->
+        @JvmField
+        val CODEC: Codec<SoulStoneComponent> = RecordCodecBuilder.create { instance ->
             instance.group(
                 UUIDUtil.CODEC.fieldOf("owner").forGetter(SoulStoneComponent::owner),
                 Codec.STRING.fieldOf("owner_name").forGetter(SoulStoneComponent::ownerName),
@@ -26,7 +27,8 @@ data class SoulStoneComponent(
             ).apply(instance, ::SoulStoneComponent)
         }
 
-        val codecStream: StreamCodec<ByteBuf, SoulStoneComponent> = StreamCodec.composite(
+        @JvmField
+        val STREAM_CODEC: StreamCodec<ByteBuf, SoulStoneComponent> = StreamCodec.composite(
             UUIDUtil.STREAM_CODEC, SoulStoneComponent::owner,
             ByteBufCodecs.STRING_UTF8, SoulStoneComponent::ownerName,
             ByteBufCodecs.INT, SoulStoneComponent::capacity,

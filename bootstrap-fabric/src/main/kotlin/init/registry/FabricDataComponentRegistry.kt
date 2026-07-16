@@ -14,8 +14,8 @@ object FabricDataComponentRegistry: DataComponentRegistry {
     override val soulStone: DataComponentType<SoulStoneComponent> = register(
         ECRModIDs.SOUL_STONE,
         DataComponentType.builder<SoulStoneComponent>()
-            .persistent(SoulStoneComponent.codec)
-            .networkSynchronized(SoulStoneComponent.codecStream)
+            .persistent(SoulStoneComponent.CODEC)
+            .networkSynchronized(SoulStoneComponent.STREAM_CODEC)
             .build()
     )
     override val bookType: DataComponentType<BookType> = register(
@@ -27,8 +27,8 @@ object FabricDataComponentRegistry: DataComponentRegistry {
     override val boundGem: DataComponentType<BoundGemComponent> = register(
         ECRModIDs.BOUND_GEM,
         DataComponentType.builder<BoundGemComponent>()
-            .persistent(BoundGemComponent.codec)
-            .networkSynchronized(BoundGemComponent.streamCodec)
+            .persistent(BoundGemComponent.CODEC)
+            .networkSynchronized(BoundGemComponent.STREAM_CODEC)
             .build()
     )
 

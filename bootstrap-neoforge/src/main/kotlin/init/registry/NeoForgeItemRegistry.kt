@@ -6,6 +6,7 @@ import com.algorithmlx.ecr.api.registries.ECRegistryKeys
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.DataComponentRegistry
 import com.algorithmlx.ecr.common.init.registry.ItemRegistry
+import com.algorithmlx.ecr.common.item.BoundGemItem
 import com.algorithmlx.ecr.common.item.SoulStone
 import com.algorithmlx.ecr.common.item.ResearchBookItem
 import com.algorithmlx.ecr.common.item.tool.WeakAxe
@@ -40,6 +41,7 @@ class NeoForgeItemRegistry(bus: IEventBus): ItemRegistry {
                 .value()
         }
     }
+    private val boundGemItem = registerItem(ECRModIDs.BOUND_GEM, ::BoundGemItem)
 
     private val weakAxeItem = registerItem(ECRModIDs.WEAKNESS_ELEMENTAL_AXE, ::WeakAxe)
     private val weakHoeItem = registerItem(ECRModIDs.WEAKNESS_ELEMENTAL_HOE, ::WeakHoe)
@@ -85,6 +87,7 @@ class NeoForgeItemRegistry(bus: IEventBus): ItemRegistry {
     // implements
     override val soulStone: SoulStone by lazy { soulStoneItem.get() }
     override val researchBook: ResearchBookItem by lazy { researchBookItem.get() }
+    override val boundGem: BoundGemItem by lazy { boundGemItem.get() }
 
     override val weaknessElementalAxe: WeakAxe by lazy { weakAxeItem.get() }
     override val weaknessElementalHoe: WeakHoe by lazy { weakHoeItem.get() }

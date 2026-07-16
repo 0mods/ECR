@@ -132,6 +132,12 @@ screen.ecreimagined:
         seconds: "%ss"
       espe: ESPE
       failed: Failed to init recipe render for item %s because recipe render is not registered for type %s.
+      structure:
+        drop: You need to drop item
+        inside: inside structure
+        at: at block
+        consume: "Structure will consumed after craft: %s"
+        chance: "Chance: %s"
     page: Page %s/%s
 
 toast.ecreimagined:

@@ -1,10 +1,14 @@
 package com.algorithmlx.ecr.common.block.entity
 
 import com.algorithmlx.ecr.api.mru.MRUDevice
+import com.algorithmlx.ecr.api.mru.processReceive
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
+import com.algorithmlx.ecr.api.recipe.CachedRecipe
+import com.algorithmlx.ecr.api.utils.count
 import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.MRUTypeRegistry
+import com.algorithmlx.ecr.common.init.registry.RecipeTypeRegistry
 import com.algorithmlx.ecr.common.menu.EnvoyerMenu
 import net.minecraft.core.BlockPos
 import net.minecraft.core.NonNullList
@@ -15,11 +19,13 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerData
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.crafting.CraftingInput
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
+import kotlin.jvm.optionals.getOrNull
 
 class EnvoyerBlockEntity(
     worldPosition: BlockPos,
@@ -43,6 +49,8 @@ class EnvoyerBlockEntity(
 
         override fun getCount(): Int = 2
     }
+
+    private val recipe = CachedRecipe(RecipeTypeRegistry.instance.envoyer)
 
     var progress = 0
     var maxProgress = 0
@@ -96,8 +104,59 @@ class EnvoyerBlockEntity(
             be.processRecipeIfPresent(level)
         }
 
-        private fun EnvoyerBlockEntity.processRecipeIfPresent(level: Level) {}
+        private fun EnvoyerBlockEntity.processRecipeIfPresent(level: Level) {
+            if ((0 ..< 5).all { this.getItem(it).isEmpty }) return
+            val container = CraftingInput.of(2, 3, mutableListOf<ItemStack>().also { list ->
+                (0 ..< 5).forEach { fe -> list.add(getItem(fe)) }
+                list.add(ItemStack.EMPTY)
+            })
 
-        private fun EnvoyerBlockEntity.processReceive(level: Level) {}
+            val recipe = this.recipe.testAndGet(container, level)
+            if (recipe == null) {
+                this.resetProgress()
+                return
+            }
+
+            val time = recipe.time
+            val mru = recipe.mruPerTick
+            val result = recipe.result
+
+            this.maxProgress = time
+
+            if (this.getItem(5).isEmpty) {
+                this.processTick(time, mru)
+
+                if (time > this.progress) return
+
+                val inputs = recipe.inputs.getOrNull()
+                val ingredientOptionals = inputs?.ingredients()
+
+                (0 ..< 4).forEach { ingredientOptionals?.get(it)?.getOrNull()?.let { l -> this.removeItem(it, l.count) } }
+
+                val catalyst = recipe.catalyst.getOrNull()
+                catalyst?.let { this.removeItem(4, it.count) }
+
+                if (this.getItem(5).isEmpty)
+                    this.setItem(5, result.create())
+                else this.getItem(5).grow(result.count)
+
+                this.resetProgress()
+            }
+        }
+
+        private fun EnvoyerBlockEntity.processTick(time: Int, mru: Int) {
+            val storage = this.mruStorage
+            if (this.progress >= time || !storage.canExtract(mru)) return
+
+            storage.extract(mru)
+            this.progress++
+            this.setChanged()
+        }
+
+        private fun EnvoyerBlockEntity.resetProgress() {
+            this.progress = 0
+            this.maxProgress = 0
+            this.setChanged()
+        }
     }
 }

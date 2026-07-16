@@ -13,7 +13,6 @@ import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.ItemStackTemplate
-import net.minecraft.world.item.crafting.CraftingInput
 import net.minecraft.world.item.crafting.Ingredient
 import net.minecraft.world.item.crafting.PlacementInfo
 import net.minecraft.world.item.crafting.Recipe
@@ -84,7 +83,6 @@ class MithrilineFurnaceRecipe(
     }
 
     companion object {
-
         @JvmField
         val CODEC: MapCodec<MithrilineFurnaceRecipe> = RecordCodecBuilder.mapCodec {
             it.group(
@@ -96,19 +94,20 @@ class MithrilineFurnaceRecipe(
 
         @JvmField
         val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, MithrilineFurnaceRecipe> = StreamCodec.of(
-            ::toNetwork, ::fromNetwork
+            ::encode, ::decode
         )
 
-        private fun fromNetwork(buf: RegistryFriendlyByteBuf): MithrilineFurnaceRecipe {
+        private fun encode(buf: RegistryFriendlyByteBuf, recipe: MithrilineFurnaceRecipe) {
+            Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.input)
+            buf.writeInt(recipe.espe)
+            ItemStackTemplate.STREAM_CODEC.encode(buf, recipe.result)
+        }
+
+        private fun decode(buf: RegistryFriendlyByteBuf): MithrilineFurnaceRecipe {
             val input = Ingredient.CONTENTS_STREAM_CODEC.decode(buf)
             val espe = buf.readInt()
             val result = ItemStackTemplate.STREAM_CODEC.decode(buf)
             return MithrilineFurnaceRecipe(input, espe, result)
-        }
-        private fun toNetwork(buf: RegistryFriendlyByteBuf, recipe: MithrilineFurnaceRecipe) {
-            Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.input)
-            buf.writeInt(recipe.espe)
-            ItemStackTemplate.STREAM_CODEC.encode(buf, recipe.result)
         }
     }
 }

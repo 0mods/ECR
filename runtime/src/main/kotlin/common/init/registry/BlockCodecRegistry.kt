@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.common.init.registry
 
-import com.algorithmlx.ecr.common.api.ClusterBlock
+import com.algorithmlx.ecr.common.api.block.ClusterBlock
 import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.Envoyer
 import com.algorithmlx.ecr.common.block.MithrilineFurnace

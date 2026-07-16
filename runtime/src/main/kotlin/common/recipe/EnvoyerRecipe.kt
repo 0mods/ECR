@@ -73,23 +73,23 @@ class EnvoyerRecipe(
         }
 
         @JvmField
-        val STREAM_CODEC = StreamCodec.of(::toNetwork, ::fromNetwork)
+        val STREAM_CODEC = StreamCodec.of(::encode, ::decode)
 
-        private fun fromNetwork(buf: RegistryFriendlyByteBuf): EnvoyerRecipe {
+        private fun encode(buf: RegistryFriendlyByteBuf, recipe: EnvoyerRecipe) {
+            buf.writeOptional(recipe.inputs) { b, pattern -> ShapedRecipePattern.STREAM_CODEC.encode(b as RegistryFriendlyByteBuf, pattern) }
+            Ingredient.OPTIONAL_CONTENTS_STREAM_CODEC.encode(buf, recipe.catalyst)
+            buf.writeInt(recipe.time)
+            buf.writeInt(recipe.mruPerTick)
+            ItemStackTemplate.STREAM_CODEC.encode(buf, recipe.result)
+        }
+
+        private fun decode(buf: RegistryFriendlyByteBuf): EnvoyerRecipe {
             val pattern = buf.readOptional { ShapedRecipePattern.STREAM_CODEC.decode(it as RegistryFriendlyByteBuf) }
             val catalyst = Ingredient.OPTIONAL_CONTENTS_STREAM_CODEC.decode(buf)
             val time = buf.readInt()
             val mru = buf.readInt()
             val result = ItemStackTemplate.STREAM_CODEC.decode(buf)
             return EnvoyerRecipe(pattern, catalyst, time, mru, result)
-        }
-
-        private fun toNetwork(buf: RegistryFriendlyByteBuf, recipe: EnvoyerRecipe) {
-            buf.writeOptional(recipe.inputs) { b, pattern -> ShapedRecipePattern.STREAM_CODEC.encode(b as RegistryFriendlyByteBuf, pattern) }
-            Ingredient.OPTIONAL_CONTENTS_STREAM_CODEC.encode(buf, recipe.catalyst)
-            buf.writeInt(recipe.time)
-            buf.writeInt(recipe.mruPerTick)
-            ItemStackTemplate.STREAM_CODEC.encode(buf, recipe.result)
         }
     }
 }

@@ -14,4 +14,6 @@ interface MRUStorage {
     val hasMRU: Boolean get() = mru > 0
 
     val isEmpty: Boolean get() = mru == 0
+
+    fun comparableWith(storage: MRUStorage): Boolean = this.mruType == storage.mruType
 }

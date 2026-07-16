@@ -109,9 +109,32 @@ config.jade.plugin_ecreimagined:
     espe_collector: "Активные сборщики ESPE: %s/%s"
 
 screen.ecreimagined:
-  research_book: Книга исследований
-  complete_task: Завершить задание
-  complete_research: Завершить исследование
+  research_book:
+    .: Книга исследований
+    complete_task: Завершить задание
+    complete_research: Завершить исследование
+    experience:
+      .: Опыт
+      levels: Уровни опыта
+    task:
+      .: Задание
+      requires: "Требуется:"
+      more: и еще %s...
+    research:
+      .: "Исследование: %s"
+    recipe:
+      duration:
+        .: "Длительность: %s"
+        seconds: "%s сек."
+      espe: ESPE
+      failed: Не удалось отобразить рецепт для предмета %s, потому что рендер рецепта не найден для типа %s.
+      structure:
+        drop: Нужно бросить предмет
+        inside: внутрь структуры
+        at: на блок
+        consume: "Структура будет забрана после крафта: %s"
+        chance: "Шанс: %s"
+    page: Страница %s/%s
 
 toast.ecreimagined:
   research_unlocked: Исследование открыто

@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.api.mru
 
+import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import net.minecraft.world.Container
 import net.minecraft.world.level.Level
@@ -92,4 +93,26 @@ interface MRUDevice {
 
 fun MRUDevice.processReceive(level: Level) {
     if (level.isClientSide) return
+
+    val stack = this.locator?.let { it.locatorStorage.getItem(it.locatorSlot) } ?: return
+    val item = stack.item as? BoundGem ?: return
+
+    val pos = item.getBoundPos(stack) ?: return
+    val server = level.server ?: return
+    val world = item.getWorld(stack)
+
+    val logicalLevel = world?.let { server.getLevel(it) } ?: level
+    val exporter = logicalLevel.getBlockEntity(pos) as? MRUDevice ?: return
+
+    if (!exporter.holderType.isExporter || !this.holderType.isReceiver) return
+
+    val currentContainer = this.mruStorage
+    val generator = exporter.mruStorage
+
+    if (!currentContainer.comparableWith(generator)) return
+
+    val transferCount = item.transferStrength.reversedArray()
+    transferCount.forEach {
+        if (generator.canExtractAndReceive(currentContainer, it)) return@forEach
+    }
 }

@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.common.block
 
 import com.algorithmlx.ecr.api.block.FullBlockParticles
 import com.algorithmlx.ecr.api.utils.checkAndOpenMenu
+import com.algorithmlx.ecr.api.utils.simpleTicker
 import com.algorithmlx.ecr.common.block.entity.EnvoyerBlockEntity
 import com.algorithmlx.ecr.common.init.registry.BlockCodecRegistry
 import com.mojang.serialization.MapCodec
@@ -13,6 +14,8 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.EntityBlock
 import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.block.entity.BlockEntityTicker
+import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.BlockHitResult
 import net.minecraft.world.phys.shapes.BooleanOp
@@ -25,6 +28,12 @@ class Envoyer(properties: Properties) : Block(properties), EntityBlock, FullBloc
         worldPosition: BlockPos,
         blockState: BlockState
     ): BlockEntity = EnvoyerBlockEntity(worldPosition, blockState)
+
+    override fun <T : BlockEntity> getTicker(
+        level: Level,
+        blockState: BlockState,
+        type: BlockEntityType<T>
+    ): BlockEntityTicker<T> = simpleTicker<T, EnvoyerBlockEntity> { level, _, _, be -> EnvoyerBlockEntity.onTick(level, be) }
 
     override fun getShape(state: BlockState, level: BlockGetter, pos: BlockPos, context: CollisionContext): VoxelShape = shape
 

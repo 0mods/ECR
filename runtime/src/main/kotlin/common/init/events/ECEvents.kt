@@ -1,7 +1,8 @@
 package com.algorithmlx.ecr.common.init.events
 
 import com.algorithmlx.ecr.api.ModId
-import com.algorithmlx.ecr.api.block.Multipart
+import com.algorithmlx.ecr.api.item.BoundGem
+import com.algorithmlx.ecr.api.item.SoulStoneLike
 import com.algorithmlx.ecr.api.recipe.CachedRecipe
 import com.algorithmlx.ecr.api.utils.countByIngredient
 import com.algorithmlx.ecr.common.components.SoulStoneComponent
@@ -12,7 +13,6 @@ import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
 import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.item.crafting.CraftingInput
 import net.minecraft.world.item.crafting.SingleRecipeInput
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
@@ -21,22 +21,30 @@ import net.minecraft.world.phys.Vec3
 
 object ECEvents {
     @JvmStatic
-    fun itemTooltip(item: ItemStack, tooltips: MutableList<Component>) {
-        val component = item.getOrDefault(DataComponentRegistry.instance.soulStone, SoulStoneComponent.EMPTY)
+    fun itemTooltip(stack: ItemStack, tooltips: MutableList<Component>) {
+        when (stack.item) {
+            is SoulStoneLike -> {
+                val component = stack.getOrDefault(DataComponentRegistry.instance.soulStone, SoulStoneComponent.EMPTY)
 
-        if (component == SoulStoneComponent.EMPTY) return
+                if (component == SoulStoneComponent.EMPTY) return
 
-        tooltips += if (component.ownerName.isNotEmpty())
-            Component.translatable(
-                "tooltip.$ModId.soul_stone.tracking",
-                Component.literal(component.ownerName).withStyle(ChatFormatting.GOLD)
-            ).withStyle(ChatFormatting.DARK_GRAY)
-        else Component.translatable("tooltip.$ModId.soul_stone.error").withStyle(ChatFormatting.DARK_RED)
+                tooltips += if (component.ownerName.isNotEmpty())
+                    Component.translatable(
+                        "tooltip.$ModId.soul_stone.tracking",
+                        Component.literal(component.ownerName).withStyle(ChatFormatting.GOLD)
+                    ).withStyle(ChatFormatting.DARK_GRAY)
+                else Component.translatable("tooltip.$ModId.soul_stone.error").withStyle(ChatFormatting.DARK_RED)
 
-        tooltips += Component.translatable(
-            "tooltip.$ModId.soul_stone.detected_ubmru",
-            Component.literal(component.capacity.toString()).withStyle(ChatFormatting.GREEN)
-        ).withStyle(ChatFormatting.DARK_GRAY)
+                tooltips += Component.translatable(
+                    "tooltip.$ModId.soul_stone.detected_ubmru",
+                    Component.literal(component.capacity.toString()).withStyle(ChatFormatting.GREEN)
+                ).withStyle(ChatFormatting.DARK_GRAY)
+            }
+
+            is BoundGem -> {
+
+            }
+        }
     }
 
     @JvmStatic

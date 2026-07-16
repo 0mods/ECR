@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.common.block
 
-import com.algorithmlx.ecr.common.api.SideBlock
+import com.algorithmlx.ecr.common.api.block.SideBlock
 import com.algorithmlx.ecr.common.init.registry.BlockCodecRegistry
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos

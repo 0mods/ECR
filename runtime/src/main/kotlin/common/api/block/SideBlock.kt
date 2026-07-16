@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.common.api
+package com.algorithmlx.ecr.common.api.block
 
 import com.algorithmlx.ecr.api.block.FullBlockParticles
 import com.algorithmlx.ecr.common.block.SolarPrism

@@ -3,9 +3,11 @@ package com.algorithmlx.ecr.fabric.init
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.ecRL
 import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
+import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.item.HasSubItem
 import com.algorithmlx.ecr.api.item.NoTab
 import com.algorithmlx.ecr.api.menu.MenuTypeData
+import com.algorithmlx.ecr.api.mru.MRUDevice
 import com.algorithmlx.ecr.api.registries.*
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.ResearchAction
@@ -40,9 +42,11 @@ import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceKey
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.server.packs.PackType
 import net.minecraft.world.InteractionResult
+import net.minecraft.world.entity.item.ItemEntity
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
@@ -64,6 +68,7 @@ object FabricInit {
         registerAccessEvents()
         tooltipEvent()
         tabEvent()
+        boundGemEvents()
 
         initRegistries()
 
@@ -192,6 +197,57 @@ object FabricInit {
 
                 output.accept(item)
             }
+        }
+    }
+
+    private fun boundGemEvents() {
+        UseItemCallback.EVENT.register evt@{ player, level, hand ->
+            val stack = player.getItemInHand(hand)
+
+            val item = stack.item
+            if (item is BoundGem) {
+                if (!player.isShiftKeyDown) return@evt InteractionResult.FAIL
+
+                player.sendOverlayMessage(Component.translatable("tooltip.$ModId.bound_gem.revoke"))
+                item.setBoundPos(stack, null)
+            }
+
+            InteractionResult.SUCCESS
+        }
+
+        UseBlockCallback.EVENT.register evt@{ player, level, hand, hit ->
+            val stack = player.getItemInHand(hand)
+            val pos = hit.blockPos
+
+            val item = stack.item
+            if (item is BoundGem) {
+                val blockEntity = level.getBlockEntity(hit.blockPos)
+                if (blockEntity !is MRUDevice || !blockEntity.holderType.isExporter || item.getBoundPos(stack) == null) return@evt InteractionResult.FAIL
+
+                player.sendOverlayMessage(
+                    Component.translatable("tooltip.$ModId.linked")
+                        .append(": ")
+                        .append("X: ${pos.x} Y: ${pos.y} Z: ${pos.z}")
+                )
+
+                if (stack.count > 1) {
+                    val copied = stack.copy().apply {
+                        this.count = 1
+                        item.setBoundPos(this, pos)
+                    }
+
+                    stack.shrink(1)
+
+                    val itemEntity = ItemEntity(level, player.x, player.y, player.z, copied).apply {
+                        this.setNoPickUpDelay()
+                        this.setThrower(player)
+                    }
+
+                    level.addFreshEntity(itemEntity)
+                } else item.setBoundPos(stack, pos)
+            }
+
+            InteractionResult.SUCCESS
         }
     }
 
