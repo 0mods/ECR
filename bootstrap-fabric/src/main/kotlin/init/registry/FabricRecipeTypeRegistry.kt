@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.fabric.init.registry
 
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.RecipeTypeRegistry
 import com.algorithmlx.ecr.common.recipe.EnvoyerRecipe

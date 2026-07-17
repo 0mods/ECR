@@ -1,19 +1,30 @@
 package com.algorithmlx.ecr.common.block.entity
 
+import com.algorithmlx.ecr.api.item.SoulStoneLike
 import com.algorithmlx.ecr.api.mru.MRUDevice
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
+import com.algorithmlx.ecr.api.block.entity.syncForNearby
+import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
+import com.algorithmlx.ecr.common.init.registry.DataComponentRegistry
 import com.algorithmlx.ecr.common.init.registry.MRUTypeRegistry
+import com.algorithmlx.ecr.common.menu.MatrixDestructorMenu
 import com.mojang.serialization.Codec
-import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.BlockPos
+import net.minecraft.core.HolderLookup
 import net.minecraft.core.NonNullList
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ClientGamePacketListener
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
 import net.minecraft.world.ContainerHelper
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.AbstractContainerMenu
+import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
@@ -22,8 +33,8 @@ import net.minecraft.world.level.storage.ValueOutput
 import kotlin.jvm.optionals.getOrElse
 
 class MatrixDestructorEntity(
-    type: BlockEntityType<*>, worldPosition: BlockPos, blockState: BlockState
-): BaseContainerBlockEntity(type, worldPosition, blockState), MRUDevice {
+    worldPosition: BlockPos, blockState: BlockState
+): BaseContainerBlockEntity(BlockEntityTypeRegistry.instance.matrixDestructor, worldPosition, blockState), MRUDevice {
     private var items: NonNullList<ItemStack> = NonNullList.withSize(1, ItemStack.EMPTY)
 
     var progress = 0
@@ -42,27 +53,46 @@ class MatrixDestructorEntity(
         ContainerHelper.saveAllItems(output, this.items)
         output.store("status", MatrixDestructorStatus.CODEC, this.status)
         output.putInt("progress", this.progress)
+        this.mruStorage.save(output)
         super.saveAdditional(output)
     }
 
     override fun loadAdditional(input: ValueInput) {
+        this.items = NonNullList.withSize(this.containerSize, ItemStack.EMPTY)
         ContainerHelper.loadAllItems(input, this.items)
         this.status = input.read("status", MatrixDestructorStatus.CODEC).getOrElse { MatrixDestructorStatus.STOPPED }
         this.progress = input.getIntOr("progress", 0)
+        this.mruStorage.load(input)
         super.loadAdditional(input)
     }
 
     override fun createMenu(
         containerId: Int,
         inventory: Inventory
-    ): AbstractContainerMenu {
-        TODO("Not yet implemented")
-    }
+    ): AbstractContainerMenu = MatrixDestructorMenu(
+        containerId, inventory, this, this,
+        ContainerLevelAccess.create(this.level!!, this.blockPos)
+    )
 
     override fun getContainerSize(): Int = 1
 
-    override val mruStorage: IOMRUStorage = MRUStorageContainer(10000, MRUTypeRegistry.instance.radiationUnit)
+    override val mruStorage: IOMRUStorage = MRUStorageContainer(10000, MRUTypeRegistry.instance.radiationUnit) { setChanged() }
     override val holderType: MRUDevice.DeviceType = MRUDevice.DeviceType.TRANSLATOR
+
+    override fun setChanged() {
+        super.setChanged()
+        this.syncForNearby()
+    }
+
+    override fun getUpdatePacket(): Packet<ClientGamePacketListener> = ClientboundBlockEntityDataPacket.create(this)
+
+    override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag = this.saveWithFullMetadata(registries)
+
+    fun setStatusUpdated(status: MatrixDestructorStatus) {
+        if (this.status == status) return
+        this.status = status
+        this.setChanged()
+    }
 
     enum class MatrixDestructorStatus {
         WAITING, WORKING, WARNING, STOPPED;
@@ -73,6 +103,72 @@ class MatrixDestructorEntity(
                 it.group(
                     Codec.STRING.fieldOf("name").forGetter(MatrixDestructorStatus::name)
                 ).apply(it, MatrixDestructorStatus::valueOf)
+            }
+        }
+    }
+
+    companion object {
+        @JvmStatic
+        fun onTick(level: Level, be: MatrixDestructorEntity) {
+            if (level.isClientSide) return
+
+            val stack = be.getItem(0)
+
+            if (stack.isEmpty) {
+                be.progress = 0
+                be.setStatusUpdated(
+                    if (be.mruStorage.hasMRU) MatrixDestructorStatus.WAITING
+                    else MatrixDestructorStatus.STOPPED
+                )
+                return
+            }
+
+            val soulStoneComponent = stack.get(DataComponentRegistry.instance.soulStone)
+            if (soulStoneComponent == null) {
+                be.progress = 0
+                be.setStatusUpdated(MatrixDestructorStatus.STOPPED)
+                return
+            }
+
+            val capacity = soulStoneComponent.capacity
+            val i = stack.item as? SoulStoneLike
+            if (i == null) {
+                be.progress = 0
+                be.setStatusUpdated(MatrixDestructorStatus.STOPPED)
+                return
+            }
+
+            val convertCost = i.extractCount
+            val receiveCost = i.receiveCount
+            val hasEnoughStorage = capacity >= receiveCost
+            val hasPower = capacity > 0
+
+            when {
+                be.mruStorage.isFilled && hasPower -> {
+                    be.progress = 0
+                    be.setStatusUpdated(MatrixDestructorStatus.WARNING)
+                    return
+                }
+
+                !hasPower || !hasEnoughStorage || capacity - convertCost < 0 -> {
+                    be.progress = 0
+                    be.setStatusUpdated(MatrixDestructorStatus.STOPPED)
+                    return
+                }
+            }
+
+            be.setStatusUpdated(MatrixDestructorStatus.WORKING)
+
+            stack.set(
+                DataComponentRegistry.instance.soulStone,
+                soulStoneComponent.copy(capacity = (capacity - convertCost))
+            )
+            be.progress += convertCost
+
+            if (be.progress >= convertCost) {
+                be.progress = 0
+                be.mruStorage.insert(receiveCost)
+                be.setChanged()
             }
         }
     }

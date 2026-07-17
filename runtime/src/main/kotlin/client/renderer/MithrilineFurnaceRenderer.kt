@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.client.renderer
 
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis

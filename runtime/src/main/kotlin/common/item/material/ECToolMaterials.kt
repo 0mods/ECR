@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.common.item.material
 
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 import net.minecraft.core.registries.Registries
 import net.minecraft.tags.BlockTags
 import net.minecraft.tags.TagKey

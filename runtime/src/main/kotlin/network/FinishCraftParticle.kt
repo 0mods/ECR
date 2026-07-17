@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.network
 
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 import net.minecraft.network.codec.ByteBufCodecs
 import net.minecraft.network.codec.StreamCodec
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload

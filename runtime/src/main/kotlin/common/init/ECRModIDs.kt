@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.common.init
 
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 
 object ECRModIDs {
     // Block Type Codecs
@@ -12,6 +12,7 @@ object ECRModIDs {
     const val MITHRILINE_FURNACE = "mithriline_furnace"
     const val MITHRILINE_CRYSTAL = "mithriline_crystal"
     const val MITHRILINE_PLATING = "mithriline_plating"
+    const val MATRIX_DESTRUCTOR = "matrix_destructor"
     const val SOUL_STONE = "soul_stone"
     const val BOUND_GEM = "bound_gem"
     const val ENVOYER = "envoyer"

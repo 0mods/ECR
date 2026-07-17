@@ -1,8 +1,9 @@
 package com.algorithmlx.ecr.fabric.init.registry
 
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.Envoyer
+import com.algorithmlx.ecr.common.block.MatrixDestructor
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.BlockRegistry
@@ -21,6 +22,7 @@ object FabricBlockRegistry: BlockRegistry {
     override val mithrilineCrystal: CrystalBlock = register(ECRModIDs.MITHRILINE_CRYSTAL, ::CrystalBlock)
     override val mithrilinePlating: Block = register(ECRModIDs.MITHRILINE_PLATING, ::Block)
     override val envoyer: Envoyer = register(ECRModIDs.ENVOYER, ::Envoyer)
+    override val matrixDestructor: MatrixDestructor = register(ECRModIDs.MATRIX_DESTRUCTOR, ::MatrixDestructor)
 
     private fun <B: Block> register(
         id: String,

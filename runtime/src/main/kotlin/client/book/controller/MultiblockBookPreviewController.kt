@@ -4,7 +4,7 @@ import com.algorithmlx.ecr.api.client.render.MultiblockPreviewGuiBridge
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewRenderState
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewTransform
 import com.algorithmlx.ecr.api.client.research.BookElementRenderContext
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.algorithmlx.ecr.api.research.content.MultiblockBookElement
 import com.mojang.blaze3d.platform.InputConstants

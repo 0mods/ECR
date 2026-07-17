@@ -4,6 +4,7 @@ import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.common.api.block.ClusterBlock
 import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.Envoyer
+import com.algorithmlx.ecr.common.block.MatrixDestructor
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
 import com.algorithmlx.ecr.common.block.SolarPrism
 import com.algorithmlx.ecr.common.init.ECRModIDs
@@ -26,10 +27,12 @@ class NeoForgeBlockCodecRegistry(bus: IEventBus): BlockCodecRegistry {
     private val crystalBlockCodec = blockTypes.register(ECRModIDs.CRYSTAL) { _ -> BlockBehaviour.simpleCodec(::CrystalBlock) }
     private val mithrilineFurnaceCodec = blockTypes.register(ECRModIDs.MITHRILINE_FURNACE) { _ -> BlockBehaviour.simpleCodec(::MithrilineFurnace) }
     private val envoyerCodec = blockTypes.register(ECRModIDs.ENVOYER) { _ -> BlockBehaviour.simpleCodec(::Envoyer) }
+    private val matrixDestructorCodec = blockTypes.register(ECRModIDs.MATRIX_DESTRUCTOR) { _ -> BlockBehaviour.simpleCodec(::MatrixDestructor) }
 
     override val solarPrism: MapCodec<SolarPrism> by lazy { solarPrismCodec.get() }
     override val clusterBlock: MapCodec<ClusterBlock> by lazy { clusterBlockCodec.get() }
     override val crystalBlock: MapCodec<CrystalBlock> by lazy { crystalBlockCodec.get() }
     override val mithrilineFurnace: MapCodec<MithrilineFurnace> by lazy { mithrilineFurnaceCodec.get() }
     override val envoyer: MapCodec<Envoyer> by lazy { envoyerCodec.get() }
+    override val matrixDestructor: MapCodec<MatrixDestructor> by lazy { matrixDestructorCodec.get() }
 }

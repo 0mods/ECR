@@ -1,10 +1,11 @@
 package com.algorithmlx.ecr.fabric.init.registry
 
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.menu.MenuTypeData
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.MenuTypeRegistry
 import com.algorithmlx.ecr.common.menu.EnvoyerMenu
+import com.algorithmlx.ecr.common.menu.MatrixDestructorMenu
 import com.algorithmlx.ecr.common.menu.MithrilineFurnaceMenu
 import net.fabricmc.fabric.api.menu.v1.ExtendedMenuType
 import net.minecraft.core.Registry
@@ -18,6 +19,7 @@ import net.minecraft.world.inventory.MenuType
 object FabricMenuTypeRegistry: MenuTypeRegistry {
     override val mithrilineFurnace: MenuType<MithrilineFurnaceMenu> = register(ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnaceMenu)
     override val envoyer: MenuType<EnvoyerMenu> = register(ECRModIDs.ENVOYER, ::EnvoyerMenu)
+    override val matrixDestructor: MenuType<MatrixDestructorMenu> = register(ECRModIDs.MATRIX_DESTRUCTOR, ::MatrixDestructorMenu)
 
     private fun <T: AbstractContainerMenu> register(id: String, menu: (Int, Inventory, MenuTypeData) -> T) =
         register(id, createDefaulted(menu))

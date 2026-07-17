@@ -1,20 +1,16 @@
 package com.algorithmlx.ecr.neoforge.init
 
-import com.algorithmlx.ecr.api.client.render.MultiblockPreviewGuiBridge
-import com.algorithmlx.ecr.api.client.render.MultiblockPreviewPictureRenderer
-import com.algorithmlx.ecr.api.client.render.MultiblockPreviewRenderState
-import com.algorithmlx.ecr.api.research.ClientResearchState
-import com.algorithmlx.ecr.api.research.CompleteResearchPayload
-import com.algorithmlx.ecr.api.research.FavoriteResearchPayload
-import com.algorithmlx.ecr.api.research.ResearchNetwork
-import com.algorithmlx.ecr.api.research.ResearchProgressPayload
-import com.algorithmlx.ecr.api.research.ResearchSyncPayload
-import com.algorithmlx.ecr.api.research.UpdateBookViewPayload
+import com.algorithmlx.ecr.api.client.render.*
+import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.client.book.ResearchBookClient
+import com.algorithmlx.ecr.client.renderer.MatrixDestructorRenderer
 import com.algorithmlx.ecr.client.renderer.MithrilineFurnaceRenderer
-import com.algorithmlx.ecr.client.screen.MithrilineFurnaceScreen
+import com.algorithmlx.ecr.client.screen.*
 import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.MenuTypeRegistry
+import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
+import com.algorithmlx.ecr.network.BoundGemTooltipRequestPayload
+import com.algorithmlx.ecr.network.BoundGemTooltipResponsePayload
 import com.algorithmlx.ecr.network.FinishCraftParticle
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphicsExtractor
@@ -49,18 +45,24 @@ object NeoForgeClientInit {
             ResearchNetwork.completeResearch = { ClientPacketDistributor.sendToServer(CompleteResearchPayload(it)) }
             ResearchNetwork.updateFavorite = { research, spread, color -> ClientPacketDistributor.sendToServer(FavoriteResearchPayload(research, spread, color)) }
             ResearchNetwork.updateView = { state -> runCatching { ClientPacketDistributor.sendToServer(UpdateBookViewPayload(state)) } }
+            BoundGemTooltipNetwork.currentDimension = { Minecraft.getInstance().level?.dimension() }
+            BoundGemTooltipNetwork.sendRequestToServer = { payload -> runCatching { ClientPacketDistributor.sendToServer(payload) } }
 
             BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceRenderer)
+            BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.matrixDestructor, ::MatrixDestructorRenderer)
         }
     }
 
     private fun onMenuScreen(event: RegisterMenuScreensEvent) {
         event.register(MenuTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceScreen)
+        event.register(MenuTypeRegistry.instance.envoyer, ::EnvoyerMenuScreen)
+        event.register(MenuTypeRegistry.instance.matrixDestructor, ::MatrixDestructorScreen)
     }
 
     private fun onRegisterClientPayloads(event: RegisterClientPayloadHandlersEvent) {
         event.register(ResearchSyncPayload.TYPE) { payload, _ -> ClientResearchState.apply(payload) }
         event.register(ResearchProgressPayload.TYPE) { payload, _ -> ClientResearchState.apply(payload) }
+        event.register(BoundGemTooltipResponsePayload.TYPE) { payload, _ -> BoundGemTooltipNetwork.acceptResponse(payload) }
         event.register(FinishCraftParticle.TYPE) { payload, _ ->
             val level = Minecraft.getInstance().level ?: return@register
             (0 ..< payload.count).forEach { _ ->

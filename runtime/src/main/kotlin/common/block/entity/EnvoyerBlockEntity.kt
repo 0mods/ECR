@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.common.block.entity
 
+import com.algorithmlx.ecr.api.block.entity.syncForNearby
 import com.algorithmlx.ecr.api.mru.MRUDevice
 import com.algorithmlx.ecr.api.mru.processReceive
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
@@ -10,9 +11,15 @@ import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.MRUTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.RecipeTypeRegistry
 import com.algorithmlx.ecr.common.menu.EnvoyerMenu
+import com.algorithmlx.ecr.common.recipe.EnvoyerRecipe
 import net.minecraft.core.BlockPos
+import net.minecraft.core.HolderLookup
 import net.minecraft.core.NonNullList
+import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.chat.Component
+import net.minecraft.network.protocol.Packet
+import net.minecraft.network.protocol.game.ClientGamePacketListener
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
 import net.minecraft.world.ContainerHelper
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.AbstractContainerMenu
@@ -20,6 +27,8 @@ import net.minecraft.world.inventory.ContainerData
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.CraftingInput
+import net.minecraft.world.item.crafting.Ingredient
+import net.minecraft.world.item.crafting.ShapedRecipePattern
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BaseContainerBlockEntity
 import net.minecraft.world.level.block.state.BlockState
@@ -92,7 +101,15 @@ class EnvoyerBlockEntity(
 
     override fun canPlaceItem(slot: Int, itemStack: ItemStack): Boolean = if (slot == 5) false else super.canPlaceItem(slot, itemStack)
 
-    override val mruStorage: IOMRUStorage = MRUStorageContainer(5000, MRUTypeRegistry.instance.espe) { setChanged() }
+    override fun setChanged() {
+        super.setChanged()
+        this.syncForNearby()
+    }
+
+    override fun getUpdatePacket(): Packet<ClientGamePacketListener> = ClientboundBlockEntityDataPacket.create(this)
+    override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag = this.saveWithFullMetadata(registries)
+
+    override val mruStorage: IOMRUStorage = MRUStorageContainer(5000, MRUTypeRegistry.instance.radiationUnit) { setChanged() }
     override val holderType: MRUDevice.DeviceType = MRUDevice.DeviceType.RECEIVER
 
     override val locator: MRUDevice.LocatorData = MRUDevice.LocatorData(this, 6)
@@ -106,12 +123,10 @@ class EnvoyerBlockEntity(
 
         private fun EnvoyerBlockEntity.processRecipeIfPresent(level: Level) {
             if ((0 ..< 5).all { this.getItem(it).isEmpty }) return
-            val container = CraftingInput.of(2, 3, mutableListOf<ItemStack>().also { list ->
-                (0 ..< 5).forEach { fe -> list.add(getItem(fe)) }
-                list.add(ItemStack.EMPTY)
-            })
 
-            val recipe = this.recipe.testAndGet(container, level)
+            val input = EnvoyerRecipe.Input((0 ..< 5).map { this.getItem(it) })
+
+            val recipe = this.recipe.testAndGet(input, level)
             if (recipe == null) {
                 this.resetProgress()
                 return
@@ -129,9 +144,21 @@ class EnvoyerBlockEntity(
                 if (time > this.progress) return
 
                 val inputs = recipe.inputs.getOrNull()
-                val ingredientOptionals = inputs?.ingredients()
+                if (inputs != null) {
+                    val positioned = input.craftingInput()
+                    val craftingInput = positioned.input()
+                    val ingredients = inputs.ingredients()
+                    val mirrored = shouldConsumeMirrored(inputs, craftingInput)
 
-                (0 ..< 4).forEach { ingredientOptionals?.get(it)?.getOrNull()?.let { l -> this.removeItem(it, l.count) } }
+                    (0 ..< inputs.height()).forEach { y ->
+                        (0 ..< inputs.width()).forEach { x ->
+                            val ingredientX = if (mirrored) inputs.width() - x - 1 else x
+                            val ingredient = ingredients[ingredientX + y * inputs.width()].getOrNull() ?: return@forEach
+                            val slot = x + positioned.left() + (y + positioned.top()) * 2
+                            this.removeItem(slot, ingredient.count)
+                        }
+                    }
+                }
 
                 val catalyst = recipe.catalyst.getOrNull()
                 catalyst?.let { this.removeItem(4, it.count) }
@@ -157,6 +184,23 @@ class EnvoyerBlockEntity(
             this.progress = 0
             this.maxProgress = 0
             this.setChanged()
+        }
+
+        private fun shouldConsumeMirrored(pattern: ShapedRecipePattern, input: CraftingInput): Boolean =
+            !matchesPattern(pattern, input, mirrored = false) && matchesPattern(pattern, input, mirrored = true)
+
+        private fun matchesPattern(pattern: ShapedRecipePattern, input: CraftingInput, mirrored: Boolean): Boolean {
+            val ingredients = pattern.ingredients()
+
+            (0 ..< pattern.height()).forEach { y ->
+                (0 ..< pattern.width()).forEach { x ->
+                    val ingredientX = if (mirrored) pattern.width() - x - 1 else x
+                    val ingredient = ingredients[ingredientX + y * pattern.width()]
+                    if (!Ingredient.testOptionalIngredient(ingredient, input.getItem(x, y))) return false
+                }
+            }
+
+            return true
         }
     }
 }

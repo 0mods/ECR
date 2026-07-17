@@ -8,7 +8,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import net.minecraft.resources.Identifier
 
-internal val researchJson = Json {
+val researchJson = Json {
+    allowComments = true
     ignoreUnknownKeys = true
     encodeDefaults = true
     explicitNulls = false

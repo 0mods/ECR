@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.fabric.init.registry
 
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
 import com.algorithmlx.ecr.api.multiblock.*
 import com.algorithmlx.ecr.api.registries.ECRegistries

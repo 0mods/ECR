@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.client.book.controller
 
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.BookEntry
 import com.algorithmlx.ecr.api.research.content.BookText

@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.api.mru.storage
 
+import com.algorithmlx.ecr.api.LOGGER
 import com.algorithmlx.ecr.api.mru.MRUType
 
 interface MRUStorage {
@@ -15,5 +16,5 @@ interface MRUStorage {
 
     val isEmpty: Boolean get() = mru == 0
 
-    fun comparableWith(storage: MRUStorage): Boolean = this.mruType == storage.mruType
+    fun isSameTypes(storage: MRUStorage): Boolean = this.mruType == storage.mruType
 }

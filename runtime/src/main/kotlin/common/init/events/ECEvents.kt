@@ -8,6 +8,8 @@ import com.algorithmlx.ecr.api.utils.countByIngredient
 import com.algorithmlx.ecr.common.components.SoulStoneComponent
 import com.algorithmlx.ecr.common.init.registry.DataComponentRegistry
 import com.algorithmlx.ecr.common.recipe.StructureRecipe
+import com.algorithmlx.ecr.network.BoundGemTargetStatus
+import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
 import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
@@ -22,7 +24,7 @@ import net.minecraft.world.phys.Vec3
 object ECEvents {
     @JvmStatic
     fun itemTooltip(stack: ItemStack, tooltips: MutableList<Component>) {
-        when (stack.item) {
+        when (val item = stack.item) {
             is SoulStoneLike -> {
                 val component = stack.getOrDefault(DataComponentRegistry.instance.soulStone, SoulStoneComponent.EMPTY)
 
@@ -42,8 +44,37 @@ object ECEvents {
             }
 
             is BoundGem -> {
-
+                addBoundGemTooltip(stack, item, tooltips)
             }
+        }
+    }
+
+    private fun addBoundGemTooltip(stack: ItemStack, item: BoundGem, tooltips: MutableList<Component>) {
+        val pos = item.getBoundPos(stack) ?: return
+
+        tooltips += Component.translatable("tooltip.$ModId.bound_gem.linked.pos")
+            .append(":")
+            .withStyle(ChatFormatting.GOLD)
+        tooltips += Component.literal("X").withStyle(ChatFormatting.RED)
+            .append(": ")
+            .append(Component.literal(pos.x.toString()))
+            .append(" ")
+            .append(Component.literal("Y").withStyle(ChatFormatting.GREEN))
+            .append(": ")
+            .append(Component.literal(pos.y.toString()))
+            .append(" ")
+            .append(Component.literal("Z").withStyle(ChatFormatting.BLUE))
+            .append(": ")
+            .append(Component.literal(pos.z.toString()))
+
+        if (BoundGemTooltipNetwork.tooltipStatus(stack, item) == BoundGemTargetStatus.NOT_MRU) {
+            tooltips += Component.translatable("tooltip.$ModId.bound_gem.linked.not_mru")
+                .withStyle(ChatFormatting.GOLD)
+        }
+
+        if (!item.dimensionalBounds) {
+            tooltips += Component.translatable("tooltip.$ModId.bound_gem.dimension.disallowed")
+                .withStyle(ChatFormatting.RED)
         }
     }
 

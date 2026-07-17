@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.client.book
 
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.research.content.BookCategory
 import com.algorithmlx.ecr.mixin.client.RenderPipelinesAccessor
 import com.mojang.blaze3d.pipeline.RenderPipeline

@@ -1,7 +1,7 @@
 package com.algorithmlx.ecr.mixin;
 
-import com.algorithmlx.ecr.api.UtilitiesKt;
 import com.algorithmlx.ecr.api.recipe.CachedRecipe;
+import com.algorithmlx.ecr.api.utils.UtilitiesKt;
 import com.algorithmlx.ecr.common.init.events.ECEvents;
 import com.algorithmlx.ecr.common.init.registry.RecipeTypeRegistry;
 import com.algorithmlx.ecr.common.recipe.StructureRecipe;

@@ -109,7 +109,7 @@ fun MRUDevice.processReceive(level: Level) {
     val currentContainer = this.mruStorage
     val generator = exporter.mruStorage
 
-    if (!currentContainer.comparableWith(generator)) return
+    if (!currentContainer.isSameTypes(generator)) return
 
     val transferCount = item.transferStrength.reversedArray()
     transferCount.forEach {

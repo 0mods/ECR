@@ -17,6 +17,7 @@ import net.minecraft.world.item.crafting.PlacementInfo
 import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeBookCategories
 import net.minecraft.world.item.crafting.RecipeBookCategory
+import net.minecraft.world.item.crafting.RecipeInput
 import net.minecraft.world.item.crafting.RecipeSerializer
 import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.item.crafting.ShapedRecipePattern
@@ -29,37 +30,62 @@ class EnvoyerRecipe(
     val time: Int,
     val mruPerTick: Int,
     val result: ItemStackTemplate
-): Recipe<CraftingInput> {
+): Recipe<EnvoyerRecipe.Input> {
     init {
         require(inputs.isPresent || catalyst.isPresent) { "Recipe must present with inputs or catalyst!" }
-        require(inputs.isPresent && inputs.get().height() * inputs.get().width() < 5) { "Recipe max have only ~2x2 recipe grid" }
+        require(inputs.isEmpty || inputs.get().height() * inputs.get().width() <= CRAFTING_SLOT_COUNT) { "Recipe max have only ~2x2 recipe grid" }
     }
 
     override fun matches(
-        input: CraftingInput,
+        input: Input,
         level: Level
     ): Boolean {
         if (inputs.isPresent) {
             val shaped = inputs.get()
-            val craftingInput = CraftingInput.of(2, 2, input.items().filterIndexed { index, _ -> index < 4 })
+            val craftingInput = input.craftingInput().input()
 
             if (!shaped.matches(craftingInput)) return false
+        } else if (input.craftingItems.any { !it.isEmpty }) {
+            return false
         }
 
-        val catalystIsEmpty = catalyst.isEmpty && input.items().getOrElse(4) { ItemStack.EMPTY }.isEmpty
-        val catalystTest = input.items().size > 4 && catalyst.get().test(input.items()[4])
-        return catalystIsEmpty || catalystTest
+        val catalystStack = input.catalystStack
+        return if (catalyst.isPresent) catalyst.get().test(catalystStack) else catalystStack.isEmpty
     }
 
-    override fun assemble(input: CraftingInput): ItemStack = this.result.create()
+    override fun assemble(input: Input): ItemStack = this.result.create()
     override fun showNotification(): Boolean = true
     override fun group(): String = "$ModId:${ECRModIDs.ENVOYER}"
-    override fun getSerializer(): RecipeSerializer<out Recipe<CraftingInput>> = RecipeSerializerRegistry.instance.envoyer
-    override fun getType(): RecipeType<out Recipe<CraftingInput>> = RecipeTypeRegistry.instance.envoyer
+    override fun getSerializer(): RecipeSerializer<out Recipe<Input>> = RecipeSerializerRegistry.instance.envoyer
+    override fun getType(): RecipeType<out Recipe<Input>> = RecipeTypeRegistry.instance.envoyer
     override fun placementInfo(): PlacementInfo = PlacementInfo.NOT_PLACEABLE
     override fun recipeBookCategory(): RecipeBookCategory = RecipeBookCategories.CAMPFIRE
 
+    class Input(private val stacks: List<ItemStack>): RecipeInput {
+        init {
+            require(stacks.size == INPUT_SLOT_COUNT) { "Envoyer recipe input must contain $INPUT_SLOT_COUNT slots" }
+        }
+
+        val craftingItems: List<ItemStack> get() = stacks.subList(0, CRAFTING_SLOT_COUNT)
+        val catalystStack: ItemStack get() = stacks[CATALYST_SLOT]
+
+        override fun getItem(index: Int): ItemStack = stacks[index]
+        override fun size(): Int = stacks.size
+
+        fun craftingInput(): CraftingInput.Positioned = CraftingInput.ofPositioned(
+            CRAFTING_WIDTH,
+            CRAFTING_HEIGHT,
+            craftingItems
+        )
+    }
+
     companion object {
+        private const val CRAFTING_WIDTH = 2
+        private const val CRAFTING_HEIGHT = 2
+        private const val CRAFTING_SLOT_COUNT = CRAFTING_WIDTH * CRAFTING_HEIGHT
+        private const val CATALYST_SLOT = CRAFTING_SLOT_COUNT
+        private const val INPUT_SLOT_COUNT = CRAFTING_SLOT_COUNT + 1
+
         @JvmField
         val CODEC: MapCodec<EnvoyerRecipe> = RecordCodecBuilder.mapCodec {
             it.group(

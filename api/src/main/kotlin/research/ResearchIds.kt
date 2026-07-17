@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.api.research
 
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 
 object ResearchIds {
     @JvmField val SPACE = "space".ecRL

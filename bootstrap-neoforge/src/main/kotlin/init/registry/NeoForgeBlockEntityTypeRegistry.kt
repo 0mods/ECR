@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.neoforge.init.registry
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.common.block.entity.EnvoyerBlockEntity
+import com.algorithmlx.ecr.common.block.entity.MatrixDestructorEntity
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
@@ -24,7 +25,11 @@ class NeoForgeBlockEntityTypeRegistry(bus: IEventBus): BlockEntityTypeRegistry {
     private val envoyerEntity = blockEntityType.register(ECRModIDs.ENVOYER) { _ ->
         BlockEntityType(::EnvoyerBlockEntity, setOf(BlockRegistry.instance.envoyer))
     }
+    private val matrixDestructorEntity = blockEntityType.register(ECRModIDs.MATRIX_DESTRUCTOR) { _ ->
+        BlockEntityType(::MatrixDestructorEntity, setOf(BlockRegistry.instance.matrixDestructor))
+    }
 
     override val mithrilineFurnace: BlockEntityType<MithrilineFurnaceEntity> by lazy { mithrilineFurnaceEntity.get() }
     override val envoyer: BlockEntityType<EnvoyerBlockEntity> by lazy { envoyerEntity.get() }
+    override val matrixDestructor: BlockEntityType<MatrixDestructorEntity> by lazy { matrixDestructorEntity.get() }
 }

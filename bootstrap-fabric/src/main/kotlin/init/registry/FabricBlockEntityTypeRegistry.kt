@@ -1,7 +1,8 @@
 package com.algorithmlx.ecr.fabric.init.registry
 
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.block.entity.EnvoyerBlockEntity
+import com.algorithmlx.ecr.common.block.entity.MatrixDestructorEntity
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
@@ -19,6 +20,10 @@ object FabricBlockEntityTypeRegistry: BlockEntityTypeRegistry {
     override val envoyer: BlockEntityType<EnvoyerBlockEntity> = register(
         ECRModIDs.ENVOYER,
         BlockEntityType(::EnvoyerBlockEntity, setOf(BlockRegistry.instance.envoyer))
+    )
+    override val matrixDestructor: BlockEntityType<MatrixDestructorEntity> = register(
+        ECRModIDs.MATRIX_DESTRUCTOR,
+        BlockEntityType(::MatrixDestructorEntity, setOf(BlockRegistry.instance.matrixDestructor))
     )
 
     private fun <B: BlockEntity> register(id: String, codec: BlockEntityType<B>) =

@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.api.registries
 
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.mru.MRUType
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.algorithmlx.ecr.api.multiblock.MultiblockMatcherType

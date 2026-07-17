@@ -4,7 +4,7 @@ import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.client.research.BookElementRenderContext
 import com.algorithmlx.ecr.api.client.research.BookElementRenderers
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.research.BookType
 import com.algorithmlx.ecr.api.research.content.BookCategory
 import com.algorithmlx.ecr.api.research.content.BookEntry

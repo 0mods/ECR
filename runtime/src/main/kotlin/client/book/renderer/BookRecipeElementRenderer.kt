@@ -2,7 +2,7 @@ package com.algorithmlx.ecr.client.book.renderer
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.client.research.*
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.mojang.blaze3d.platform.cursor.CursorTypes
 import com.algorithmlx.ecr.api.research.ClientResearchState

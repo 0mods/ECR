@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.fabric.init.registry
 
-import com.algorithmlx.ecr.api.ecRL
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.research.BookType
 import com.algorithmlx.ecr.common.components.BoundGemComponent
 import com.algorithmlx.ecr.common.components.SoulStoneComponent

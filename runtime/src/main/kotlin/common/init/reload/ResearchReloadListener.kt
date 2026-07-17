@@ -1,5 +1,7 @@
-package com.algorithmlx.ecr.api.research
+package com.algorithmlx.ecr.common.init.reload
 
+import com.algorithmlx.ecr.api.research.ResearchCatalog
+import com.algorithmlx.ecr.api.research.ResearchJson
 import com.algorithmlx.ecr.api.research.serializer.researchJson
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject

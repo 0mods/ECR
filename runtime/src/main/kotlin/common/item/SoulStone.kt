@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.common.item
 
+import com.algorithmlx.ecr.api.item.SoulStoneLike
 import com.algorithmlx.ecr.common.components.SoulStoneComponent
 import com.algorithmlx.ecr.common.init.registry.DataComponentRegistry
 import net.minecraft.server.level.ServerLevel
@@ -14,7 +15,7 @@ class SoulStone(properties: Properties): Item(
         DataComponentRegistry.instance.soulStone,
         SoulStoneComponent.EMPTY
     )
-) {
+), SoulStoneLike {
     override fun inventoryTick(itemStack: ItemStack, level: ServerLevel, owner: Entity, slot: EquipmentSlot?) {
         if (owner is ServerPlayer) {
             val component = itemStack.getOrDefault(DataComponentRegistry.instance.soulStone, SoulStoneComponent.EMPTY)
@@ -27,4 +28,7 @@ class SoulStone(properties: Properties): Item(
             itemStack.set(DataComponentRegistry.instance.soulStone, component.copy(ownerName = owner.name.string))
         }
     }
+
+    override val receiveCount: Int = 1
+    override val extractCount: Int = 10
 }
