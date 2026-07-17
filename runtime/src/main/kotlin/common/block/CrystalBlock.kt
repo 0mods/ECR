@@ -90,6 +90,14 @@ class CrystalBlock(properties: Properties) : Block(properties), Multipart<Crysta
 
     override fun getAllParts(pos: BlockPos, dir: Direction): Array<BlockPos> = arrayOf(pos, pos.above())
 
+    override fun getPreviewParts(pos: BlockPos, dir: Direction, state: BlockState): List<Pair<BlockPos, BlockState>> {
+        val positions = this.getAllParts(pos, dir)
+        return listOf(
+            positions[0] to state.setValue(PART, CrystalPart.DOWN),
+            positions[1] to state.setValue(PART, CrystalPart.UP)
+        )
+    }
+
     private val downShape by lazy {
         var shape = Shapes.empty()
         shape = Shapes.join(shape, Shapes.box(0.4375, 0.0625, 0.4375, 0.5625, 1.0625, 0.5625), BooleanOp.OR)

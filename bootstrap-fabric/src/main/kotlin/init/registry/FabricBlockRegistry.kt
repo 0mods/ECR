@@ -27,6 +27,7 @@ object FabricBlockRegistry: BlockRegistry {
     override val matrixDestructor: MatrixDestructor = register(ECRModIDs.MATRIX_DESTRUCTOR, ::MatrixDestructor)
     override val solarPrism: SolarPrism = register(ECRModIDs.SOLAR_PRISM, ::SolarPrism)
     override val coldDistiller: ColdDistiller = register(ECRModIDs.COLD_DISTILLER, ::ColdDistiller)
+    override val voidStone: Block = register(ECRModIDs.VOID_STONE, ::Block)
 
     private fun <B: Block> register(
         id: String,

@@ -10,6 +10,8 @@ import net.minecraft.core.Registry
 object FabricMultiblockMatcherTypes: MultiblockMatcherTypes {
     override val tag: MultiblockMatcherType<TagMultiblockMatcher> = register(ECRModIDs.TAG, MultiblockMatcherType(TagMultiblockMatcher.CODEC))
     override val block: MultiblockMatcherType<BlockMultiblockMatcher> = register(ECRModIDs.BLOCK, MultiblockMatcherType(BlockMultiblockMatcher.CODEC))
+    override val list: MultiblockMatcherType<ListMultiblockMatcher> =
+        register(ECRModIDs.LIST, MultiblockMatcherType(ListMultiblockMatcher.CODEC))
 
     private fun <T: MultiblockMatcherType<*>> register(id: String, menu: T): T =
         Registry.register(ECRegistries.MULTIBLOCK_MATCHER_TYPE, id.ecRL, menu)

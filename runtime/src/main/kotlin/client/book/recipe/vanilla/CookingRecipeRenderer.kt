@@ -19,7 +19,7 @@ abstract class CookingRecipeRenderer<T: AbstractCookingRecipe>: BookRecipeRender
     protected fun render(builder: BookRecipeRenderBuilder, ingredient: SlotDisplay, result: SlotDisplay, duration: Int, item: ItemStack) {
         val contentWidth = SLOT_SIZE + ELEMENT_GAP + ITEM_SIZE + ELEMENT_GAP + SLOT_SIZE
 
-        val startX = (builder.context.width - contentWidth) / 2
+        val startX = (builder.width - contentWidth) / 2
         val slotY = 0
 
         val furnaceX = startX + SLOT_SIZE + ELEMENT_GAP
@@ -34,7 +34,7 @@ abstract class CookingRecipeRenderer<T: AbstractCookingRecipe>: BookRecipeRender
                 duration / 20
             )
         )
-        val durationX = (builder.context.width - builder.context.mc.font.width(durationText)) / 2
+        val durationX = (builder.width - builder.mc.font.width(durationText)) / 2
 
         builder.slot(ingredient, BookRecipeSlotType.INPUT, startX, slotY)
 

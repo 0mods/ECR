@@ -51,7 +51,9 @@ object BookPageLayout {
             val spec = originalSpec.resolveText(entry) ?: return@forEach
             val serializer = ResearchSerializers.elementSerializer(spec.content.type)
             val width = (spec.width ?: autoWidth(spec, entry) ?: serializer?.defaultWidth ?: 16).coerceIn(0, PAGE_WIDTH)
-            val height = (spec.height ?: autoHeight(spec, width) ?: serializer?.defaultHeight ?: 16).coerceIn(0, PAGE_HEIGHT)
+            val measuredHeight = autoHeight(spec, width, entry)
+            val height = elementHeight(spec, measuredHeight, serializer?.defaultHeight ?: 16)
+                .coerceIn(0, PAGE_HEIGHT)
             if (spec.content === SpaceBookElement) {
                 cursor.y = (cursor.y + height).coerceAtMost(BOTTOM)
                 return@forEach
@@ -85,9 +87,16 @@ object BookPageLayout {
         else -> null
     }
 
-    private fun autoHeight(spec: BookElementSpec, width: Int): Int? = when (val element = spec.content) {
-        is CraftingBookElement -> BookRecipeElementRenderer.preferredHeight(element, width)
+    private fun autoHeight(spec: BookElementSpec, width: Int, entry: BookEntry): Int? = when (val element = spec.content) {
+        is CraftingBookElement -> BookRecipeElementRenderer.preferredHeight(element, width, entry.id)
         else -> null
+    }
+
+    private fun elementHeight(spec: BookElementSpec, measuredHeight: Int?, defaultHeight: Int): Int {
+        if (spec.content is CraftingBookElement && measuredHeight != null) {
+            return maxOf(spec.height ?: 0, measuredHeight)
+        }
+        return spec.height ?: measuredHeight ?: defaultHeight
     }
 
     private fun placeText(

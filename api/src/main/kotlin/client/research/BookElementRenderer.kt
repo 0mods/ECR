@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.api.client.research
 import com.algorithmlx.ecr.api.research.content.BookElement
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.resources.Identifier
 import net.minecraft.util.FormattedCharSequence
 import java.util.concurrent.ConcurrentHashMap
@@ -25,7 +26,8 @@ data class BookElementRenderContext(
     val interactionKey: String? = null,
     val research: Identifier? = null,
     val textLineStart: Int = 0,
-    val textLineCount: Int = textLines?.size ?: 0
+    val textLineCount: Int = textLines?.size ?: 0,
+    val scissorArea: ScreenRectangle? = null
 ) {
     val mc: Minecraft = Minecraft.getInstance()
 }

@@ -38,6 +38,7 @@ import net.minecraft.ChatFormatting
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
 import net.minecraft.client.gui.GuiGraphicsExtractor
+import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner
@@ -509,6 +510,7 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
             val absY = transform.y + (placement.y * transform.scale).toInt()
             val absW = (placement.width * transform.scale).toInt()
             val absH = (placement.height * transform.scale).toInt()
+            val pageScissor = pageScissor(transform, placement.x)
 
             BookElementRenderers.render(
                 placement.element.content.type,
@@ -530,7 +532,8 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
                     "${entry.id}|$spreadIndex|$placementIndex",
                     entry.id,
                     placement.textLineStart,
-                    placement.textLineCount
+                    placement.textLineCount,
+                    pageScissor
                 ),
                 placement.element.content
             )
@@ -571,6 +574,16 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
             ((width - BOOK_WIDTH * finalScale) / 2f).toInt(),
             ((height - BOOK_HEIGHT * finalScale) / 2f).toInt(),
             finalScale
+        )
+    }
+
+    private fun pageScissor(transform: BookTransform, elementX: Int): ScreenRectangle {
+        val pageX = if (elementX < BOOK_WIDTH / 2) FIRST_PAGE_X else SECOND_PAGE_X
+        return ScreenRectangle(
+            transform.x + (pageX * transform.scale).roundToInt(),
+            transform.y + (PAGE_TOP * transform.scale).roundToInt(),
+            (PAGE_WIDTH * transform.scale).roundToInt(),
+            (PAGE_HEIGHT * transform.scale).roundToInt()
         )
     }
 
@@ -874,6 +887,11 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
         private const val TAB_WIDTH = 18
         private const val BOOK_WIDTH = 512
         private const val BOOK_HEIGHT = 256
+        private const val FIRST_PAGE_X = 16
+        private const val SECOND_PAGE_X = 271
+        private const val PAGE_TOP = 16
+        private const val PAGE_WIDTH = 225
+        private const val PAGE_HEIGHT = 224
 
         private const val BOOKMARK_Y = BookBookmarkController.BOOKMARK_Y
 

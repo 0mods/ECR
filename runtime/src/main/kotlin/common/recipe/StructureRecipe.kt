@@ -118,7 +118,7 @@ class StructureRecipe(
                 Identifier.CODEC.fieldOf("multiblock")
                     .forGetter { fg -> ECRegistries.MULTIBLOCK.getKey(fg.multiblock) ?: throw NullPointerException("Multiblock is not registered") },
                 Codec.INT.fieldOf("time").forGetter(StructureRecipe::time),
-                Ingredient.CODEC.fieldOf("ingredient").forGetter(StructureRecipe::ingredient),
+                Ingredient.CODEC.fieldOf("input").forGetter(StructureRecipe::ingredient),
                 ItemStackTemplate.CODEC.optionalFieldOf("result").forGetter(StructureRecipe::result),
                 Range.CODEC.optionalFieldOf("chance", Range(0, 0)).forGetter(StructureRecipe::chance),
                 Codec.optionalField("structure_center", Identifier.CODEC, true)

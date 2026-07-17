@@ -16,6 +16,7 @@ interface BlockRegistry {
     val matrixDestructor: MatrixDestructor
     val solarPrism: SolarPrism
     val coldDistiller: ColdDistiller
+    val voidStone: Block
 
     companion object {
         lateinit var instance: BlockRegistry

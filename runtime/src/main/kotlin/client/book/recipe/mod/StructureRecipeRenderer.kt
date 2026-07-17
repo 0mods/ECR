@@ -15,7 +15,7 @@ object StructureRecipeRenderer: BookRecipeRenderer<StructureRecipe> {
         builder: BookRecipeRenderBuilder
     ) {
         val display = recipe.display().filterIsInstance<StructureRecipe.Display>().firstOrNull() ?: return
-        val font = builder.context.mc.font
+        val font = builder.mc.font
 
         val dropText = Component.translatable("screen.$ModId.research_book.recipe.structure.drop")
         renderCenteredText(builder, dropText, 0)
@@ -48,7 +48,7 @@ object StructureRecipeRenderer: BookRecipeRenderer<StructureRecipe> {
 
         builder.multiblock(
             recipe.multiblock,
-            (builder.context.width - MULTIBLOCK_WIDTH) / 2,
+            (builder.width - MULTIBLOCK_WIDTH) / 2,
             y + SECTION_GAP,
             MULTIBLOCK_WIDTH,
             MULTIBLOCK_HEIGHT
@@ -75,13 +75,13 @@ object StructureRecipeRenderer: BookRecipeRenderer<StructureRecipe> {
     }
 
     private fun centeredX(builder: BookRecipeRenderBuilder, text: Component): Int =
-        (builder.context.width - builder.context.mc.font.width(text)) / 2
+        (builder.width - builder.mc.font.width(text)) / 2
 
     private fun centeredSlotX(builder: BookRecipeRenderBuilder): Int =
-        (builder.context.width - SLOT_SIZE) / 2
+        (builder.width - SLOT_SIZE) / 2
 
     private fun centeredItemX(builder: BookRecipeRenderBuilder): Int =
-        (builder.context.width - ITEM_SIZE) / 2
+        (builder.width - ITEM_SIZE) / 2
 
     private const val RENDER_WIDTH = 225
     private const val RENDER_HEIGHT = 192

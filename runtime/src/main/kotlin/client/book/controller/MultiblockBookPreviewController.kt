@@ -10,6 +10,7 @@ import com.algorithmlx.ecr.api.research.content.MultiblockBookElement
 import com.mojang.blaze3d.platform.InputConstants
 import com.mojang.blaze3d.platform.cursor.CursorTypes
 import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.resources.Identifier
 import kotlin.math.exp
@@ -50,16 +51,40 @@ object MultiblockBookPreviewController {
         state.maxLayer = (multiblock.ySize - 1).coerceAtLeast(0)
         state.layer = state.layer.coerceIn(0, state.maxLayer)
 
+        val scissor = currentScissor(context)
+        val elementBounds = Rect(
+            context.screenX,
+            context.screenY,
+            context.screenWidth.coerceAtLeast(1),
+            context.screenHeight.coerceAtLeast(1)
+        )
+        if (!elementBounds.isInside(scissor)) {
+            state.previewBounds = Rect.EMPTY
+            state.leftButton = Rect.EMPTY
+            state.modeButton = Rect.EMPTY
+            state.rightButton = Rect.EMPTY
+            return
+        }
+
         val previewLocalHeight = (context.height - CONTROL_RESERVED_HEIGHT).coerceAtLeast(1)
         val previewScreenHeight = (previewLocalHeight * context.scale).roundToInt()
             .coerceIn(1, context.screenHeight.coerceAtLeast(1))
 
-        state.previewBounds = Rect(
+        val previewBounds = Rect(
             context.screenX,
             context.screenY,
             context.screenWidth.coerceAtLeast(1),
             previewScreenHeight
         )
+        val previewFullyVisible = previewBounds.isInside(scissor)
+        if (!previewFullyVisible) {
+            state.previewBounds = Rect.EMPTY
+            state.leftButton = Rect.EMPTY
+            state.modeButton = Rect.EMPTY
+            state.rightButton = Rect.EMPTY
+            return
+        }
+        state.previewBounds = previewBounds
 
         val controls = controlLayout(context)
         state.leftButton = controls.left.toScreen(context)
@@ -74,7 +99,9 @@ object MultiblockBookPreviewController {
                 context.screenX,
                 context.screenY,
                 context.screenX + context.screenWidth,
-                context.screenY + previewScreenHeight
+                context.screenY + previewScreenHeight,
+                scissor,
+                key
             )
         )
 
@@ -86,22 +113,33 @@ object MultiblockBookPreviewController {
         element: MultiblockBookElement,
         multiblock: Multiblock
     ) {
-        MultiblockPreviewGuiBridge.add(
-            context.graphics,
-            MultiblockPreviewRenderState(
-                multiblock,
-                MultiblockPreviewTransform(
-                    scale = element.scale,
-                    rotationX = element.rotationX,
-                    rotationY = element.rotationY,
-                    layer = element.layer
-                ),
-                context.screenX,
-                context.screenY,
-                context.screenX + context.screenWidth,
-                context.screenY + context.screenHeight
-            )
+        val bounds = Rect(
+            context.screenX,
+            context.screenY,
+            context.screenWidth.coerceAtLeast(1),
+            context.screenHeight.coerceAtLeast(1)
         )
+        val scissor = currentScissor(context)
+        if (bounds.isInside(scissor)) {
+            MultiblockPreviewGuiBridge.add(
+                context.graphics,
+                MultiblockPreviewRenderState(
+                    multiblock,
+                    MultiblockPreviewTransform(
+                        scale = element.scale,
+                        rotationX = element.rotationX,
+                        rotationY = element.rotationY,
+                        layer = element.layer
+                    ),
+                    context.screenX,
+                    context.screenY,
+                    context.screenX + context.screenWidth,
+                    context.screenY + context.screenHeight,
+                    scissor,
+                    context.interactionKey ?: "${element.multiblock}|${context.screenX},${context.screenY}"
+                )
+            )
+        }
     }
 
     private fun renderControls(
@@ -290,12 +328,32 @@ object MultiblockBookPreviewController {
             InputConstants.isKeyDown(window, InputConstants.KEY_RSHIFT)
     }
 
+    private fun currentScissor(context: BookElementRenderContext): ScreenRectangle {
+        return context.scissorArea ?: ScreenRectangle(
+            context.screenX,
+            context.screenY,
+            context.screenWidth.coerceAtLeast(1),
+            context.screenHeight.coerceAtLeast(1)
+        )
+    }
+
     private data class Controls(val left: Rect, val mode: Rect, val right: Rect)
 
     private data class Rect(val x: Int, val y: Int, val width: Int, val height: Int) {
         fun contains(mouseX: Int, mouseY: Int, padding: Int = 0): Boolean =
             mouseX >= x - padding && mouseX < x + width + padding &&
                 mouseY >= y - padding && mouseY < y + height + padding
+
+        fun isInside(scissor: ScreenRectangle): Boolean =
+            width > 0 && height > 0 &&
+                x >= scissor.left() &&
+                y >= scissor.top() &&
+                x + width <= scissor.right() &&
+                y + height <= scissor.bottom()
+
+        companion object {
+            val EMPTY = Rect(0, 0, 0, 0)
+        }
     }
 
     private enum class DragMode { ROTATE, PAN }

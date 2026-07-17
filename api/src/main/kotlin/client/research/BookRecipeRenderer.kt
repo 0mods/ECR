@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.api.client.research
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.research.content.BookResearchLink
+import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
@@ -12,6 +13,7 @@ import net.minecraft.world.item.crafting.RecipeType
 import net.minecraft.world.item.crafting.display.SlotDisplay
 import net.minecraft.world.level.ItemLike
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.math.max
 
 enum class BookRecipeSlotType {
     INPUT,
@@ -146,9 +148,25 @@ data class BookRecipeMultiblock(
     override fun render(context: BookElementRenderContext) { throw AssertionError("Used default render") }
 }
 
-class BookRecipeRenderBuilder(val context: BookElementRenderContext) {
+class BookRecipeRenderBuilder private constructor(
+    private val renderContext: BookElementRenderContext?,
+    val width: Int,
+    val research: Identifier?
+) {
+    constructor(context: BookElementRenderContext) : this(context, context.width, context.research)
+
+    val context: BookElementRenderContext
+        get() = renderContext ?: throw IllegalStateException(MEASURE_CONTEXT_ERROR)
+
+    val mc: Minecraft get() = Minecraft.getInstance()
     private val mutableElements = mutableListOf<BookRecipeRenderElement>()
     val elements: List<BookRecipeRenderElement> get() = mutableElements
+    var contentHeight: Int = 0
+        private set
+
+    private fun include(y: Int, height: Int) {
+        contentHeight = max(contentHeight, y + height)
+    }
 
     fun slot(stack: ItemStack, slotType: BookRecipeSlotType, x: Int, y: Int): BookRecipeSlot =
         slot(listOf(stack), slotType, x, y)
@@ -163,24 +181,35 @@ class BookRecipeRenderBuilder(val context: BookElementRenderContext) {
             x,
             y
         )
+        include(y, SLOT_SIZE)
         mutableElements += slot
         return slot
     }
 
     fun slot(display: SlotDisplay, slotType: BookRecipeSlotType, x: Int, y: Int): BookRecipeSlot {
         val slot = BookRecipeSlot(BookRecipeSlotContent.Display(display), slotType, x, y)
+        include(y, SLOT_SIZE)
         mutableElements += slot
         return slot
     }
 
     fun sprite(sprite: Identifier, x: Int, y: Int, width: Int, height: Int): BookRecipeSprite =
-        BookRecipeSprite(sprite, x, y, width, height).also(mutableElements::add)
+        BookRecipeSprite(sprite, x, y, width, height).also {
+            include(y, height)
+            mutableElements += it
+        }
 
     fun item(item: ItemStack, x: Int, y: Int): BookRecipeItemSprite =
-        BookRecipeItemSprite(item, x, y).also(mutableElements::add)
+        BookRecipeItemSprite(item, x, y).also {
+            include(y, ITEM_SIZE)
+            mutableElements += it
+        }
 
     fun tooltip(text: Component, x: Int, y: Int, size: Int): BookRecipeTooltip =
-        BookRecipeTooltip(text, x, y, size).also(mutableElements::add)
+        BookRecipeTooltip(text, x, y, size).also {
+            include(y, size)
+            mutableElements += it
+        }
 
     fun tooltip(text: String, x: Int, y: Int, size: Int) = tooltip(Component.translatable(text), x, y, size)
 
@@ -190,7 +219,10 @@ class BookRecipeRenderBuilder(val context: BookElementRenderContext) {
         y: Int,
         color: Int = 0xFF202020.toInt(),
         shadow: Boolean = false
-    ): BookRecipeText = BookRecipeText(text, x, y, color, shadow).also(mutableElements::add)
+    ): BookRecipeText = BookRecipeText(text, x, y, color, shadow).also {
+        include(y, mc.font.lineHeight)
+        mutableElements += it
+    }
 
     fun text(
         text: String,
@@ -208,7 +240,10 @@ class BookRecipeRenderBuilder(val context: BookElementRenderContext) {
         color: Int = 0xFF2F67B1.toInt(),
         hoverColor: Int = 0xFF1B4F91.toInt(),
         shadow: Boolean = false
-    ): BookRecipeLink = BookRecipeLink(text, target, x, y, color, hoverColor, shadow).also(mutableElements::add)
+    ): BookRecipeLink = BookRecipeLink(text, target, x, y, color, hoverColor, shadow).also {
+        include(y, mc.font.lineHeight)
+        mutableElements += it
+    }
 
     fun link(
         text: Component,
@@ -220,7 +255,7 @@ class BookRecipeRenderBuilder(val context: BookElementRenderContext) {
         shadow: Boolean = false
     ): BookRecipeLink = link(
         text,
-        requireNotNull(BookResearchLink.parse(target, context.research)) { "Invalid research link: $target" },
+        requireNotNull(BookResearchLink.parse(target, research)) { "Invalid research link: $target" },
         x,
         y,
         color,
@@ -286,7 +321,10 @@ class BookRecipeRenderBuilder(val context: BookElementRenderContext) {
         rotationX,
         rotationY,
         layer
-    ).also(mutableElements::add)
+    ).also {
+        include(y, height)
+        mutableElements += it
+    }
 
     fun multiblock(
         multiblock: String,
@@ -334,6 +372,18 @@ class BookRecipeRenderBuilder(val context: BookElementRenderContext) {
 
     private fun Multiblock.id(): Identifier =
         requireNotNull(ECRegistries.MULTIBLOCK.getKey(this)) { "Multiblock is not registered" }
+
+    companion object {
+        private const val SLOT_SIZE = 32
+        private const val ITEM_SIZE = 16
+        private const val MEASURE_CONTEXT_ERROR = "Render context is not available while measuring a recipe"
+
+        fun measure(width: Int, research: Identifier?): BookRecipeRenderBuilder =
+            BookRecipeRenderBuilder(null, width, research)
+
+        fun isMeasureContextError(error: IllegalStateException): Boolean =
+            error.message == MEASURE_CONTEXT_ERROR
+    }
 }
 
 fun interface BookRecipeRenderer<T : Recipe<*>> {
@@ -364,6 +414,17 @@ object BookRecipeRenderers {
     fun build(recipeId: Identifier, recipe: Recipe<*>, context: BookElementRenderContext): BookRecipeRenderBuilder? {
         val renderer = renderer(recipeId, recipe) ?: return null
         return BookRecipeRenderBuilder(context).also { renderer.build(recipe, it) }
+    }
+
+    fun measureHeight(recipeId: Identifier, recipe: Recipe<*>, width: Int, research: Identifier?): Int? {
+        val renderer = renderer(recipeId, recipe) ?: return null
+        return try {
+            BookRecipeRenderBuilder.measure(width, research)
+                .also { renderer.build(recipe, it) }
+                .contentHeight
+        } catch (error: IllegalStateException) {
+            if (BookRecipeRenderBuilder.isMeasureContextError(error)) null else throw error
+        }
     }
 
     fun width(recipeId: Identifier, recipe: Recipe<*>): Int? = renderer(recipeId, recipe)?.width(recipe)

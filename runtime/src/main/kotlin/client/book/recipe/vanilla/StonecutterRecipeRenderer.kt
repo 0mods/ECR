@@ -19,7 +19,7 @@ object StonecutterRecipeRenderer: BookRecipeRenderer<StonecutterRecipe> {
 
         val width = SLOT_SIZE + ELEMENT_GAP + ITEM_SIZE + ELEMENT_GAP + SLOT_SIZE
 
-        val startX = (builder.context.width - width) / 2
+        val startX = (builder.width - width) / 2
         val slotY = 0
 
         val stonecutterX = startX + SLOT_SIZE + ELEMENT_GAP

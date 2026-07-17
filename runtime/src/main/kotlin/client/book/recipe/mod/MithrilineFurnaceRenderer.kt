@@ -18,7 +18,7 @@ object MithrilineFurnaceRenderer: BookRecipeRenderer<MithrilineFurnaceRecipe> {
 
         val contentWidth = SLOT_SIZE + ELEMENT_GAP + ITEM_SIZE + ELEMENT_GAP + SLOT_SIZE
 
-        val startX = (builder.context.width - contentWidth) / 2
+        val startX = (builder.width - contentWidth) / 2
         val slotY = 0
 
         val furnace = ItemStack(BlockRegistry.instance.mithrilineFurnace)
@@ -30,7 +30,7 @@ object MithrilineFurnaceRenderer: BookRecipeRenderer<MithrilineFurnaceRecipe> {
         val espeText = Component.empty().append(recipe.espe.toString())
             .append(" ")
             .append(Component.translatable("screen.$ModId.research_book.recipe.espe"))
-        val espeX = (builder.context.width - builder.context.mc.font.width(espeText)) / 2
+        val espeX = (builder.width - builder.mc.font.width(espeText)) / 2
 
         builder.slot(display.ingredient, BookRecipeSlotType.INPUT, startX, slotY)
 

@@ -105,6 +105,15 @@
           "type": "crafting",
           "recipe": "ecreimagined:soul_stone",
           "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "multiblock",
+          "multiblock": "ecreimagined:lightning_collector",
+          "align": "center"
         }
       ]
     }

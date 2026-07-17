@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.Identifier
 import net.minecraft.util.Util
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
@@ -34,6 +35,7 @@ object BookRecipeElementRenderer {
             renderMissingRenderer(context, recipe)
             return
         }
+        if (!contentFits(context, render.contentHeight)) return
         render.elements.forEachIndexed { index, element -> renderElement(context, element, index) }
     }
 
@@ -42,10 +44,12 @@ object BookRecipeElementRenderer {
         return BookRecipeRenderers.width(element.recipe, recipe)
     }
 
-    fun preferredHeight(element: CraftingBookElement, width: Int): Int? {
+    fun preferredHeight(element: CraftingBookElement, width: Int, research: Identifier?): Int? {
         val recipe = ClientResearchState.recipe(element.recipe) ?: return null
 
-        BookRecipeRenderers.height(element.recipe, recipe)?.let { return it }
+        val declaredHeight = BookRecipeRenderers.height(element.recipe, recipe)
+        val measuredHeight = BookRecipeRenderers.measureHeight(element.recipe, recipe, width, research)
+        listOfNotNull(declaredHeight, measuredHeight).maxOrNull()?.let { return it }
 
         if (BookRecipeRenderers.hasRenderer(element.recipe, recipe)) return null
         val font = Minecraft.getInstance().font
@@ -91,6 +95,15 @@ object BookRecipeElementRenderer {
             is BookRecipeMultiblock -> renderMultiblock(context, element, index)
             else -> element.render(context)
         }
+    }
+
+    private fun contentFits(context: BookElementRenderContext, contentHeight: Int): Boolean {
+        val scissor = context.scissorArea ?: return true
+        val screenHeight = max(1, (contentHeight * context.scale).roundToInt())
+        return context.screenX >= scissor.left() &&
+            context.screenY >= scissor.top() &&
+            context.screenX + context.screenWidth <= scissor.right() &&
+            context.screenY + screenHeight <= scissor.bottom()
     }
 
     private fun renderMultiblock(context: BookElementRenderContext, element: BookRecipeMultiblock, index: Int) {

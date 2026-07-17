@@ -11,12 +11,15 @@ object ECRModIDs {
     const val SOLAR_PRISM = "solar_prism"
     const val MITHRILINE_FURNACE = "mithriline_furnace"
     const val MITHRILINE_CRYSTAL = "mithriline_crystal"
-    const val MITHRILINE_PLATING = "mithriline_plating"
     const val MATRIX_DESTRUCTOR = "matrix_destructor"
     const val SOUL_STONE = "soul_stone"
     const val BOUND_GEM = "bound_gem"
     const val ENVOYER = "envoyer"
     const val COLD_DISTILLER = "cold_distiller"
+
+    // Blocks
+    const val MITHRILINE_PLATING = "mithriline_plating"
+    const val VOID_STONE = "void_stone"
 
     // Data Components
     const val BOOK_TYPE = "book_type"
@@ -79,6 +82,14 @@ object ECRModIDs {
     // Multiblock Matcher
     const val TAG = "tag"
     const val BLOCK = "block"
+    const val LIST = "list"
+
+    // Multiblocks
+    const val FLAME_CRYSTAL = "flame_crystal"
+    const val WATER_CRYSTAL = "water_crystal"
+    const val EARTH_CRYSTAL = "earth_crystal"
+    const val AIR_CRYSTAL = "air_crystal"
+    const val LIGHTNING_COLLECTOR = "lightning_collector"
 
     // Recipes
     const val STRUCTURE = "structure"
@@ -88,7 +99,6 @@ object ECRModIDs {
     const val TAB_BLOCKS = "tab_blocks"
 
     // Ingredients
-
     const val COUNT = "count"
 
     fun guiLocation(id: String) = "textures/gui/$id.png".ecRL

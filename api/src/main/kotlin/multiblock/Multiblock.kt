@@ -204,6 +204,8 @@ open class Multiblock(val xSize: Int, val zSize: Int, val ySize: Int, block: Mul
     fun empty() = block(Blocks.AIR.defaultBlockState())
     fun block(state: BlockState, ignoreTag: Boolean = false) = BlockMultiblockMatcher(state, ignoreTag)
     fun tag(tag: TagKey<Block>) = TagMultiblockMatcher(tag)
+    fun list(vararg matchers: MultiblockMatcher, defaultState: BlockState? = null) = ListMultiblockMatcher(matchers.toList(), defaultState)
+    fun list(matchers: List<MultiblockMatcher>, defaultState: BlockState? = null) = ListMultiblockMatcher(matchers, defaultState)
 }
 
 data class MultiblockPlacement(
