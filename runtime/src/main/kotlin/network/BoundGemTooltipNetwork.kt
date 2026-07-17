@@ -140,7 +140,7 @@ object BoundGemTooltipNetwork {
         val device = level.getBlockEntity(pos) as? MRUDevice
             ?: return BoundGemTargetStatus.NOT_MRU
 
-        return if (device.holderType.isExporter) {
+        return if (device.deviceType.isExporter) {
             BoundGemTargetStatus.MRU_EXPORTER
         } else {
             BoundGemTargetStatus.NOT_MRU

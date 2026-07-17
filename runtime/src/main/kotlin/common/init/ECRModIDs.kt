@@ -16,6 +16,7 @@ object ECRModIDs {
     const val SOUL_STONE = "soul_stone"
     const val BOUND_GEM = "bound_gem"
     const val ENVOYER = "envoyer"
+    const val COLD_DISTILLER = "cold_distiller"
 
     // Data Components
     const val BOOK_TYPE = "book_type"

@@ -77,16 +77,7 @@ class MatrixDestructorEntity(
     override fun getContainerSize(): Int = 1
 
     override val mruStorage: IOMRUStorage = MRUStorageContainer(10000, MRUTypeRegistry.instance.radiationUnit) { setChanged() }
-    override val holderType: MRUDevice.DeviceType = MRUDevice.DeviceType.TRANSLATOR
-
-    override fun setChanged() {
-        super.setChanged()
-        this.syncForNearby()
-    }
-
-    override fun getUpdatePacket(): Packet<ClientGamePacketListener> = ClientboundBlockEntityDataPacket.create(this)
-
-    override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag = this.saveWithFullMetadata(registries)
+    override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.TRANSLATOR
 
     fun setStatusUpdated(status: MatrixDestructorStatus) {
         if (this.status == status) return

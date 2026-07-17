@@ -239,7 +239,7 @@ object NeoForgeInit {
         val item = stack.item
         if (item is BoundGem) {
             val blockEntity = level.getBlockEntity(pos)
-            if (blockEntity !is MRUDevice || !blockEntity.holderType.isExporter || item.getBoundPos(stack) == null) return
+            if (blockEntity !is MRUDevice || !blockEntity.deviceType.isExporter || item.getBoundPos(stack) == null) return
 
             event.entity.sendOverlayMessage(
                 Component.translatable("tooltip.$ModId.linked")

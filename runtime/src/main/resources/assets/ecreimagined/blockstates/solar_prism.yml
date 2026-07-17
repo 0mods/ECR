@@ -12,6 +12,11 @@ multipart:
       east: "false"
   - apply:
       model: ecreimagined:block/solar_prism/side
+      y: 180
+    when:
+      south: "false"
+  - apply:
+      model: ecreimagined:block/solar_prism/side
       y: 270
     when:
       west: "false"

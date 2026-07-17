@@ -7,6 +7,7 @@ import com.algorithmlx.ecr.api.utils.StackHelper
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.api.utils.count
 import com.algorithmlx.ecr.api.utils.countByIngredient
+import com.algorithmlx.ecr.common.api.block.entity.SynchronizedContainerBlockEntity
 import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.BlockRegistry
 import com.algorithmlx.ecr.common.init.registry.MRUTypeRegistry
@@ -40,7 +41,7 @@ import kotlin.math.floor
 class MithrilineFurnaceEntity(
     worldPosition: BlockPos,
     blockState: BlockState
-): BaseContainerBlockEntity(BlockEntityTypeRegistry.instance.mithrilineFurnace, worldPosition, blockState), MRUDevice, WorldlyContainer {
+): SynchronizedContainerBlockEntity(BlockEntityTypeRegistry.instance.mithrilineFurnace, worldPosition, blockState), MRUDevice, WorldlyContainer {
     @all:JvmName("items")
     private var items = NonNullList.withSize(2, ItemStack.EMPTY)
     private val containerData: ContainerData = object : ContainerData {
@@ -109,7 +110,7 @@ class MithrilineFurnaceEntity(
     override fun getContainerSize(): Int = this.items.size
 
     override val mruStorage: MRUStorageContainer = MRUStorageContainer(10000, MRUTypeRegistry.instance.espe)
-    override val holderType: MRUDevice.DeviceType = MRUDevice.DeviceType.RECEIVER
+    override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.RECEIVER
 
     override fun getSlotsForFace(direction: Direction): IntArray = intArrayOf(0, 1)
 
@@ -125,16 +126,7 @@ class MithrilineFurnaceEntity(
         direction: Direction
     ): Boolean = slot == 0
 
-    override fun setChanged() {
-        super.setChanged()
-        this.syncForNearby()
-    }
-
-    override fun canPlaceItem(slot: Int, itemStack: ItemStack): Boolean = if (slot == 1) false else super<BaseContainerBlockEntity>.canPlaceItem(slot, itemStack)
-
-    override fun getUpdatePacket(): Packet<ClientGamePacketListener> = ClientboundBlockEntityDataPacket.create(this)
-
-    override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag = this.saveWithFullMetadata(registries)
+    override fun canPlaceItem(slot: Int, itemStack: ItemStack): Boolean = if (slot == 1) false else super<SynchronizedContainerBlockEntity>.canPlaceItem(slot, itemStack)
 
     companion object {
         @JvmStatic

@@ -13,7 +13,7 @@ import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 
-class SolarPrism(properties: Properties) : SideBlock(properties), BeaconBeamBlock {
+class SolarPrism(properties: Properties): SideBlock(properties), BeaconBeamBlock {
     private val northShape = Shapes.box(0.0, 0.4375, 0.0, 1.0, 0.5625, 0.125)
     private val eastShape = Shapes.box(0.875, 0.4375, 0.0, 1.0, 0.5625, 1.0)
     private val southShape = Shapes.box(0.0, 0.4375, 0.875, 1.0, 0.5625, 1.0)

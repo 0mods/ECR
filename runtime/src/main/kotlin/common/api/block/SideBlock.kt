@@ -32,11 +32,12 @@ abstract class SideBlock(properties: Properties): CrossCollisionBlock(
                 .setValue(EAST, false)
                 .setValue(SOUTH, false)
                 .setValue(WEST, false)
+                .setValue(WATERLOGGED, false)
         )
     }
 
     override fun createBlockStateDefinition(builder: StateDefinition.Builder<Block, BlockState>) {
-        builder.add(NORTH, EAST, WEST, SOUTH)
+        builder.add(NORTH, EAST, WEST, SOUTH, WATERLOGGED)
     }
 
     override fun propagatesSkylightDown(state: BlockState): Boolean = state.fluidState.isEmpty

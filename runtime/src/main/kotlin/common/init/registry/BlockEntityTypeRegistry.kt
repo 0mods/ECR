@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.common.init.registry
 
+import com.algorithmlx.ecr.common.block.entity.ColdDistillerEntity
 import com.algorithmlx.ecr.common.block.entity.EnvoyerBlockEntity
 import com.algorithmlx.ecr.common.block.entity.MatrixDestructorEntity
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
@@ -9,6 +10,7 @@ interface BlockEntityTypeRegistry {
     val mithrilineFurnace: BlockEntityType<MithrilineFurnaceEntity>
     val envoyer: BlockEntityType<EnvoyerBlockEntity>
     val matrixDestructor: BlockEntityType<MatrixDestructorEntity>
+    val coldDistiller: BlockEntityType<ColdDistillerEntity>
 
     companion object {
         lateinit var instance: BlockEntityTypeRegistry

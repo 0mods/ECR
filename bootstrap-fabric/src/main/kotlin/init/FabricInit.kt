@@ -249,7 +249,7 @@ object FabricInit {
             val item = stack.item
             if (item is BoundGem) {
                 val blockEntity = level.getBlockEntity(hit.blockPos)
-                if (blockEntity !is MRUDevice || !blockEntity.holderType.isExporter || item.getBoundPos(stack) != null) return@evt InteractionResult.PASS
+                if (blockEntity !is MRUDevice || !blockEntity.deviceType.isExporter || item.getBoundPos(stack) != null) return@evt InteractionResult.PASS
 
                 player.sendOverlayMessage(
                     Component.translatable("tooltip.$ModId.linked")

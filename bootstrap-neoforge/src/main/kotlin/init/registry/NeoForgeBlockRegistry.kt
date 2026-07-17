@@ -1,10 +1,12 @@
 package com.algorithmlx.ecr.neoforge.init.registry
 
 import com.algorithmlx.ecr.api.ModId
+import com.algorithmlx.ecr.common.block.ColdDistiller
 import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.Envoyer
 import com.algorithmlx.ecr.common.block.MatrixDestructor
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
+import com.algorithmlx.ecr.common.block.SolarPrism
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.BlockRegistry
 import com.algorithmlx.ecr.common.item.NamedBlockItem
@@ -32,12 +34,16 @@ class NeoForgeBlockRegistry(bus: IEventBus): BlockRegistry {
     private val mithrilinePlatingBlock = registerBlock(ECRModIDs.MITHRILINE_PLATING, ::Block)
     private val envoyerBlock = registerBlock(ECRModIDs.ENVOYER, ::Envoyer)
     private val matrixDestructorBlock = registerBlock(ECRModIDs.MATRIX_DESTRUCTOR, ::MatrixDestructor)
+    private val solarPrismBlock = registerBlock(ECRModIDs.SOLAR_PRISM, ::SolarPrism)
+    private val coldDistillerBlock = registerBlock(ECRModIDs.COLD_DISTILLER, ::ColdDistiller)
 
     override val mithrilineFurnace: MithrilineFurnace by lazy { mithrilineFurnaceBlock.get() }
     override val mithrilineCrystal: CrystalBlock by lazy { mithrilineCrystalBlock.get() }
     override val mithrilinePlating: Block by lazy { mithrilinePlatingBlock.get() }
     override val envoyer: Envoyer by lazy { envoyerBlock.get() }
     override val matrixDestructor: MatrixDestructor by lazy { matrixDestructorBlock.get() }
+    override val solarPrism: SolarPrism by lazy { solarPrismBlock.get() }
+    override val coldDistiller: ColdDistiller by lazy { coldDistillerBlock.get() }
 
     private fun <B: Block> registerBlock(
         id: String,

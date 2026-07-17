@@ -39,7 +39,7 @@ interface MRUDevice {
      *
      * @return the [DeviceType] of this holder.
      */
-    val holderType: DeviceType
+    val deviceType: DeviceType
 
     /**
      * Enum representing the different types of MRU Holders and their capabilities.
@@ -104,7 +104,7 @@ fun MRUDevice.processReceive(level: Level) {
     val logicalLevel = world?.let { server.getLevel(it) } ?: level
     val exporter = logicalLevel.getBlockEntity(pos) as? MRUDevice ?: return
 
-    if (!exporter.holderType.isExporter || !this.holderType.isReceiver) return
+    if (!exporter.deviceType.isExporter || !this.deviceType.isReceiver) return
 
     val currentContainer = this.mruStorage
     val generator = exporter.mruStorage

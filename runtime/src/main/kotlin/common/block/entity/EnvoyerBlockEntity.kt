@@ -101,16 +101,8 @@ class EnvoyerBlockEntity(
 
     override fun canPlaceItem(slot: Int, itemStack: ItemStack): Boolean = if (slot == 5) false else super.canPlaceItem(slot, itemStack)
 
-    override fun setChanged() {
-        super.setChanged()
-        this.syncForNearby()
-    }
-
-    override fun getUpdatePacket(): Packet<ClientGamePacketListener> = ClientboundBlockEntityDataPacket.create(this)
-    override fun getUpdateTag(registries: HolderLookup.Provider): CompoundTag = this.saveWithFullMetadata(registries)
-
     override val mruStorage: IOMRUStorage = MRUStorageContainer(5000, MRUTypeRegistry.instance.radiationUnit) { setChanged() }
-    override val holderType: MRUDevice.DeviceType = MRUDevice.DeviceType.RECEIVER
+    override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.RECEIVER
 
     override val locator: MRUDevice.LocatorData = MRUDevice.LocatorData(this, 6)
 
