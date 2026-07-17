@@ -39,7 +39,7 @@ import kotlin.jvm.optionals.getOrNull
 class EnvoyerBlockEntity(
     worldPosition: BlockPos,
     blockState: BlockState
-) : BaseContainerBlockEntity(BlockEntityTypeRegistry.instance.envoyer, worldPosition, blockState), MRUDevice {
+): BaseContainerBlockEntity(BlockEntityTypeRegistry.instance.envoyer, worldPosition, blockState), MRUDevice {
     private var items: NonNullList<ItemStack> = NonNullList.withSize(8, ItemStack.EMPTY)
 
     private val containerData: ContainerData = object : ContainerData {

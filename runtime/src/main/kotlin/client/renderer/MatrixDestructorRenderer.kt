@@ -53,9 +53,9 @@ class MatrixDestructorRenderer(
         camera: CameraRenderState
     ) {
         poseStack.pushPose()
-        poseStack.translate(0.5, 0.71875, 0.5)
+        poseStack.translate(0.5, 0.85, 0.5)
 
-        val scale = if (state.renderStack.item is BlockItem) 0.75F else 0.55F
+        val scale = if (state.renderStack.item is BlockItem) 0.55F else 0.35F
         poseStack.scale(scale, scale, scale)
 
         val animationTicks = state.animationTicks
@@ -68,8 +68,10 @@ class MatrixDestructorRenderer(
     }
 
     companion object {
-        private const val BOB_AMPLITUDE = 0.065
+        private const val BOB_AMPLITUDE = 0.072
         private const val BOB_RADIANS_PER_TICK = 1.0 / 16.0
         private const val ROTATION_DEGREES_PER_TICK = 12.5 / 16.0
     }
 }
+
+

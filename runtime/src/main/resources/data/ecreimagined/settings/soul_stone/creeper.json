@@ -1,8 +1,6 @@
 {
   // if vanilla mob, mod id is not needed, you can write and without it
   "entity": "creeper",
-  //"min": 160,
-  //"max": 210
-  "min": 10000000,
-  "max": 10000000
+  "min": 160,
+  "max": 210
 }
