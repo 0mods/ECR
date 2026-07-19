@@ -2,7 +2,7 @@ package com.algorithmlx.ecr.neoforge.init.registry
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.common.block.entity.ColdDistillerEntity
-import com.algorithmlx.ecr.common.block.entity.EnvoyerBlockEntity
+import com.algorithmlx.ecr.common.block.entity.MagicTableBlockEntity
 import com.algorithmlx.ecr.common.block.entity.MatrixDestructorEntity
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
 import com.algorithmlx.ecr.common.init.ECRModIDs
@@ -23,8 +23,8 @@ class NeoForgeBlockEntityTypeRegistry(bus: IEventBus): BlockEntityTypeRegistry {
     private val mithrilineFurnaceEntity = blockEntityType.register(ECRModIDs.MITHRILINE_FURNACE) { _ ->
         BlockEntityType(::MithrilineFurnaceEntity, setOf(BlockRegistry.instance.mithrilineFurnace))
     }
-    private val envoyerEntity = blockEntityType.register(ECRModIDs.ENVOYER) { _ ->
-        BlockEntityType(::EnvoyerBlockEntity, setOf(BlockRegistry.instance.envoyer))
+    private val envoyerEntity = blockEntityType.register(ECRModIDs.MAGIC_TABLE) { _ ->
+        BlockEntityType(::MagicTableBlockEntity, setOf(BlockRegistry.instance.magicTable))
     }
     private val matrixDestructorEntity = blockEntityType.register(ECRModIDs.MATRIX_DESTRUCTOR) { _ ->
         BlockEntityType(::MatrixDestructorEntity, setOf(BlockRegistry.instance.matrixDestructor))
@@ -34,7 +34,7 @@ class NeoForgeBlockEntityTypeRegistry(bus: IEventBus): BlockEntityTypeRegistry {
     }
 
     override val mithrilineFurnace: BlockEntityType<MithrilineFurnaceEntity> by lazy { mithrilineFurnaceEntity.get() }
-    override val envoyer: BlockEntityType<EnvoyerBlockEntity> by lazy { envoyerEntity.get() }
+    override val envoyer: BlockEntityType<MagicTableBlockEntity> by lazy { envoyerEntity.get() }
     override val matrixDestructor: BlockEntityType<MatrixDestructorEntity> by lazy { matrixDestructorEntity.get() }
     override val coldDistiller: BlockEntityType<ColdDistillerEntity> by lazy { coldDistillerEntity.get() }
 }

@@ -3,7 +3,7 @@ package com.algorithmlx.ecr.neoforge.init.registry
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.common.block.ColdDistiller
 import com.algorithmlx.ecr.common.block.CrystalBlock
-import com.algorithmlx.ecr.common.block.Envoyer
+import com.algorithmlx.ecr.common.block.MagicTable
 import com.algorithmlx.ecr.common.block.MatrixDestructor
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
 import com.algorithmlx.ecr.common.block.SolarPrism
@@ -31,21 +31,43 @@ class NeoForgeBlockRegistry(bus: IEventBus): BlockRegistry {
 
     private val mithrilineFurnaceBlock = registerBlock(ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnace)
     private val mithrilineCrystalBlock = registerBlock(ECRModIDs.MITHRILINE_CRYSTAL, ::CrystalBlock)
-    private val mithrilinePlatingBlock = registerBlock(ECRModIDs.MITHRILINE_PLATING, ::Block)
-    private val envoyerBlock = registerBlock(ECRModIDs.ENVOYER, ::Envoyer)
+    private val magicTableBlock = registerBlock(ECRModIDs.MAGIC_TABLE, ::MagicTable)
     private val matrixDestructorBlock = registerBlock(ECRModIDs.MATRIX_DESTRUCTOR, ::MatrixDestructor)
     private val solarPrismBlock = registerBlock(ECRModIDs.SOLAR_PRISM, ::SolarPrism)
     private val coldDistillerBlock = registerBlock(ECRModIDs.COLD_DISTILLER, ::ColdDistiller)
-    private val voidStoneBlock = registerBlock(ECRModIDs.VOID_STONE, ::Block)
+    private val voidStoneBlock = registerBasic(ECRModIDs.VOID_STONE)
+    private val mithrilinePlatingBlock = registerBasic(ECRModIDs.MITHRILINE_PLATING)
+    private val paleBlock = registerBasic(ECRModIDs.PALE_BLOCK)
+    private val palePlatingBlock = registerBasic(ECRModIDs.PALE_PLATING)
+    private val magicPlatingBlock = registerBasic(ECRModIDs.MAGIC_PLATING)
+    private val demonicPlatingBlock = registerBasic(ECRModIDs.DEMONIC_PLATING)
+    private val flameClusterBlock = registerBasic(ECRModIDs.FLAME_CLUSTER, shouldRegisterItem = false)
+    private val waterClusterBlock = registerBasic(ECRModIDs.WATER_CLUSTER, shouldRegisterItem = false)
+    private val earthClusterBlock = registerBasic(ECRModIDs.EARTH_CLUSTER, shouldRegisterItem = false)
+    private val airClusterBlock = registerBasic(ECRModIDs.AIR_CLUSTER, shouldRegisterItem = false)
 
     override val mithrilineFurnace: MithrilineFurnace by lazy { mithrilineFurnaceBlock.get() }
     override val mithrilineCrystal: CrystalBlock by lazy { mithrilineCrystalBlock.get() }
-    override val mithrilinePlating: Block by lazy { mithrilinePlatingBlock.get() }
-    override val envoyer: Envoyer by lazy { envoyerBlock.get() }
+    override val magicTable: MagicTable by lazy { magicTableBlock.get() }
     override val matrixDestructor: MatrixDestructor by lazy { matrixDestructorBlock.get() }
     override val solarPrism: SolarPrism by lazy { solarPrismBlock.get() }
     override val coldDistiller: ColdDistiller by lazy { coldDistillerBlock.get() }
     override val voidStone: Block by lazy { voidStoneBlock.get() }
+    override val mithrilinePlating: Block by lazy { mithrilinePlatingBlock.get() }
+    override val pale: Block by lazy { paleBlock.get() }
+    override val palePlating: Block by lazy { palePlatingBlock.get() }
+    override val magicPlating: Block by lazy { magicPlatingBlock.get() }
+    override val demonicPlating: Block by lazy { demonicPlatingBlock.get() }
+    override val flameCluster: Block by lazy { flameClusterBlock.get() }
+    override val waterCluster: Block by lazy { waterClusterBlock.get() }
+    override val earthCluster: Block by lazy { earthClusterBlock.get() }
+    override val airCluster: Block by lazy { airClusterBlock.get() }
+
+    private fun registerBasic(
+        id: String, 
+        properties: BlockBehaviour.Properties = BlockBehaviour.Properties.of(),
+        shouldRegisterItem: Boolean = true
+    ) = registerBlock(id, ::Block, properties, shouldRegisterItem)
 
     private fun <B: Block> registerBlock(
         id: String,

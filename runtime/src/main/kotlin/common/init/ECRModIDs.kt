@@ -14,12 +14,20 @@ object ECRModIDs {
     const val MATRIX_DESTRUCTOR = "matrix_destructor"
     const val SOUL_STONE = "soul_stone"
     const val BOUND_GEM = "bound_gem"
-    const val ENVOYER = "envoyer"
+    const val MAGIC_TABLE = "magic_table"
     const val COLD_DISTILLER = "cold_distiller"
 
     // Blocks
     const val MITHRILINE_PLATING = "mithriline_plating"
     const val VOID_STONE = "void_stone"
+    const val PALE_BLOCK = "pale_block"
+    const val PALE_PLATING = "pale_plating"
+    const val MAGIC_PLATING = "magic_plating"
+    const val DEMONIC_PLATING = "demonic_plating"
+    const val FLAME_CLUSTER = "flame_cluster"
+    const val WATER_CLUSTER = "water_cluster"
+    const val EARTH_CLUSTER = "earth_cluster"
+    const val AIR_CLUSTER = "air_cluster"
 
     // Data Components
     const val BOOK_TYPE = "book_type"

@@ -1,4 +1,7 @@
 #$json_flat
+tag.item.ecreimagined:
+  ice: Ice
+
 itemGroup.ecreimagined:
   items: "Essential Craft: Items"
   blocks: "Essential Craft: Blocks"
@@ -50,7 +53,7 @@ block.ecreimagined:
   mithriline_plating: Mithriline Plating
   mithriline_furnace: Mithriline Furnace
   matrix_destructor: Matrix Destructor
-  envoyer: Envoyer
+  magic_table: Magic Table
   mithriline_crystal: Mithriline Crystal
   void_stone: Void Stone
   pale_block: Pale Block
@@ -61,6 +64,8 @@ block.ecreimagined:
   water_cluster: Water Cluster
   earth_cluster: Earth Cluster
   air_cluster: Air Cluster
+  solar_prism: Solar Prism
+  cold_distiller: Cold Distiller
 
 tooltip.ecreimagined:
   sword_multiplier: MRU Gain Bonus
@@ -82,9 +87,9 @@ tooltip.ecreimagined:
   bound_gem:
     linked:
       .: Bound gem was bounded at pos
-      revoked: Bound gem was unbounded
       pos: Currently bound to position at
       not_mru: Bound gem is linked to a position where no MRU devices are detected
+    revoke: Bound gem was unbounded
     dimension:
       .: Dimension
       disallowed: Current Bound Gem is not supports the dimension bounds

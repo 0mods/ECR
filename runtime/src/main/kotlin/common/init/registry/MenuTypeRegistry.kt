@@ -5,7 +5,7 @@ import net.minecraft.world.inventory.MenuType
 
 interface MenuTypeRegistry {
     val mithrilineFurnace: MenuType<MithrilineFurnaceMenu>
-    val envoyer: MenuType<EnvoyerMenu>
+    val envoyer: MenuType<MagicTableMenu>
     val matrixDestructor: MenuType<MatrixDestructorMenu>
 
     companion object {

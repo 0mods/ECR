@@ -10,10 +10,7 @@ import net.minecraft.world.item.ItemStack
 import java.util.Locale
 
 object StructureRecipeRenderer: BookRecipeRenderer<StructureRecipe> {
-    override fun build(
-        recipe: StructureRecipe,
-        builder: BookRecipeRenderBuilder
-    ) {
+    override fun build(recipe: StructureRecipe, builder: BookRecipeRenderBuilder) {
         val display = recipe.display().filterIsInstance<StructureRecipe.Display>().firstOrNull() ?: return
         val font = builder.mc.font
 

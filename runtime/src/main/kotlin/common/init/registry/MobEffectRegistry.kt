@@ -1,0 +1,12 @@
+package com.algorithmlx.ecr.common.init.registry
+
+import net.minecraft.core.Holder
+import net.minecraft.world.effect.MobEffect
+
+interface MobEffectRegistry {
+    val mru: Holder<MobEffect>
+
+    companion object {
+        lateinit var instance: MobEffectRegistry
+    }
+}

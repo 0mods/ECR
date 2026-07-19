@@ -1,11 +1,13 @@
 package com.algorithmlx.ecr.common.init
 
 import com.algorithmlx.ecr.api.utils.ecRL
+import net.minecraft.core.registries.Registries
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.crafting.RecipePropertySet
 
 object ResourceKeys {
-    val mithrilineFurnaceKey = registerPropertySet("mithriline_furnace")
+    @JvmStatic
+    val MRU_DAMAGE_TYPE = registerDamageType(ECRModIDs.MRU)
 
-    private fun registerPropertySet(name: String) = ResourceKey.create(RecipePropertySet.TYPE_KEY, name.ecRL)
+    private fun registerDamageType(name: String) = ResourceKey.create(Registries.DAMAGE_TYPE, name.ecRL)
 }

@@ -10,7 +10,7 @@ import com.algorithmlx.ecr.api.research.UpdateBookViewPayload
 import com.algorithmlx.ecr.client.book.ResearchBookClient
 import com.algorithmlx.ecr.client.renderer.MatrixDestructorRenderer
 import com.algorithmlx.ecr.client.renderer.MithrilineFurnaceRenderer
-import com.algorithmlx.ecr.client.screen.EnvoyerMenuScreen
+import com.algorithmlx.ecr.client.screen.MagicTableMenuScreen
 import com.algorithmlx.ecr.client.screen.MatrixDestructorScreen
 import com.algorithmlx.ecr.client.screen.MithrilineFurnaceScreen
 import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
@@ -42,7 +42,7 @@ object FabricClientInit {
         ModelLayerRegistry.registerModelLayer(MithrilineFurnaceRenderer.MF_LAYER, MithrilineFurnaceRenderer::createBodyLayer)
 
         MenuScreens.register(MenuTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceScreen)
-        MenuScreens.register(MenuTypeRegistry.instance.envoyer, ::EnvoyerMenuScreen)
+        MenuScreens.register(MenuTypeRegistry.instance.envoyer, ::MagicTableMenuScreen)
         MenuScreens.register(MenuTypeRegistry.instance.matrixDestructor, ::MatrixDestructorScreen)
     }
 

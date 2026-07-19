@@ -9,7 +9,6 @@ import com.algorithmlx.ecr.client.screen.*
 import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.MenuTypeRegistry
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
-import com.algorithmlx.ecr.network.BoundGemTooltipRequestPayload
 import com.algorithmlx.ecr.network.BoundGemTooltipResponsePayload
 import com.algorithmlx.ecr.network.FinishCraftParticle
 import net.minecraft.client.Minecraft
@@ -55,7 +54,7 @@ object NeoForgeClientInit {
 
     private fun onMenuScreen(event: RegisterMenuScreensEvent) {
         event.register(MenuTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceScreen)
-        event.register(MenuTypeRegistry.instance.envoyer, ::EnvoyerMenuScreen)
+        event.register(MenuTypeRegistry.instance.envoyer, ::MagicTableMenuScreen)
         event.register(MenuTypeRegistry.instance.matrixDestructor, ::MatrixDestructorScreen)
     }
 

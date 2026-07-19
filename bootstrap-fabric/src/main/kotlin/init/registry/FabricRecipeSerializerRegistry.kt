@@ -3,7 +3,7 @@ package com.algorithmlx.ecr.fabric.init.registry
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.registry.RecipeSerializerRegistry
-import com.algorithmlx.ecr.common.recipe.EnvoyerRecipe
+import com.algorithmlx.ecr.common.recipe.MagicTableRecipe
 import com.algorithmlx.ecr.common.recipe.StructureRecipe
 import com.algorithmlx.ecr.common.recipe.MithrilineFurnaceRecipe
 import net.minecraft.core.Registry
@@ -17,8 +17,8 @@ object FabricRecipeSerializerRegistry: RecipeSerializerRegistry {
     override val structure: RecipeSerializer<StructureRecipe> = register(
         ECRModIDs.STRUCTURE, RecipeSerializer(StructureRecipe.CODEC, StructureRecipe.STREAM_CODEC)
     )
-    override val envoyer: RecipeSerializer<EnvoyerRecipe> = register(
-        ECRModIDs.ENVOYER, RecipeSerializer(EnvoyerRecipe.CODEC, EnvoyerRecipe.STREAM_CODEC)
+    override val envoyer: RecipeSerializer<MagicTableRecipe> = register(
+        ECRModIDs.MAGIC_TABLE, RecipeSerializer(MagicTableRecipe.CODEC, MagicTableRecipe.STREAM_CODEC)
     )
 
     private fun <T: RecipeSerializer<*>> register(id: String, recipeSerializer: T): T = Registry.register(

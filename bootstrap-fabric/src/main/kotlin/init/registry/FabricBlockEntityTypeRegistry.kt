@@ -2,7 +2,7 @@ package com.algorithmlx.ecr.fabric.init.registry
 
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.block.entity.ColdDistillerEntity
-import com.algorithmlx.ecr.common.block.entity.EnvoyerBlockEntity
+import com.algorithmlx.ecr.common.block.entity.MagicTableBlockEntity
 import com.algorithmlx.ecr.common.block.entity.MatrixDestructorEntity
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
 import com.algorithmlx.ecr.common.init.ECRModIDs
@@ -18,9 +18,9 @@ object FabricBlockEntityTypeRegistry: BlockEntityTypeRegistry {
         ECRModIDs.MITHRILINE_FURNACE,
         BlockEntityType(::MithrilineFurnaceEntity, setOf(BlockRegistry.instance.mithrilineFurnace))
     )
-    override val envoyer: BlockEntityType<EnvoyerBlockEntity> = register(
-        ECRModIDs.ENVOYER,
-        BlockEntityType(::EnvoyerBlockEntity, setOf(BlockRegistry.instance.envoyer))
+    override val envoyer: BlockEntityType<MagicTableBlockEntity> = register(
+        ECRModIDs.MAGIC_TABLE,
+        BlockEntityType(::MagicTableBlockEntity, setOf(BlockRegistry.instance.magicTable))
     )
     override val matrixDestructor: BlockEntityType<MatrixDestructorEntity> = register(
         ECRModIDs.MATRIX_DESTRUCTOR,

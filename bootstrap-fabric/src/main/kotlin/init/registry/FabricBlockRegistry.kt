@@ -3,7 +3,7 @@ package com.algorithmlx.ecr.fabric.init.registry
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.block.ColdDistiller
 import com.algorithmlx.ecr.common.block.CrystalBlock
-import com.algorithmlx.ecr.common.block.Envoyer
+import com.algorithmlx.ecr.common.block.MagicTable
 import com.algorithmlx.ecr.common.block.MatrixDestructor
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
 import com.algorithmlx.ecr.common.block.SolarPrism
@@ -22,12 +22,26 @@ import net.minecraft.world.level.block.state.BlockBehaviour
 object FabricBlockRegistry: BlockRegistry {
     override val mithrilineFurnace: MithrilineFurnace = register(ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnace)
     override val mithrilineCrystal: CrystalBlock = register(ECRModIDs.MITHRILINE_CRYSTAL, ::CrystalBlock)
-    override val mithrilinePlating: Block = register(ECRModIDs.MITHRILINE_PLATING, ::Block)
-    override val envoyer: Envoyer = register(ECRModIDs.ENVOYER, ::Envoyer)
+    override val magicTable: MagicTable = register(ECRModIDs.MAGIC_TABLE, ::MagicTable)
     override val matrixDestructor: MatrixDestructor = register(ECRModIDs.MATRIX_DESTRUCTOR, ::MatrixDestructor)
     override val solarPrism: SolarPrism = register(ECRModIDs.SOLAR_PRISM, ::SolarPrism)
     override val coldDistiller: ColdDistiller = register(ECRModIDs.COLD_DISTILLER, ::ColdDistiller)
-    override val voidStone: Block = register(ECRModIDs.VOID_STONE, ::Block)
+    override val voidStone: Block = registerBasic(ECRModIDs.VOID_STONE)
+    override val mithrilinePlating: Block = registerBasic(ECRModIDs.MITHRILINE_PLATING)
+    override val pale: Block = registerBasic(ECRModIDs.PALE_BLOCK)
+    override val palePlating: Block = registerBasic(ECRModIDs.PALE_PLATING)
+    override val magicPlating: Block = registerBasic(ECRModIDs.MAGIC_PLATING)
+    override val demonicPlating: Block = registerBasic(ECRModIDs.DEMONIC_PLATING)
+    override val flameCluster: Block = registerBasic(ECRModIDs.FLAME_CLUSTER, shouldRegisterItem = false)
+    override val waterCluster: Block = registerBasic(ECRModIDs.WATER_CLUSTER, shouldRegisterItem = false)
+    override val earthCluster: Block = registerBasic(ECRModIDs.EARTH_CLUSTER, shouldRegisterItem = false)
+    override val airCluster: Block = registerBasic(ECRModIDs.AIR_CLUSTER, shouldRegisterItem = false)
+
+    private fun registerBasic(
+        id: String,
+        properties: BlockBehaviour.Properties = BlockBehaviour.Properties.of(),
+        shouldRegisterItem: Boolean = true
+    ) = register(id, ::Block, properties, shouldRegisterItem)
 
     private fun <B: Block> register(
         id: String,

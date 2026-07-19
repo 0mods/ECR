@@ -110,6 +110,7 @@ object NeoForgeInit {
         ItemRegistry.instance = NeoForgeItemRegistry(bus)
         CreativeTabRegistry.instance = NeoForgeCreativeTabRegistry(bus)
         MenuTypeRegistry.instance = NeoForgeMenuTypeRegistry(bus)
+        MobEffectRegistry.instance = NeoForgeMobEffectRegistry(bus)
         MRUTypeRegistry.instance = NeoForgeMRUTypeRegistry(bus)
         MultiblockMatcherTypes.instance = NeoForgeMultiblockMatcherTypes(bus)
         MultiblockRegistry.instance = NeoForgeMultiblockRegistry(bus)
@@ -216,7 +217,7 @@ object NeoForgeInit {
         if (item is BoundGem) {
             if (!event.entity.isShiftKeyDown) return
 
-            event.entity.sendOverlayMessage(Component.translatable("tooltip.$ModId.bound_gem.revoke"))
+            event.entity.sendOverlayMessage(Component.translatable("tooltip.$ModId.${ECRModIDs.BOUND_GEM}.revoke"))
             item.setBoundPos(stack, null)
             event.cancellationResult = InteractionResult.SUCCESS
         }
@@ -242,7 +243,7 @@ object NeoForgeInit {
             if (blockEntity !is MRUDevice || !blockEntity.deviceType.isExporter || item.getBoundPos(stack) == null) return
 
             event.entity.sendOverlayMessage(
-                Component.translatable("tooltip.$ModId.linked")
+                Component.translatable("tooltip.$ModId.${ECRModIDs.BOUND_GEM}.linked")
                     .append(": ")
                     .append("X: ${pos.x} Y: ${pos.y} Z: ${pos.z}")
             )

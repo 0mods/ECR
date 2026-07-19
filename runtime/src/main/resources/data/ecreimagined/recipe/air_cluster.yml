@@ -1,6 +1,6 @@
 type: ecreimagined:structure
 multiblock: ecreimagined:air_crystal
-input: minecraft:gunpowder
+input: minecraft:wind_charge
 placement: ecreimagined:air_cluster
 time: 20
 chance:

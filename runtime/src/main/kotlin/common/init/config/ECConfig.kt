@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.common.init.config
 import com.algorithmlx.ecr.api.ModId
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.random.Random
 
 @JsonComment([
     "Hello! This is $ModId's config.",
@@ -16,7 +17,8 @@ import kotlinx.serialization.Serializable
 data class ECConfig(
     @SerialName("disabled_researches")
     val disabledResearches: List<String> = emptyList(),
-    @SerialName("research_book") val researchBook: ResearchBookConfig = ResearchBookConfig()
+    @SerialName("research_book") val researchBook: ResearchBookConfig = ResearchBookConfig(),
+    @SerialName("cold_distiller") val coldDistillerConfig: ColdDistillerConfig = ColdDistillerConfig()
 ) {
     companion object {
         @JvmStatic
@@ -49,3 +51,43 @@ data class ResearchBookGraphConfig(
     @SerialName("zoom_step") val zoomStep: Float = 0.12F,
     @SerialName("available_blink_seconds") val availableBlinkSeconds: Double = 3.0
 )
+
+@JsonDefaults
+@Serializable
+data class ColdDistillerConfig(
+    @SerialName("ice_block_radius")
+    val iceBlockRadius: Int = 3,
+    @SerialName("min_ice_blocks")
+    val minIceBlocks: Int = 2,
+    @SerialName("min_mru")
+    val minMruPerSecond: Int = 1,
+    @SerialName("max_mru")
+    val maxMruPerSecond: Int = 16,
+    @SerialName("destroy_ice")
+    val destroyIce: DestroyIceConfig = DestroyIceConfig()
+) {
+}
+
+@JsonDefaults
+@Serializable
+data class DestroyIceConfig(
+    val enabled: Boolean = true,
+    val chance: Chance = Chance(7, 10),
+    val time: Int = 100
+)
+
+@JsonDefaults
+@Serializable
+data class Chance(
+    val min: Int,
+    val max: Int
+) {
+    init {
+        require(-100 <= max && max <= 100)
+        require(min in (-100 .. max))
+    }
+
+    fun roll(): Int = Random.nextInt(max)
+
+    fun isRolled(): Boolean = min >= this.roll()
+}

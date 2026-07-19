@@ -1,7 +1,7 @@
 package com.algorithmlx.ecr.client.widget
 
 import com.algorithmlx.ecr.common.init.ECRModIDs
-import com.algorithmlx.ecr.common.menu.EnvoyerMenu
+import com.algorithmlx.ecr.common.menu.MagicTableMenu
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarrationElementOutput
@@ -10,7 +10,7 @@ import net.minecraft.network.chat.Component
 
 class EnvoyerProgressArrow(
     x: Int, y: Int,
-    private val menu: EnvoyerMenu
+    private val menu: MagicTableMenu
 ): AbstractWidget(x, y, 16, 8, Component.empty()) {
     override fun extractWidgetRenderState(
         graphics: GuiGraphicsExtractor,
@@ -34,6 +34,6 @@ class EnvoyerProgressArrow(
     override fun updateWidgetNarration(output: NarrationElementOutput) {}
 
     companion object {
-        private val TEXTURE = ECRModIDs.guiLocation("widget/${ECRModIDs.ENVOYER}_arrow")
+        private val TEXTURE = ECRModIDs.guiLocation("widget/${ECRModIDs.MAGIC_TABLE}_arrow")
     }
 }

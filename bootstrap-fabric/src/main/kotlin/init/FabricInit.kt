@@ -102,6 +102,7 @@ object FabricInit {
         BlockEntityTypeRegistry.instance = FabricBlockEntityTypeRegistry
         ItemRegistry.instance = FabricItemRegistry
         MenuTypeRegistry.instance = FabricMenuTypeRegistry
+        MobEffectRegistry.instance = FabricMobEffectRegistry
         MRUTypeRegistry.instance = FabricMRUTypeRegistry
         MultiblockMatcherTypes.instance = FabricMultiblockMatcherTypes
         MultiblockRegistry.instance = FabricMultiblockRegistry
@@ -233,7 +234,7 @@ object FabricInit {
             if (item is BoundGem) {
                 if (!player.isShiftKeyDown || item.getBoundPos(stack) == null) return@evt InteractionResult.PASS
 
-                player.sendOverlayMessage(Component.translatable("tooltip.$ModId.bound_gem.revoke"))
+                player.sendOverlayMessage(Component.translatable("tooltip.$ModId.${ECRModIDs.BOUND_GEM}.revoke"))
                 item.setBoundPos(stack, null)
 
                 return@evt InteractionResult.SUCCESS
@@ -252,7 +253,7 @@ object FabricInit {
                 if (blockEntity !is MRUDevice || !blockEntity.deviceType.isExporter || item.getBoundPos(stack) != null) return@evt InteractionResult.PASS
 
                 player.sendOverlayMessage(
-                    Component.translatable("tooltip.$ModId.linked")
+                    Component.translatable("tooltip.$ModId.${ECRModIDs.BOUND_GEM}.linked")
                         .append(": ")
                         .append("X: ${pos.x} Y: ${pos.y} Z: ${pos.z}")
                 )

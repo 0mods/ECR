@@ -4,7 +4,7 @@ import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.api.block.ClusterBlock
 import com.algorithmlx.ecr.common.block.ColdDistiller
 import com.algorithmlx.ecr.common.block.CrystalBlock
-import com.algorithmlx.ecr.common.block.Envoyer
+import com.algorithmlx.ecr.common.block.MagicTable
 import com.algorithmlx.ecr.common.block.MatrixDestructor
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
 import com.algorithmlx.ecr.common.block.SolarPrism
@@ -21,7 +21,7 @@ object FabricBlockCodecRegistry: BlockCodecRegistry {
     override val clusterBlock: MapCodec<ClusterBlock> = register(ECRModIDs.CLUSTER, BlockBehaviour.simpleCodec(::ClusterBlock))
     override val crystalBlock: MapCodec<CrystalBlock> = register(ECRModIDs.CRYSTAL, BlockBehaviour.simpleCodec(::CrystalBlock))
     override val mithrilineFurnace: MapCodec<MithrilineFurnace> = register(ECRModIDs.MITHRILINE_FURNACE, BlockBehaviour.simpleCodec(::MithrilineFurnace))
-    override val envoyer: MapCodec<Envoyer> = register(ECRModIDs.ENVOYER, BlockBehaviour.simpleCodec(::Envoyer))
+    override val magicTable: MapCodec<MagicTable> = register(ECRModIDs.MAGIC_TABLE, BlockBehaviour.simpleCodec(::MagicTable))
     override val matrixDestructor: MapCodec<MatrixDestructor> = register(ECRModIDs.MATRIX_DESTRUCTOR, BlockBehaviour.simpleCodec(::MatrixDestructor))
     override val coldDistiller: MapCodec<ColdDistiller> = register(ECRModIDs.COLD_DISTILLER, BlockBehaviour.simpleCodec(::ColdDistiller))
 
