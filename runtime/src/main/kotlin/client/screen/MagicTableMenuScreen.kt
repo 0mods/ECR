@@ -1,7 +1,7 @@
 package com.algorithmlx.ecr.client.screen
 
 import com.algorithmlx.ecr.api.client.drawMRULine
-import com.algorithmlx.ecr.client.widget.EnvoyerProgressArrow
+import com.algorithmlx.ecr.client.widget.MagicTableProgressArrow
 import com.algorithmlx.ecr.common.block.entity.MagicTableBlockEntity
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.menu.MagicTableMenu
@@ -18,7 +18,7 @@ class MagicTableMenuScreen(
 ): AbstractContainerScreen<MagicTableMenu>(menu, inv, title) {
     override fun init() {
         super.init()
-        addRenderableOnly(EnvoyerProgressArrow(this.leftPos + 85, this.topPos + 39, this.menu))
+        addRenderableOnly(MagicTableProgressArrow(this.leftPos + 85, this.topPos + 39, this.menu))
     }
 
     override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {

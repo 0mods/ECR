@@ -8,7 +8,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput
 import net.minecraft.client.renderer.RenderPipelines
 import net.minecraft.network.chat.Component
 
-class EnvoyerProgressArrow(
+class MagicTableProgressArrow(
     x: Int, y: Int,
     private val menu: MagicTableMenu
 ): AbstractWidget(x, y, 16, 8, Component.empty()) {

@@ -1,8 +1,9 @@
 package com.algorithmlx.ecr.fabric.init.registry
 
+import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.init.ECRModIDs
-import com.algorithmlx.ecr.common.init.registry.BookLevelRegistry
+import com.algorithmlx.ecr.common.init.registry.BookTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.DataComponentRegistry
 import com.algorithmlx.ecr.common.init.registry.ItemRegistry
 import com.algorithmlx.ecr.common.item.BoundGemItem
@@ -25,7 +26,7 @@ object FabricItemRegistry: ItemRegistry {
     override val researchBook: ResearchBookItem = register(
         ECRModIDs.RESEARCH_BOOK, ::ResearchBookItem, Item.Properties().component(
             DataComponentRegistry.instance.bookType,
-            BookLevelRegistry.instance.basic
+            ECRegistries.BOOK_TYPES.getResourceKey(BookTypeRegistry.instance.basic).get()
         )
     )
     override val boundGem: BoundGemItem = register(ECRModIDs.BOUND_GEM, ::BoundGemItem)

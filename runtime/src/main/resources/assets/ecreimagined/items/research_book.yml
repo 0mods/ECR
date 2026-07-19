@@ -1,3 +1,24 @@
 model:
-  type: minecraft:model
-  model: ecreimagined:item/research_book
+  type: minecraft:select
+  property: minecraft:component
+  component: ecreimagined:book_type
+  cases:
+    - when: ecreimagined:mru
+      model:
+        type: minecraft:model
+        model: ecreimagined:item/research_book/mru
+    - when: ecreimagined:engineer
+      model:
+        type: minecraft:model
+        model: ecreimagined:item/research_book/engineer
+    - when: ecreimagined:hoanna
+      model:
+        type: minecraft:model
+        model: ecreimagined:item/research_book/hoanna
+    - when: ecreimagined:shade
+      model:
+        type: minecraft:model
+        model: ecreimagined:item/research_book/shade
+  fallback:
+    type: minecraft:model
+    model: ecreimagined:item/research_book

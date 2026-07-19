@@ -38,7 +38,7 @@ class NeoForgeItemRegistry(bus: IEventBus): ItemRegistry {
         ) {
             it.lookupOrThrow(ECRegistryKeys.BOOK_TYPE_KEY)
                 .getOrThrow(ResourceKey.create(ECRegistryKeys.BOOK_TYPE_KEY, ECRModIDs.BASIC.ecRL))
-                .value()
+                .key()
         }
     }
     private val boundGemItem = registerItem(ECRModIDs.BOUND_GEM, ::BoundGemItem)

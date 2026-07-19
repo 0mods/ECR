@@ -96,7 +96,7 @@ object FabricInit {
     private fun initRegistries() {
         DataComponentRegistry.instance = FabricDataComponentRegistry
         BlockCodecRegistry.instance = FabricBlockCodecRegistry
-        BookLevelRegistry.instance = FabricBookLevelRegistry
+        BookTypeRegistry.instance = FabricBookTypeRegistry
         FabricResearchSerializerRegistry.register()
         BlockRegistry.instance = FabricBlockRegistry
         BlockEntityTypeRegistry.instance = FabricBlockEntityTypeRegistry

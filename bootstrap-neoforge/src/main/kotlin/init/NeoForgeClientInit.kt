@@ -1,11 +1,15 @@
 package com.algorithmlx.ecr.neoforge.init
 
-import com.algorithmlx.ecr.api.client.render.*
+import com.algorithmlx.ecr.api.client.render.MultiblockPreviewGuiBridge
+import com.algorithmlx.ecr.api.client.render.MultiblockPreviewPictureRenderer
+import com.algorithmlx.ecr.api.client.render.MultiblockPreviewRenderState
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.client.book.ResearchBookClient
 import com.algorithmlx.ecr.client.renderer.MatrixDestructorRenderer
 import com.algorithmlx.ecr.client.renderer.MithrilineFurnaceRenderer
-import com.algorithmlx.ecr.client.screen.*
+import com.algorithmlx.ecr.client.screen.MagicTableMenuScreen
+import com.algorithmlx.ecr.client.screen.MatrixDestructorScreen
+import com.algorithmlx.ecr.client.screen.MithrilineFurnaceScreen
 import com.algorithmlx.ecr.common.init.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.common.init.registry.MenuTypeRegistry
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork

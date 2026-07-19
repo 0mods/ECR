@@ -36,7 +36,7 @@ object ECRModIDs {
     const val BASIC = "basic"
     const val MRU = "mru"
     const val ENGINEER = "engineer"
-    const val HOANA = "hoana"
+    const val HOANNA = "hoanna"
     const val SHADE = "shade"
 
     // Items

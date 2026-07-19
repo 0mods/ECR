@@ -2,14 +2,14 @@ package com.algorithmlx.ecr.common.init.registry
 
 import com.algorithmlx.ecr.api.research.BookType
 
-interface BookLevelRegistry {
+interface BookTypeRegistry {
     val basic: BookType
     val mru: BookType
     val engineer: BookType
-    val hoana: BookType
+    val hoanna: BookType
     val shade: BookType
 
     companion object {
-        lateinit var instance: BookLevelRegistry
+        lateinit var instance: BookTypeRegistry
     }
 }

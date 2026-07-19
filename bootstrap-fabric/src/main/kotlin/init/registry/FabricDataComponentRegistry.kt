@@ -1,6 +1,7 @@
 package com.algorithmlx.ecr.fabric.init.registry
 
 import com.algorithmlx.ecr.api.utils.ecRL
+import com.algorithmlx.ecr.api.registries.ECRegistryKeys
 import com.algorithmlx.ecr.api.research.BookType
 import com.algorithmlx.ecr.common.components.BoundGemComponent
 import com.algorithmlx.ecr.common.components.SoulStoneComponent
@@ -9,6 +10,7 @@ import com.algorithmlx.ecr.common.init.registry.DataComponentRegistry
 import net.minecraft.core.Registry
 import net.minecraft.core.component.DataComponentType
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.resources.ResourceKey
 
 object FabricDataComponentRegistry: DataComponentRegistry {
     override val soulStone: DataComponentType<SoulStoneComponent> = register(
@@ -18,10 +20,10 @@ object FabricDataComponentRegistry: DataComponentRegistry {
             .networkSynchronized(SoulStoneComponent.STREAM_CODEC)
             .build()
     )
-    override val bookType: DataComponentType<BookType> = register(
-        ECRModIDs.BOOK_TYPE, DataComponentType.builder<BookType>()
-            .persistent(BookType.codec)
-            .networkSynchronized(BookType.codecStream)
+    override val bookType: DataComponentType<ResourceKey<BookType>> = register(
+        ECRModIDs.BOOK_TYPE, DataComponentType.builder<ResourceKey<BookType>>()
+            .persistent(ResourceKey.codec(ECRegistryKeys.BOOK_TYPE_KEY))
+            .networkSynchronized(ResourceKey.streamCodec(ECRegistryKeys.BOOK_TYPE_KEY))
             .build()
     )
     override val boundGem: DataComponentType<BoundGemComponent> = register(
