@@ -71,6 +71,8 @@ object NeoForgeInit {
         val forgeBus = NeoForge.EVENT_BUS
         ResearchConfigDisabler.init()
 
+        initRegistries(bus)
+
         forgeBus.addListener(::onItemTooltip)
         bus.addListener(::onRegisterPayload)
 
@@ -89,8 +91,6 @@ object NeoForgeInit {
         forgeBus.addListener(::onRegisterCommands)
         forgeBus.addListener(::onLivingDeath)
 
-        initRegistries(bus)
-
         if (FMLEnvironment.getDist().isClient)
             NeoForgeClientInit.init(bus)
 
@@ -101,6 +101,7 @@ object NeoForgeInit {
         RecipeSerializerRegistry.init(bus)
         RecipeTypeRegistry.init(bus)
         BlockCodecRegistry.init(bus)
+        BlockEntityTypeRegistry.init(bus)
         BookTypeRegistry.init(bus)
         NeoForgeResearchSerializerRegistry(bus)
         BlockRegistry.init(bus)
