@@ -2,10 +2,8 @@ package com.algorithmlx.ecr.registry
 
 import com.algorithmlx.ecr.api.mru.MRUType
 
-interface MRUTypeRegistry {
+expect object MRUTypeRegistry {
     val espe: MRUType
     val radiationUnit: MRUType
     val ubmru: MRUType
-
-    companion object { @JvmStatic lateinit var instance: MRUTypeRegistry }
 }

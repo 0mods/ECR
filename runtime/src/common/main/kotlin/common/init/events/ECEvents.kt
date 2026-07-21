@@ -26,7 +26,7 @@ object ECEvents {
     fun itemTooltip(stack: ItemStack, tooltips: MutableList<Component>) {
         when (val item = stack.item) {
             is SoulStoneLike -> {
-                val component = stack.getOrDefault(DataComponentRegistry.instance.soulStone, SoulStoneComponent.EMPTY)
+                val component = stack.getOrDefault(DataComponentRegistry.soulStone, SoulStoneComponent.EMPTY)
 
                 if (component == SoulStoneComponent.EMPTY) return
 

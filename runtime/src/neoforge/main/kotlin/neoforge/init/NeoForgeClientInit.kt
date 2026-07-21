@@ -51,15 +51,15 @@ object NeoForgeClientInit {
             BoundGemTooltipNetwork.currentDimension = { Minecraft.getInstance().level?.dimension() }
             BoundGemTooltipNetwork.sendRequestToServer = { payload -> runCatching { ClientPacketDistributor.sendToServer(payload) } }
 
-            BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceRenderer)
-            BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.matrixDestructor, ::MatrixDestructorRenderer)
+            BlockEntityRenderers.register(BlockEntityTypeRegistry.mithrilineFurnace, ::MithrilineFurnaceRenderer)
+            BlockEntityRenderers.register(BlockEntityTypeRegistry.matrixDestructor, ::MatrixDestructorRenderer)
         }
     }
 
     private fun onMenuScreen(event: RegisterMenuScreensEvent) {
-        event.register(MenuTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceScreen)
-        event.register(MenuTypeRegistry.instance.envoyer, ::MagicTableMenuScreen)
-        event.register(MenuTypeRegistry.instance.matrixDestructor, ::MatrixDestructorScreen)
+        event.register(MenuTypeRegistry.mithrilineFurnace, ::MithrilineFurnaceScreen)
+        event.register(MenuTypeRegistry.magicTable, ::MagicTableMenuScreen)
+        event.register(MenuTypeRegistry.matrixDestructor, ::MatrixDestructorScreen)
     }
 
     private fun onRegisterClientPayloads(event: RegisterClientPayloadHandlersEvent) {
@@ -83,7 +83,7 @@ object NeoForgeClientInit {
     }
 
     private fun onRegisterEntityRenderers(event: EntityRenderersEvent.RegisterRenderers) {
-        event.registerBlockEntityRenderer(BlockEntityTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceRenderer)
+        event.registerBlockEntityRenderer(BlockEntityTypeRegistry.mithrilineFurnace, ::MithrilineFurnaceRenderer)
     }
 
     private fun onRegisterEntityModelLayer(event: EntityRenderersEvent.RegisterLayerDefinitions) {

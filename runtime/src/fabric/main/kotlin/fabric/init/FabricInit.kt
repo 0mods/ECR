@@ -20,24 +20,10 @@ import com.algorithmlx.ecr.common.init.events.ECEvents
 import com.algorithmlx.ecr.common.init.reload.ResearchReloadListener
 import com.algorithmlx.ecr.common.init.reload.SoulStoneDataReloadListener
 import com.algorithmlx.ecr.common.item.NamedBlockItem
-import com.algorithmlx.ecr.registry.BlockCodecRegistry
-import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
-import com.algorithmlx.ecr.registry.BlockRegistry
-import com.algorithmlx.ecr.registry.BookTypeRegistry
-import com.algorithmlx.ecr.registry.CreativeTabRegistry
-import com.algorithmlx.ecr.registry.DataComponentRegistry
-import com.algorithmlx.ecr.registry.ItemRegistry
-import com.algorithmlx.ecr.registry.MRUTypeRegistry
-import com.algorithmlx.ecr.registry.MenuTypeRegistry
-import com.algorithmlx.ecr.registry.MobEffectRegistry
-import com.algorithmlx.ecr.registry.MultiblockRegistry
-import com.algorithmlx.ecr.registry.RecipeDisplayTypeRegistry
-import com.algorithmlx.ecr.registry.RecipeSerializerRegistry
-import com.algorithmlx.ecr.registry.RecipeTypeRegistry
+import com.algorithmlx.ecr.registry.*
 import com.algorithmlx.ecr.common.research.ResearchConfigDisabler
 import com.algorithmlx.ecr.common.research.ResearchCommands
 import com.algorithmlx.ecr.fabric.api.CountIngredient
-import com.algorithmlx.ecr.fabric.init.registry.*
 import com.algorithmlx.ecr.mixin.InventoryAccessor
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
 import com.algorithmlx.ecr.network.BoundGemTooltipRequestPayload
@@ -103,23 +89,25 @@ object FabricInit {
         extendPlatform()
     }
 
+    @Suppress("UnusedExpression")
     private fun initRegistries() {
-        DataComponentRegistry.instance = FabricDataComponentRegistry
-        BlockCodecRegistry.instance = FabricBlockCodecRegistry
-        BookTypeRegistry.instance = FabricBookTypeRegistry
+        DataComponentRegistry
+        BlockCodecRegistry
+        BookTypeRegistry
         FabricResearchSerializerRegistry.register()
-        BlockRegistry.instance = FabricBlockRegistry
-        BlockEntityTypeRegistry.instance = FabricBlockEntityTypeRegistry
-        ItemRegistry.instance = FabricItemRegistry
-        MenuTypeRegistry.instance = FabricMenuTypeRegistry
-        MobEffectRegistry.instance = FabricMobEffectRegistry
-        MRUTypeRegistry.instance = FabricMRUTypeRegistry
+        BlockRegistry
+        BlockEntityTypeRegistry
+        ItemRegistry
+        MenuTypeRegistry
+        MobEffectRegistry
+        MRUTypeRegistry
         MultiblockMatcherTypes.instance = FabricMultiblockMatcherTypes
-        MultiblockRegistry.instance = FabricMultiblockRegistry
-        RecipeDisplayTypeRegistry.instance = FabricRecipeDisplayTypeRegistry
-        RecipeSerializerRegistry.instance = FabricRecipeSerializerRegistry
-        RecipeTypeRegistry.instance = FabricRecipeTypeRegistry
-        CreativeTabRegistry.instance = FabricCreativeTabRegistry
+        MultiblockRegistry
+        RecipeDisplayTypeRegistry
+        RecipeSerializerRegistry
+        RecipeTypeRegistry
+        CreativeTabRegistry
+
         CustomIngredientSerializer.register(CountIngredient.SERIALIZER)
     }
 
@@ -213,7 +201,7 @@ object FabricInit {
         CreativeModeTabEvents.MODIFY_OUTPUT_ALL.register { tab, output ->
             BuiltInRegistries.ITEM.keySet().filter { it.namespace == ModId }.forEach {
                 val item = BuiltInRegistries.ITEM.getOptional(it).get()
-                if (tab == CreativeTabRegistry.instance.blocks) {
+                if (tab == CreativeTabRegistry.blocks) {
                     if ((item is BlockItem || item is NamedBlockItem) && item.block !is NoTab)
                         output.accept(item)
                     return@forEach
@@ -221,7 +209,7 @@ object FabricInit {
 
                 if (BuiltInRegistries.BLOCK.getOptional(it).isPresent) return@forEach
 
-                if (item is NoTab || tab != CreativeTabRegistry.instance.items) return@forEach
+                if (item is NoTab || tab != CreativeTabRegistry.items) return@forEach
 
                 if (item is HasSubItem) {
                     item.addSubItems(ItemStack(item)).forEach { stack ->
@@ -300,7 +288,7 @@ object FabricInit {
             if (items.isEmpty()) return@register
 
             val item = items.random()
-            val component = item.get(DataComponentRegistry.instance.soulStone)
+            val component = item.get(DataComponentRegistry.soulStone)
 
             if (component == null || component == SoulStoneComponent.EMPTY || component.owner != sourceEntity.uuid) return@register
 
@@ -314,7 +302,7 @@ object FabricInit {
                 else SoulStoneData.defaultCapacityAdd.random() * multiplier
             }
 
-            item.set(DataComponentRegistry.instance.soulStone, component.copy(capacity = component.capacity + addCount.roundToInt()))
+            item.set(DataComponentRegistry.soulStone, component.copy(capacity = component.capacity + addCount.roundToInt()))
         }
     }
 

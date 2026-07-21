@@ -4,7 +4,7 @@ import com.algorithmlx.ecr.api.block.FullBlockParticles
 import com.algorithmlx.ecr.api.utils.checkAndOpenMenu
 import com.algorithmlx.ecr.api.utils.simpleTicker
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
-import com.algorithmlx.ecr.registry.EBlockCodecRegistry
+import com.algorithmlx.ecr.registry.BlockCodecRegistry
 import com.algorithmlx.ecr.registry.MultiblockRegistry
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
@@ -44,7 +44,7 @@ class MithrilineFurnace(properties: Properties): Block(properties), EntityBlock,
         pos: BlockPos,
         player: Player,
         hitResult: BlockHitResult
-    ): InteractionResult = if (MultiblockRegistry.instance.mithrilineFurnace.findPlacement(level, pos) != null) {
+    ): InteractionResult = if (MultiblockRegistry.mithrilineFurnace.findPlacement(level, pos) != null) {
         checkAndOpenMenu<MithrilineFurnaceEntity>(player, level, pos)
     } else InteractionResult.FAIL
 
@@ -70,5 +70,5 @@ class MithrilineFurnace(properties: Properties): Block(properties), EntityBlock,
         shape
     }
 
-    override fun codec(): MapCodec<out Block> = EBlockCodecRegistry.mithrilineFurnace
+    override fun codec(): MapCodec<out Block> = BlockCodecRegistry.mithrilineFurnace
 }

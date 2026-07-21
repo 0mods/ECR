@@ -2,7 +2,7 @@ package com.algorithmlx.ecr.common.block
 
 import com.algorithmlx.ecr.api.utils.simpleTicker
 import com.algorithmlx.ecr.common.block.entity.ColdDistillerEntity
-import com.algorithmlx.ecr.registry.EBlockCodecRegistry
+import com.algorithmlx.ecr.registry.BlockCodecRegistry
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.Level
@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 
 class ColdDistiller(properties: Properties): Block(properties), EntityBlock {
-    override fun codec(): MapCodec<out Block> = EBlockCodecRegistry.coldDistiller
+    override fun codec(): MapCodec<out Block> = BlockCodecRegistry.coldDistiller
 
     override fun newBlockEntity(
         worldPosition: BlockPos,

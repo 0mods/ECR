@@ -56,8 +56,8 @@ class MagicTableRecipe(
     override fun assemble(input: Input): ItemStack = this.result.create()
     override fun showNotification(): Boolean = true
     override fun group(): String = "$ModId:${ECRModIDs.MAGIC_TABLE}"
-    override fun getSerializer(): RecipeSerializer<out Recipe<Input>> = RecipeSerializerRegistry.instance.envoyer
-    override fun getType(): RecipeType<out Recipe<Input>> = RecipeTypeRegistry.instance.envoyer
+    override fun getSerializer(): RecipeSerializer<out Recipe<Input>> = RecipeSerializerRegistry.magicTable
+    override fun getType(): RecipeType<out Recipe<Input>> = RecipeTypeRegistry.magicTable
     override fun placementInfo(): PlacementInfo = PlacementInfo.NOT_PLACEABLE
     override fun recipeBookCategory(): RecipeBookCategory = RecipeBookCategories.CAMPFIRE
 

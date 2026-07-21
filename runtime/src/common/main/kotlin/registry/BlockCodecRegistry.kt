@@ -9,7 +9,7 @@ import com.algorithmlx.ecr.common.block.MithrilineFurnace
 import com.algorithmlx.ecr.common.block.SolarPrism
 import com.mojang.serialization.MapCodec
 
-interface BlockCodecRegistry {
+expect object BlockCodecRegistry {
     val solarPrism: MapCodec<SolarPrism>
     val clusterBlock: MapCodec<ClusterBlock>
     val crystalBlock: MapCodec<CrystalBlock>
@@ -17,8 +17,4 @@ interface BlockCodecRegistry {
     val magicTable: MapCodec<MagicTable>
     val matrixDestructor: MapCodec<MatrixDestructor>
     val coldDistiller: MapCodec<ColdDistiller>
-
-    companion object {
-        lateinit var instance: BlockCodecRegistry
-    }
 }

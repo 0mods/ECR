@@ -6,13 +6,9 @@ import com.algorithmlx.ecr.common.block.entity.MatrixDestructorEntity
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 
-interface BlockEntityTypeRegistry {
+expect object BlockEntityTypeRegistry {
     val mithrilineFurnace: BlockEntityType<MithrilineFurnaceEntity>
-    val envoyer: BlockEntityType<MagicTableBlockEntity>
+    val magicTable: BlockEntityType<MagicTableBlockEntity>
     val matrixDestructor: BlockEntityType<MatrixDestructorEntity>
     val coldDistiller: BlockEntityType<ColdDistillerEntity>
-
-    companion object {
-        lateinit var instance: BlockEntityTypeRegistry
-    }
 }

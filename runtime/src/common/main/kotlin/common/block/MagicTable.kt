@@ -4,7 +4,7 @@ import com.algorithmlx.ecr.api.block.FullBlockParticles
 import com.algorithmlx.ecr.api.utils.checkAndOpenMenu
 import com.algorithmlx.ecr.api.utils.simpleTicker
 import com.algorithmlx.ecr.common.block.entity.MagicTableBlockEntity
-import com.algorithmlx.ecr.registry.EBlockCodecRegistry
+import com.algorithmlx.ecr.registry.BlockCodecRegistry
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionResult
@@ -65,5 +65,5 @@ class MagicTable(properties: Properties) : Block(properties), EntityBlock, FullB
         shape
     }
 
-    override fun codec(): MapCodec<out Block> = EBlockCodecRegistry.magicTable
+    override fun codec(): MapCodec<out Block> = BlockCodecRegistry.magicTable
 }

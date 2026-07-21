@@ -4,7 +4,7 @@ import com.algorithmlx.ecr.api.block.FullBlockParticles
 import com.algorithmlx.ecr.api.utils.checkAndOpenMenu
 import com.algorithmlx.ecr.api.utils.simpleTicker
 import com.algorithmlx.ecr.common.block.entity.MatrixDestructorEntity
-import com.algorithmlx.ecr.registry.EBlockCodecRegistry
+import com.algorithmlx.ecr.registry.BlockCodecRegistry
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionResult
@@ -24,7 +24,7 @@ import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
 
 class MatrixDestructor(properties: Properties): Block(properties), EntityBlock, FullBlockParticles {
-    override fun codec(): MapCodec<out Block> = EBlockCodecRegistry.matrixDestructor
+    override fun codec(): MapCodec<out Block> = BlockCodecRegistry.matrixDestructor
 
     override fun newBlockEntity(
         worldPosition: BlockPos,

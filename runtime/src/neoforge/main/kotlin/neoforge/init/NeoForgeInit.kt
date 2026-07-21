@@ -1,8 +1,8 @@
 package com.algorithmlx.ecr.neoforge.init
 
 import com.algorithmlx.ecr.api.ModId
-import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.item.HasSubItem
 import com.algorithmlx.ecr.api.item.NoTab
@@ -23,25 +23,11 @@ import com.algorithmlx.ecr.common.init.events.ECEvents
 import com.algorithmlx.ecr.common.init.reload.ResearchReloadListener
 import com.algorithmlx.ecr.common.init.reload.SoulStoneDataReloadListener
 import com.algorithmlx.ecr.common.item.NamedBlockItem
-import com.algorithmlx.ecr.registry.BlockCodecRegistry
-import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
-import com.algorithmlx.ecr.registry.BlockRegistry
-import com.algorithmlx.ecr.registry.BookTypeRegistry
-import com.algorithmlx.ecr.registry.CreativeTabRegistry
-import com.algorithmlx.ecr.registry.DataComponentRegistry
-import com.algorithmlx.ecr.registry.ItemRegistry
-import com.algorithmlx.ecr.registry.MRUTypeRegistry
-import com.algorithmlx.ecr.registry.MenuTypeRegistry
-import com.algorithmlx.ecr.registry.MobEffectRegistry
-import com.algorithmlx.ecr.registry.MultiblockRegistry
-import com.algorithmlx.ecr.registry.RecipeDisplayTypeRegistry
-import com.algorithmlx.ecr.registry.RecipeSerializerRegistry
-import com.algorithmlx.ecr.registry.RecipeTypeRegistry
+import com.algorithmlx.ecr.registry.*
 import com.algorithmlx.ecr.common.research.ResearchConfigDisabler
 import com.algorithmlx.ecr.common.research.ResearchCommands
 import com.algorithmlx.ecr.mixin.InventoryAccessor
 import com.algorithmlx.ecr.neoforge.api.CountIngredient
-import com.algorithmlx.ecr.neoforge.init.registry.*
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
 import com.algorithmlx.ecr.network.BoundGemTooltipRequestPayload
 import com.algorithmlx.ecr.network.BoundGemTooltipResponsePayload
@@ -112,22 +98,21 @@ object NeoForgeInit {
     }
 
     private fun initRegistries(bus: IEventBus) {
-        RecipeSerializerRegistry.instance = NeoForgeRecipeSerializerRegistry(bus)
-        RecipeTypeRegistry.instance = NeoForgeRecipeTypeRegistry(bus)
-        BlockCodecRegistry.instance = NeoForgeBlockCodecRegistry(bus)
-        BookTypeRegistry.instance = NeoForgeBookTypeRegistry(bus)
+        RecipeSerializerRegistry.init(bus)
+        RecipeTypeRegistry.init(bus)
+        BlockCodecRegistry.init(bus)
+        BookTypeRegistry.init(bus)
         NeoForgeResearchSerializerRegistry(bus)
-        BlockRegistry.instance = NeoForgeBlockRegistry(bus)
-        BlockEntityTypeRegistry.instance = NeoForgeBlockEntityTypeRegistry(bus)
-        DataComponentRegistry.instance = NeoForgeDataComponentRegistry(bus)
-        ItemRegistry.instance = NeoForgeItemRegistry(bus)
-        CreativeTabRegistry.instance = NeoForgeCreativeTabRegistry(bus)
-        MenuTypeRegistry.instance = NeoForgeMenuTypeRegistry(bus)
-        MobEffectRegistry.instance = NeoForgeMobEffectRegistry(bus)
-        MRUTypeRegistry.instance = NeoForgeMRUTypeRegistry(bus)
+        BlockRegistry.init(bus)
+        DataComponentRegistry.init(bus)
+        ItemRegistry.init(bus)
+        CreativeTabRegistry.init(bus)
+        MenuTypeRegistry.init(bus)
+        MobEffectRegistry.init(bus)
+        MRUTypeRegistry.init(bus)
         MultiblockMatcherTypes.instance = NeoForgeMultiblockMatcherTypes(bus)
-        MultiblockRegistry.instance = NeoForgeMultiblockRegistry(bus)
-        RecipeDisplayTypeRegistry.instance = NeoForgeRecipeDisplayTypeRegistry(bus)
+        MultiblockRegistry.init(bus)
+        RecipeDisplayTypeRegistry.init(bus)
         IngredientRegistry.init(bus)
     }
 
@@ -147,7 +132,7 @@ object NeoForgeInit {
     private fun onCreativeTabs(event: BuildCreativeModeTabContentsEvent) {
         BuiltInRegistries.ITEM.keySet().filter { it.namespace == ModId }.forEach {
             val item = BuiltInRegistries.ITEM.getOptional(it).get()
-            if (event.tab == CreativeTabRegistry.instance.blocks) {
+            if (event.tab == CreativeTabRegistry.blocks) {
                 if ((item is BlockItem || item is NamedBlockItem)  && item.block !is NoTab)
                     event.accept(item)
                 return@forEach
@@ -155,7 +140,7 @@ object NeoForgeInit {
 
             if (BuiltInRegistries.BLOCK.getOptional(it).isPresent) return@forEach
 
-            if (item is NoTab || event.tab != CreativeTabRegistry.instance.items) return@forEach
+            if (item is NoTab || event.tab != CreativeTabRegistry.items) return@forEach
 
             if (item is HasSubItem) {
                 item.addSubItems(ItemStack(item)).forEach { stack ->
@@ -330,7 +315,7 @@ object NeoForgeInit {
         if (items.isEmpty()) return
 
         val item = items.random()
-        val component = item.get(DataComponentRegistry.instance.soulStone)
+        val component = item.get(DataComponentRegistry.soulStone)
 
         if (component == null || component == SoulStoneComponent.EMPTY || component.owner != source.uuid) return
 
@@ -344,7 +329,7 @@ object NeoForgeInit {
             else SoulStoneData.defaultCapacityAdd.random() * multiplier
         }
 
-        item.set(DataComponentRegistry.instance.soulStone, component.copy(capacity = component.capacity + addCount.roundToInt()))
+        item.set(DataComponentRegistry.soulStone, component.copy(capacity = component.capacity + addCount.roundToInt()))
     }
 
     private fun extendPlatform() {

@@ -5,13 +5,11 @@ import com.algorithmlx.ecr.common.recipe.StructureRecipe
 import com.algorithmlx.ecr.common.recipe.MithrilineFurnaceRecipe
 import net.minecraft.world.item.crafting.RecipeType
 
-interface RecipeTypeRegistry {
+// visible for jvm
+val structureRecipeType = RecipeTypeRegistry.structure
+
+expect object RecipeTypeRegistry {
     val mithrilineFurnace: RecipeType<MithrilineFurnaceRecipe>
     val structure: RecipeType<StructureRecipe>
-    val envoyer: RecipeType<MagicTableRecipe>
-
-    companion object {
-        @JvmStatic
-        lateinit var instance: RecipeTypeRegistry
-    }
+    val magicTable: RecipeType<MagicTableRecipe>
 }

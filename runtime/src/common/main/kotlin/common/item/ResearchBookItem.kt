@@ -17,17 +17,17 @@ import net.minecraft.world.level.Level
 class ResearchBookItem(properties: Properties): Item(properties), HasSubItem {
     override fun use(level: Level, player: Player, hand: InteractionHand): InteractionResult {
         val stack = player.getItemInHand(hand)
-        val basic = BookTypeRegistry.instance.basic
+        val basic = BookTypeRegistry.basic
         val basicKey = ECRegistries.BOOK_TYPES.getResourceKey(basic).get()
         var bookTypeKey = stack.getOrDefault(
-            DataComponentRegistry.instance.bookType,
+            DataComponentRegistry.bookType,
             basicKey
         )
 
         val bookTypeOptional = ECRegistries.BOOK_TYPES.get(bookTypeKey)
         val bookType = if (bookTypeOptional.isPresent) bookTypeOptional.get().value() else {
             bookTypeKey = basicKey
-            stack.set(DataComponentRegistry.instance.bookType, basicKey)
+            stack.set(DataComponentRegistry.bookType, basicKey)
             basic
         }
 
@@ -41,7 +41,7 @@ class ResearchBookItem(properties: Properties): Item(properties), HasSubItem {
     override fun addSubItems(original: ItemStack): List<ItemStack> {
         val items = mutableListOf<ItemStack>()
         ECRegistries.BOOK_TYPES.listElements().forEach {
-            items += original.copy().apply { this.set(DataComponentRegistry.instance.bookType, it.key()) }
+            items += original.copy().apply { this.set(DataComponentRegistry.bookType, it.key()) }
         }
 
         return items

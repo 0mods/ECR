@@ -53,8 +53,8 @@ class StructureRecipe(
         }
     }
 
-    override fun getSerializer(): RecipeSerializer<StructureRecipe> = RecipeSerializerRegistry.instance.structure
-    override fun getType(): RecipeType<StructureRecipe> = RecipeTypeRegistry.instance.structure
+    override fun getSerializer(): RecipeSerializer<StructureRecipe> = RecipeSerializerRegistry.structure
+    override fun getType(): RecipeType<StructureRecipe> = RecipeTypeRegistry.structure
     override fun placementInfo(): PlacementInfo = PlacementInfo.NOT_PLACEABLE
     override fun matches(input: SingleRecipeInput, level: Level): Boolean = ingredient.test(input.item())
     override fun assemble(input: SingleRecipeInput): ItemStack = result.getOrNull()?.create() ?: ItemStack.EMPTY
@@ -79,7 +79,7 @@ class StructureRecipe(
 
         override fun craftingStation(): SlotDisplay = this.ingredient
 
-        override fun type(): RecipeDisplay.Type<out RecipeDisplay> = RecipeDisplayTypeRegistry.instance.structure
+        override fun type(): RecipeDisplay.Type<out RecipeDisplay> = RecipeDisplayTypeRegistry.structure
 
         companion object {
             @JvmField

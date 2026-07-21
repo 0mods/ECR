@@ -21,7 +21,7 @@ object MithrilineFurnaceRenderer: BookRecipeRenderer<MithrilineFurnaceRecipe> {
         val startX = (builder.width - contentWidth) / 2
         val slotY = 0
 
-        val furnace = ItemStack(BlockRegistry.instance.mithrilineFurnace)
+        val furnace = ItemStack(BlockRegistry.mithrilineFurnace)
         val furnaceX = startX + SLOT_SIZE + ELEMENT_GAP
         val furnaceY = slotY + (SLOT_SIZE - ITEM_SIZE) / 2
 

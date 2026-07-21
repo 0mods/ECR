@@ -41,8 +41,8 @@ object BookDefaultRenderers {
         BookRecipeRenderers.register(RecipeType.SMOKING, CookingRecipeRenderer.Smoking)
         BookRecipeRenderers.register(RecipeType.CAMPFIRE_COOKING, CookingRecipeRenderer.CampfireCooking)
         BookRecipeRenderers.register(RecipeType.STONECUTTING, StonecutterRecipeRenderer)
-        BookRecipeRenderers.register(RecipeTypeRegistry.instance.mithrilineFurnace, MithrilineFurnaceRenderer)
-        BookRecipeRenderers.register(RecipeTypeRegistry.instance.structure, StructureRecipeRenderer)
+        BookRecipeRenderers.register(RecipeTypeRegistry.mithrilineFurnace, MithrilineFurnaceRenderer)
+        BookRecipeRenderers.register(RecipeTypeRegistry.structure, StructureRecipeRenderer)
     }
 
     private fun renderText(context: BookElementRenderContext, element: TextBookElement) {

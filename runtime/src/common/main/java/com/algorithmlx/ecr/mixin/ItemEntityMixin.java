@@ -3,7 +3,7 @@ package com.algorithmlx.ecr.mixin;
 import com.algorithmlx.ecr.api.recipe.CachedRecipe;
 import com.algorithmlx.ecr.api.utils.UtilitiesKt;
 import com.algorithmlx.ecr.common.init.events.ECEvents;
-import com.algorithmlx.ecr.registry.RecipeTypeRegistry;
+import com.algorithmlx.ecr.registry.RecipeTypeRegistryKt;
 import com.algorithmlx.ecr.common.recipe.StructureRecipe;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -35,7 +35,7 @@ public abstract class ItemEntityMixin extends Entity {
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;tick()V"))
     public void tick(CallbackInfo ci) {
-        if (ecr$recipe == null) ecr$recipe = new CachedRecipe<>(RecipeTypeRegistry.getInstance().getStructure());
+        if (ecr$recipe == null) ecr$recipe = new CachedRecipe<>(RecipeTypeRegistryKt.getStructureRecipeType());
         ECEvents.itemEntityTickCraft(this.getItem(), this.ecr$recipe, this.position(), this.level(), this.ecr$ticker);
     }
 }

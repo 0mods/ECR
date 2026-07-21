@@ -36,14 +36,14 @@ object FabricClientInit {
         MultiblockPreviewGuiBridgeInit.init()
         ResearchBookClient.init()
 
-        BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceRenderer)
-        BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.matrixDestructor, ::MatrixDestructorRenderer)
+        BlockEntityRenderers.register(BlockEntityTypeRegistry.mithrilineFurnace, ::MithrilineFurnaceRenderer)
+        BlockEntityRenderers.register(BlockEntityTypeRegistry.matrixDestructor, ::MatrixDestructorRenderer)
 
         ModelLayerRegistry.registerModelLayer(MithrilineFurnaceRenderer.MF_LAYER, MithrilineFurnaceRenderer::createBodyLayer)
 
-        MenuScreens.register(MenuTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceScreen)
-        MenuScreens.register(MenuTypeRegistry.instance.envoyer, ::MagicTableMenuScreen)
-        MenuScreens.register(MenuTypeRegistry.instance.matrixDestructor, ::MatrixDestructorScreen)
+        MenuScreens.register(MenuTypeRegistry.mithrilineFurnace, ::MithrilineFurnaceScreen)
+        MenuScreens.register(MenuTypeRegistry.magicTable, ::MagicTableMenuScreen)
+        MenuScreens.register(MenuTypeRegistry.matrixDestructor, ::MatrixDestructorScreen)
     }
 
     private fun registerReceivers() {

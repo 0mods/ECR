@@ -27,7 +27,7 @@ import kotlin.jvm.optionals.getOrElse
 
 class MatrixDestructorEntity(
     worldPosition: BlockPos, blockState: BlockState
-): SynchronizedContainerBlockEntity(BlockEntityTypeRegistry.instance.matrixDestructor, worldPosition, blockState), MRUDevice {
+): SynchronizedContainerBlockEntity(BlockEntityTypeRegistry.matrixDestructor, worldPosition, blockState), MRUDevice {
     private var items: NonNullList<ItemStack> = NonNullList.withSize(1, ItemStack.EMPTY)
 
     var progress = 0
@@ -69,7 +69,7 @@ class MatrixDestructorEntity(
 
     override fun getContainerSize(): Int = 1
 
-    override val mruStorage: IOMRUStorage = MRUStorageContainer(10000, MRUTypeRegistry.instance.radiationUnit) { setChanged() }
+    override val mruStorage: IOMRUStorage = MRUStorageContainer(10000, MRUTypeRegistry.radiationUnit) { setChanged() }
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.TRANSLATOR
 
     fun setStatusUpdated(status: MatrixDestructorStatus) {
@@ -107,7 +107,7 @@ class MatrixDestructorEntity(
                 return
             }
 
-            val soulStoneComponent = stack.get(DataComponentRegistry.instance.soulStone)
+            val soulStoneComponent = stack.get(DataComponentRegistry.soulStone)
             if (soulStoneComponent == null) {
                 be.progress = 0
                 be.setStatusUpdated(MatrixDestructorStatus.STOPPED)
@@ -144,7 +144,7 @@ class MatrixDestructorEntity(
             be.setStatusUpdated(MatrixDestructorStatus.WORKING)
 
             stack.set(
-                DataComponentRegistry.instance.soulStone,
+                DataComponentRegistry.soulStone,
                 soulStoneComponent.copy(capacity = (capacity - convertCost))
             )
             be.progress += convertCost

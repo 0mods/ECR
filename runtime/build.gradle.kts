@@ -59,10 +59,6 @@ cloche {
         author("AlgorithmLX")
     }
 
-    mappings {
-        official()
-    }
-
     val commonTarget = common {
         dependencies {
             compileOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
@@ -244,19 +240,15 @@ tasks.named("assemble") {
     dependsOn(universalJar)
 }
 
-afterEvaluate {
-    tasks.named<KotlinJvmCompile>("compileKotlin") {
-        compilerOptions.freeCompilerArgs.add("-Xmulti-platform")
-    }
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_24)
 
-    tasks.withType<KotlinJvmCompile>().configureEach {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_24)
-            freeCompilerArgs.addAll(
-                "-Xannotation-target-all",
-                "-Xnullability-annotations=@org.jspecify.annotations:warn"
-            )
-        }
+        freeCompilerArgs.addAll(
+            "-Xmulti-platform",
+            "-Xexpect-actual-classes",
+            "-Xannotation-target-all",
+            "-Xnullability-annotations=@org.jspecify.annotations:warn"
+        )
     }
-
 }

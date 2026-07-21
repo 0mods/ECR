@@ -7,8 +7,8 @@ import net.minecraft.tags.BlockTags
 import net.minecraft.world.level.block.Blocks
 
 object MithrilineFurnaceMultiblock: Multiblock(5, 5, 3, {
-    val a = block(BlockRegistry.instance.mithrilinePlating.defaultBlockState())
-    val b = block(BlockRegistry.instance.mithrilineFurnace.defaultBlockState())
+    val a = block(BlockRegistry.mithrilinePlating.defaultBlockState())
+    val b = block(BlockRegistry.mithrilineFurnace.defaultBlockState())
 
     pattern(
         a, null, a, null, a,
@@ -71,12 +71,12 @@ object LightningCollector: Multiblock(11, 11, 4, {
     val copperBlockList = Blocks.COPPER_BLOCK.asList().map { this.block(it.defaultBlockState()) }
     val lightningRodList = Blocks.LIGHTNING_ROD.asList().map { this.block(it.defaultBlockState()) }
 
-    val voidStone = this.block(BlockRegistry.instance.voidStone.defaultBlockState())
-    val mithrilinePlating = this.block(BlockRegistry.instance.mithrilinePlating.defaultBlockState())
+    val voidStone = this.block(BlockRegistry.voidStone.defaultBlockState())
+    val mithrilinePlating = this.block(BlockRegistry.mithrilinePlating.defaultBlockState())
     val copperSlabs = this.list(cutCopperSlabList)
     val copperBlocks = this.list(copperBlockList)
-    val center = this.block(BlockRegistry.instance.mithrilineFurnace.defaultBlockState())
-    val mithrilineCrystal = this.block(BlockRegistry.instance.mithrilineCrystal.defaultBlockState())
+    val center = this.block(BlockRegistry.mithrilineFurnace.defaultBlockState())
+    val mithrilineCrystal = this.block(BlockRegistry.mithrilineCrystal.defaultBlockState())
     val lightningRod = this.list(lightningRodList)
 
     pattern(

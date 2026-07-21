@@ -33,7 +33,7 @@ import kotlin.math.floor
 class MithrilineFurnaceEntity(
     worldPosition: BlockPos,
     blockState: BlockState
-): SynchronizedContainerBlockEntity(BlockEntityTypeRegistry.instance.mithrilineFurnace, worldPosition, blockState), MRUDevice, WorldlyContainer {
+): SynchronizedContainerBlockEntity(BlockEntityTypeRegistry.mithrilineFurnace, worldPosition, blockState), MRUDevice, WorldlyContainer {
     @all:JvmName("items")
     private var items = NonNullList.withSize(2, ItemStack.EMPTY)
     private val containerData: ContainerData = object : ContainerData {
@@ -53,7 +53,7 @@ class MithrilineFurnaceEntity(
         override fun getCount(): Int = 2
     }
 
-    val recipe = CachedRecipe(RecipeTypeRegistry.instance.mithrilineFurnace)
+    val recipe = CachedRecipe(RecipeTypeRegistry.mithrilineFurnace)
 
     var structureIsValid = false
     var craftProgress = 0
@@ -101,7 +101,7 @@ class MithrilineFurnaceEntity(
 
     override fun getContainerSize(): Int = this.items.size
 
-    override val mruStorage: MRUStorageContainer = MRUStorageContainer(10000, MRUTypeRegistry.instance.espe)
+    override val mruStorage: MRUStorageContainer = MRUStorageContainer(10000, MRUTypeRegistry.espe)
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.RECEIVER
 
     override fun getSlotsForFace(direction: Direction): IntArray = intArrayOf(0, 1)
@@ -124,7 +124,7 @@ class MithrilineFurnaceEntity(
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, be: MithrilineFurnaceEntity) {
             val oldValid = be.structureIsValid
-            val newValid = MultiblockRegistry.instance.mithrilineFurnace.findPlacement(level, pos) != null
+            val newValid = MultiblockRegistry.mithrilineFurnace.findPlacement(level, pos) != null
             if (oldValid != newValid) {
                 be.structureIsValid = newValid
                 be.setChanged()
@@ -153,13 +153,13 @@ class MithrilineFurnaceEntity(
                     val bpDown = BlockPos(xo, pos.y + 1, zo)
                     val bsDown = level.getBlockState(bpDown)
 
-                    if (bsDown.`is`(BlockRegistry.instance.mithrilineCrystal) && downCrystalCount + 1 <= 12)
+                    if (bsDown.`is`(BlockRegistry.mithrilineCrystal) && downCrystalCount + 1 <= 12)
                         downCrystalCount++
 
                     val bpUp = BlockPos(xo, pos.y + 3, zo)
                     val bsUp = level.getBlockState(bpUp)
 
-                    if (bsUp.`is`(BlockRegistry.instance.mithrilineCrystal) && upCrystalCount + 1 <= 5)
+                    if (bsUp.`is`(BlockRegistry.mithrilineCrystal) && upCrystalCount + 1 <= 5)
                         upCrystalCount++
                 }
             }

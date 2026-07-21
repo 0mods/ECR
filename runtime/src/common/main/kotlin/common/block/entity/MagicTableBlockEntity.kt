@@ -33,7 +33,7 @@ import kotlin.jvm.optionals.getOrNull
 class MagicTableBlockEntity(
     worldPosition: BlockPos,
     blockState: BlockState
-): SynchronizedContainerBlockEntity(BlockEntityTypeRegistry.instance.envoyer, worldPosition, blockState), MRUDevice {
+): SynchronizedContainerBlockEntity(BlockEntityTypeRegistry.magicTable, worldPosition, blockState), MRUDevice {
     private var items: NonNullList<ItemStack> = NonNullList.withSize(8, ItemStack.EMPTY)
 
     private val containerData: ContainerData = object : ContainerData {
@@ -53,7 +53,7 @@ class MagicTableBlockEntity(
         override fun getCount(): Int = 2
     }
 
-    private val recipe = CachedRecipe(RecipeTypeRegistry.instance.envoyer)
+    private val recipe = CachedRecipe(RecipeTypeRegistry.magicTable)
 
     var progress = 0
     var maxProgress = 0
@@ -95,7 +95,7 @@ class MagicTableBlockEntity(
 
     override fun canPlaceItem(slot: Int, itemStack: ItemStack): Boolean = if (slot == 5) false else super.canPlaceItem(slot, itemStack)
 
-    override val mruStorage: IOMRUStorage = MRUStorageContainer(5000, MRUTypeRegistry.instance.radiationUnit) { setChanged() }
+    override val mruStorage: IOMRUStorage = MRUStorageContainer(5000, MRUTypeRegistry.radiationUnit) { setChanged() }
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.RECEIVER
 
     override val locator: MRUDevice.LocatorData = MRUDevice.LocatorData(this, 6)

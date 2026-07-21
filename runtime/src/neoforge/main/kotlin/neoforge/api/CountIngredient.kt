@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.neoforge.api
 
-import com.algorithmlx.ecr.neoforge.init.registry.IngredientRegistry
+import com.algorithmlx.ecr.registry.IngredientRegistry
 import com.mojang.serialization.Codec
 import com.mojang.serialization.MapCodec
 import com.mojang.serialization.codecs.RecordCodecBuilder

@@ -4,7 +4,7 @@ import com.algorithmlx.ecr.common.item.*
 import com.algorithmlx.ecr.common.item.tool.*
 import net.minecraft.world.item.Item
 
-interface ItemRegistry {
+expect object ItemRegistry {
     val soulStone: SoulStone
     val researchBook: ResearchBookItem
     val boundGem: BoundGemItem
@@ -49,8 +49,4 @@ interface ItemRegistry {
     val mithrilineCrystalGem: Item
     val mruResonatingCrystal: Item
     val fadingCrystal: Item
-
-    companion object {
-        lateinit var instance: ItemRegistry
-    }
 }

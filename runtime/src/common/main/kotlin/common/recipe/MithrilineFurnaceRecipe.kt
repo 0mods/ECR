@@ -43,8 +43,8 @@ class MithrilineFurnaceRecipe(
 
     override fun showNotification(): Boolean = false
     override fun group(): String = "$ModId:${ECRModIDs.MITHRILINE_FURNACE}"
-    override fun getSerializer(): RecipeSerializer<out Recipe<SingleRecipeInput>> = RecipeSerializerRegistry.instance.mithrilineFurnace
-    override fun getType(): RecipeType<out Recipe<SingleRecipeInput>> = RecipeTypeRegistry.instance.mithrilineFurnace
+    override fun getSerializer(): RecipeSerializer<out Recipe<SingleRecipeInput>> = RecipeSerializerRegistry.mithrilineFurnace
+    override fun getType(): RecipeType<out Recipe<SingleRecipeInput>> = RecipeTypeRegistry.mithrilineFurnace
     override fun placementInfo(): PlacementInfo = PlacementInfo.NOT_PLACEABLE
     override fun recipeBookCategory(): RecipeBookCategory = RecipeBookCategories.FURNACE_MISC
 
@@ -52,7 +52,7 @@ class MithrilineFurnaceRecipe(
         Display(
             input.display(),
             SlotDisplay.ItemStackSlotDisplay(result),
-            SlotDisplay.ItemSlotDisplay(BlockRegistry.instance.mithrilineFurnace.asItem())
+            SlotDisplay.ItemSlotDisplay(BlockRegistry.mithrilineFurnace.asItem())
         )
     )
 
@@ -62,7 +62,7 @@ class MithrilineFurnaceRecipe(
 
         override fun craftingStation(): SlotDisplay = station
 
-        override fun type(): RecipeDisplay.Type<out RecipeDisplay> = RecipeDisplayTypeRegistry.instance.mithrilineFurnace
+        override fun type(): RecipeDisplay.Type<out RecipeDisplay> = RecipeDisplayTypeRegistry.mithrilineFurnace
 
         companion object {
             @JvmField

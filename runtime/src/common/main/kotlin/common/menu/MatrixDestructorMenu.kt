@@ -21,14 +21,14 @@ class MatrixDestructorMenu(
     container: Container,
     val blockEntity: BlockEntity?,
     access: ContainerLevelAccess
-): AbstractMenu(MenuTypeRegistry.instance.matrixDestructor, containerId, access) {
+): AbstractMenu(MenuTypeRegistry.matrixDestructor, containerId, access) {
     constructor(containerId: Int, inv: Inventory, typeData: MenuTypeData): this(
         containerId, inv, SimpleContainer(1), inv.player.level().getBlockEntity(typeData.pos), ContainerLevelAccess.NULL
     )
 
     init {
         addSlot(VanillaSpecialSlot(container, 0, 80, 60, {
-            val component = it.get(DataComponentRegistry.instance.soulStone)
+            val component = it.get(DataComponentRegistry.soulStone)
             component != null && component != SoulStoneComponent.EMPTY
         }))
 
@@ -69,5 +69,5 @@ class MatrixDestructorMenu(
         return qms
     }
 
-    override fun stillValid(player: Player): Boolean = stillValid(this.access, player, BlockRegistry.instance.matrixDestructor)
+    override fun stillValid(player: Player): Boolean = stillValid(this.access, player, BlockRegistry.matrixDestructor)
 }

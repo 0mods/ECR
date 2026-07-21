@@ -11,25 +11,25 @@ import kotlin.jvm.optionals.getOrNull
 
 object BoundGemHelper {
     @JvmStatic
-    fun getBoundPos(stack: ItemStack): BlockPos? = stack.get(DataComponentRegistry.instance.boundGem)?.pos
+    fun getBoundPos(stack: ItemStack): BlockPos? = stack.get(DataComponentRegistry.boundGem)?.pos
 
     @JvmStatic
     fun setBoundPos(stack: ItemStack, pos: BlockPos?) {
-        val data = stack.get(DataComponentRegistry.instance.boundGem)
+        val data = stack.get(DataComponentRegistry.boundGem)
         if (pos != null) stack.set(
-            DataComponentRegistry.instance.boundGem,
+            DataComponentRegistry.boundGem,
             data?.copy(pos = pos) ?: BoundGemComponent(pos)
-        ) else stack.set(DataComponentRegistry.instance.boundGem, null)
+        ) else stack.set(DataComponentRegistry.boundGem, null)
     }
 
     @JvmStatic
     fun setWorld(stack: ItemStack, world: ResourceKey<Level>?) {
-        val data = stack.get(DataComponentRegistry.instance.boundGem) ?: return
-        stack.set(DataComponentRegistry.instance.boundGem, data.copy(dimension = Optional.ofNullable(world)))
+        val data = stack.get(DataComponentRegistry.boundGem) ?: return
+        stack.set(DataComponentRegistry.boundGem, data.copy(dimension = Optional.ofNullable(world)))
     }
 
     @JvmStatic
-    fun getWorld(stack: ItemStack): ResourceKey<Level>? = stack.get(DataComponentRegistry.instance.boundGem)
+    fun getWorld(stack: ItemStack): ResourceKey<Level>? = stack.get(DataComponentRegistry.boundGem)
         ?.dimension
         ?.getOrNull()
 }
