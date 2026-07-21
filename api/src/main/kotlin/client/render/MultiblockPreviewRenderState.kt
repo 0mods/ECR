@@ -12,9 +12,11 @@ class MultiblockPreviewRenderState(
     private val y0: Int,
     private val x1: Int,
     private val y1: Int,
-    private val scissorArea: ScreenRectangle = ScreenRectangle(x0, y0, x1 - x0, y1 - y0)
+    private val scissorArea: ScreenRectangle = ScreenRectangle(x0, y0, x1 - x0, y1 - y0),
+    val textureKey: Any = TextureKey(multiblock, x0, y0, x1, y1)
 ) : PictureInPictureRenderState {
-    private val bounds = ScreenRectangle(x0, y0, x1 - x0, y1 - y0)
+    private val bounds = PictureInPictureRenderState.getBounds(x0, y0, x1, y1, scissorArea)
+        ?: ScreenRectangle.empty()
 
     override fun x0(): Int = x0
 
@@ -31,4 +33,12 @@ class MultiblockPreviewRenderState(
     override fun scissorArea(): ScreenRectangle = scissorArea
 
     override fun bounds(): ScreenRectangle = bounds
+
+    private data class TextureKey(
+        val multiblock: Multiblock,
+        val x0: Int,
+        val y0: Int,
+        val x1: Int,
+        val y1: Int
+    )
 }

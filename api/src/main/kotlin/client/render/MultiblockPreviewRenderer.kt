@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.api.client.render
 
+import com.algorithmlx.ecr.api.block.Multipart
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
@@ -9,8 +10,10 @@ import net.minecraft.client.renderer.block.BlockModelResolver
 import net.minecraft.client.renderer.block.model.BlockDisplayContext
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.core.BlockPos
+import net.minecraft.core.Direction
 import net.minecraft.util.LightCoordsUtil
 import net.minecraft.util.Mth
+import net.minecraft.world.level.block.state.BlockState
 import org.joml.Quaternionf
 import org.joml.Vector3f
 import kotlin.math.min
@@ -52,7 +55,8 @@ class MultiblockPreviewRenderer(
         bounds: MultiblockPreviewBounds,
         transform: MultiblockPreviewTransform
     ) {
-        val projected = projectedBounds(multiblock, transform)
+        val blocks = previewBlocks(multiblock, transform)
+        val projected = projectedBounds(multiblock, blocks, transform)
         val availableWidth = bounds.width.coerceAtLeast(1f)
         val availableHeight = bounds.height.coerceAtLeast(1f)
         val fittedScale = min(
@@ -76,6 +80,7 @@ class MultiblockPreviewRenderer(
 
     private fun projectedBounds(
         multiblock: Multiblock,
+        blocks: List<PreviewBlock>,
         transform: MultiblockPreviewTransform
     ): ProjectedBounds {
         val pivot = Vector3f(multiblock.xSize / 2f, 0f, multiblock.zSize / 2f)
@@ -87,28 +92,25 @@ class MultiblockPreviewRenderer(
         var maxY = Float.NEGATIVE_INFINITY
         var maxZ = Float.NEGATIVE_INFINITY
 
-        val (minVisibleY, maxVisibleY) = when {
-            transform.singleLayer -> {
-                val selected = transform.layer.coerceIn(0, multiblock.ySize - 1)
-                selected.toFloat() to (selected + 1).toFloat()
-            }
-            transform.layer != Int.MAX_VALUE -> 0f to (transform.layer.coerceIn(0, multiblock.ySize - 1) + 1).toFloat()
-            else -> 0f to multiblock.ySize.toFloat()
+        val visibleBlocks = blocks.ifEmpty {
+            listOf(PreviewBlock(BlockPos.ZERO, multiblock.getBlockState(BlockPos.ZERO)))
         }
 
-        for (x in floatArrayOf(0f, multiblock.xSize.toFloat())) {
-            for (y in floatArrayOf(minVisibleY, maxVisibleY)) {
-                for (z in floatArrayOf(0f, multiblock.zSize.toFloat())) {
-                    val point = Vector3f(x, y, z)
-                        .sub(pivot)
-                    rotation.transform(point)
-                    point.add(pivot)
-                    minX = minOf(minX, point.x)
-                    minY = minOf(minY, point.y)
-                    minZ = minOf(minZ, point.z)
-                    maxX = maxOf(maxX, point.x)
-                    maxY = maxOf(maxY, point.y)
-                    maxZ = maxOf(maxZ, point.z)
+        visibleBlocks.forEach { block ->
+            for (x in floatArrayOf(block.pos.x.toFloat(), block.pos.x + 1f)) {
+                for (y in floatArrayOf(block.pos.y.toFloat(), block.pos.y + 1f)) {
+                    for (z in floatArrayOf(block.pos.z.toFloat(), block.pos.z + 1f)) {
+                        val point = Vector3f(x, y, z)
+                            .sub(pivot)
+                        rotation.transform(point)
+                        point.add(pivot)
+                        minX = minOf(minX, point.x)
+                        minY = minOf(minY, point.y)
+                        minZ = minOf(minZ, point.z)
+                        maxX = maxOf(maxX, point.x)
+                        maxY = maxOf(maxY, point.y)
+                        maxZ = maxOf(maxZ, point.z)
+                    }
                 }
             }
         }
@@ -149,6 +151,13 @@ class MultiblockPreviewRenderer(
         submitter: SubmitNodeCollector,
         transform: MultiblockPreviewTransform
     ) {
+        val blocks = previewBlocks(multiblock, transform)
+        blocks.forEach { block ->
+            submitBlock(block, poseStack, submitter)
+        }
+    }
+
+    private fun previewBlocks(multiblock: Multiblock, transform: MultiblockPreviewTransform): List<PreviewBlock> {
         val layers = when {
             transform.singleLayer -> {
                 val selected = transform.layer.coerceIn(0, multiblock.ySize - 1)
@@ -158,22 +167,35 @@ class MultiblockPreviewRenderer(
             else -> 0..<multiblock.ySize
         }
 
-        for (y in layers) {
-            for (z in 0..<multiblock.zSize) {
-                for (x in 0..<multiblock.xSize) {
-                    submitBlock(multiblock, poseStack, submitter, BlockPos(x, y, z))
+        return buildList {
+            for (y in layers) {
+                for (z in 0..<multiblock.zSize) {
+                    for (x in 0..<multiblock.xSize) {
+                        val pos = BlockPos(x, y, z)
+                        val state = multiblock.getBlockState(pos)
+                        if (state.isAir) continue
+                        addAll(previewParts(pos, state))
+                    }
                 }
             }
         }
     }
 
+    private fun previewParts(pos: BlockPos, state: BlockState): List<PreviewBlock> {
+        val block = state.block
+        if (block is Multipart<*>) {
+            return block.getPreviewParts(pos, Direction.NORTH, state)
+                .map { (partPos, partState) -> PreviewBlock(partPos, partState) }
+        }
+        return listOf(PreviewBlock(pos, state))
+    }
+
     private fun submitBlock(
-        multiblock: Multiblock,
+        block: PreviewBlock,
         poseStack: PoseStack,
-        submitter: SubmitNodeCollector,
-        pos: BlockPos
+        submitter: SubmitNodeCollector
     ) {
-        val state = multiblock.getBlockState(pos)
+        val state = block.state
         if (state.isAir) return
 
         modelState.clear()
@@ -182,10 +204,12 @@ class MultiblockPreviewRenderer(
         if (modelState.isEmpty) return
 
         poseStack.pushPose()
-        poseStack.translate(pos.x.toFloat(), pos.y.toFloat(), pos.z.toFloat())
+        poseStack.translate(block.pos.x.toFloat(), block.pos.y.toFloat(), block.pos.z.toFloat())
         modelState.submit(poseStack, submitter, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, -1)
         poseStack.popPose()
     }
+
+    private data class PreviewBlock(val pos: BlockPos, val state: BlockState)
 }
 
 data class MultiblockPreviewBounds(

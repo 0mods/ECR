@@ -27,7 +27,7 @@ class MultiblockPreviewWidget(
         MultiblockPreviewGuiBridge.add(
             graphics,
             MultiblockPreviewRenderState(
-                 multiblock.apply { this.registryAccess = access },
+                multiblock.apply { this.registryAccess = access },
                 transform = transform,
                 x0 = x,
                 y0 = y,

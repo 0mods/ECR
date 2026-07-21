@@ -1,0 +1,11 @@
+type: ecreimagined:structure
+multiblock: ecreimagined:soul_stone
+structure_center: minecraft:emerald_block
+time: 40
+input: minecraft:emerald
+chance:
+  min: 6
+  max: 10
+result:
+  id: ecreimagined:soul_stone
+  count: 1

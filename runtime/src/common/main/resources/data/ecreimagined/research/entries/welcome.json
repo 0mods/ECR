@@ -1,0 +1,121 @@
+{
+  "title": {
+    "text": "Lorem Ipsum"
+  },
+  "description": "Lorem ipsum dolor sit amet",
+  "category": "ecreimagined:basics",
+  "icon": {
+    "item": "ecreimagined:research_book"
+  },
+  "tasks": [
+    {
+      "type": "open"
+    }
+  ],
+  "pages": [
+    {
+      "elements": [
+        {
+          "type": "text",
+          "text": {
+            "text": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+          }
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "item",
+          "item": "ecreimagined:research_book"
+        },
+        {
+          "type": "crafting",
+          "recipe": "minecraft:barrel",
+          "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "crafting",
+          "recipe": "minecraft:observer",
+          "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "multiblock",
+          "multiblock": "ecreimagined:mithriline_furnace",
+          "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "crafting",
+          "recipe": "minecraft:baked_potato_from_campfire_cooking",
+          "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "crafting",
+          "recipe": "minecraft:baked_potato_from_smoking",
+          "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "crafting",
+          "recipe": "minecraft:iron_ingot_from_smelting_iron_ore",
+          "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "crafting",
+          "recipe": "minecraft:iron_ingot_from_blasting_iron_ore",
+          "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "crafting",
+          "recipe": "minecraft:brick_stairs_from_bricks_stonecutting",
+          "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "crafting",
+          "recipe": "ecreimagined:soul_stone",
+          "align": "center"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "multiblock",
+          "multiblock": "ecreimagined:lightning_collector",
+          "align": "center"
+        }
+      ]
+    }
+  ]
+}
