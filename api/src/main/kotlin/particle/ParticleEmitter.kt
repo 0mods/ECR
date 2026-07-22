@@ -32,6 +32,7 @@ class ParticleEmitter(
 
     private var firedCreationEvents = false
     private var firedExpirationEvents = false
+    private var emissionStopped = false
     private var age: Float by variables.getOrPut("emitter_age", 0f)
     private var activeTime: Float by variables.getOrPut("emitter_lifetime", 0f)
     private var sleepTime = 0f
@@ -45,6 +46,8 @@ class ParticleEmitter(
     }
 
     fun startLoop(timeSince: Float) {
+        if (emissionStopped) return
+
         for (i in 1..4) variables["emitter_random_$i"] = system.random.nextFloat()
 
         age = 0f
@@ -67,9 +70,17 @@ class ParticleEmitter(
         nextTimelineEvent = components.emitterLifetimeEvents.timeline.lowestEntry()
     }
 
+    fun stopLoop() {
+        emissionStopped = true
+    }
+
     fun update(dt: Float): Boolean {
-        val alive = updateEmitter(dt.coerceAtLeast(0f))
-        if (!alive && !firedExpirationEvents) {
+        val safeDt = dt.coerceAtLeast(0f)
+        if (!emissionStopped && !updateEmitter(safeDt)) {
+            emissionStopped = true
+        }
+
+        if (emissionStopped && !firedExpirationEvents) {
             firedExpirationEvents = true
             fire(0f, components.emitterLifetimeEvents.expirationEvents, null)
         }
@@ -77,12 +88,12 @@ class ParticleEmitter(
         val iterator = particles.iterator()
         while (iterator.hasNext()) {
             val particle = iterator.next()
-            if (!particle.update(dt)) {
+            if (!particle.update(safeDt)) {
                 onRemove(particle)
                 iterator.remove()
             }
         }
-        return alive
+        return !emissionStopped || particles.isNotEmpty()
     }
 
     private fun updateEmitter(dt: Float): Boolean {
