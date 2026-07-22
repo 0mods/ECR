@@ -1,4 +1,4 @@
-    plugins {
+plugins {
     java
     id("dev.architectury.loom-no-remap")
     kotlin("jvm")

@@ -58,7 +58,12 @@ interface MRUDevice {
         /**
          * Represents an entity that can both send and receive MRU universally.
          */
-        IO;
+        IO,
+
+        /**
+         * Represents an entity that can be bounded but can not translate MRU.
+         */
+        CONNECTABLE_RECEIVER;
 
         /**
          * Determines if this holder is capable of exporting MRU.
@@ -80,6 +85,8 @@ interface MRUDevice {
          * @return `true` if this type is either [RECEIVER] or [IO], otherwise `false`.
          */
         val isReceiver: Boolean get() = this == RECEIVER || this.isUniversal
+
+        val isConnectable: Boolean get() = this == CONNECTABLE_RECEIVER || this.isExporter
     }
 
     /**

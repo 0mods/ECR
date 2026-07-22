@@ -1,0 +1,70 @@
+package com.algorithmlx.ecr.client.book.renderer
+
+import com.algorithmlx.ecr.api.client.research.BookElementRenderContext
+import com.algorithmlx.ecr.api.client.research.BookElementRenderers
+import com.algorithmlx.ecr.api.client.research.BookRecipeRenderers
+import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.research.*
+import com.algorithmlx.ecr.api.research.content.BlockBookElement
+import com.algorithmlx.ecr.api.research.content.ItemBookElement
+import com.algorithmlx.ecr.api.research.content.MultiblockBookElement
+import com.algorithmlx.ecr.api.research.content.TextBookElement
+import com.algorithmlx.ecr.client.book.BookLinkedTextLayout
+import com.algorithmlx.ecr.client.book.controller.MultiblockBookPreviewController
+import com.algorithmlx.ecr.client.book.recipe.mod.MithrilineFurnaceRenderer
+import com.algorithmlx.ecr.client.book.recipe.mod.StructureRecipeRenderer
+import com.algorithmlx.ecr.client.book.recipe.vanilla.CookingRecipeRenderer
+import com.algorithmlx.ecr.client.book.recipe.vanilla.CraftingTableRecipeRenderer
+import com.algorithmlx.ecr.client.book.recipe.vanilla.StonecutterRecipeRenderer
+import com.algorithmlx.ecr.registry.RecipeTypeRegistry
+import net.minecraft.client.Minecraft
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.crafting.RecipeType
+
+object BookDefaultRenderers {
+    private var initialized = false
+
+    fun init() {
+        if (initialized) return
+        initialized = true
+        BookElementRenderers.register(ResearchIds.TEXT, ::renderText)
+        BookElementRenderers.register(ResearchIds.ITEM, ::renderItem)
+        BookElementRenderers.register(ResearchIds.BLOCK, ::renderBlock)
+        BookElementRenderers.register(ResearchIds.MULTIBLOCK, ::renderMultiblock)
+        BookElementRenderers.register(ResearchIds.CRAFTING, BookRecipeElementRenderer::render)
+        BookElementRenderers.register(ResearchIds.TASK_LIST, BookTaskRenderer::render)
+
+        BookRecipeRenderers.register(RecipeType.CRAFTING, CraftingTableRecipeRenderer)
+        BookRecipeRenderers.register(RecipeType.SMELTING, CookingRecipeRenderer.Smelting)
+        BookRecipeRenderers.register(RecipeType.BLASTING, CookingRecipeRenderer.Blasting)
+        BookRecipeRenderers.register(RecipeType.SMOKING, CookingRecipeRenderer.Smoking)
+        BookRecipeRenderers.register(RecipeType.CAMPFIRE_COOKING, CookingRecipeRenderer.CampfireCooking)
+        BookRecipeRenderers.register(RecipeType.STONECUTTING, StonecutterRecipeRenderer)
+        BookRecipeRenderers.register(RecipeTypeRegistry.instance.mithrilineFurnace, MithrilineFurnaceRenderer)
+        BookRecipeRenderers.register(RecipeTypeRegistry.instance.structure, StructureRecipeRenderer)
+    }
+
+    private fun renderText(context: BookElementRenderContext, element: TextBookElement) {
+        BookLinkedTextLayout.render(context, element)
+    }
+
+    private fun renderItem(context: BookElementRenderContext, element: ItemBookElement) {
+        val item = BuiltInRegistries.ITEM.getOptional(element.item).orElse(null) ?: return
+        val stack = ItemStack(item, element.count)
+        context.graphics.item(stack, context.x, context.y)
+        if (element.count > 1) context.graphics.itemDecorations(Minecraft.getInstance().font, stack, context.x, context.y)
+    }
+
+    private fun renderBlock(context: BookElementRenderContext, element: BlockBookElement) {
+        val block = BuiltInRegistries.BLOCK.getOptional(element.block).orElse(null) ?: return
+        context.graphics.item(ItemStack(block.asItem()), context.x, context.y)
+    }
+
+    private fun renderMultiblock(context: BookElementRenderContext, element: MultiblockBookElement) {
+        val multiblock = ECRegistries.MULTIBLOCK.getOptional(element.multiblock).orElse(null) ?: return
+        val access = Minecraft.getInstance().level?.registryAccess() ?: return
+        multiblock.registryAccess = access
+        MultiblockBookPreviewController.render(context, element, multiblock)
+    }
+}

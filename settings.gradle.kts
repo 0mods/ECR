@@ -8,32 +8,18 @@ pluginManagement {
         maven("https://maven.architectury.dev")
         maven("https://maven.minecraftforge.net")
         maven("https://maven.neoforged.net/releases/")
-        maven("https://maven.msrandom.net/repository/cloche")
     }
 
     val kotlinVersion = providers.gradleProperty("libs.kotlin").get()
     val architecturyLoom = providers.gradleProperty("plugins.architectury_loom").get()
-    val cloche = providers.gradleProperty("plugins.cloche").get()
     val modPublishPlugin = providers.gradleProperty("plugins.mod_publish_plugin").get()
-    val jvmVirtualSourceSets = providers.gradleProperty("libs.jvm_virtual_source_sets").get()
-
-    resolutionStrategy {
-        eachPlugin {
-            if (requested.id.id == "net.msrandom.virtual-source-sets") {
-                useModule("net.msrandom:jvm-virtual-source-sets:$jvmVirtualSourceSets")
-            }
-        }
-    }
 
     plugins {
         kotlin("jvm") version kotlinVersion
         kotlin("plugin.serialization") version kotlinVersion
         id("dev.architectury.loom-no-remap") version architecturyLoom
-        id("earth.terrarium.cloche") version cloche
         id("me.modmuss50.mod-publish-plugin") version modPublishPlugin
         id("team.0mods.yaml2json") version "1.0.0"
-        id("net.msrandom.virtual-source-sets") version jvmVirtualSourceSets
-        kotlin("kapt") version "2.3.20"
     }
 }
 
@@ -46,5 +32,7 @@ rootProject.name = archivesName
 
 include(
     "api",
+    "bootstrap-fabric",
+    "bootstrap-neoforge",
     "runtime"
 )

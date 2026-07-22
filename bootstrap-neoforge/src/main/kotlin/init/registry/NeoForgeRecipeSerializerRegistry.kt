@@ -1,0 +1,32 @@
+package com.algorithmlx.ecr.neoforge.init.registry
+
+import com.algorithmlx.ecr.api.ModId
+import com.algorithmlx.ecr.common.init.ECRModIDs
+import com.algorithmlx.ecr.common.recipe.*
+import com.algorithmlx.ecr.registry.RecipeSerializerRegistry
+import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.world.item.crafting.RecipeSerializer
+import net.neoforged.bus.api.IEventBus
+import net.neoforged.neoforge.registries.DeferredRegister
+
+object NeoForgeRecipeSerializerRegistry : RecipeSerializerRegistry {
+    private val recipeSerializers = DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, ModId)
+
+    fun init(bus: IEventBus) {
+        recipeSerializers.register(bus)
+    }
+
+    private val mithrilineFurnaceSerializer = recipeSerializers.register(ECRModIDs.MITHRILINE_FURNACE) { _ ->
+        RecipeSerializer(MithrilineFurnaceRecipe.CODEC, MithrilineFurnaceRecipe.STREAM_CODEC)
+    }
+    private val structureRecipe = recipeSerializers.register(ECRModIDs.STRUCTURE) { _ ->
+        RecipeSerializer(StructureRecipe.CODEC, StructureRecipe.STREAM_CODEC)
+    }
+    private val magicTableRecipe = recipeSerializers.register(ECRModIDs.MAGIC_TABLE) { _ ->
+        RecipeSerializer(MagicTableRecipe.CODEC, MagicTableRecipe.STREAM_CODEC)
+    }
+
+    override val mithrilineFurnace: RecipeSerializer<MithrilineFurnaceRecipe> by lazy { mithrilineFurnaceSerializer.get() }
+    override val structure: RecipeSerializer<StructureRecipe> by lazy { structureRecipe.get() }
+    override val magicTable: RecipeSerializer<MagicTableRecipe> by lazy { magicTableRecipe.get() }
+}
