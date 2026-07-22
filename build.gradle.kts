@@ -20,12 +20,12 @@ subprojects {
     plugins.apply("idea")
 
     tasks.withType<JavaCompile>().configureEach {
-        sourceCompatibility = JavaVersion.VERSION_24.toString()
-        targetCompatibility = JavaVersion.VERSION_24.toString()
+        sourceCompatibility = JavaVersion.VERSION_25.toString()
+        targetCompatibility = JavaVersion.VERSION_25.toString()
     }
 
     tasks.withType<KotlinJvmCompile>().configureEach {
-        compilerOptions.jvmTarget.set(JvmTarget.JVM_24)
+        compilerOptions.jvmTarget.set(JvmTarget.JVM_25)
     }
 
     idea {

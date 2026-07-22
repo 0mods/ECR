@@ -21,7 +21,6 @@ val modGroupValue = providers.gradleProperty("mod.group").get()
 val modNameValue = providers.gradleProperty("mod.name").get()
 val modLicenseValue = providers.gradleProperty("mod.license").get()
 val kotlinVersion = providers.gradleProperty("libs.kotlin").get()
-val kotlinRuntimeVersion = providers.gradleProperty("libs.kotlin_runtime").get()
 val kotlinSerializationVersion = libs.versions.kotlin.serialization.get()
 val kotlinCoroutinesVersion = libs.versions.kotlin.coroutines.get()
 val fabricApiBaseVersion = libs.versions.fabric.api.get().substringBefore('+')
@@ -91,7 +90,7 @@ cloche {
 
         dependencies {
             implementation(project(":api"))
-            modImplementation("dev.nyon:KotlinLangForge:$klfVersion-k$kotlinRuntimeVersion-$klfLoaderVersion+neoforge")
+            modImplementation("dev.nyon:KotlinLangForge:$klfVersion-k$kotlinVersion-$klfLoaderVersion+neoforge")
         }
 
         metadata {
@@ -242,7 +241,7 @@ tasks.named("assemble") {
 
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_24)
+        jvmTarget.set(JvmTarget.JVM_25)
 
         freeCompilerArgs.addAll(
             "-Xmulti-platform",
