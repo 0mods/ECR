@@ -4,6 +4,9 @@ import com.algorithmlx.ecr.api.mru.MRUDevice
 import com.algorithmlx.ecr.api.recipe.CachedRecipe
 import com.algorithmlx.ecr.api.utils.StackHelper
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
+import com.algorithmlx.ecr.api.particle.BedrockParticles
+import com.algorithmlx.ecr.api.particle.ClientParticleSystems
+import com.algorithmlx.ecr.api.particle.Transform
 import com.algorithmlx.ecr.api.utils.count
 import com.algorithmlx.ecr.common.api.block.entity.SynchronizedContainerBlockEntity
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
@@ -28,6 +31,8 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
+import org.joml.Quaternionf
+import org.joml.Vector3f
 import kotlin.math.floor
 
 class MithrilineFurnaceEntity(
@@ -63,6 +68,15 @@ class MithrilineFurnaceEntity(
     // Client Only
     var coreRotationPrevious = 0f
     var coreRotationAngle = 0f
+    var snowstormStarted = false
+    private val snowstormTransform = object : Transform {
+        override val parent: Transform? = null
+        override val isValid: Boolean get() = !isRemoved
+        override val position: Vector3f
+            get() = Vector3f(blockPos.x + 0.5f, blockPos.y + 0.5f, blockPos.z + 0.5f)
+        override val rotation: Quaternionf get() = Quaternionf()
+        override val velocity: Vector3f get() = Vector3f()
+    }
 
     override fun saveAdditional(output: ValueOutput) {
         ContainerHelper.saveAllItems(output, this.items)
@@ -132,6 +146,11 @@ class MithrilineFurnaceEntity(
 
             if (level.isClientSide) {
                 be.processRotation()
+                if (!be.snowstormStarted) {
+                    val particle = BedrockParticles["ecreimagined:mithriline_furnace"] ?: return
+                    ClientParticleSystems.system(level).spawn(particle, transform = be.snowstormTransform)
+                    be.snowstormStarted = true
+                }
                 return
             }
 

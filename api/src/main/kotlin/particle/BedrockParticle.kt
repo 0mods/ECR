@@ -46,6 +46,7 @@ class BedrockParticle(
         get() = if (localSpace == null) Vector3f(velocity) else Vector3f(velocity).rotate(localSpace.rotation)
 
     private val emitterRotationOnEmit = Quaternionf(emitter.rotation)
+    private val emitterPositionOnEmit = Vector3f(emitter.position)
     private var rotationAngle = components.particleInitialSpin?.rotation?.eval(molang) ?: 0f
     private var rotationRate = components.particleInitialSpin?.rotationRate?.eval(molang) ?: 0f
 
@@ -165,6 +166,7 @@ class BedrockParticle(
 
         components.particleMotionParametric?.let {
             position.set(it.relativePosition.eval(molang))
+            if (localSpace == null) position.add(emitterPositionOnEmit)
             rotationAngle = it.rotation.eval(molang)
             it.direction?.let { expression ->
                 direction.set(expression.eval(molang))
