@@ -7,6 +7,9 @@ import com.algorithmlx.ecr.api.research.ResearchNetwork
 import com.algorithmlx.ecr.api.research.ResearchProgressPayload
 import com.algorithmlx.ecr.api.research.ResearchSyncPayload
 import com.algorithmlx.ecr.api.research.UpdateBookViewPayload
+import com.algorithmlx.ecr.api.particle.BedrockParticleRenderTypes
+import com.algorithmlx.ecr.api.particle.BedrockParticles
+import com.algorithmlx.ecr.api.particle.ClientParticleSystems
 import com.algorithmlx.ecr.client.book.ResearchBookClient
 import com.algorithmlx.ecr.client.renderer.MatrixDestructorRenderer
 import com.algorithmlx.ecr.client.renderer.MithrilineFurnaceRenderer
@@ -22,15 +25,21 @@ import com.algorithmlx.ecr.network.BoundGemTooltipResponsePayload
 import com.algorithmlx.ecr.network.FinishCraftParticle
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
 import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
+import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers
 import net.minecraft.core.particles.ParticleTypes
+import net.minecraft.server.packs.PackType
+import com.algorithmlx.ecr.api.utils.rl
 import kotlin.random.Random
 
 object FabricClientInit {
     @JvmStatic
     fun init() {
+        registerBedrockParticles()
         registerReceivers()
 
         MultiblockPreviewGuiBridgeInit.init()
@@ -44,6 +53,27 @@ object FabricClientInit {
         MenuScreens.register(MenuTypeRegistry.mithrilineFurnace, ::MithrilineFurnaceScreen)
         MenuScreens.register(MenuTypeRegistry.magicTable, ::MagicTableMenuScreen)
         MenuScreens.register(MenuTypeRegistry.matrixDestructor, ::MatrixDestructorScreen)
+    }
+
+    private fun registerBedrockParticles() {
+        BedrockParticleRenderTypes.init()
+        ResourceLoader.get(PackType.CLIENT_RESOURCES)
+            .registerReloadListener("ecreimagined:bedrock_particles".rl, BedrockParticles)
+        ClientTickEvents.END_LEVEL_TICK.register { level ->
+            ClientParticleSystems.get(level)?.update()
+        }
+        LevelRenderEvents.COLLECT_SUBMITS.register { context ->
+            val minecraft = Minecraft.getInstance()
+            val level = minecraft.level ?: return@register
+            val poseStack = context.poseStack() ?: return@register
+            ClientParticleSystems.get(level)?.submit(
+                poseStack,
+                context.submitNodeCollector(),
+                context.levelState(),
+                minecraft.player?.uuid,
+                minecraft.options.cameraType.isFirstPerson,
+            )
+        }
     }
 
     private fun registerReceivers() {

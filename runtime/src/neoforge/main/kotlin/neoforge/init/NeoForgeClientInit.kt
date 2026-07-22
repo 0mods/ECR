@@ -3,7 +3,12 @@ package com.algorithmlx.ecr.neoforge.init
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewGuiBridge
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewPictureRenderer
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewRenderState
+import com.algorithmlx.ecr.api.particle.BedrockParticleRenderTypes
+import com.algorithmlx.ecr.api.particle.BedrockParticles
+import com.algorithmlx.ecr.api.particle.ClientParticleSystems
 import com.algorithmlx.ecr.api.research.*
+import com.algorithmlx.ecr.api.utils.ecRL
+import com.algorithmlx.ecr.api.utils.rl
 import com.algorithmlx.ecr.client.book.ResearchBookClient
 import com.algorithmlx.ecr.client.renderer.MatrixDestructorRenderer
 import com.algorithmlx.ecr.client.renderer.MithrilineFurnaceRenderer
@@ -22,16 +27,22 @@ import net.minecraft.core.particles.ParticleTypes
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
 import net.neoforged.neoforge.client.event.EntityRenderersEvent
+import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent
+import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 import net.neoforged.neoforge.client.event.RegisterPictureInPictureRenderersEvent
+import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent
 import net.neoforged.neoforge.client.network.ClientPacketDistributor
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent
+import net.neoforged.neoforge.common.NeoForge
 import kotlin.random.Random
 
 object NeoForgeClientInit {
     fun init(bus: IEventBus) {
+        BedrockParticleRenderTypes.init()
         MultiblockPreviewGuiBridge.install(GuiGraphicsExtractor::submitPictureInPictureRenderState)
         bus.addListener(::onRegisterPIPRenders)
+        bus.addListener(::onRegisterClientReloadListeners)
 
         bus.addListener(::onRegisterClientPayloads)
         bus.addListener(::onClientInit)
@@ -39,6 +50,29 @@ object NeoForgeClientInit {
 
         bus.addListener(::onRegisterEntityModelLayer)
         bus.addListener(::onRegisterEntityRenderers)
+
+        NeoForge.EVENT_BUS.addListener(::onClientTick)
+        NeoForge.EVENT_BUS.addListener(::onSubmitParticleGeometry)
+    }
+
+    private fun onRegisterClientReloadListeners(event: AddClientReloadListenersEvent) {
+        event.addListener("bedrock_particles".ecRL, BedrockParticles)
+    }
+
+    private fun onClientTick(event: ClientTickEvent.Post) {
+        Minecraft.getInstance().level?.let { ClientParticleSystems.get(it)?.update() }
+    }
+
+    private fun onSubmitParticleGeometry(event: SubmitCustomGeometryEvent) {
+        val minecraft = Minecraft.getInstance()
+        val level = minecraft.level ?: return
+        ClientParticleSystems.get(level)?.submit(
+            event.poseStack,
+            event.submitNodeCollector,
+            event.levelRenderState,
+            minecraft.player?.uuid,
+            minecraft.options.cameraType.isFirstPerson,
+        )
     }
 
     private fun onClientInit(event: FMLClientSetupEvent) {
