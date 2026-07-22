@@ -162,7 +162,7 @@ class ParticleEmitter(
         system.billboardRenderPasses.getOrPut(renderPass, ::linkedSetOf).add(particle)
     }
 
-    internal fun onRemove(particle: BedrockParticle) {
+    fun onRemove(particle: BedrockParticle) {
         val renderPass = effect.renderPass ?: return
         val renderPassSet = system.billboardRenderPasses[renderPass] ?: return
         renderPassSet.remove(particle)
@@ -184,22 +184,22 @@ class ParticleEmitter(
         }
     }
 
-    internal fun fire(timeSince: Float, events: List<String>, particle: BedrockParticle?) =
+    fun fire(timeSince: Float, events: List<String>, particle: BedrockParticle?) =
         events.forEach { fire(timeSince, it, particle) }
 
-    private fun fire(timeSince: Float, eventName: String, particle: BedrockParticle?) {
+    fun fire(timeSince: Float, eventName: String, particle: BedrockParticle?) {
         effect.events[eventName]?.let { fire(timeSince, it, particle) }
     }
 
-    private fun fire(timeSince: Float, event: BedrockParticleFile.Event, particle: BedrockParticle?) {
+    fun fire(timeSince: Float, event: BedrockParticleFile.Event, particle: BedrockParticle?) {
         event.sequence?.forEach { fire(timeSince, it, particle) }
 
         event.randomize?.let { options ->
             var choice = system.random.nextDouble() * options.sumOf { it.weight.toDouble() }
-            for (option in options) {
-                choice -= option.weight
+            for ((weight, value) in options) {
+                choice -= weight
                 if (choice <= 0.0) {
-                    fire(timeSince, option.value, particle)
+                    fire(timeSince, value, particle)
                     break
                 }
             }

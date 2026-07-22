@@ -98,10 +98,12 @@ class ParticleSystem(
         poseStack: PoseStack,
         collector: SubmitNodeCollector,
         levelRenderState: LevelRenderState,
+        partialTick: Float,
         cameraUuid: UUID?,
         firstPerson: Boolean,
     ) {
         if (billboardRenderPasses.isEmpty()) return
+        val renderProgress = partialTick.coerceIn(0f, 1f)
         val camera = levelRenderState.cameraRenderState
         val cameraPosition = Vector3f(camera.pos.x.toFloat(), camera.pos.y.toFloat(), camera.pos.z.toFloat())
         val cameraRotation = Quaternionf(camera.orientation)
@@ -114,9 +116,24 @@ class ParticleSystem(
                 .sortedBy { it.key.material.needsSorting }
                 .forEach { (renderPass, particles) ->
                     var quads = particles.asSequence()
-                        .filter { camera.cullFrustum.pointInFrustum(it.globalPosition.x.toDouble(), it.globalPosition.y.toDouble(), it.globalPosition.z.toDouble()) }
-                        .mapNotNull {
-                            it.extractBillboard(cameraPosition, cameraRotation, cameraFacing, cameraUuid, firstPerson)
+                        .mapNotNull { particle ->
+                            val worldPosition = particle.interpolatedGlobalPosition(renderProgress)
+                            if (!camera.cullFrustum.pointInFrustum(
+                                    worldPosition.x.toDouble(),
+                                    worldPosition.y.toDouble(),
+                                    worldPosition.z.toDouble(),
+                                )
+                            ) return@mapNotNull null
+
+                            particle.extractBillboard(
+                                worldPosition,
+                                renderProgress,
+                                cameraPosition,
+                                cameraRotation,
+                                cameraFacing,
+                                cameraUuid,
+                                firstPerson,
+                            )
                         }
                         .toList()
                     if (renderPass.material.needsSorting) quads = quads.sortedByDescending(ParticleQuad::distance)

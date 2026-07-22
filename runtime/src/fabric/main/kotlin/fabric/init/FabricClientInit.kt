@@ -70,6 +70,7 @@ object FabricClientInit {
                 poseStack,
                 context.submitNodeCollector(),
                 context.levelState(),
+                minecraft.deltaTracker.getGameTimeDeltaPartialTick(false),
                 minecraft.player?.uuid,
                 minecraft.options.cameraType.isFirstPerson,
             )

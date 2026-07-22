@@ -70,6 +70,7 @@ object NeoForgeClientInit {
             event.poseStack,
             event.submitNodeCollector,
             event.levelRenderState,
+            minecraft.deltaTracker.getGameTimeDeltaPartialTick(false),
             minecraft.player?.uuid,
             minecraft.options.cameraType.isFirstPerson,
         )

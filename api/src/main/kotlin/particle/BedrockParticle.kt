@@ -49,6 +49,9 @@ class BedrockParticle(
     private val emitterPositionOnEmit = Vector3f(emitter.position)
     private var rotationAngle = components.particleInitialSpin?.rotation?.eval(molang) ?: 0f
     private var rotationRate = components.particleInitialSpin?.rotationRate?.eval(molang) ?: 0f
+    private val previousPosition = Vector3f()
+    private var previousRotationAngle = rotationAngle
+    private var interpolationInitialized = false
 
     init {
         for (i in 1..4) variables["particle_random_$i"] = emitter.system.random.nextFloat()
@@ -142,6 +145,11 @@ class BedrockParticle(
     }
 
     fun update(dt: Float): Boolean {
+        if (interpolationInitialized) {
+            previousPosition.set(position)
+            previousRotationAngle = rotationAngle
+        }
+
         if (!firedCreationEvents) {
             firedCreationEvents = true
             emitter.fire(dt, components.particleLifetimeEvents.creationEvents, this)
@@ -150,6 +158,12 @@ class BedrockParticle(
         if (!alive && !firedExpirationEvents) {
             firedExpirationEvents = true
             emitter.fire(0f, components.particleLifetimeEvents.expirationEvents, this)
+        }
+
+        if (!interpolationInitialized) {
+            previousPosition.set(position)
+            previousRotationAngle = rotationAngle
+            interpolationInitialized = true
         }
         return alive
     }
@@ -266,7 +280,15 @@ class BedrockParticle(
         return move(postDt, accelerationInPlane, iteration + 1, true)
     }
 
+    internal fun interpolatedGlobalPosition(partialTick: Float): Vector3f {
+        val interpolatedPosition = Vector3f(previousPosition).lerp(position, partialTick)
+        return if (localSpace == null) interpolatedPosition
+        else interpolatedPosition.rotate(localSpace.rotation).add(localSpace.position)
+    }
+
     internal fun extractBillboard(
+        worldPosition: Vector3f,
+        partialTick: Float,
         cameraPosition: Vector3fc,
         cameraRotation: Quaternionf,
         cameraFacing: Vector3fc,
@@ -280,8 +302,8 @@ class BedrockParticle(
         val appearance = components.particleAppearanceBillboard ?: return null
         components.particleInitialization?.perRenderExpression?.eval(molang)
 
-        val worldPosition = globalPosition
-        val rotation = billboardRotation(appearance, worldPosition, cameraPosition, cameraRotation)
+        val renderRotationAngle = lerpDegrees(previousRotationAngle, rotationAngle, partialTick)
+        val rotation = billboardRotation(appearance, worldPosition, cameraPosition, cameraRotation, renderRotationAngle)
         val size = appearance.size.eval(molang)
         val textureSize = Vector2f(appearance.uv.textureWidth.toFloat(), appearance.uv.textureHeight.toFloat())
         var minUv: Vector2f
@@ -337,6 +359,7 @@ class BedrockParticle(
         worldPosition: Vector3fc,
         cameraPosition: Vector3fc,
         cameraRotation: Quaternionf,
+        renderRotationAngle: Float,
     ): Quaternionf {
         fun computedDirection(): Vector3f {
             val localDirection = when (val value = appearance.direction) {
@@ -381,8 +404,15 @@ class BedrockParticle(
             ParticleComponents.ParticleBillboard.FacingCameraMode.EMITTER_TRANSFORM_YZ ->
                 Quaternionf(localSpace?.rotation ?: emitterRotationOnEmit).mul(Quaternionf().rotationY(-PI.toFloat() / 2f))
         }
-        if (rotationAngle != 0f) result.mul(Quaternionf().rotationZ(Math.toRadians(-rotationAngle.toDouble()).toFloat()))
+        if (renderRotationAngle != 0f) {
+            result.mul(Quaternionf().rotationZ(Math.toRadians(-renderRotationAngle.toDouble()).toFloat()))
+        }
         return result
+    }
+
+    private fun lerpDegrees(start: Float, end: Float, progress: Float): Float {
+        val delta = ((end - start + 180f) % 360f + 360f) % 360f - 180f
+        return start + delta * progress
     }
 }
 
