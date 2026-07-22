@@ -1,14 +1,19 @@
 package com.algorithmlx.ecr.common.block.entity
 
+import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.mru.MRUDevice
 import com.algorithmlx.ecr.api.recipe.CachedRecipe
 import com.algorithmlx.ecr.api.utils.StackHelper
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.api.particle.BedrockParticles
 import com.algorithmlx.ecr.api.particle.ClientParticleSystems
+import com.algorithmlx.ecr.api.particle.ParticleEmitter
 import com.algorithmlx.ecr.api.particle.Transform
 import com.algorithmlx.ecr.api.utils.count
+import com.algorithmlx.ecr.api.utils.ecPrefix
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.api.block.entity.SynchronizedContainerBlockEntity
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.BlockRegistry
 import com.algorithmlx.ecr.registry.MRUTypeRegistry
@@ -68,12 +73,12 @@ class MithrilineFurnaceEntity(
     // Client Only
     var coreRotationPrevious = 0f
     var coreRotationAngle = 0f
-    var snowstormStarted = false
+    private val snowstormEmitters = mutableListOf<ParticleEmitter>()
     private val snowstormTransform = object : Transform {
         override val parent: Transform? = null
         override val isValid: Boolean get() = !isRemoved
         override val position: Vector3f
-            get() = Vector3f(blockPos.x + 0.5f, blockPos.y + 0.5f, blockPos.z + 0.5f)
+            get() = Vector3f(blockPos.x + 0.5F, blockPos.y + 0.15F, blockPos.z + 0.5F)
         override val rotation: Quaternionf get() = Quaternionf()
         override val velocity: Vector3f get() = Vector3f()
     }
@@ -145,12 +150,22 @@ class MithrilineFurnaceEntity(
             }
 
             if (level.isClientSide) {
+                val system = ClientParticleSystems.system(level)
+                val activeId = "${ECRModIDs.MITHRILINE_FURNACE}/active".ecPrefix
+                val activeLeftId = "${ECRModIDs.MITHRILINE_FURNACE}/active_left".ecPrefix
+
                 be.processRotation()
-                if (!be.snowstormStarted) {
-                    val particle = BedrockParticles["ecreimagined:mithriline_furnace"] ?: return
-                    ClientParticleSystems.system(level).spawn(particle, transform = be.snowstormTransform)
-                    be.snowstormStarted = true
+                if (be.snowstormEmitters.isEmpty() && be.structureIsValid) {
+                    val active = BedrockParticles[activeId] ?: return
+                    val activeLeft = BedrockParticles[activeLeftId] ?: return
+
+                    be.snowstormEmitters += system.spawn(active, transform = be.snowstormTransform)
+                    be.snowstormEmitters += system.spawn(activeLeft, transform = be.snowstormTransform)
+                } else if (!be.structureIsValid && be.snowstormEmitters.isNotEmpty()) {
+                    be.snowstormEmitters.forEach { it.stopLoop() }
+                    be.snowstormEmitters.clear()
                 }
+
                 return
             }
 
