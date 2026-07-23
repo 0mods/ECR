@@ -10,10 +10,10 @@ import net.minecraft.world.item.ItemStack
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
 
-object NeoForgeCreativeTabRegistry : CreativeTabRegistry {
+class NeoForgeCreativeTabRegistry(bus: IEventBus): CreativeTabRegistry {
     private val creativeTabs = DeferredRegister.create(BuiltInRegistries.CREATIVE_MODE_TAB, ModId)
 
-    fun init(bus: IEventBus) {
+    init {
         creativeTabs.register(bus)
     }
 

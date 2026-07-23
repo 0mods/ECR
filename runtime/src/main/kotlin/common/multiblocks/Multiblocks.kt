@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.common.multiblocks
 
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.algorithmlx.ecr.api.multiblock.MultiblockMatcher
+import com.algorithmlx.ecr.common.init.ECTags
 import com.algorithmlx.ecr.registry.BlockRegistry
 import net.minecraft.tags.BlockTags
 import net.minecraft.world.level.block.Blocks
@@ -128,6 +129,17 @@ object LightningCollector: Multiblock(11, 11, 4, {
         null, mithrilineCrystal, null, null, null, null, null, null, null, mithrilineCrystal, null,
         null, null, null, null, null, null, null, null, null, null, null,
     )
+})
+
+object EnrichmentChamber: Multiblock(128, 128, 128, {
+    val frame = this.tag(ECTags.Blocks.ENRICHMENT_CHAMBER)
+    val air = this.block(Blocks.AIR.defaultBlockState())
+    this.scalablePattern(2 ..< 64) {
+        when {
+            isBoundary -> frame
+            else -> air
+        }
+    }
 })
 
 private fun Multiblock.makeRecipeMB(left: MultiblockMatcher, center: MultiblockMatcher) {

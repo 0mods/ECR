@@ -22,10 +22,10 @@ import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredItem
 import net.neoforged.neoforge.registries.DeferredRegister
 
-object NeoForgeItemRegistry : ItemRegistry {
+class NeoForgeItemRegistry(bus: IEventBus): ItemRegistry {
     private val items = DeferredRegister.createItems(ModId)
 
-    fun init(bus: IEventBus) {
+    init {
         items.register(bus)
     }
 

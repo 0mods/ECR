@@ -48,7 +48,13 @@ class StructureRecipe(
             "Item result and block place is not present. One of values must exists."
         }
         require(!(result.isPresent && blockForPlace != null)) { "Item result and block place cannot be specified at the same time." }
-        require(structureCenter == null || multiblock.blocks.map { it.default() }.any { it.`is`(structureCenter) }) {
+        require(
+            structureCenter == null ||
+                multiblock.variants.asSequence()
+                    .flatMap { it.blocks.asSequence() }
+                    .map { it.default() }
+                    .any { it.`is`(structureCenter) }
+        ) {
             "Structure center is not contains in ${ECRegistries.MULTIBLOCK.getKey(multiblock)}"
         }
     }

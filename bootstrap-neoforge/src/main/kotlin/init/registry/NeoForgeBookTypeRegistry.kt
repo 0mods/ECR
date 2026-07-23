@@ -9,10 +9,10 @@ import net.minecraft.resources.ResourceKey
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
 
-object NeoForgeBookTypeRegistry : BookTypeRegistry {
+class NeoForgeBookTypeRegistry(bus: IEventBus): BookTypeRegistry {
     private val bookTypes = DeferredRegister.create(ECRegistries.BOOK_TYPES, ModId)
 
-    fun init(bus: IEventBus) {
+    init {
         bookTypes.register(bus)
     }
 

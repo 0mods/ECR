@@ -10,10 +10,10 @@ import net.minecraft.world.level.block.entity.BlockEntityType
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
 
-object NeoForgeBlockEntityTypeRegistry : BlockEntityTypeRegistry {
+class NeoForgeBlockEntityTypeRegistry(bus: IEventBus): BlockEntityTypeRegistry {
     private val blockEntityType = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, ModId)
 
-    fun init(bus: IEventBus) {
+    init {
         blockEntityType.register(bus)
     }
 

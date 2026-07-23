@@ -11,10 +11,10 @@ import net.minecraft.world.item.crafting.RecipeType
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
 
-object NeoForgeRecipeTypeRegistry : RecipeTypeRegistry {
+class NeoForgeRecipeTypeRegistry(bus: IEventBus): RecipeTypeRegistry {
     private val recipeTypes = DeferredRegister.create(BuiltInRegistries.RECIPE_TYPE, ModId)
 
-    fun init(bus: IEventBus) {
+    init {
         recipeTypes.register(bus)
     }
 

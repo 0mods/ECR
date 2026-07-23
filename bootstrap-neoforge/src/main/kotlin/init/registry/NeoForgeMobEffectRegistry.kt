@@ -10,10 +10,10 @@ import net.minecraft.world.effect.MobEffect
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
 
-object NeoForgeMobEffectRegistry : MobEffectRegistry {
+class NeoForgeMobEffectRegistry(bus: IEventBus): MobEffectRegistry {
     private val mobEffects = DeferredRegister.create(BuiltInRegistries.MOB_EFFECT, ModId)
 
-    fun init(bus: IEventBus) {
+    init {
         mobEffects.register(bus)
     }
 

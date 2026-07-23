@@ -10,6 +10,7 @@ interface MultiblockRegistry {
     val earthCrystal: Multiblock
     val airCrystal: Multiblock
     val lightningCollector: Multiblock
+    val enrichmentChamber: Multiblock
 
     companion object {
         @JvmStatic

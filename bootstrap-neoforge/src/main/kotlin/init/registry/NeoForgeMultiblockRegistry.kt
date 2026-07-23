@@ -6,6 +6,7 @@ import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.multiblocks.AirCrystal
 import com.algorithmlx.ecr.common.multiblocks.EarthCrystal
+import com.algorithmlx.ecr.common.multiblocks.EnrichmentChamber
 import com.algorithmlx.ecr.common.multiblocks.FlameCrystal
 import com.algorithmlx.ecr.common.multiblocks.LightningCollector
 import com.algorithmlx.ecr.common.multiblocks.MithrilineFurnaceMultiblock
@@ -15,10 +16,10 @@ import com.algorithmlx.ecr.registry.MultiblockRegistry
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
 
-object NeoForgeMultiblockRegistry : MultiblockRegistry {
+class NeoForgeMultiblockRegistry(bus: IEventBus): MultiblockRegistry {
     private val multiblocks = DeferredRegister.create(ECRegistries.MULTIBLOCK, ModId)
 
-    fun init(bus: IEventBus) {
+    init {
         multiblocks.register(bus)
     }
 
@@ -29,6 +30,7 @@ object NeoForgeMultiblockRegistry : MultiblockRegistry {
     private val earthCrystalMultiblock = multiblocks.register(ECRModIDs.EARTH_CRYSTAL) { _ -> EarthCrystal }
     private val airCrystalMultiblock = multiblocks.register(ECRModIDs.AIR_CRYSTAL) { _ -> AirCrystal }
     private val lightningCollectorMultiblock = multiblocks.register(ECRModIDs.LIGHTNING_COLLECTOR) { _ -> LightningCollector }
+    private val enrichmentChamberMultiblock = multiblocks.register(ECRModIDs.ENRICHMENT_CHAMBER) { _ -> EnrichmentChamber }
 
     override val mithrilineFurnace: Multiblock by lazy { mithrilineFurnaceMultiblock.get() }
     override val soulStone: Multiblock by lazy { soulStoneMultiblock.get() }
@@ -37,4 +39,5 @@ object NeoForgeMultiblockRegistry : MultiblockRegistry {
     override val earthCrystal: Multiblock by lazy { earthCrystalMultiblock.get() }
     override val airCrystal: Multiblock by lazy { airCrystalMultiblock.get() }
     override val lightningCollector: Multiblock by lazy { lightningCollectorMultiblock.get() }
+    override val enrichmentChamber: Multiblock by lazy { enrichmentChamberMultiblock.get() }
 }

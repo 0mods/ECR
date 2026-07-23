@@ -151,3 +151,12 @@ toast.ecreimagined:
 
 message.ecreimagined:
   research_required: "Required research: %s"
+
+book.ecreimagined:
+  title:
+    basics: Basics
+  entry:
+    welcome:
+      title: "Welcome to Essential Craft: Reimagined"
+      description: Where I am?
+      content: Welcome to ECR Mod!

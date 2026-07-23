@@ -9,10 +9,10 @@ import net.minecraft.world.item.crafting.RecipeSerializer
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
 
-object NeoForgeRecipeSerializerRegistry : RecipeSerializerRegistry {
+class NeoForgeRecipeSerializerRegistry(bus: IEventBus): RecipeSerializerRegistry {
     private val recipeSerializers = DeferredRegister.create(BuiltInRegistries.RECIPE_SERIALIZER, ModId)
 
-    fun init(bus: IEventBus) {
+    init {
         recipeSerializers.register(bus)
     }
 

@@ -6,6 +6,7 @@ import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.multiblocks.AirCrystal
 import com.algorithmlx.ecr.common.multiblocks.EarthCrystal
+import com.algorithmlx.ecr.common.multiblocks.EnrichmentChamber
 import com.algorithmlx.ecr.common.multiblocks.FlameCrystal
 import com.algorithmlx.ecr.common.multiblocks.LightningCollector
 import com.algorithmlx.ecr.common.multiblocks.MithrilineFurnaceMultiblock
@@ -22,6 +23,7 @@ object FabricMultiblockRegistry : MultiblockRegistry {
     override val earthCrystal: Multiblock = register(ECRModIDs.EARTH_CRYSTAL, EarthCrystal)
     override val airCrystal: Multiblock = register(ECRModIDs.AIR_CRYSTAL, AirCrystal)
     override val lightningCollector: Multiblock = register(ECRModIDs.LIGHTNING_COLLECTOR, LightningCollector)
+    override val enrichmentChamber: Multiblock = register(ECRModIDs.ENRICHMENT_CHAMBER, EnrichmentChamber)
 
     private fun <T: Multiblock> register(id: String, multiblock: T) = Registry.register(
         ECRegistries.MULTIBLOCK, id.ecRL, multiblock

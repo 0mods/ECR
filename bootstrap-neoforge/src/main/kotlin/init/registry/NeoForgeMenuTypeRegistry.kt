@@ -17,10 +17,10 @@ import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension
 import net.neoforged.neoforge.registries.DeferredRegister
 
-object NeoForgeMenuTypeRegistry : MenuTypeRegistry {
+class NeoForgeMenuTypeRegistry(bus: IEventBus): MenuTypeRegistry {
     private val menuType = DeferredRegister.create(BuiltInRegistries.MENU, ModId)
 
-    fun init(bus: IEventBus) {
+    init {
         menuType.register(bus)
     }
 

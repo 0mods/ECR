@@ -10,10 +10,10 @@ import net.minecraft.world.item.crafting.display.RecipeDisplay
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
 
-object NeoForgeRecipeDisplayTypeRegistry : RecipeDisplayTypeRegistry {
+class NeoForgeRecipeDisplayTypeRegistry(bus: IEventBus): RecipeDisplayTypeRegistry {
     private val registry = DeferredRegister.create(BuiltInRegistries.RECIPE_DISPLAY, ModId)
 
-    fun init(bus: IEventBus) {
+    init {
         registry.register(bus)
     }
 

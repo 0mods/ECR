@@ -118,22 +118,22 @@ object NeoForgeInit {
 
     private fun initRegistries(bus: IEventBus) {
         PlatformUtils.instance = NeoForgePlatformUtils
-        RecipeSerializerRegistry.instance = NeoForgeRecipeSerializerRegistry.apply { init(bus) }
-        RecipeTypeRegistry.instance = NeoForgeRecipeTypeRegistry.apply { init(bus) }
-        BlockCodecRegistry.instance = NeoForgeBlockCodecRegistry.apply { init(bus) }
-        BlockEntityTypeRegistry.instance = NeoForgeBlockEntityTypeRegistry.apply { init(bus) }
-        BookTypeRegistry.instance = NeoForgeBookTypeRegistry.apply { init(bus) }
+        RecipeSerializerRegistry.instance = NeoForgeRecipeSerializerRegistry(bus)
+        RecipeTypeRegistry.instance = NeoForgeRecipeTypeRegistry(bus)
+        BlockCodecRegistry.instance = NeoForgeBlockCodecRegistry(bus)
+        BlockEntityTypeRegistry.instance = NeoForgeBlockEntityTypeRegistry(bus)
+        BookTypeRegistry.instance = NeoForgeBookTypeRegistry(bus)
         NeoForgeResearchSerializerRegistry(bus)
-        BlockRegistry.instance = NeoForgeBlockRegistry.apply { init(bus) }
-        DataComponentRegistry.instance = NeoForgeDataComponentRegistry.apply { init(bus) }
-        ItemRegistry.instance = NeoForgeItemRegistry.apply { init(bus) }
-        CreativeTabRegistry.instance = NeoForgeCreativeTabRegistry.apply { init(bus) }
-        MenuTypeRegistry.instance = NeoForgeMenuTypeRegistry.apply { init(bus) }
-        MobEffectRegistry.instance = NeoForgeMobEffectRegistry.apply { init(bus) }
-        MRUTypeRegistry.instance = NeoForgeMRUTypeRegistry.apply { init(bus) }
+        BlockRegistry.instance = NeoForgeBlockRegistry(bus)
+        DataComponentRegistry.instance = NeoForgeDataComponentRegistry(bus)
+        ItemRegistry.instance = NeoForgeItemRegistry(bus)
+        CreativeTabRegistry.instance = NeoForgeCreativeTabRegistry(bus)
+        MenuTypeRegistry.instance = NeoForgeMenuTypeRegistry(bus)
+        MobEffectRegistry.instance = NeoForgeMobEffectRegistry(bus)
+        MRUTypeRegistry.instance = NeoForgeMRUTypeRegistry(bus)
         MultiblockMatcherTypes.instance = NeoForgeMultiblockMatcherTypes(bus)
-        MultiblockRegistry.instance = NeoForgeMultiblockRegistry.apply { init(bus) }
-        RecipeDisplayTypeRegistry.instance = NeoForgeRecipeDisplayTypeRegistry.apply { init(bus) }
+        MultiblockRegistry.instance = NeoForgeMultiblockRegistry(bus)
+        RecipeDisplayTypeRegistry.instance = NeoForgeRecipeDisplayTypeRegistry(bus)
         IngredientRegistry.init(bus)
     }
 

@@ -15,11 +15,11 @@ import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredBlock
 import net.neoforged.neoforge.registries.DeferredRegister
 
-object NeoForgeBlockRegistry : BlockRegistry {
+class NeoForgeBlockRegistry(bus: IEventBus) : BlockRegistry {
     private val blockItems = DeferredRegister.createItems(ModId)
     private val blocks = DeferredRegister.createBlocks(ModId)
 
-    fun init(bus: IEventBus) {
+    init{
         blocks.register(bus)
         blockItems.register(bus)
     }

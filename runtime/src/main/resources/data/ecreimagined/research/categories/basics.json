@@ -1,7 +1,5 @@
 {
-  "title": {
-    "text": "Basics"
-  },
+  "title": "book.ecreimagined.title.basics",
   "icon": {
     "item": "ecreimagined:research_book"
   },

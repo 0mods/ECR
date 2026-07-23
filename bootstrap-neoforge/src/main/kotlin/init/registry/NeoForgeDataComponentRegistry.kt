@@ -13,10 +13,10 @@ import net.minecraft.resources.ResourceKey
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
 
-object NeoForgeDataComponentRegistry : DataComponentRegistry {
+class NeoForgeDataComponentRegistry(bus: IEventBus): DataComponentRegistry {
     private val dataComponents = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, ModId)
 
-    fun init(bus: IEventBus) {
+    init {
         dataComponents.register(bus)
     }
 

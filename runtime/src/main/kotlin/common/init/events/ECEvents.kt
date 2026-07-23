@@ -91,7 +91,11 @@ object ECEvents {
         val state = level.getBlockState(center)
         val isAtCenter = recipe.structureCenter?.let { state.`is`(it) } ?: true
 
-        val placement = recipe.multiblock.findPlacement(level, center)
+        val placement = if (recipe.structureCenter == null)
+            recipe.multiblock.findPlacement(level, center)
+        else
+            recipe.multiblock.findPlacementAtCenter(level, center)
+
         if (!isAtCenter || placement == null) {
             timer[0] = 0
             return

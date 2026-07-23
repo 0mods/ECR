@@ -11,10 +11,10 @@ import net.minecraft.world.level.block.state.BlockBehaviour
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
 
-object NeoForgeBlockCodecRegistry : BlockCodecRegistry {
+class NeoForgeBlockCodecRegistry(bus: IEventBus): BlockCodecRegistry {
     private val blockTypes = DeferredRegister.create(BuiltInRegistries.BLOCK_TYPE, ModId)
 
-    fun init(bus: IEventBus) {
+    init {
         blockTypes.register(bus)
     }
 

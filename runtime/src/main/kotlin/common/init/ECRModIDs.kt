@@ -17,6 +17,7 @@ object ECRModIDs {
     const val MAGIC_TABLE = "magic_table"
     const val COLD_DISTILLER = "cold_distiller"
     const val MAGICAL_TELEPORTER = "magical_teleporter"
+    const val ENRICHMENT_CHAMBER = "enrichment_chamber"
 
     // Blocks
     const val MITHRILINE_PLATING = "mithriline_plating"
