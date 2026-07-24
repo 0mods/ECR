@@ -1,4 +1,5 @@
 run/
+logs/
 .idea/
 .gradle/
 build/

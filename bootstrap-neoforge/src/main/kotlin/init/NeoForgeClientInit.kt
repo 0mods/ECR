@@ -8,13 +8,14 @@ import com.algorithmlx.ecr.api.particle.BedrockParticles
 import com.algorithmlx.ecr.api.particle.ClientParticleSystems
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.utils.ecRL
-import com.algorithmlx.ecr.api.utils.rl
 import com.algorithmlx.ecr.client.book.ResearchBookClient
 import com.algorithmlx.ecr.client.renderer.MatrixDestructorRenderer
 import com.algorithmlx.ecr.client.renderer.MithrilineFurnaceRenderer
 import com.algorithmlx.ecr.client.screen.MagicTableMenuScreen
 import com.algorithmlx.ecr.client.screen.MatrixDestructorScreen
 import com.algorithmlx.ecr.client.screen.MithrilineFurnaceScreen
+import com.algorithmlx.ecr.neoforge.client.NeoForgeConnectedTextures
+import com.algorithmlx.ecr.client.ECRConnectedTextures
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.MenuTypeRegistry
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
@@ -39,6 +40,8 @@ import kotlin.random.Random
 
 object NeoForgeClientInit {
     fun init(bus: IEventBus) {
+        NeoForgeConnectedTextures.init(bus)
+        ECRConnectedTextures.init()
         BedrockParticleRenderTypes.init()
         MultiblockPreviewGuiBridge.install(GuiGraphicsExtractor::submitPictureInPictureRenderState)
         bus.addListener(::onRegisterPIPRenders)

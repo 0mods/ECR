@@ -26,6 +26,7 @@ object ECRModIDs {
     const val PALE_PLATING = "pale_plating"
     const val MAGIC_PLATING = "magic_plating"
     const val DEMONIC_PLATING = "demonic_plating"
+    const val FORTIFIED_STONE = "fortified_stone"
     const val FLAME_CLUSTER = "flame_cluster"
     const val WATER_CLUSTER = "water_cluster"
     const val EARTH_CLUSTER = "earth_cluster"

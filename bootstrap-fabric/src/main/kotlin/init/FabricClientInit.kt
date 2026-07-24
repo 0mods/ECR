@@ -10,6 +10,7 @@ import com.algorithmlx.ecr.api.research.UpdateBookViewPayload
 import com.algorithmlx.ecr.api.particle.BedrockParticleRenderTypes
 import com.algorithmlx.ecr.api.particle.BedrockParticles
 import com.algorithmlx.ecr.api.particle.ClientParticleSystems
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.client.book.ResearchBookClient
 import com.algorithmlx.ecr.client.renderer.MatrixDestructorRenderer
 import com.algorithmlx.ecr.client.renderer.MithrilineFurnaceRenderer
@@ -19,6 +20,8 @@ import com.algorithmlx.ecr.client.screen.MithrilineFurnaceScreen
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.MenuTypeRegistry
 import com.algorithmlx.ecr.fabric.client.MultiblockPreviewGuiBridgeInit
+import com.algorithmlx.ecr.fabric.client.FabricConnectedTextures
+import com.algorithmlx.ecr.client.ECRConnectedTextures
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
 import com.algorithmlx.ecr.network.BoundGemTooltipRequestPayload
 import com.algorithmlx.ecr.network.BoundGemTooltipResponsePayload
@@ -39,6 +42,8 @@ import kotlin.random.Random
 object FabricClientInit {
     @JvmStatic
     fun init() {
+        FabricConnectedTextures.init()
+        ECRConnectedTextures.init()
         registerBedrockParticles()
         registerReceivers()
 
@@ -58,14 +63,14 @@ object FabricClientInit {
     private fun registerBedrockParticles() {
         BedrockParticleRenderTypes.init()
         ResourceLoader.get(PackType.CLIENT_RESOURCES)
-            .registerReloadListener("ecreimagined:bedrock_particles".rl, BedrockParticles)
+            .registerReloadListener("bedrock_particles".ecRL, BedrockParticles)
         ClientTickEvents.END_LEVEL_TICK.register { level ->
             ClientParticleSystems.get(level)?.update()
         }
         LevelRenderEvents.COLLECT_SUBMITS.register { context ->
             val minecraft = Minecraft.getInstance()
             val level = minecraft.level ?: return@register
-            val poseStack = context.poseStack() ?: return@register
+            val poseStack = context.poseStack()
             ClientParticleSystems.get(level)?.submit(
                 poseStack,
                 context.submitNodeCollector(),

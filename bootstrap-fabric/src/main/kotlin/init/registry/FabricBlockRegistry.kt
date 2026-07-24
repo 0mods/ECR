@@ -34,6 +34,7 @@ object FabricBlockRegistry : BlockRegistry {
     override val palePlating: Block = registerBasic(ECRModIDs.PALE_PLATING)
     override val magicPlating: Block = registerBasic(ECRModIDs.MAGIC_PLATING)
     override val demonicPlating: Block = registerBasic(ECRModIDs.DEMONIC_PLATING)
+    override val fortifiedStone: Block = registerBasic(ECRModIDs.FORTIFIED_STONE)
     override val flameCluster: Block = registerBasic(ECRModIDs.FLAME_CLUSTER, shouldRegisterItem = false)
     override val waterCluster: Block = registerBasic(ECRModIDs.WATER_CLUSTER, shouldRegisterItem = false)
     override val earthCluster: Block = registerBasic(ECRModIDs.EARTH_CLUSTER, shouldRegisterItem = false)

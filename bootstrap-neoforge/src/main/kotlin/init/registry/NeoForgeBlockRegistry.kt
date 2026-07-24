@@ -37,6 +37,7 @@ class NeoForgeBlockRegistry(bus: IEventBus) : BlockRegistry {
     private val palePlatingBlock = registerBasic(ECRModIDs.PALE_PLATING)
     private val magicPlatingBlock = registerBasic(ECRModIDs.MAGIC_PLATING)
     private val demonicPlatingBlock = registerBasic(ECRModIDs.DEMONIC_PLATING)
+    private val fortifiedStoneBlock = registerBasic(ECRModIDs.FORTIFIED_STONE)
     private val flameClusterBlock = registerBasic(ECRModIDs.FLAME_CLUSTER, shouldRegisterItem = false)
     private val waterClusterBlock = registerBasic(ECRModIDs.WATER_CLUSTER, shouldRegisterItem = false)
     private val earthClusterBlock = registerBasic(ECRModIDs.EARTH_CLUSTER, shouldRegisterItem = false)
@@ -55,6 +56,7 @@ class NeoForgeBlockRegistry(bus: IEventBus) : BlockRegistry {
     override val palePlating: Block by lazy { palePlatingBlock.get() }
     override val magicPlating: Block by lazy { magicPlatingBlock.get() }
     override val demonicPlating: Block by lazy { demonicPlatingBlock.get() }
+    override val fortifiedStone: Block by lazy { fortifiedStoneBlock.get() }
     override val flameCluster: Block by lazy { flameClusterBlock.get() }
     override val waterCluster: Block by lazy { waterClusterBlock.get() }
     override val earthCluster: Block by lazy { earthClusterBlock.get() }

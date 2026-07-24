@@ -23,6 +23,7 @@ interface BlockRegistry {
     val palePlating: Block
     val magicPlating: Block
     val demonicPlating: Block
+    val fortifiedStone: Block
     val flameCluster: Block
     val waterCluster: Block
     val earthCluster: Block
