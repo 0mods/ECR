@@ -1,0 +1,5 @@
+parent: minecraft:block/orientable
+textures:
+  front: ecreimagined:block/enrichment_chamber_controller
+  side: &texture ecreimagined:block/magic_plating/base
+  top: *texture

@@ -6,7 +6,7 @@ import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.api.recipe.CachedRecipe
 import com.algorithmlx.ecr.api.utils.count
-import com.algorithmlx.ecr.common.api.block.entity.SynchronizedContainerBlockEntity
+import com.algorithmlx.ecr.api.block.entity.SynchronizedContainerBlockEntity
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.MRUTypeRegistry
 import com.algorithmlx.ecr.registry.RecipeTypeRegistry

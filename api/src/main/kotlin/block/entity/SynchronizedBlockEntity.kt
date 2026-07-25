@@ -1,20 +1,18 @@
-package com.algorithmlx.ecr.common.api.block.entity
+package com.algorithmlx.ecr.api.block.entity
 
-import com.algorithmlx.ecr.api.block.entity.syncForNearby
 import net.minecraft.core.BlockPos
 import net.minecraft.core.HolderLookup
 import net.minecraft.nbt.CompoundTag
 import net.minecraft.network.protocol.Packet
 import net.minecraft.network.protocol.game.ClientGamePacketListener
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket
-import net.minecraft.world.level.block.entity.BaseContainerBlockEntity
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.minecraft.world.level.block.state.BlockState
 
-abstract class SynchronizedContainerBlockEntity(
+open class SynchronizedBlockEntity(
     type: BlockEntityType<*>, worldPosition: BlockPos, blockState: BlockState
-
-): BaseContainerBlockEntity(type, worldPosition, blockState) {
+): BlockEntity(type, worldPosition, blockState) {
     override fun setChanged() {
         super.setChanged()
         this.syncForNearby()

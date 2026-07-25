@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.fabric.init.registry
 
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.block.entity.ColdDistillerEntity
+import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberControllerEntity
 import com.algorithmlx.ecr.common.block.entity.MagicTableBlockEntity
 import com.algorithmlx.ecr.common.block.entity.MagicalTeleporterEntity
 import com.algorithmlx.ecr.common.block.entity.MatrixDestructorEntity
@@ -26,6 +27,10 @@ object FabricBlockEntityTypeRegistry : BlockEntityTypeRegistry {
     override val magicalTeleporter: BlockEntityType<MagicalTeleporterEntity> = register(
         ECRModIDs.MAGICAL_TELEPORTER,
         BlockEntityType(::MagicalTeleporterEntity, setOf(BlockRegistry.instance.magicalTeleporter))
+    )
+    override val enrichmentChamberController: BlockEntityType<EnrichmentChamberControllerEntity> = register(
+        ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER,
+        BlockEntityType(::EnrichmentChamberControllerEntity, setOf(BlockRegistry.instance.enrichmentChamberController))
     )
     override val matrixDestructor: BlockEntityType<MatrixDestructorEntity> = register(
         ECRModIDs.MATRIX_DESTRUCTOR,

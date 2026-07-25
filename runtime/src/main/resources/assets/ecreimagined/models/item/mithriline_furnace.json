@@ -1,7 +1,8 @@
 {
   "texture_size": [128, 128],
   "textures": {
-    "1": "ecreimagined:block/mithriline_furnace"
+    "1": "ecreimagined:block/mithriline_furnace",
+    "particle": "#1"
   },
   "elements": [
     {

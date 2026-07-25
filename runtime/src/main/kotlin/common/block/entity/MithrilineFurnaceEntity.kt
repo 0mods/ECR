@@ -1,6 +1,5 @@
 package com.algorithmlx.ecr.common.block.entity
 
-import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.mru.MRUDevice
 import com.algorithmlx.ecr.api.recipe.CachedRecipe
 import com.algorithmlx.ecr.api.utils.StackHelper
@@ -11,8 +10,7 @@ import com.algorithmlx.ecr.api.particle.ParticleEmitter
 import com.algorithmlx.ecr.api.particle.Transform
 import com.algorithmlx.ecr.api.utils.count
 import com.algorithmlx.ecr.api.utils.ecPrefix
-import com.algorithmlx.ecr.api.utils.ecRL
-import com.algorithmlx.ecr.common.api.block.entity.SynchronizedContainerBlockEntity
+import com.algorithmlx.ecr.api.block.entity.SynchronizedContainerBlockEntity
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.BlockRegistry
@@ -121,7 +119,7 @@ class MithrilineFurnaceEntity(
     override fun getContainerSize(): Int = this.items.size
 
     override val mruStorage: MRUStorageContainer = MRUStorageContainer(10000, MRUTypeRegistry.instance.espe)
-    override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.RECEIVER
+    override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.UNCONNECTABLE
 
     override fun getSlotsForFace(direction: Direction): IntArray = intArrayOf(0, 1)
 

@@ -63,7 +63,9 @@ interface MRUDevice {
         /**
          * Represents an entity that can be bounded but can not translate MRU.
          */
-        CONNECTABLE_RECEIVER;
+        CONNECTABLE_RECEIVER,
+
+        UNCONNECTABLE;
 
         /**
          * Determines if this holder is capable of exporting MRU.

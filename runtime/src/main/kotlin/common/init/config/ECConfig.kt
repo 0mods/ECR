@@ -19,7 +19,8 @@ data class ECConfig(
     val disabledResearches: List<String> = emptyList(),
     @SerialName("research_book") val researchBook: ResearchBookConfig = ResearchBookConfig(),
     @SerialName("cold_distiller") val coldDistillerConfig: ColdDistillerConfig = ColdDistillerConfig(),
-    @SerialName("magical_teleporter") val magicalTeleporter: MagicalTeleporterConfig = MagicalTeleporterConfig()
+    @SerialName("magical_teleporter") val magicalTeleporter: MagicalTeleporterConfig = MagicalTeleporterConfig(),
+    @SerialName("enrichment_chamber") val enrichmentChamber: EnrichmentChamberConfig = EnrichmentChamberConfig()
 ) {
     companion object {
         @JvmStatic
@@ -96,6 +97,13 @@ data class Chance(
 @JsonDefaults
 @Serializable
 data class MagicalTeleporterConfig(
-    val mruUsage: Int = 500,
-    val ticksRequired: Int = 250
+    @SerialName("mru_usage") val mruUsage: Int = 500,
+    @SerialName("ticks_required") val ticksRequired: Int = 250
+)
+
+@JsonDefaults
+@Serializable
+data class EnrichmentChamberConfig(
+    @SerialName("controller_capacity") val controllerCapacity: Int = 60000,
+    @SerialName("holder_capacity") val holderCapacity: Int = 100000
 )

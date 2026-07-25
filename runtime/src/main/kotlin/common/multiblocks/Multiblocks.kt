@@ -132,11 +132,20 @@ object LightningCollector: Multiblock(11, 11, 4, {
 })
 
 object EnrichmentChamber: Multiblock(128, 128, 128, {
-    val frame = this.tag(ECTags.Blocks.ENRICHMENT_CHAMBER)
+    val outerFrame = this.block(BlockRegistry.instance.magicPlating.defaultBlockState())
+    val innerFrame = this.list(
+        this.tag(ECTags.Blocks.ENRICHMENT_CHAMBER),
+        this.block(
+            BlockRegistry.instance.enrichmentChamberController.defaultBlockState(),
+            ignoreTag = true
+        )
+    )
     val air = this.block(Blocks.AIR.defaultBlockState())
+
     this.scalablePattern(2 ..< 64) {
         when {
-            isBoundary -> frame
+            isEdge -> outerFrame
+            isBoundary -> innerFrame
             else -> air
         }
     }

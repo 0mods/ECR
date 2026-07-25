@@ -10,12 +10,13 @@ import net.minecraft.resources.Identifier
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.TransparentBlock
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredBlock
 import net.neoforged.neoforge.registries.DeferredRegister
 
-class NeoForgeBlockRegistry(bus: IEventBus) : BlockRegistry {
+class NeoForgeBlockRegistry(bus: IEventBus): BlockRegistry {
     private val blockItems = DeferredRegister.createItems(ModId)
     private val blocks = DeferredRegister.createBlocks(ModId)
 
@@ -42,6 +43,24 @@ class NeoForgeBlockRegistry(bus: IEventBus) : BlockRegistry {
     private val waterClusterBlock = registerBasic(ECRModIDs.WATER_CLUSTER, shouldRegisterItem = false)
     private val earthClusterBlock = registerBasic(ECRModIDs.EARTH_CLUSTER, shouldRegisterItem = false)
     private val airClusterBlock = registerBasic(ECRModIDs.AIR_CLUSTER, shouldRegisterItem = false)
+    private val fortifiedGlassBlock = registerBlock(
+        ECRModIDs.FORTIFIED_GLASS,
+        ::TransparentBlock,
+        BlockBehaviour.Properties.of().noOcclusion(),
+    )
+    private val enrichmentChamberHolderBlock = registerBasic(ECRModIDs.ENRICHMENT_CHAMBER_HOLDER)
+    private val enrichmentChamberControllerBlock = registerBlock(
+        ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER,
+        ::EnrichmentChamberController
+    )
+    private val enrichmentChamberExtractorBlock = registerBlock(
+        ECRModIDs.ENRICHMENT_CHAMBER_EXTRACTOR,
+        ::EnrichmentChamberExtractor
+    )
+    private val enrichmentChamberReceiverBlock = registerBlock(
+        ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER,
+        ::EnrichmentChamberReceiver
+    )
 
     override val mithrilineFurnace: MithrilineFurnace by lazy { mithrilineFurnaceBlock.get() }
     override val mithrilineCrystal: CrystalBlock by lazy { mithrilineCrystalBlock.get() }
@@ -61,6 +80,11 @@ class NeoForgeBlockRegistry(bus: IEventBus) : BlockRegistry {
     override val waterCluster: Block by lazy { waterClusterBlock.get() }
     override val earthCluster: Block by lazy { earthClusterBlock.get() }
     override val airCluster: Block by lazy { airClusterBlock.get() }
+    override val fortifiedGlass: Block by lazy { fortifiedGlassBlock.get() }
+    override val enrichmentChamberHolder: Block by lazy { enrichmentChamberHolderBlock.get() }
+    override val enrichmentChamberController: EnrichmentChamberController by lazy { enrichmentChamberControllerBlock.get() }
+    override val enrichmentChamberExtractor: EnrichmentChamberExtractor by lazy { enrichmentChamberExtractorBlock.get() }
+    override val enrichmentChamberReceiver: EnrichmentChamberReceiver by lazy { enrichmentChamberReceiverBlock.get() }
 
     private fun registerBasic(
         id: String,

@@ -24,6 +24,8 @@ import com.algorithmlx.ecr.network.FinishCraftParticle
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers
+import net.minecraft.client.renderer.item.properties.select.ItemBlockState
+import net.minecraft.client.renderer.rendertype.RenderTypes
 import net.minecraft.core.particles.ParticleTypes
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent

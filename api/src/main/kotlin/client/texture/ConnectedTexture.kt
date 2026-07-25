@@ -18,7 +18,22 @@ enum class ConnectedTextureRotation {
 data class ConnectedTextureVariant @JvmOverloads constructor(
     val sprite: Identifier,
     val rotation: ConnectedTextureRotation = ConnectedTextureRotation.NONE,
+    val region: ConnectedTextureRegion? = null,
 )
+
+data class ConnectedTextureRegion(
+    val x: Int,
+    val y: Int,
+    val width: Int,
+    val height: Int,
+) {
+    init {
+        require(x >= 0) { "Connected texture region x must not be negative, got $x" }
+        require(y >= 0) { "Connected texture region y must not be negative, got $y" }
+        require(width > 0) { "Connected texture region width must be positive, got $width" }
+        require(height > 0) { "Connected texture region height must be positive, got $height" }
+    }
+}
 
 fun interface ConnectedTextureConnection {
     fun connects(
@@ -152,6 +167,48 @@ class ConnectedTexture private constructor(
 
         @JvmStatic
         @JvmOverloads
+        fun fromMap(
+            source: Identifier,
+            map: Identifier,
+            textureSize: Int,
+            connection: ConnectedTextureConnection = ConnectedTextureConnection.SAME_BLOCK,
+            faces: Set<Direction> = ALL_FACES,
+        ): ConnectedTexture {
+            require(textureSize > 0) { "Connected texture size must be positive, got $textureSize" }
+            require(textureSize <= Int.MAX_VALUE / MAP_GRID_SIZE) {
+                "Connected texture size is too large: $textureSize"
+            }
+
+            return ConnectedTexture(
+                source = source,
+                variants = Array(ConnectedTextureMask.VARIANT_COUNT) { mask ->
+                    val column = axisIndex(
+                        mask = mask,
+                        start = ConnectedTextureMask.RIGHT,
+                        end = ConnectedTextureMask.LEFT,
+                    )
+                    val row = axisIndex(
+                        mask = mask,
+                        start = ConnectedTextureMask.BOTTOM,
+                        end = ConnectedTextureMask.TOP,
+                    )
+                    ConnectedTextureVariant(
+                        sprite = map,
+                        region = ConnectedTextureRegion(
+                            x = column * textureSize,
+                            y = row * textureSize,
+                            width = textureSize,
+                            height = textureSize,
+                        ),
+                    )
+                },
+                connection = connection,
+                faces = faces,
+            )
+        }
+
+        @JvmStatic
+        @JvmOverloads
         fun linePattern(
             source: Identifier,
             startLine: Identifier,
@@ -226,6 +283,16 @@ class ConnectedTexture private constructor(
                 faces,
                 outlineComponentBounds,
             )
+        }
+
+        private const val MAP_GRID_SIZE = 4
+
+        private fun axisIndex(mask: Int, start: Int, end: Int): Int = when (mask and (start or end)) {
+            0 -> 0
+            start -> 1
+            start or end -> 2
+            end -> 3
+            else -> error("Unexpected connected texture axis mask")
         }
     }
 

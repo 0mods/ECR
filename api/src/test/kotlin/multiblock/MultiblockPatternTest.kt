@@ -53,7 +53,42 @@ class MultiblockPatternTest {
         }
     }
 
-    private class TestMatcher: MultiblockMatcher {
+    @Test
+    fun distinguishesWildcardFromRequiredAirMatcher() {
+        val wildcard = TestMatcher(required = false)
+        val required = TestMatcher()
+        val multiblock = Multiblock(2, 1, 1) {
+            pattern(wildcard, required)
+        }
+
+        assertEquals(false, multiblock.variants.single()[0, 0, 0].required)
+        assertEquals(true, multiblock.variants.single()[1, 0, 0].required)
+    }
+
+    @Test
+    fun generatesFramedFacesAndEmptyCavity() {
+        val outerFrame = TestMatcher()
+        val innerFrame = TestMatcher()
+        val air = TestMatcher()
+        val multiblock = Multiblock(5, 5, 5) {
+            scalablePattern(2..2) {
+                when {
+                    isEdge -> outerFrame
+                    isBoundary -> innerFrame
+                    else -> air
+                }
+            }
+        }
+        val variant = multiblock.variants.single()
+
+        assertEquals(44, variant.blocks.count { it === outerFrame })
+        assertEquals(54, variant.blocks.count { it === innerFrame })
+        assertEquals(27, variant.blocks.count { it === air })
+    }
+
+    private class TestMatcher(
+        override val required: Boolean = true
+    ): MultiblockMatcher {
         override val type: MultiblockMatcherType<*>
             get() = error("Matcher type is not used by pattern generation tests")
 

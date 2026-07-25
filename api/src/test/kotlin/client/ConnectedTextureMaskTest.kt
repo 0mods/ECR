@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.api.client
 
 import com.algorithmlx.ecr.api.client.texture.ConnectedTexture
 import com.algorithmlx.ecr.api.client.texture.ConnectedTextureMask
+import com.algorithmlx.ecr.api.client.texture.ConnectedTextureRegion
 import com.algorithmlx.ecr.api.client.texture.ConnectedTextureRotation
 import com.algorithmlx.ecr.api.client.texture.ConnectedTextureVariant
 import net.minecraft.core.Direction
@@ -338,6 +339,59 @@ class ConnectedTextureMaskTest {
         assertEquals(16, texture.variants.size)
         assertEquals(Identifier.parse("example:block/panel_connected_0"), texture.variants.first()?.sprite)
         assertEquals(Identifier.parse("example:block/panel_connected_15"), texture.variants.last()?.sprite)
+    }
+
+    @Test
+    fun mapsAllConnectionMasksToMapRegions() {
+        val source = Identifier.parse("example:block/panel")
+        val map = Identifier.parse("example:block/panel_connected")
+        val texture = ConnectedTexture.fromMap(source, map, 20)
+        val horizontalColumns = mapOf(
+            0 to 0,
+            ConnectedTextureMask.RIGHT to 1,
+            ConnectedTextureMask.LEFT or ConnectedTextureMask.RIGHT to 2,
+            ConnectedTextureMask.LEFT to 3,
+        )
+        val verticalRows = mapOf(
+            0 to 0,
+            ConnectedTextureMask.BOTTOM to 1,
+            ConnectedTextureMask.TOP or ConnectedTextureMask.BOTTOM to 2,
+            ConnectedTextureMask.TOP to 3,
+        )
+
+        assertEquals(source, texture.source)
+        for (mask in 0..<ConnectedTextureMask.VARIANT_COUNT) {
+            val column = horizontalColumns.getValue(
+                mask and (ConnectedTextureMask.LEFT or ConnectedTextureMask.RIGHT),
+            )
+            val row = verticalRows.getValue(
+                mask and (ConnectedTextureMask.TOP or ConnectedTextureMask.BOTTOM),
+            )
+            assertEquals(
+                ConnectedTextureVariant(
+                    sprite = map,
+                    region = ConnectedTextureRegion(column * 20, row * 20, 20, 20),
+                ),
+                texture.variants[mask],
+                "Unexpected map region for mask $mask",
+            )
+        }
+    }
+
+    @Test
+    fun validatesMapAndRegionSizes() {
+        val source = Identifier.parse("example:block/panel")
+        val map = Identifier.parse("example:block/panel_connected")
+
+        assertFailsWith<IllegalArgumentException> {
+            ConnectedTexture.fromMap(source, map, 0)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            ConnectedTextureRegion(-1, 0, 20, 20)
+        }
+        assertFailsWith<IllegalArgumentException> {
+            ConnectedTextureRegion(0, 0, 0, 20)
+        }
     }
 
     @Test

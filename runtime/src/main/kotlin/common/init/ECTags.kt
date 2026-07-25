@@ -6,7 +6,7 @@ import net.minecraft.tags.TagKey
 
 class ECTags {
     object Blocks {
-        @JvmField val ENRICHMENT_CHAMBER = register("enrichment_chamber")
+        @JvmField val ENRICHMENT_CHAMBER = register(ECRModIDs.ENRICHMENT_CHAMBER)
 
         private fun register(id: String) = TagKey.create(Registries.BLOCK, id.ecRL)
     }

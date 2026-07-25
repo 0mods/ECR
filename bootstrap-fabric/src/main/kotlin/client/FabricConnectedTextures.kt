@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.fabric.client
 
 import com.algorithmlx.ecr.api.client.texture.ConnectedTexture
 import com.algorithmlx.ecr.api.client.texture.ConnectedTextureMask
+import com.algorithmlx.ecr.api.client.texture.ConnectedTextureRegion
 import com.algorithmlx.ecr.api.client.texture.ConnectedTextureRotation
 import com.algorithmlx.ecr.api.client.texture.ConnectedTextures
 import com.mojang.blaze3d.platform.Transparency
@@ -38,7 +39,9 @@ object FabricConnectedTextures {
                     if (material.sprite().contents().name() != variant.sprite) {
                         null
                     } else {
-                        ResolvedVariant(material, variant.rotation)
+                        val region = resolveRegion(material.sprite(), variant.region)
+                            ?: return@Array null
+                        ResolvedVariant(material, variant.rotation, region)
                     }
                 }
 
@@ -125,8 +128,14 @@ private class FabricConnectedTextureModel(
         if (sourceSprite.contents().name() != texture.source) return
 
         val mask = ConnectedTextureMask.unpack(packedMask, face)
-         val target = variants[mask] ?: return
-        if (target.material.sprite() === sourceSprite && target.rotation == ConnectedTextureRotation.NONE) return
+        val target = variants[mask] ?: return
+        if (
+            target.material.sprite() === sourceSprite &&
+            target.rotation == ConnectedTextureRotation.NONE &&
+            target.region == ResolvedRegion.FULL
+        ) {
+            return
+        }
 
         moveUvs(quad, sourceSprite, target)
     }
@@ -150,10 +159,12 @@ private class FabricConnectedTextureModel(
             for (vertex in 0..<BakedQuad.VERTEX_COUNT) {
                 val u = (quad.u(vertex) - source.u0) / sourceWidth
                 val v = (quad.v(vertex) - source.v0) / sourceHeight
+                val rotatedU = rotatedU(target.rotation, u, v)
+                val rotatedV = rotatedV(target.rotation, u, v)
                 quad.uv(
                     vertex,
-                    targetSprite.getU(rotatedU(target.rotation, u, v)),
-                    targetSprite.getV(rotatedV(target.rotation, u, v)),
+                    targetSprite.getU(target.region.u + rotatedU * target.region.width),
+                    targetSprite.getV(target.region.v + rotatedV * target.region.height),
                 )
             }
             quad.postMaterialBake(target.material)
@@ -195,4 +206,41 @@ private class FabricConnectedTextureModel(
 private data class ResolvedVariant(
     val material: Material.Baked,
     val rotation: ConnectedTextureRotation,
+    val region: ResolvedRegion,
 )
+
+private data class ResolvedRegion(
+    val u: Float,
+    val v: Float,
+    val width: Float,
+    val height: Float,
+) {
+    companion object {
+        val FULL = ResolvedRegion(0f, 0f, 1f, 1f)
+    }
+}
+
+private fun resolveRegion(
+    sprite: TextureAtlasSprite,
+    region: ConnectedTextureRegion?,
+): ResolvedRegion? {
+    if (region == null) return ResolvedRegion.FULL
+
+    val spriteWidth = sprite.contents().width()
+    val spriteHeight = sprite.contents().height()
+    if (
+        region.width > spriteWidth ||
+        region.height > spriteHeight ||
+        region.x > spriteWidth - region.width ||
+        region.y > spriteHeight - region.height
+    ) {
+        return null
+    }
+
+    return ResolvedRegion(
+        u = region.x.toFloat() / spriteWidth,
+        v = region.y.toFloat() / spriteHeight,
+        width = region.width.toFloat() / spriteWidth,
+        height = region.height.toFloat() / spriteHeight,
+    )
+}

@@ -32,10 +32,14 @@ class NeoForgeBlockEntityTypeRegistry(bus: IEventBus): BlockEntityTypeRegistry {
     private val coldDistillerEntity = blockEntityType.register(ECRModIDs.COLD_DISTILLER) { _ ->
         BlockEntityType(::ColdDistillerEntity, setOf(BlockRegistry.instance.coldDistiller))
     }
+    private val enrichmentChamberControllerEntity = blockEntityType.register(ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER) { _ ->
+        BlockEntityType(::EnrichmentChamberControllerEntity, setOf(BlockRegistry.instance.enrichmentChamberController))
+    }
 
     override val mithrilineFurnace: BlockEntityType<MithrilineFurnaceEntity> by lazy { mithrilineFurnaceEntity.get() }
     override val magicTable: BlockEntityType<MagicTableBlockEntity> by lazy { magicTableEntity.get() }
     override val magicalTeleporter: BlockEntityType<MagicalTeleporterEntity> by lazy { magicalTeleporterEntity.get() }
+    override val enrichmentChamberController: BlockEntityType<EnrichmentChamberControllerEntity> by lazy { enrichmentChamberControllerEntity.get() }
     override val matrixDestructor: BlockEntityType<MatrixDestructorEntity> by lazy { matrixDestructorEntity.get() }
     override val coldDistiller: BlockEntityType<ColdDistillerEntity> by lazy { coldDistillerEntity.get() }
 }

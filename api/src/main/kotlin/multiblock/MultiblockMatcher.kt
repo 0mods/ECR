@@ -11,6 +11,7 @@ class MultiblockMatcherType<T: MultiblockMatcher>(
 
 interface MultiblockMatcher {
     val type: MultiblockMatcherType<*>
+    val required: Boolean get() = true
 
     fun matches(block: BlockState): Boolean
 

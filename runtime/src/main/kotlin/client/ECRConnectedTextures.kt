@@ -8,21 +8,20 @@ import com.algorithmlx.ecr.common.init.ECRModIDs
 object ECRConnectedTextures {
     fun init() {
         register(ECRModIDs.DEMONIC_PLATING)
-        register(ECRModIDs.FORTIFIED_STONE, true)
+        register(ECRModIDs.FORTIFIED_STONE)
         register(ECRModIDs.MITHRILINE_PLATING)
         register(ECRModIDs.MAGIC_PLATING)
         register(ECRModIDs.PALE_PLATING)
+        register(ECRModIDs.FORTIFIED_GLASS, 16)
     }
 
-    private fun register(block: String, endLine: Boolean = false) {
+    private fun register(block: String, texSize: Int = 20) {
         ConnectedTextures.register(
             block = block.ecRL,
-            texture = ConnectedTexture.linePattern(
-                source = "block/$block".ecRL,
-                startLine = "block/$block/start_line".ecRL,
-                endLine = if (endLine) "block/$block/end_line".ecRL else null,
-                line = "block/$block/line".ecRL,
-                angle = "block/$block/angle".ecRL,
+            texture = ConnectedTexture.fromMap(
+                source = "block/$block/base".ecRL,
+                map = "block/$block/map".ecRL,
+                textureSize = texSize,
             ),
         )
     }

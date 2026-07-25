@@ -18,6 +18,9 @@ object ECRModIDs {
     const val COLD_DISTILLER = "cold_distiller"
     const val MAGICAL_TELEPORTER = "magical_teleporter"
     const val ENRICHMENT_CHAMBER = "enrichment_chamber"
+    const val ENRICHMENT_CHAMBER_CONTROLLER = "${ENRICHMENT_CHAMBER}_controller"
+    const val ENRICHMENT_CHAMBER_EXTRACTOR = "${ENRICHMENT_CHAMBER}_extractor"
+    const val ENRICHMENT_CHAMBER_RECEIVER = "${ENRICHMENT_CHAMBER}_receiver"
 
     // Blocks
     const val MITHRILINE_PLATING = "mithriline_plating"
@@ -31,6 +34,8 @@ object ECRModIDs {
     const val WATER_CLUSTER = "water_cluster"
     const val EARTH_CLUSTER = "earth_cluster"
     const val AIR_CLUSTER = "air_cluster"
+    const val ENRICHMENT_CHAMBER_HOLDER = "${ENRICHMENT_CHAMBER}_holder"
+    const val FORTIFIED_GLASS = "fortified_glass"
 
     // Data Components
     const val BOOK_TYPE = "book_type"

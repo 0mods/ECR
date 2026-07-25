@@ -1,3 +1,3 @@
 parent: minecraft:block/cube_all
 textures:
-  all: ecreimagined:block/fortified_stone
+  all: ecreimagined:block/fortified_stone/base

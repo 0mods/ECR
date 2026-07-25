@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.neoforge.client
 
 import com.algorithmlx.ecr.api.client.texture.ConnectedTexture
 import com.algorithmlx.ecr.api.client.texture.ConnectedTextureMask
+import com.algorithmlx.ecr.api.client.texture.ConnectedTextureRegion
 import com.algorithmlx.ecr.api.client.texture.ConnectedTextureRotation
 import com.algorithmlx.ecr.api.client.texture.ConnectedTextures
 import com.mojang.blaze3d.platform.Transparency
@@ -9,6 +10,7 @@ import net.minecraft.client.renderer.block.BlockAndTintGetter
 import net.minecraft.client.renderer.block.dispatch.BlockStateModel
 import net.minecraft.client.renderer.block.dispatch.BlockStateModelPart
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer
+import net.minecraft.client.renderer.texture.TextureAtlasSprite
 import net.minecraft.client.resources.model.geometry.BakedQuad
 import net.minecraft.client.resources.model.sprite.Material
 import net.minecraft.core.BlockPos
@@ -34,7 +36,9 @@ object NeoForgeConnectedTextures {
                 if (sprite.contents().name() != variant.sprite) {
                     null
                 } else {
-                    ResolvedVariant(Material.Baked(sprite, false), variant.rotation)
+                    val region = resolveRegion(sprite, variant.region)
+                        ?: return@Array null
+                    ResolvedVariant(Material.Baked(sprite, false), variant.rotation, region)
                 }
             }
             entry.setValue(NeoForgeConnectedTextureModel(entry.value, texture, variants))
@@ -159,7 +163,13 @@ private class NeoForgeConnectedTexturePart(
 
         val mask = ConnectedTextureMask.unpack(packedMask, face)
         val target = variants[mask] ?: return quad
-        if (target.material.sprite() === sourceSprite && target.rotation == ConnectedTextureRotation.NONE) return quad
+        if (
+            target.material.sprite() === sourceSprite &&
+            target.rotation == ConnectedTextureRotation.NONE &&
+            target.region == ResolvedRegion.FULL
+        ) {
+            return quad
+        }
 
         val mutable = MutableQuad().setFrom(quad)
         val sourceWidth = sourceSprite.u1 - sourceSprite.u0
@@ -169,10 +179,12 @@ private class NeoForgeConnectedTexturePart(
         for (vertex in 0..<BakedQuad.VERTEX_COUNT) {
             val u = (mutable.u(vertex) - sourceSprite.u0) / sourceWidth
             val v = (mutable.v(vertex) - sourceSprite.v0) / sourceHeight
+            val rotatedU = rotatedU(target.rotation, u, v)
+            val rotatedV = rotatedV(target.rotation, u, v)
             mutable.setUvFromSprite(
                 vertex,
-                rotatedU(target.rotation, u, v),
-                rotatedV(target.rotation, u, v),
+                target.region.u + rotatedU * target.region.width,
+                target.region.v + rotatedV * target.region.height,
             )
         }
         return mutable.toBakedQuad()
@@ -198,4 +210,41 @@ private class NeoForgeConnectedTexturePart(
 private data class ResolvedVariant(
     val material: Material.Baked,
     val rotation: ConnectedTextureRotation,
+    val region: ResolvedRegion,
 )
+
+private data class ResolvedRegion(
+    val u: Float,
+    val v: Float,
+    val width: Float,
+    val height: Float,
+) {
+    companion object {
+        val FULL = ResolvedRegion(0f, 0f, 1f, 1f)
+    }
+}
+
+private fun resolveRegion(
+    sprite: TextureAtlasSprite,
+    region: ConnectedTextureRegion?,
+): ResolvedRegion? {
+    if (region == null) return ResolvedRegion.FULL
+
+    val spriteWidth = sprite.contents().width()
+    val spriteHeight = sprite.contents().height()
+    if (
+        region.width > spriteWidth ||
+        region.height > spriteHeight ||
+        region.x > spriteWidth - region.width ||
+        region.y > spriteHeight - region.height
+    ) {
+        return null
+    }
+
+    return ResolvedRegion(
+        u = region.x.toFloat() / spriteWidth,
+        v = region.y.toFloat() / spriteHeight,
+        width = region.width.toFloat() / spriteWidth,
+        height = region.height.toFloat() / spriteHeight,
+    )
+}

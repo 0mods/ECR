@@ -72,7 +72,8 @@ data class ListMultiblockMatcher(
 
 data class BlockMultiblockMatcher(
     val state: BlockState,
-    val ignoreTag: Boolean = false
+    val ignoreTag: Boolean = false,
+    override val required: Boolean = true
 ): MultiblockMatcher {
     override val type: MultiblockMatcherType<*> get() = MultiblockMatcherTypes.instance.block
 
@@ -88,7 +89,9 @@ data class BlockMultiblockMatcher(
             it.group(
                 BlockState.CODEC.fieldOf("state").forGetter(BlockMultiblockMatcher::state),
                 Codec.BOOL.optionalFieldOf("ignore_tag", false)
-                    .forGetter(BlockMultiblockMatcher::ignoreTag)
+                    .forGetter(BlockMultiblockMatcher::ignoreTag),
+                Codec.BOOL.optionalFieldOf("required", true)
+                    .forGetter(BlockMultiblockMatcher::required)
             ).apply(it, ::BlockMultiblockMatcher)
         }
     }

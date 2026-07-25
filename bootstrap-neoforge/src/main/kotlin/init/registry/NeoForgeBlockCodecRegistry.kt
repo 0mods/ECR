@@ -25,6 +25,9 @@ class NeoForgeBlockCodecRegistry(bus: IEventBus): BlockCodecRegistry {
     private val magicTableCodec = blockTypes.register(ECRModIDs.MAGIC_TABLE) { _ -> BlockBehaviour.simpleCodec(::MagicTable) }
     private val matrixDestructorCodec = blockTypes.register(ECRModIDs.MATRIX_DESTRUCTOR) { _ -> BlockBehaviour.simpleCodec(::MatrixDestructor) }
     private val coldDistillerCodec = blockTypes.register(ECRModIDs.COLD_DISTILLER) { _ -> BlockBehaviour.simpleCodec(::ColdDistiller) }
+    private val enrichmentChamberControllerCodec = blockTypes.register(ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER) { _ -> BlockBehaviour.simpleCodec(::EnrichmentChamberController) }
+    private val enrichmentChamberExtractorCodec = blockTypes.register(ECRModIDs.ENRICHMENT_CHAMBER_EXTRACTOR) { _ -> BlockBehaviour.simpleCodec(::EnrichmentChamberExtractor) }
+    private val enrichmentChamberReceiverCodec = blockTypes.register(ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER) { _ -> BlockBehaviour.simpleCodec(::EnrichmentChamberReceiver) }
 
     override val solarPrism: MapCodec<SolarPrism> by lazy { solarPrismCodec.get() }
     override val clusterBlock: MapCodec<ClusterBlock> by lazy { clusterBlockCodec.get() }
@@ -33,4 +36,7 @@ class NeoForgeBlockCodecRegistry(bus: IEventBus): BlockCodecRegistry {
     override val magicTable: MapCodec<MagicTable> by lazy { magicTableCodec.get() }
     override val matrixDestructor: MapCodec<MatrixDestructor> by lazy { matrixDestructorCodec.get() }
     override val coldDistiller: MapCodec<ColdDistiller> by lazy { coldDistillerCodec.get() }
+    override val enrichmentChamberController: MapCodec<EnrichmentChamberController> by lazy { enrichmentChamberControllerCodec.get() }
+    override val enrichmentChamberExtractor: MapCodec<EnrichmentChamberExtractor> by lazy { enrichmentChamberExtractorCodec.get() }
+    override val enrichmentChamberReceiver: MapCodec<EnrichmentChamberReceiver> by lazy { enrichmentChamberReceiverCodec.get() }
 }

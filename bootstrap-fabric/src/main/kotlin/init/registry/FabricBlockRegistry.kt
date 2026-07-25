@@ -3,6 +3,9 @@ package com.algorithmlx.ecr.fabric.init.registry
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.block.ColdDistiller
 import com.algorithmlx.ecr.common.block.CrystalBlock
+import com.algorithmlx.ecr.common.block.EnrichmentChamberController
+import com.algorithmlx.ecr.common.block.EnrichmentChamberExtractor
+import com.algorithmlx.ecr.common.block.EnrichmentChamberReceiver
 import com.algorithmlx.ecr.common.block.MagicTable
 import com.algorithmlx.ecr.common.block.MagicalTeleporter
 import com.algorithmlx.ecr.common.block.MatrixDestructor
@@ -18,9 +21,10 @@ import net.minecraft.resources.Identifier
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.TransparentBlock
 import net.minecraft.world.level.block.state.BlockBehaviour
 
-object FabricBlockRegistry : BlockRegistry {
+object FabricBlockRegistry: BlockRegistry {
     override val mithrilineFurnace: MithrilineFurnace = register(ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnace)
     override val mithrilineCrystal: CrystalBlock = register(ECRModIDs.MITHRILINE_CRYSTAL, ::CrystalBlock)
     override val magicTable: MagicTable = register(ECRModIDs.MAGIC_TABLE, ::MagicTable)
@@ -39,6 +43,24 @@ object FabricBlockRegistry : BlockRegistry {
     override val waterCluster: Block = registerBasic(ECRModIDs.WATER_CLUSTER, shouldRegisterItem = false)
     override val earthCluster: Block = registerBasic(ECRModIDs.EARTH_CLUSTER, shouldRegisterItem = false)
     override val airCluster: Block = registerBasic(ECRModIDs.AIR_CLUSTER, shouldRegisterItem = false)
+    override val fortifiedGlass: Block = register(
+        ECRModIDs.FORTIFIED_GLASS,
+        ::TransparentBlock,
+        BlockBehaviour.Properties.of().noOcclusion(),
+    )
+    override val enrichmentChamberHolder: Block = registerBasic(ECRModIDs.ENRICHMENT_CHAMBER_HOLDER)
+    override val enrichmentChamberController: EnrichmentChamberController = register(
+        ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER,
+        ::EnrichmentChamberController
+    )
+    override val enrichmentChamberExtractor: EnrichmentChamberExtractor = register(
+        ECRModIDs.ENRICHMENT_CHAMBER_EXTRACTOR,
+        ::EnrichmentChamberExtractor
+    )
+    override val enrichmentChamberReceiver: EnrichmentChamberReceiver = register(
+        ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER,
+        ::EnrichmentChamberReceiver
+    )
 
     private fun registerBasic(
         id: String,
