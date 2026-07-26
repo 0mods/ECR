@@ -46,7 +46,7 @@ object FabricItemRegistry : ItemRegistry {
     override val forcefieldCore: Item = basicItem(ECRModIDs.FORCEFIELD_CORE)
     override val forcefieldPlating: Item = basicItem(ECRModIDs.FORCIFIELD_PLATING)
     override val fortifiedFrame: Item = basicItem(ECRModIDs.FORTIFIED_FRAME)
-    override val magicFortifiedPlating: Item = basicItem(ECRModIDs.MAGIC_FORTIFIED_PLATING)
+    override val fortifiedPlate: Item = basicItem(ECRModIDs.FORTIFIED_PLATE)
     override val magicPlate: Item = basicItem(ECRModIDs.MAGIC_PLATE)
     override val magicPurifiedBlazeAlloy: Item = basicItem(ECRModIDs.MAGIC_PURIFIED_BLAZE_ALLOY)
     override val magicPurifiedEnderScaleAlloy: Item = basicItem(ECRModIDs.MAGIC_PURIFIED_ENDER_SCALE_ALLOY)

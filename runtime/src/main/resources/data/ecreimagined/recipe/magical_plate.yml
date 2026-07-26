@@ -1,0 +1,13 @@
+type: ecreimagined:magic_table
+input:
+  pattern:
+    - AA
+    - AA
+  key:
+    A: ecreimagined:magical_ingot
+catalyst: ecreimagined:fortified_plate
+time: 100
+mru: 1
+result:
+  count: 1
+  id: ecreimagined:magic_plate

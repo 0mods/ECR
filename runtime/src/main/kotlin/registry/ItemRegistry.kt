@@ -30,7 +30,7 @@ interface ItemRegistry {
     val forcefieldCore: Item
     val forcefieldPlating: Item
     val fortifiedFrame: Item
-    val magicFortifiedPlating: Item
+    val fortifiedPlate: Item
     val magicPlate: Item
     val magicPurifiedBlazeAlloy: Item
     val magicPurifiedEnderScaleAlloy: Item

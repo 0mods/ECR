@@ -17,8 +17,7 @@ object StackHelper {
 
     @JvmStatic
     fun canCombineStacks(stack1: ItemStack, stack2: ItemStack): Boolean {
-        if (!stack1.isEmpty && stack2.isEmpty) return true
-        return areStacksEqual(stack1, stack2) && (stack1.count + stack2.count) <= stack1.maxStackSize
+        return !stack1.isEmpty && stack2.isEmpty || areStacksEqual(stack1, stack2) && (stack1.count + stack2.count) <= stack1.maxStackSize
     }
 
     @JvmStatic

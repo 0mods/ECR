@@ -1,0 +1,7 @@
+type: ecreimagined:magic_table
+catalyst: ecreimagined:fortified_stone
+time: 50
+mru: 10
+result:
+  count: 1
+  id: ecreimagined:fortified_plate

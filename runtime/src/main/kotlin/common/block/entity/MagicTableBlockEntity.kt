@@ -7,6 +7,7 @@ import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.api.recipe.CachedRecipe
 import com.algorithmlx.ecr.api.utils.count
 import com.algorithmlx.ecr.api.block.entity.SynchronizedContainerBlockEntity
+import com.algorithmlx.ecr.api.utils.StackHelper
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.MRUTypeRegistry
 import com.algorithmlx.ecr.registry.RecipeTypeRegistry
@@ -109,7 +110,10 @@ class MagicTableBlockEntity(
         }
 
         private fun MagicTableBlockEntity.processRecipeIfPresent(level: Level) {
-            if ((0 ..< 5).all { this.getItem(it).isEmpty }) return
+            if ((0 ..< 5).all { this.getItem(it).isEmpty }) {
+                this.resetProgress()
+                return
+            }
 
             val input = MagicTableRecipe.Input((0 ..< 5).map { this.getItem(it) })
 
@@ -123,39 +127,40 @@ class MagicTableBlockEntity(
             val mru = recipe.mruPerTick
             val result = recipe.result
 
+            if (!StackHelper.canCombineStacks(result.create(), this.getItem(5))) return
+
             this.maxProgress = time
 
-            if (this.getItem(5).isEmpty) {
-                this.processTick(time, mru)
+            this.processTick(time, mru)
 
-                if (time > this.progress) return
+            if (time > this.progress) return
 
-                val inputs = recipe.inputs.getOrNull()
-                if (inputs != null) {
-                    val positioned = input.craftingInput()
-                    val craftingInput = positioned.input()
-                    val ingredients = inputs.ingredients()
-                    val mirrored = shouldConsumeMirrored(inputs, craftingInput)
+            val inputs = recipe.inputs.getOrNull()
 
-                    (0 ..< inputs.height()).forEach { y ->
-                        (0 ..< inputs.width()).forEach { x ->
-                            val ingredientX = if (mirrored) inputs.width() - x - 1 else x
-                            val ingredient = ingredients[ingredientX + y * inputs.width()].getOrNull() ?: return@forEach
-                            val slot = x + positioned.left() + (y + positioned.top()) * 2
-                            this.removeItem(slot, ingredient.count)
-                        }
+            if (inputs != null) {
+                val positioned = input.craftingInput()
+                val craftingInput = positioned.input()
+                val ingredients = inputs.ingredients()
+                val mirrored = shouldConsumeMirrored(inputs, craftingInput)
+
+                (0 ..< inputs.height()).forEach { y ->
+                    (0 ..< inputs.width()).forEach { x ->
+                        val ingredientX = if (mirrored) inputs.width() - x - 1 else x
+                        val ingredient = ingredients[ingredientX + y * inputs.width()].getOrNull() ?: return@forEach
+                        val slot = x + positioned.left() + (y + positioned.top()) * 2
+                        this.removeItem(slot, ingredient.count)
                     }
                 }
-
-                val catalyst = recipe.catalyst.getOrNull()
-                catalyst?.let { this.removeItem(4, it.count) }
-
-                if (this.getItem(5).isEmpty)
-                    this.setItem(5, result.create())
-                else this.getItem(5).grow(result.count())
-
-                this.resetProgress()
             }
+
+            val catalyst = recipe.catalyst.getOrNull()
+            catalyst?.let { this.removeItem(4, it.count) }
+
+            if (this.getItem(5).isEmpty)
+                this.setItem(5, result.create())
+            else this.getItem(5).grow(result.count())
+
+            this.resetProgress()
         }
 
         private fun MagicTableBlockEntity.processTick(time: Int, mru: Int) {

@@ -62,9 +62,9 @@ class NeoForgeItemRegistry(bus: IEventBus): ItemRegistry {
     val emeraldPlateItem = basicItem(ECRModIDs.EMERALD_PLATE)
     val enderScaleAlloyItem = basicItem(ECRModIDs.ENDER_SCALE_ALLOY)
     val forcefieldCoreItem = basicItem(ECRModIDs.FORCEFIELD_CORE)
-    val forcefieldPlationgItem = basicItem(ECRModIDs.FORCIFIELD_PLATING)
+    val forcefieldPlatingItem = basicItem(ECRModIDs.FORCIFIELD_PLATING)
     val fortifiedFrameItem = basicItem(ECRModIDs.FORTIFIED_FRAME)
-    val magicFortifiedPlatingItem = basicItem(ECRModIDs.MAGIC_FORTIFIED_PLATING)
+    val fortifiedPlateItem = basicItem(ECRModIDs.FORTIFIED_PLATE)
     val magicPlateItem = basicItem(ECRModIDs.MAGIC_PLATE)
     val magicPurifiedBlazeAlloyItem = basicItem(ECRModIDs.MAGIC_PURIFIED_BLAZE_ALLOY)
     val magicPurifiedEnderScaleAlloyItem = basicItem(ECRModIDs.MAGIC_PURIFIED_ENDER_SCALE_ALLOY)
@@ -108,9 +108,9 @@ class NeoForgeItemRegistry(bus: IEventBus): ItemRegistry {
     override val emeraldPlate: Item by lazy { emeraldPlateItem.get() }
     override val enderScaleAlloy: Item by lazy { enderScaleAlloyItem.get() }
     override val forcefieldCore: Item by lazy { forcefieldCoreItem.get() }
-    override val forcefieldPlating: Item by lazy { forcefieldPlationgItem.get() }
+    override val forcefieldPlating: Item by lazy { forcefieldPlatingItem.get() }
     override val fortifiedFrame: Item by lazy { fortifiedFrameItem.get() }
-    override val magicFortifiedPlating: Item by lazy { magicFortifiedPlatingItem.get() }
+    override val fortifiedPlate: Item by lazy { fortifiedPlateItem.get() }
     override val magicPlate: Item by lazy { magicPlateItem.get() }
     override val magicPurifiedBlazeAlloy: Item by lazy { magicPurifiedBlazeAlloyItem.get() }
     override val magicPurifiedEnderScaleAlloy: Item by lazy { magicPurifiedEnderScaleAlloyItem.get() }

@@ -71,7 +71,7 @@ object ECRModIDs {
     const val FORCEFIELD_CORE = "forcefield_core"
     const val FORCIFIELD_PLATING = "forcefield_plating"
     const val FORTIFIED_FRAME = "fortified_frame"
-    const val MAGIC_FORTIFIED_PLATING = "magic_fortified_plating"
+    const val FORTIFIED_PLATE = "fortified_plate"
     const val MAGIC_PLATE = "magic_plate"
     const val MAGIC_PURIFIED_BLAZE_ALLOY = "magic_purified_blaze_alloy"
     const val MAGIC_PURIFIED_ENDER_SCALE_ALLOY = "magic_purified_ender_scale_alloy"
