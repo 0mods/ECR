@@ -3,25 +3,35 @@ package com.algorithmlx.ecr.common.block.entity
 import com.algorithmlx.ecr.api.block.entity.SynchronizedBlockEntity
 import com.algorithmlx.ecr.api.multiblock.MultiblockPlacement
 import com.algorithmlx.ecr.api.mru.MRUDevice
+import com.algorithmlx.ecr.api.mru.storage.ExtremeMRUStorageContainer
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
-import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.common.block.EnrichmentChamberController
 import com.algorithmlx.ecr.common.init.config.ECConfig
+import com.algorithmlx.ecr.common.menu.EnrichmentChamberControllerMenu
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.BlockRegistry
 import com.algorithmlx.ecr.registry.MRUTypeRegistry
 import com.algorithmlx.ecr.registry.MultiblockRegistry
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.network.chat.Component
+import net.minecraft.world.MenuProvider
+import net.minecraft.world.entity.player.Inventory
+import net.minecraft.world.entity.player.Player
+import net.minecraft.world.inventory.AbstractContainerMenu
+import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
+import net.minecraft.world.phys.AABB
 
 class EnrichmentChamberControllerEntity(worldPosition: BlockPos, blockState: BlockState): SynchronizedBlockEntity(
     BlockEntityTypeRegistry.instance.enrichmentChamberController, worldPosition, blockState
-), MRUDevice {
-    var mutableMRUStorage = MRUStorageContainer(0, MRUTypeRegistry.instance.radiationUnit) {
+), MRUDevice, MenuProvider {
+    private var mutableMRUStorage = ExtremeMRUStorageContainer(0, MRUTypeRegistry.instance.radiationUnit) {
         this.setChanged()
     }
     private var placement: MultiblockPlacement? = null
@@ -70,6 +80,30 @@ class EnrichmentChamberControllerEntity(worldPosition: BlockPos, blockState: Blo
     override val mruStorage: IOMRUStorage get() = mutableMRUStorage
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.UNCONNECTABLE
 
+    val innerBounds: AABB?
+        get() {
+            val placement = placement ?: return null
+            val pattern = multiblock.variants.getOrNull(placement.variantIndex) ?: return null
+            if (pattern.xSize <= 2 || pattern.ySize <= 2 || pattern.zSize <= 2) return null
+
+            val first = getWorldPosition(placement, 1, 1, 1)
+            val last = getWorldPosition(
+                placement,
+                pattern.xSize - 2,
+                pattern.ySize - 2,
+                pattern.zSize - 2
+            )
+
+            return AABB(
+                minOf(first.x, last.x).toDouble(),
+                minOf(first.y, last.y).toDouble(),
+                minOf(first.z, last.z).toDouble(),
+                maxOf(first.x, last.x) + 1.0,
+                maxOf(first.y, last.y) + 1.0,
+                maxOf(first.z, last.z) + 1.0
+            )
+        }
+
     fun setPlacement(placement: MultiblockPlacement?) {
         if (this.placement == placement) {
             if (placement == null) updateCapacity(0)
@@ -82,6 +116,33 @@ class EnrichmentChamberControllerEntity(worldPosition: BlockPos, blockState: Blo
         setChanged()
     }
 
+    private inline fun <reified T: EnrichmentChamber> synchronizeElements(level: Level, nextPlacement: MultiblockPlacement?, block: Block) {
+        val previousElements = findElements(level, placement, block)
+        val nextElements = findElements(level, nextPlacement, block)
+
+        (previousElements - nextElements).forEach { position ->
+            val be = level.getBlockEntity(position)
+
+            if (be !is T) return@forEach
+            be.disconnectFromController(blockPos)
+        }
+
+        nextElements.forEach { position ->
+            val be = level.getBlockEntity(position)
+
+            if (be !is T) return@forEach
+            be.connectToController(blockPos)
+        }
+    }
+
+    private fun findElements(level: Level, placement: MultiblockPlacement?, block: Block): Set<BlockPos> {
+        if (placement == null) return emptySet()
+
+        return multiblock.matchesIn(
+            level, placement, block
+        ).asSequence().filter { it.matches }.map { it.worldPos.immutable() }.toSet()
+    }
+
     private fun updateCapacity(capacity: Int) {
         if (capacity == mutableMRUStorage.mruCapacity) return
 
@@ -90,6 +151,16 @@ class EnrichmentChamberControllerEntity(worldPosition: BlockPos, blockState: Blo
         mutableMRUStorage.set(stored)
         setChanged()
     }
+
+    override fun getDisplayName(): Component = Component.empty()
+
+    override fun createMenu(
+        containerId: Int,
+        inventory: Inventory,
+        player: Player
+    ): AbstractContainerMenu = EnrichmentChamberControllerMenu(
+        containerId, inventory, ContainerLevelAccess.create(this.level!!, this.blockPos), this
+    )
 
     companion object {
         private val config = ECConfig.instance.enrichmentChamber
@@ -103,6 +174,25 @@ class EnrichmentChamberControllerEntity(worldPosition: BlockPos, blockState: Blo
         private const val PLACEMENT_VARIANT_TAG = "multiblock_variant"
         private const val STRUCTURE_CHECK_INTERVAL = 20L
 
+        private fun getWorldPosition(
+            placement: MultiblockPlacement,
+            x: Int,
+            y: Int,
+            z: Int
+        ): BlockPos {
+            val relativeX = x - placement.startX
+            val relativeY = y - placement.startY
+            val relativeZ = z - placement.startZ
+
+            return when (placement.direction) {
+                Direction.NORTH -> placement.basePos.offset(relativeX, relativeY, -relativeZ)
+                Direction.SOUTH -> placement.basePos.offset(-relativeX, relativeY, relativeZ)
+                Direction.WEST -> placement.basePos.offset(-relativeZ, relativeY, -relativeX)
+                Direction.EAST -> placement.basePos.offset(relativeZ, relativeY, relativeX)
+                else -> placement.basePos
+            }
+        }
+
         @JvmStatic
         fun onTick(level: Level, state: BlockState, be: EnrichmentChamberControllerEntity) {
             if (level.isClientSide) return
@@ -112,6 +202,16 @@ class EnrichmentChamberControllerEntity(worldPosition: BlockPos, blockState: Blo
             ) return
 
             val placement = EnrichmentChamberController.findPlacement(level, be.blockPos, state)
+            be.synchronizeElements<EnrichmentChamberExtractorEntity>(
+                level,
+                placement,
+                BlockRegistry.instance.enrichmentChamberExtractor
+            )
+            be.synchronizeElements<EnrichmentChamberReceiverEntity>(
+                level,
+                placement,
+                BlockRegistry.instance.enrichmentChamberReceiver
+            )
             be.setPlacement(placement)
 
             val active = placement != null

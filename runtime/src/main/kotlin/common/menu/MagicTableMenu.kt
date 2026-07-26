@@ -4,6 +4,7 @@ import com.algorithmlx.ecr.api.container.AbstractMenu
 import com.algorithmlx.ecr.api.container.slot.VanillaSpecialSlot
 import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.menu.MenuTypeData
+import com.algorithmlx.ecr.common.api.BoundGemHelper
 import com.algorithmlx.ecr.registry.BlockRegistry
 import com.algorithmlx.ecr.registry.MenuTypeRegistry
 import net.minecraft.world.Container
@@ -52,9 +53,9 @@ class MagicTableMenu(
         // Bound gem
         addSlot(
             VanillaSpecialSlot(
-                container, 6, 152, 53, {
-                    val item = it.item
-                    item is BoundGem
+                container, 6, 152, 53, { stack ->
+                    val item = stack.item
+                    item is BoundGem && BoundGemHelper.getBoundPos(stack) != null
                 }
             )
         )
@@ -64,12 +65,12 @@ class MagicTableMenu(
         addDataSlots(data)
     }
 
-    override fun quickMoveStack(player: Player, index: Int): ItemStack {
-        val slot = this.slots.getOrNull(index) ?: return ItemStack.EMPTY
+    override fun quickMoveStack(player: Player, slotIndex: Int): ItemStack {
+        val slot = this.slots.getOrNull(slotIndex) ?: return ItemStack.EMPTY
         val stack = slot.item.takeIf { it.count > 0 } ?: return ItemStack.EMPTY
 
         val copy = stack.copy()
-        val moved = when (index) {
+        val moved = when (slotIndex) {
             0 -> moveItemStackTo(stack, 7, 43, true)
             in 7 ..< 17 -> moveItemStackTo(stack, 0, 6, false) || moveItemStackTo(stack, 17, 43, false)
             in 17 ..< 43 -> moveItemStackTo(stack, 0, 6, false) || moveItemStackTo(stack, 7, 16, false)

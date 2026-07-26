@@ -3,6 +3,8 @@ package com.algorithmlx.ecr.fabric.init.registry
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.block.entity.ColdDistillerEntity
 import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberControllerEntity
+import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberExtractorEntity
+import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberReceiverEntity
 import com.algorithmlx.ecr.common.block.entity.MagicTableBlockEntity
 import com.algorithmlx.ecr.common.block.entity.MagicalTeleporterEntity
 import com.algorithmlx.ecr.common.block.entity.MatrixDestructorEntity
@@ -31,6 +33,14 @@ object FabricBlockEntityTypeRegistry : BlockEntityTypeRegistry {
     override val enrichmentChamberController: BlockEntityType<EnrichmentChamberControllerEntity> = register(
         ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER,
         BlockEntityType(::EnrichmentChamberControllerEntity, setOf(BlockRegistry.instance.enrichmentChamberController))
+    )
+    override val enrichmentChamberExtractor: BlockEntityType<EnrichmentChamberExtractorEntity> = register(
+        ECRModIDs.ENRICHMENT_CHAMBER_EXTRACTOR,
+        BlockEntityType(::EnrichmentChamberExtractorEntity, setOf(BlockRegistry.instance.enrichmentChamberExtractor))
+    )
+    override val enrichmentChamberReceiver: BlockEntityType<EnrichmentChamberReceiverEntity> = register(
+        ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER,
+        BlockEntityType(::EnrichmentChamberReceiverEntity, setOf(BlockRegistry.instance.enrichmentChamberReceiver))
     )
     override val matrixDestructor: BlockEntityType<MatrixDestructorEntity> = register(
         ECRModIDs.MATRIX_DESTRUCTOR,

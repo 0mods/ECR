@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.common.block
 
+import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberExtractorEntity
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.EntityBlock
@@ -10,5 +11,5 @@ class EnrichmentChamberExtractor(properties: Properties): Block(properties), Ent
     override fun newBlockEntity(
         worldPosition: BlockPos,
         blockState: BlockState
-    ): BlockEntity? = null
+    ): BlockEntity = EnrichmentChamberExtractorEntity(worldPosition, blockState)
 }

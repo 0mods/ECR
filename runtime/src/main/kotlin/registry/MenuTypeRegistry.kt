@@ -7,6 +7,8 @@ interface MenuTypeRegistry {
     val mithrilineFurnace: MenuType<MithrilineFurnaceMenu>
     val magicTable: MenuType<MagicTableMenu>
     val matrixDestructor: MenuType<MatrixDestructorMenu>
+    val enrichmentChamberController: MenuType<EnrichmentChamberControllerMenu>
+    val enrichmentChamberReceiver: MenuType<EnrichmentChamberReceiverMenu>
 
     companion object {
         @JvmStatic

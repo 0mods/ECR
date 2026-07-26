@@ -12,6 +12,8 @@ import com.algorithmlx.ecr.api.particle.BedrockParticles
 import com.algorithmlx.ecr.api.particle.ClientParticleSystems
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.client.book.ResearchBookClient
+import com.algorithmlx.ecr.client.renderer.BoundGemLinkRenderer
+import com.algorithmlx.ecr.client.renderer.EnrichmentChamberControllerRenderer
 import com.algorithmlx.ecr.client.renderer.MatrixDestructorRenderer
 import com.algorithmlx.ecr.client.renderer.MithrilineFurnaceRenderer
 import com.algorithmlx.ecr.client.screen.MagicTableMenuScreen
@@ -37,6 +39,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderers
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.packs.PackType
 import com.algorithmlx.ecr.api.utils.rl
+import com.algorithmlx.ecr.client.screen.EnrichmentChamberControllerScreen
+import com.algorithmlx.ecr.client.screen.EnrichmentChamberReceiverScreen
 import kotlin.random.Random
 
 object FabricClientInit {
@@ -52,12 +56,18 @@ object FabricClientInit {
 
         BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceRenderer)
         BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.matrixDestructor, ::MatrixDestructorRenderer)
+        BlockEntityRenderers.register(
+            BlockEntityTypeRegistry.instance.enrichmentChamberController,
+            ::EnrichmentChamberControllerRenderer
+        )
 
         ModelLayerRegistry.registerModelLayer(MithrilineFurnaceRenderer.MF_LAYER, MithrilineFurnaceRenderer::createBodyLayer)
 
         MenuScreens.register(MenuTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceScreen)
         MenuScreens.register(MenuTypeRegistry.instance.magicTable, ::MagicTableMenuScreen)
         MenuScreens.register(MenuTypeRegistry.instance.matrixDestructor, ::MatrixDestructorScreen)
+        MenuScreens.register(MenuTypeRegistry.instance.enrichmentChamberController, ::EnrichmentChamberControllerScreen)
+        MenuScreens.register(MenuTypeRegistry.instance.enrichmentChamberReceiver, ::EnrichmentChamberReceiverScreen)
     }
 
     private fun registerBedrockParticles() {
@@ -78,6 +88,11 @@ object FabricClientInit {
                 minecraft.deltaTracker.getGameTimeDeltaPartialTick(false),
                 minecraft.player?.uuid,
                 minecraft.options.cameraType.isFirstPerson,
+            )
+            BoundGemLinkRenderer.submit(
+                poseStack,
+                context.submitNodeCollector(),
+                context.levelState()
             )
         }
     }

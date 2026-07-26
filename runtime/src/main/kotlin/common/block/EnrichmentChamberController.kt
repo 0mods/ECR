@@ -1,6 +1,7 @@
 package com.algorithmlx.ecr.common.block
 
 import com.algorithmlx.ecr.api.multiblock.MultiblockPlacement
+import com.algorithmlx.ecr.api.utils.checkAndOpenMenu
 import com.algorithmlx.ecr.api.utils.simpleTicker
 import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberControllerEntity
 import com.algorithmlx.ecr.common.init.ECTags
@@ -58,14 +59,9 @@ class EnrichmentChamberController(properties: Properties): Block(properties), En
         player: Player,
         hitResult: BlockHitResult
     ): InteractionResult {
-        if (level.isClientSide) return InteractionResult.SUCCESS
-
-        return if (state.getValue(ACTIVE)) {
-            player.sendSystemMessage(Component.literal("all works!"))
-            InteractionResult.SUCCESS
-        } else {
-            InteractionResult.PASS
-        }
+        return if (state.getValue(ACTIVE))
+            checkAndOpenMenu<EnrichmentChamberControllerEntity>(player, level, pos)
+        else super.useWithoutItem(state, level, pos, player, hitResult)
     }
 
     override fun getStateForPlacement(context: BlockPlaceContext): BlockState =

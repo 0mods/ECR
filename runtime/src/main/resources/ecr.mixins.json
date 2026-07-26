@@ -4,7 +4,8 @@
   "package": "com.algorithmlx.ecr.mixin",
   "client": [
     "client.ClientLevelMixin",
-    "client.RenderPipelinesAccessor"
+    "client.RenderPipelinesAccessor",
+    "client.RenderTypeAccessor"
   ],
   "mixins": [
     "ItemEntityMixin",

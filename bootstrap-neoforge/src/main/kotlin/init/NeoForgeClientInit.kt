@@ -9,6 +9,8 @@ import com.algorithmlx.ecr.api.particle.ClientParticleSystems
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.client.book.ResearchBookClient
+import com.algorithmlx.ecr.client.renderer.BoundGemLinkRenderer
+import com.algorithmlx.ecr.client.renderer.EnrichmentChamberControllerRenderer
 import com.algorithmlx.ecr.client.renderer.MatrixDestructorRenderer
 import com.algorithmlx.ecr.client.renderer.MithrilineFurnaceRenderer
 import com.algorithmlx.ecr.client.screen.MagicTableMenuScreen
@@ -16,6 +18,7 @@ import com.algorithmlx.ecr.client.screen.MatrixDestructorScreen
 import com.algorithmlx.ecr.client.screen.MithrilineFurnaceScreen
 import com.algorithmlx.ecr.neoforge.client.NeoForgeConnectedTextures
 import com.algorithmlx.ecr.client.ECRConnectedTextures
+import com.algorithmlx.ecr.client.screen.EnrichmentChamberReceiverScreen
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.MenuTypeRegistry
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
@@ -57,7 +60,7 @@ object NeoForgeClientInit {
         bus.addListener(::onRegisterEntityRenderers)
 
         NeoForge.EVENT_BUS.addListener(::onClientTick)
-        NeoForge.EVENT_BUS.addListener(::onSubmitParticleGeometry)
+        NeoForge.EVENT_BUS.addListener(::onSubmitCustomGeometry)
     }
 
     private fun onRegisterClientReloadListeners(event: AddClientReloadListenersEvent) {
@@ -68,7 +71,7 @@ object NeoForgeClientInit {
         Minecraft.getInstance().level?.let { ClientParticleSystems.get(it)?.update() }
     }
 
-    private fun onSubmitParticleGeometry(event: SubmitCustomGeometryEvent) {
+    private fun onSubmitCustomGeometry(event: SubmitCustomGeometryEvent) {
         val minecraft = Minecraft.getInstance()
         val level = minecraft.level ?: return
         ClientParticleSystems.get(level)?.submit(
@@ -78,6 +81,11 @@ object NeoForgeClientInit {
             minecraft.deltaTracker.getGameTimeDeltaPartialTick(false),
             minecraft.player?.uuid,
             minecraft.options.cameraType.isFirstPerson,
+        )
+        BoundGemLinkRenderer.submit(
+            event.poseStack,
+            event.submitNodeCollector,
+            event.levelRenderState
         )
     }
 
@@ -93,6 +101,10 @@ object NeoForgeClientInit {
 
             BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceRenderer)
             BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.matrixDestructor, ::MatrixDestructorRenderer)
+            BlockEntityRenderers.register(
+                BlockEntityTypeRegistry.instance.enrichmentChamberController,
+                ::EnrichmentChamberControllerRenderer
+            )
         }
     }
 
@@ -100,6 +112,7 @@ object NeoForgeClientInit {
         event.register(MenuTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceScreen)
         event.register(MenuTypeRegistry.instance.magicTable, ::MagicTableMenuScreen)
         event.register(MenuTypeRegistry.instance.matrixDestructor, ::MatrixDestructorScreen)
+        event.register(MenuTypeRegistry.instance.enrichmentChamberReceiver, ::EnrichmentChamberReceiverScreen)
     }
 
     private fun onRegisterClientPayloads(event: RegisterClientPayloadHandlersEvent) {

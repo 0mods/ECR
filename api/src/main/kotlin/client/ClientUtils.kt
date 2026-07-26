@@ -47,6 +47,15 @@ fun drawMRUGradientLine(
     colorIn: Int = Color(139, 0, 255).rgb,
     colorOut: Int = Color(50, 18, 122).rgb
 ) {
-    val m = ((container.mru.toFloat() / container.mruCapacity) * width).toInt()
+    val m = calculateMRULineWidth(container.mru, container.mruCapacity, width)
+    if (m == 0) return
+
     gg.fillGradient(x + xo, y + yo, (x + m) + xo, (y + height) + yo, colorIn, colorOut)
+}
+
+internal fun calculateMRULineWidth(mru: Int, capacity: Int, width: Int): Int {
+    if (mru <= 0 || capacity <= 0 || width <= 0) return 0
+
+    val fill = (mru.toDouble() / capacity).coerceIn(0.0, 1.0)
+    return (fill * width).toInt()
 }

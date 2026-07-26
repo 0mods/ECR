@@ -66,6 +66,13 @@ block.ecreimagined:
   air_cluster: Air Cluster
   solar_prism: Solar Prism
   cold_distiller: Cold Distiller
+  enrichment_chamber_controller: Enrichment Chamber Controller
+  enrichment_chamber_extractor: Enrichment Chamber Extractor
+  enrichment_chamber_receiver: Enrichment Chamber Receiver
+  enrichment_chamber_holder: Enrichment Chamber Holder
+  fortified_glass: Fortified Glass
+  fortified_stone: Fortified Stone
+  magical_teleporter: Magical Teleporter
 
 tooltip.ecreimagined:
   sword_multiplier: MRU Gain Bonus
@@ -80,10 +87,6 @@ tooltip.ecreimagined:
     tracking: Tracking MRU Matrix of %s
     detected_ubmru: Detected %s UBMRU Energy
     matrix: MRU Matrix twists with %s Energies
-    bounded: The soul stone is bounded to %s
-    can_not_unbound: You can't unbound this soul stone
-    unbounded: The soul stone is unbounded
-    creative: Creative
   bound_gem:
     linked:
       .: Bound gem was bounded at pos
@@ -112,12 +115,6 @@ mru_type.ecreimagined:
 matrix.ecreimagined:
   neutral: Neutral
 
-config.jade.plugin_ecreimagined:
-  mru_component: MRU Devices
-  mithriline_furnace:
-    .: Mithriline Furnace
-    espe_collector: "Active ESPE collectors: %s/%s"
-
 screen.ecreimagined:
   research_book:
     .: Research Book
@@ -145,7 +142,7 @@ screen.ecreimagined:
         chance: "Chance: %s"
     page: Page %s/%s
 
-toast.ecreimagined:
+toast.ecreimagined.research_book:
   research_unlocked: Research unlocked
   research_completed: Research completed
 
