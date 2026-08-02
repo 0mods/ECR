@@ -70,6 +70,17 @@ data class MultiblockBookElement(
     override val type: Identifier = ResearchIds.MULTIBLOCK
 }
 
+data class AssembledMultiblockBookElement(
+    val multiblock: Identifier,
+    val assembled: Boolean = false,
+    val scale: Float = 0.9F,
+    val rotationX: Float = 25F,
+    val rotationY: Float = -30F,
+    val layer: Int = Int.MAX_VALUE
+) : BookElement {
+    override val type: Identifier = ResearchIds.ASSEMBLED_MULTIBLOCK
+}
+
 data class CraftingBookElement(
     val recipe: Identifier
 ) : BookElement {

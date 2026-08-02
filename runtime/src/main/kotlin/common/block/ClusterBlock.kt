@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.common.api.block
+package com.algorithmlx.ecr.common.block
 
 import com.algorithmlx.ecr.registry.BlockCodecRegistry
 import com.mojang.serialization.MapCodec

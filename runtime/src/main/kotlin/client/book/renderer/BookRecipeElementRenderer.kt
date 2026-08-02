@@ -7,6 +7,7 @@ import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.mojang.blaze3d.platform.cursor.CursorTypes
 import com.algorithmlx.ecr.api.research.ClientResearchState
 import com.algorithmlx.ecr.api.research.content.CraftingBookElement
+import com.algorithmlx.ecr.api.research.content.AssembledMultiblockBookElement
 import com.algorithmlx.ecr.api.research.content.MultiblockBookElement
 import com.algorithmlx.ecr.client.book.BookResearchLinkController
 import com.algorithmlx.ecr.client.book.controller.MultiblockBookPreviewController
@@ -93,6 +94,7 @@ object BookRecipeElementRenderer {
             is BookRecipeTooltip -> renderTooltip(context, element)
             is BookRecipeLink -> renderLink(context, element)
             is BookRecipeMultiblock -> renderMultiblock(context, element, index)
+            is BookRecipeAssembledMultiblock -> renderAssembledMultiblock(context, element, index)
             else -> element.render(context)
         }
     }
@@ -108,8 +110,6 @@ object BookRecipeElementRenderer {
 
     private fun renderMultiblock(context: BookElementRenderContext, element: BookRecipeMultiblock, index: Int) {
         val multiblock = ECRegistries.MULTIBLOCK.getOptional(element.multiblock).orElse(null) ?: return
-        val access = context.mc.level?.registryAccess() ?: return
-        multiblock.registryAccess = access
 
         val x = context.x + element.x
         val y = context.y + element.y
@@ -141,6 +141,52 @@ object BookRecipeElementRenderer {
             multiblock
         )
     }
+
+    private fun renderAssembledMultiblock(
+        context: BookElementRenderContext,
+        element: BookRecipeAssembledMultiblock,
+        index: Int
+    ) {
+        val multiblock = ECRegistries.ASSEMBLED_MULTIBLOCK.getOptional(element.multiblock).orElse(null) ?: return
+        val subContext = previewContext(context, element.x, element.y, element.width, element.height, index, true)
+        MultiblockBookPreviewController.render(
+            subContext,
+            AssembledMultiblockBookElement(
+                element.multiblock,
+                element.assembled,
+                element.scale,
+                element.rotationX,
+                element.rotationY,
+                element.layer
+            ),
+            multiblock
+        )
+    }
+
+    private fun previewContext(
+        context: BookElementRenderContext,
+        offsetX: Int,
+        offsetY: Int,
+        width: Int,
+        height: Int,
+        index: Int,
+        assembled: Boolean
+    ): BookElementRenderContext = context.copy(
+        x = context.x + offsetX,
+        y = context.y + offsetY,
+        width = width,
+        height = height,
+        screenX = context.screenX + (offsetX * context.scale).roundToInt(),
+        screenY = context.screenY + (offsetY * context.scale).roundToInt(),
+        screenWidth = max(1, (width * context.scale).roundToInt()),
+        screenHeight = max(1, (height * context.scale).roundToInt()),
+        textLines = null,
+        interactionKey = context.interactionKey?.let {
+            "$it|recipe_${if (assembled) "assembled_" else ""}multiblock_$index"
+        },
+        textLineStart = 0,
+        textLineCount = 0
+    )
 
     private fun renderLink(context: BookElementRenderContext, link: BookRecipeLink) {
         val font = context.mc.font

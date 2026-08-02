@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.fabric.init.registry
 
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.block.ColdDistiller
+import com.algorithmlx.ecr.common.block.AssembledMultiblockPartBlock
 import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.EnrichmentChamberController
 import com.algorithmlx.ecr.common.block.EnrichmentChamberExtractor
@@ -10,6 +11,7 @@ import com.algorithmlx.ecr.common.block.MagicTable
 import com.algorithmlx.ecr.common.block.MagicalTeleporter
 import com.algorithmlx.ecr.common.block.MatrixDestructor
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
+import com.algorithmlx.ecr.common.block.RayTower
 import com.algorithmlx.ecr.common.block.SolarPrism
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.item.NamedBlockItem
@@ -23,8 +25,19 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.TransparentBlock
 import net.minecraft.world.level.block.state.BlockBehaviour
+import net.minecraft.world.level.material.PushReaction
 
 object FabricBlockRegistry: BlockRegistry {
+    override val assembledMultiblockPart: AssembledMultiblockPartBlock = register(
+        ECRModIDs.ASSEMBLED_MULTIBLOCK_PART,
+        ::AssembledMultiblockPartBlock,
+        BlockBehaviour.Properties.of()
+            .strength(3.0F)
+            .noOcclusion()
+            .noLootTable()
+            .pushReaction(PushReaction.BLOCK),
+        shouldRegisterItem = false
+    )
     override val mithrilineFurnace: MithrilineFurnace = register(ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnace)
     override val mithrilineCrystal: CrystalBlock = register(ECRModIDs.MITHRILINE_CRYSTAL, ::CrystalBlock)
     override val magicTable: MagicTable = register(ECRModIDs.MAGIC_TABLE, ::MagicTable)
@@ -61,6 +74,8 @@ object FabricBlockRegistry: BlockRegistry {
         ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER,
         ::EnrichmentChamberReceiver
     )
+    override val rayTowerBase: Block = registerBasic(ECRModIDs.RAY_TOWER_BASE)
+    override val rayTower: RayTower = register(ECRModIDs.RAY_TOWER, ::RayTower)
 
     private fun registerBasic(
         id: String,

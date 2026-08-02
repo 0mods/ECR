@@ -1,6 +1,7 @@
 package com.algorithmlx.ecr.client.renderer
 
 import com.algorithmlx.ecr.api.item.BoundGem
+import com.algorithmlx.ecr.api.assembled.AssembledMultiblocks
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.SubmitNodeCollector
@@ -28,7 +29,8 @@ object BoundGemLinkRenderer {
 
         val blockState = level.getBlockState(boundPos)
         val collisionContext = CollisionContext.of(player)
-        val blockShape = blockState.getShape(level, boundPos, collisionContext)
+        val blockShape = (AssembledMultiblocks.formedSelectionShape(level, boundPos)
+            ?: blockState.getShape(level, boundPos, collisionContext))
             .takeUnless { it.isEmpty }
             ?: Shapes.block()
         val cameraPos = levelRenderState.cameraRenderState.pos

@@ -67,7 +67,12 @@ class MultiblockPreviewPictureRenderer : PictureInPictureRenderer<MultiblockPrev
                 height = (state.y1() - state.y0()).toFloat()
             )
 
-            previewRenderer.submit(state.multiblock, poseStack, submitter, bounds, state.transform)
+            when (val model = state.model) {
+                is MultiblockPreviewModel.Pattern ->
+                    previewRenderer.submit(model.multiblock, poseStack, submitter, bounds, state.transform)
+                is MultiblockPreviewModel.Assembled ->
+                    previewRenderer.submit(model.definition, model.assembled, poseStack, submitter, bounds, state.transform)
+            }
         }
 
         override fun getTextureLabel(): String = "multiblock_preview"

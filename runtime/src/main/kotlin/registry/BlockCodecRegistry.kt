@@ -1,6 +1,7 @@
 package com.algorithmlx.ecr.registry
 
-import com.algorithmlx.ecr.common.api.block.ClusterBlock
+import com.algorithmlx.ecr.common.block.ClusterBlock
+import com.algorithmlx.ecr.common.block.AssembledMultiblockPartBlock
 import com.algorithmlx.ecr.common.block.ColdDistiller
 import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.EnrichmentChamberController
@@ -9,10 +10,12 @@ import com.algorithmlx.ecr.common.block.EnrichmentChamberReceiver
 import com.algorithmlx.ecr.common.block.MagicTable
 import com.algorithmlx.ecr.common.block.MatrixDestructor
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
+import com.algorithmlx.ecr.common.block.RayTower
 import com.algorithmlx.ecr.common.block.SolarPrism
 import com.mojang.serialization.MapCodec
 
 interface BlockCodecRegistry {
+    val assembledMultiblockPart: MapCodec<AssembledMultiblockPartBlock>
     val solarPrism: MapCodec<SolarPrism>
     val clusterBlock: MapCodec<ClusterBlock>
     val crystalBlock: MapCodec<CrystalBlock>
@@ -23,6 +26,7 @@ interface BlockCodecRegistry {
     val enrichmentChamberController: MapCodec<EnrichmentChamberController>
     val enrichmentChamberExtractor: MapCodec<EnrichmentChamberExtractor>
     val enrichmentChamberReceiver: MapCodec<EnrichmentChamberReceiver>
+    val rayTower: MapCodec<RayTower>
 
     companion object {
         @JvmStatic

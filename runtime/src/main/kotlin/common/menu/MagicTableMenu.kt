@@ -51,14 +51,9 @@ class MagicTableMenu(
         addSlot(VanillaSpecialSlot(container, 5, 116, 35, { false }))
 
         // Bound gem
-        addSlot(
-            VanillaSpecialSlot(
-                container, 6, 152, 53, { stack ->
-                    val item = stack.item
-                    item is BoundGem && BoundGemHelper.getBoundPos(stack) != null
-                }
-            )
-        )
+        addSlot(VanillaSpecialSlot(
+            container, 6, 152, 53, BoundGemHelper::isBoundGemAndHasPositionSpecialSlot
+        ))
 
         inv.make()
 

@@ -1,6 +1,10 @@
 package com.algorithmlx.ecr.api.client.render
 
+import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.block.Multipart
+import com.algorithmlx.ecr.api.geo.client.BedrockGeoRenderData
+import com.algorithmlx.ecr.api.geo.client.BedrockGeoRenderEngine
+import com.algorithmlx.ecr.api.molang.runtime.MolangContext
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
@@ -38,6 +42,31 @@ class MultiblockPreviewRenderer(
     }
 
     fun submit(
+        definition: AssembledMultiblockDefinition,
+        assembled: Boolean,
+        poseStack: PoseStack,
+        submitter: SubmitNodeCollector,
+        bounds: MultiblockPreviewBounds,
+        transform: MultiblockPreviewTransform = MultiblockPreviewTransform()
+    ) {
+        if (assembled) {
+            submitFormed(definition, poseStack, submitter, bounds, transform)
+            return
+        }
+
+        val blocks = previewBlocks(definition, transform)
+        val pivot = Vector3f(
+            (definition.minOffset.x + definition.maxOffset.x + 1) / 2f,
+            definition.minOffset.y.toFloat(),
+            (definition.minOffset.z + definition.maxOffset.z + 1) / 2f
+        )
+        poseStack.pushPose()
+        applyGuiTransform(blocks, pivot, poseStack, bounds, transform)
+        submitBlocks(blocks, poseStack, submitter)
+        poseStack.popPose()
+    }
+
+    fun submit(
         multiblock: Multiblock,
         poseStack: PoseStack,
         submitter: SubmitNodeCollector,
@@ -56,7 +85,18 @@ class MultiblockPreviewRenderer(
         transform: MultiblockPreviewTransform
     ) {
         val blocks = previewBlocks(multiblock, transform)
-        val projected = projectedBounds(multiblock, blocks, transform)
+        val pivot = Vector3f(multiblock.xSize / 2f, 0f, multiblock.zSize / 2f)
+        applyGuiTransform(blocks, pivot, poseStack, bounds, transform)
+    }
+
+    private fun applyGuiTransform(
+        blocks: List<PreviewBlock>,
+        pivot: Vector3f,
+        poseStack: PoseStack,
+        bounds: MultiblockPreviewBounds,
+        transform: MultiblockPreviewTransform
+    ) {
+        val projected = projectedBounds(blocks, pivot, transform)
         val availableWidth = bounds.width.coerceAtLeast(1f)
         val availableHeight = bounds.height.coerceAtLeast(1f)
         val fittedScale = min(
@@ -75,15 +115,14 @@ class MultiblockPreviewRenderer(
         // so the default camera sees the outside of the block models rather than their back.
         poseStack.scale(-fittedScale, -fittedScale, fittedScale)
         poseStack.translate(-projected.centerX, -projected.centerY, -projected.centerZ)
-        rotateAroundPivot(multiblock, poseStack, transform)
+        rotateAroundPivot(pivot, poseStack, transform)
     }
 
     private fun projectedBounds(
-        multiblock: Multiblock,
         blocks: List<PreviewBlock>,
+        pivot: Vector3f,
         transform: MultiblockPreviewTransform
     ): ProjectedBounds {
-        val pivot = Vector3f(multiblock.xSize / 2f, 0f, multiblock.zSize / 2f)
         val rotation = rotation(transform)
         var minX = Float.POSITIVE_INFINITY
         var minY = Float.POSITIVE_INFINITY
@@ -92,9 +131,7 @@ class MultiblockPreviewRenderer(
         var maxY = Float.NEGATIVE_INFINITY
         var maxZ = Float.NEGATIVE_INFINITY
 
-        val visibleBlocks = blocks.ifEmpty {
-            listOf(PreviewBlock(BlockPos.ZERO, multiblock.getBlockState(BlockPos.ZERO)))
-        }
+        val visibleBlocks = blocks.ifEmpty { listOf(PreviewBlock(BlockPos.ZERO, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState())) }
 
         visibleBlocks.forEach { block ->
             for (x in floatArrayOf(block.pos.x.toFloat(), block.pos.x + 1f)) {
@@ -134,6 +171,14 @@ class MultiblockPreviewRenderer(
         transform: MultiblockPreviewTransform
     ) {
         val pivot = Vector3f(multiblock.xSize / 2f, 0f, multiblock.zSize / 2f)
+        rotateAroundPivot(pivot, poseStack, transform)
+    }
+
+    private fun rotateAroundPivot(
+        pivot: Vector3f,
+        poseStack: PoseStack,
+        transform: MultiblockPreviewTransform
+    ) {
         val rotation = rotation(transform)
 
         poseStack.translate(pivot.x, pivot.y, pivot.z)
@@ -152,10 +197,101 @@ class MultiblockPreviewRenderer(
         transform: MultiblockPreviewTransform
     ) {
         val blocks = previewBlocks(multiblock, transform)
+        submitBlocks(blocks, poseStack, submitter)
+    }
+
+    private fun submitBlocks(
+        blocks: List<PreviewBlock>,
+        poseStack: PoseStack,
+        submitter: SubmitNodeCollector
+    ) {
         blocks.forEach { block ->
             submitBlock(block, poseStack, submitter)
         }
     }
+
+    private fun previewBlocks(
+        definition: AssembledMultiblockDefinition,
+        transform: MultiblockPreviewTransform
+    ): List<PreviewBlock> {
+        val selectedY = definition.minOffset.y + transform.layer.coerceIn(0, definition.ySize - 1)
+        return definition.parts.flatMap { part ->
+            if (transform.singleLayer && part.offset.y != selectedY) return@flatMap emptyList()
+            val state = part.matcher.previewState() ?: return@flatMap emptyList()
+            if (state.isAir) return@flatMap emptyList()
+            previewParts(part.offset, state)
+        }
+    }
+
+    private fun submitFormed(
+        definition: AssembledMultiblockDefinition,
+        poseStack: PoseStack,
+        submitter: SubmitNodeCollector,
+        bounds: MultiblockPreviewBounds,
+        transform: MultiblockPreviewTransform
+    ) {
+        val model = definition.formedModel ?: return
+        val data = BedrockGeoRenderEngine.extract(model, emptyList(), MolangContext.EMPTY, 0.0) ?: return
+        val projected = projectedBounds(data, transform)
+        val availableWidth = bounds.width.coerceAtLeast(1f)
+        val availableHeight = bounds.height.coerceAtLeast(1f)
+        val fittedScale = min(
+            availableWidth / projected.width.coerceAtLeast(1f),
+            availableHeight / projected.height.coerceAtLeast(1f)
+        ) * transform.scale
+        val pivot = geoPivot(data)
+
+        poseStack.pushPose()
+        poseStack.translate(
+            bounds.x + bounds.width / 2f + transform.offsetX,
+            bounds.y + bounds.height / 2f + transform.offsetY,
+            0f
+        )
+        poseStack.scale(-fittedScale, -fittedScale, fittedScale)
+        poseStack.translate(-projected.centerX, -projected.centerY, -projected.centerZ)
+        rotateAroundPivot(pivot, poseStack, transform)
+        BedrockGeoRenderEngine.submit(data, poseStack, submitter, LightCoordsUtil.FULL_BRIGHT)
+        poseStack.popPose()
+    }
+
+    private fun projectedBounds(
+        data: BedrockGeoRenderData,
+        transform: MultiblockPreviewTransform
+    ): ProjectedBounds {
+        val pivot = geoPivot(data)
+        val halfWidth = data.model.visibleBoundsWidth.coerceAtLeast(1f) * data.scale / 2f
+        val halfHeight = data.model.visibleBoundsHeight.coerceAtLeast(1f) * data.scale / 2f
+        val rotation = rotation(transform)
+        var minX = Float.POSITIVE_INFINITY
+        var minY = Float.POSITIVE_INFINITY
+        var minZ = Float.POSITIVE_INFINITY
+        var maxX = Float.NEGATIVE_INFINITY
+        var maxY = Float.NEGATIVE_INFINITY
+        var maxZ = Float.NEGATIVE_INFINITY
+
+        for (x in floatArrayOf(pivot.x - halfWidth, pivot.x + halfWidth)) {
+            for (y in floatArrayOf(pivot.y - halfHeight, pivot.y + halfHeight)) {
+                for (z in floatArrayOf(pivot.z - halfWidth, pivot.z + halfWidth)) {
+                    val point = Vector3f(x, y, z).sub(pivot)
+                    rotation.transform(point)
+                    point.add(pivot)
+                    minX = minOf(minX, point.x)
+                    minY = minOf(minY, point.y)
+                    minZ = minOf(minZ, point.z)
+                    maxX = maxOf(maxX, point.x)
+                    maxY = maxOf(maxY, point.y)
+                    maxZ = maxOf(maxZ, point.z)
+                }
+            }
+        }
+        return ProjectedBounds(minX, minY, minZ, maxX, maxY, maxZ)
+    }
+
+    private fun geoPivot(data: BedrockGeoRenderData): Vector3f = Vector3f(
+        data.model.visibleBoundsOffsetX * data.scale,
+        data.model.visibleBoundsOffsetY * data.scale,
+        data.model.visibleBoundsOffsetZ * data.scale
+    )
 
     private fun previewBlocks(multiblock: Multiblock, transform: MultiblockPreviewTransform): List<PreviewBlock> {
         val layers = when {

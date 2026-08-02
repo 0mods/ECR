@@ -1,7 +1,6 @@
 package com.algorithmlx.ecr.api.client.render
 
 import com.algorithmlx.ecr.api.multiblock.Multiblock
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.gui.components.AbstractWidget
 import net.minecraft.client.gui.narration.NarratedElementType
@@ -23,11 +22,10 @@ class MultiblockPreviewWidget(
         mouseY: Int,
         partialTick: Float
     ) {
-        val access = Minecraft.getInstance().level?.registryAccess() ?: return
         MultiblockPreviewGuiBridge.add(
             graphics,
             MultiblockPreviewRenderState(
-                multiblock.apply { this.registryAccess = access },
+                multiblock,
                 transform = transform,
                 x0 = x,
                 y0 = y,

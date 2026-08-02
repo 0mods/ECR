@@ -2,23 +2,13 @@ package com.algorithmlx.ecr.api.multiblock
 
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
-import net.minecraft.client.renderer.block.BlockAndTintGetter
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
-import net.minecraft.core.RegistryAccess
-import net.minecraft.core.registries.Registries
 import net.minecraft.tags.TagKey
-import net.minecraft.world.level.CardinalLighting
-import net.minecraft.world.level.ColorResolver
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.biome.Biomes
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
-import net.minecraft.world.level.block.EntityBlock
-import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.lighting.LevelLightEngine
-import net.minecraft.world.level.material.FluidState
 import kotlin.math.abs
 
 open class Multiblock(
@@ -26,7 +16,7 @@ open class Multiblock(
     zSize: Int,
     ySize: Int,
     block: Multiblock.() -> Unit
-): BlockAndTintGetter {
+) {
     constructor(xSize: Int, zSize: Int, ySize: Int, blocks: List<MultiblockMatcher>): this(
         xSize,
         zSize,
@@ -59,9 +49,7 @@ open class Multiblock(
     private val maximumXSize = xSize
     private val maximumZSize = zSize
     private val maximumYSize = ySize
-    private val blockEntities = hashMapOf<BlockPos, BlockEntity>()
     private val patternVariants = arrayListOf<MultiblockPattern>()
-    lateinit var registryAccess: RegistryAccess
     val blocks = arrayListOf<MultiblockMatcher>()
     val variants: List<MultiblockPattern> get() = patternVariants
 
@@ -402,7 +390,6 @@ open class Multiblock(
 
         blocks.clear()
         blocks += requireNotNull(previewVariant).blocks
-        blockEntities.clear()
     }
 
     private fun getRotatedPos(basePos: BlockPos, x: Int, y: Int, z: Int, direction: Direction): BlockPos {
@@ -415,39 +402,11 @@ open class Multiblock(
         }
     }
 
-    override fun cardinalLighting(): CardinalLighting = CardinalLighting.DEFAULT
-
-    override fun getBlockTint(
-        pos: BlockPos,
-        color: ColorResolver
-    ): Int = color.getColor(
-        registryAccess.getOrThrow(Registries.BIOME).value().getOrThrow(Biomes.PLAINS).value(),
-        pos.x.toDouble(),
-        pos.z.toDouble()
-    )
-
-    override fun getLightEngine(): LevelLightEngine = LevelLightEngine.EMPTY
-
-    override fun getBlockEntity(pos: BlockPos): BlockEntity? {
-        val state = this.getBlockState(pos)
-        if (state.block is EntityBlock)
-            return blockEntities.computeIfAbsent(pos.immutable()) { p ->
-                (state.block as EntityBlock).newBlockEntity(p, state) ?: throw IllegalStateException("Block does not have a BlockEntity")
-            }
-        return null
-    }
-
-    override fun getBlockState(pos: BlockPos): BlockState {
+    fun getBlockState(pos: BlockPos): BlockState {
         val variant = previewVariant ?: return Blocks.LIGHT.defaultBlockState()
         if (!variant.contains(pos)) return Blocks.LIGHT.defaultBlockState()
         return variant[pos.x, pos.y, pos.z].default()
     }
-
-    override fun getFluidState(pos: BlockPos): FluidState = this.getBlockState(pos).fluidState
-
-    override fun getHeight(): Int = ySize
-
-    override fun getMinY(): Int = 0
 
     fun empty() = BlockMultiblockMatcher(Blocks.AIR.defaultBlockState(), required = false)
     fun block(state: BlockState, ignoreTag: Boolean = false) = BlockMultiblockMatcher(state, ignoreTag)

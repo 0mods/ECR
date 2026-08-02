@@ -11,13 +11,19 @@ interface ModifiableMRUStorage: MRUStorage {
 
     fun canReceive(receive: Int): Boolean = mru + receive <= mruCapacity
 
-    fun canExtractAndReceive(receiver: ModifiableMRUStorage, max: Int): Boolean {
-        if (receiver.canReceive(max) && this.canExtract(max)) {
-            this.extract(max)
-            receiver.insert(max)
-            return true
-        }
+    /** Transfers as much as possible up to [limit] and returns the inserted amount. */
+    fun transferTo(receiver: ModifiableMRUStorage, limit: Int): Int {
+        if (receiver === this || limit <= 0 || !isSameTypes(receiver)) return 0
 
-        return false
+        val freeSpace = (receiver.mruCapacity - receiver.mru).coerceAtLeast(0)
+        val requested = minOf(limit, mru, freeSpace)
+        if (requested <= 0) return 0
+
+        val extracted = extract(requested)
+        if (extracted <= 0) return 0
+
+        val inserted = receiver.insert(extracted)
+        if (inserted < extracted) insert(extracted - inserted)
+        return inserted
     }
 }

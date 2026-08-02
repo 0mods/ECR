@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.api.registries
 import com.algorithmlx.ecr.api.mru.MRUType
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.algorithmlx.ecr.api.multiblock.MultiblockMatcherType
+import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.research.BookType
 import com.algorithmlx.ecr.api.research.content.BookElementSerializer
 import com.algorithmlx.ecr.api.research.ResearchTaskSerializer
@@ -15,6 +16,9 @@ object ECRegistries {
     val MRU_TYPE: Registry<MRUType> = MappedRegistry(ECRegistryKeys.MRU_TYPE_KEY, Lifecycle.stable())
     @JvmField
     val MULTIBLOCK: Registry<Multiblock> = MappedRegistry(ECRegistryKeys.MULTIBLOCK_KEY, Lifecycle.stable())
+    @JvmField
+    val ASSEMBLED_MULTIBLOCK: Registry<AssembledMultiblockDefinition> =
+        MappedRegistry(ECRegistryKeys.ASSEMBLED_MULTIBLOCK_KEY, Lifecycle.stable())
     @JvmField
     val BOOK_TYPES: Registry<BookType> = MappedRegistry(ECRegistryKeys.BOOK_TYPE_KEY, Lifecycle.stable())
     @JvmField

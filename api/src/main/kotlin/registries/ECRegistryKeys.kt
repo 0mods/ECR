@@ -4,6 +4,7 @@ import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.mru.MRUType
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.algorithmlx.ecr.api.multiblock.MultiblockMatcherType
+import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.research.BookType
 import com.algorithmlx.ecr.api.research.content.BookElementSerializer
 import com.algorithmlx.ecr.api.research.ResearchTaskSerializer
@@ -15,6 +16,9 @@ object ECRegistryKeys {
     val MRU_TYPE_KEY: ResourceKey<Registry<MRUType>> = ResourceKey.createRegistryKey("magical_radiation_unit".ecRL)
     @JvmField
     val MULTIBLOCK_KEY: ResourceKey<Registry<Multiblock>> = ResourceKey.createRegistryKey("multiblock".ecRL)
+    @JvmField
+    val ASSEMBLED_MULTIBLOCK_KEY: ResourceKey<Registry<AssembledMultiblockDefinition>> =
+        ResourceKey.createRegistryKey("assembled_multiblock".ecRL)
     @JvmField
     val BOOK_TYPE_KEY: ResourceKey<Registry<BookType>> = ResourceKey.createRegistryKey(("book_type").ecRL)
     @JvmField

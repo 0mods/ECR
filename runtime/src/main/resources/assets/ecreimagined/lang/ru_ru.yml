@@ -4,6 +4,7 @@ itemGroup.ecreimagined:
   blocks: "Essential Craft: Блоки"
 
 item.ecreimagined:
+  hammer: Молот
   research_book: Книга исследований
   elemental_gem: Элементальный кристалл
   flame_gem: Пылающий кристалл
@@ -85,6 +86,7 @@ tooltip.ecreimagined:
       revoked: Кристал привязки отвязан
       pos: Привязан к позиции
       not_mru: Кристал привязки настроен к позиции, где отсутствуют MRU устройства
+      outside_radius: Привязанный блок находится вне радиуса передачи кристалла
     dimension:
       .: Измерение
       disallowed: Данный кристалл привязки не поддерживает привязывания между измерениями

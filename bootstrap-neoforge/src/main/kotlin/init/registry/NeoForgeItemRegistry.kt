@@ -5,6 +5,7 @@ import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.registries.ECRegistryKeys
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.item.BoundGemItem
+import com.algorithmlx.ecr.common.item.Hammer
 import com.algorithmlx.ecr.common.item.SoulStone
 import com.algorithmlx.ecr.common.item.ResearchBookItem
 import com.algorithmlx.ecr.common.item.tool.WeakAxe
@@ -29,6 +30,7 @@ class NeoForgeItemRegistry(bus: IEventBus): ItemRegistry {
         items.register(bus)
     }
 
+    private val hammerItem = registerItem(ECRModIDs.HAMMER, ::Hammer)
     private val soulStoneItem = registerItem(ECRModIDs.SOUL_STONE, ::SoulStone)
     private val researchBookItem = registerItem(
         ECRModIDs.RESEARCH_BOOK, ::ResearchBookItem
@@ -85,6 +87,7 @@ class NeoForgeItemRegistry(bus: IEventBus): ItemRegistry {
     val fadingCrystalItem = basicItem(ECRModIDs.FADING_CRYSTAL)
 
     // implements
+    override val hammer: Hammer by lazy { hammerItem.get() }
     override val soulStone: SoulStone by lazy { soulStoneItem.get() }
     override val researchBook: ResearchBookItem by lazy { researchBookItem.get() }
     override val boundGem: BoundGemItem by lazy { boundGemItem.get() }

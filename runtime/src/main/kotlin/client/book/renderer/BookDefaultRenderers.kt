@@ -5,6 +5,7 @@ import com.algorithmlx.ecr.api.client.research.BookElementRenderers
 import com.algorithmlx.ecr.api.client.research.BookRecipeRenderers
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.research.*
+import com.algorithmlx.ecr.api.research.content.AssembledMultiblockBookElement
 import com.algorithmlx.ecr.api.research.content.BlockBookElement
 import com.algorithmlx.ecr.api.research.content.ItemBookElement
 import com.algorithmlx.ecr.api.research.content.MultiblockBookElement
@@ -32,6 +33,7 @@ object BookDefaultRenderers {
         BookElementRenderers.register(ResearchIds.ITEM, ::renderItem)
         BookElementRenderers.register(ResearchIds.BLOCK, ::renderBlock)
         BookElementRenderers.register(ResearchIds.MULTIBLOCK, ::renderMultiblock)
+        BookElementRenderers.register(ResearchIds.ASSEMBLED_MULTIBLOCK, ::renderAssembledMultiblock)
         BookElementRenderers.register(ResearchIds.CRAFTING, BookRecipeElementRenderer::render)
         BookElementRenderers.register(ResearchIds.TASK_LIST, BookTaskRenderer::render)
 
@@ -63,8 +65,14 @@ object BookDefaultRenderers {
 
     private fun renderMultiblock(context: BookElementRenderContext, element: MultiblockBookElement) {
         val multiblock = ECRegistries.MULTIBLOCK.getOptional(element.multiblock).orElse(null) ?: return
-        val access = Minecraft.getInstance().level?.registryAccess() ?: return
-        multiblock.registryAccess = access
+        MultiblockBookPreviewController.render(context, element, multiblock)
+    }
+
+    private fun renderAssembledMultiblock(
+        context: BookElementRenderContext,
+        element: AssembledMultiblockBookElement
+    ) {
+        val multiblock = ECRegistries.ASSEMBLED_MULTIBLOCK.getOptional(element.multiblock).orElse(null) ?: return
         MultiblockBookPreviewController.render(context, element, multiblock)
     }
 }

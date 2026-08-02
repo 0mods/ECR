@@ -8,6 +8,7 @@ import com.algorithmlx.ecr.common.menu.EnrichmentChamberReceiverMenu
 import com.algorithmlx.ecr.common.menu.MagicTableMenu
 import com.algorithmlx.ecr.common.menu.MatrixDestructorMenu
 import com.algorithmlx.ecr.common.menu.MithrilineFurnaceMenu
+import com.algorithmlx.ecr.common.menu.RayTowerMenu
 import com.algorithmlx.ecr.registry.MenuTypeRegistry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.RegistryFriendlyByteBuf
@@ -32,12 +33,14 @@ class NeoForgeMenuTypeRegistry(bus: IEventBus): MenuTypeRegistry {
     private val matrixDestructorMenu = menuType.register(ECRModIDs.MATRIX_DESTRUCTOR) { _ -> createTyped(::MatrixDestructorMenu) }
     private val enrichmentChamberControllerMenu = menuType.register(ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER) { _ -> createTyped(::EnrichmentChamberControllerMenu) }
     private val enrichmentChamberReceiverMenu = menuType.register(ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER) { _ -> createDefaulted(::EnrichmentChamberReceiverMenu) }
+    private val rayTowerMenu = menuType.register(ECRModIDs.RAY_TOWER) { _ -> createTyped(::RayTowerMenu) }
 
     override val mithrilineFurnace: MenuType<MithrilineFurnaceMenu> by lazy { mithrilineFurnaceMenu.get() }
     override val magicTable: MenuType<MagicTableMenu> by lazy { magicTableMenu.get() }
     override val matrixDestructor: MenuType<MatrixDestructorMenu> by lazy { matrixDestructorMenu.get() }
     override val enrichmentChamberController: MenuType<EnrichmentChamberControllerMenu> by lazy { enrichmentChamberControllerMenu.get() }
     override val enrichmentChamberReceiver: MenuType<EnrichmentChamberReceiverMenu> by lazy { enrichmentChamberReceiverMenu.get() }
+    override val rayTower: MenuType<RayTowerMenu> by lazy { rayTowerMenu.get() }
 
     private fun <T: AbstractContainerMenu> createTyped(
         factory: (Int, Inventory, MenuTypeData) -> T

@@ -5,8 +5,7 @@ import kotlin.math.truncate
 import kotlin.random.Random
 
 object Math {
-    @JvmField
-    val pi = kotlin.math.PI.toFloat()
+    const val PI = kotlin.math.PI.toFloat()
 
     @JvmStatic
     fun cos(value: Float) = kotlin.math.cos(value * kotlin.math.PI / 180.0).toFloat()

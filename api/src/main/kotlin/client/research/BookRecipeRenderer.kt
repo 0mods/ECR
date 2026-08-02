@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.api.client.research
 
+import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.research.content.BookResearchLink
@@ -136,6 +137,25 @@ data class BookRecipeMultiblock(
     val y: Int,
     val width: Int,
     val height: Int,
+    val scale: Float,
+    val rotationX: Float,
+    val rotationY: Float,
+    val layer: Int
+): BookRecipeRenderElement {
+    init {
+        require(width > 0 && height > 0)
+    }
+
+    override fun render(context: BookElementRenderContext) { throw AssertionError("Used default render") }
+}
+
+data class BookRecipeAssembledMultiblock(
+    val multiblock: Identifier,
+    val x: Int,
+    val y: Int,
+    val width: Int,
+    val height: Int,
+    val assembled: Boolean,
     val scale: Float,
     val rotationX: Float,
     val rotationY: Float,
@@ -368,6 +388,81 @@ class BookRecipeRenderBuilder private constructor(
         rotationX,
         rotationY,
         layer
+    )
+
+    fun assembledMultiblock(
+        multiblock: Identifier,
+        width: Int,
+        height: Int
+    ): BookRecipeAssembledMultiblock = assembledMultiblock(multiblock, 0, 0, width, height)
+
+    fun assembledMultiblock(
+        multiblock: String,
+        width: Int,
+        height: Int
+    ): BookRecipeAssembledMultiblock = assembledMultiblock(Identifier.parse(multiblock), width, height)
+
+    fun assembledMultiblock(
+        multiblock: AssembledMultiblockDefinition,
+        width: Int,
+        height: Int
+    ): BookRecipeAssembledMultiblock = assembledMultiblock(multiblock.id, width, height)
+
+    fun assembledMultiblock(
+        multiblock: Identifier,
+        x: Int,
+        y: Int,
+        width: Int,
+        height: Int,
+        assembled: Boolean = false,
+        scale: Float = 0.9F,
+        rotationX: Float = 25F,
+        rotationY: Float = -30F,
+        layer: Int = Int.MAX_VALUE
+    ): BookRecipeAssembledMultiblock = BookRecipeAssembledMultiblock(
+        multiblock,
+        x,
+        y,
+        width,
+        height,
+        assembled,
+        scale,
+        rotationX,
+        rotationY,
+        layer
+    ).also {
+        include(y, height)
+        mutableElements += it
+    }
+
+    fun assembledMultiblock(
+        multiblock: String,
+        x: Int,
+        y: Int,
+        width: Int,
+        height: Int,
+        assembled: Boolean = false,
+        scale: Float = 0.9F,
+        rotationX: Float = 25F,
+        rotationY: Float = -30F,
+        layer: Int = Int.MAX_VALUE
+    ): BookRecipeAssembledMultiblock = assembledMultiblock(
+        Identifier.parse(multiblock), x, y, width, height, assembled, scale, rotationX, rotationY, layer
+    )
+
+    fun assembledMultiblock(
+        multiblock: AssembledMultiblockDefinition,
+        x: Int,
+        y: Int,
+        width: Int,
+        height: Int,
+        assembled: Boolean = false,
+        scale: Float = 0.9F,
+        rotationX: Float = 25F,
+        rotationY: Float = -30F,
+        layer: Int = Int.MAX_VALUE
+    ): BookRecipeAssembledMultiblock = assembledMultiblock(
+        multiblock.id, x, y, width, height, assembled, scale, rotationX, rotationY, layer
     )
 
     private fun Multiblock.id(): Identifier =

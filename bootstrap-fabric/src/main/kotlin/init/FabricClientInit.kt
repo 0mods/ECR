@@ -8,17 +8,31 @@ import com.algorithmlx.ecr.api.research.ResearchProgressPayload
 import com.algorithmlx.ecr.api.research.ResearchSyncPayload
 import com.algorithmlx.ecr.api.research.UpdateBookViewPayload
 import com.algorithmlx.ecr.api.particle.BedrockParticleRenderTypes
+import com.algorithmlx.ecr.api.geo.GeoAnimationNetwork
+import com.algorithmlx.ecr.api.geo.GeoBlockAnimationPayload
+import com.algorithmlx.ecr.api.geo.GeoBlockAnimationStopPayload
+import com.algorithmlx.ecr.api.geo.GeoEntityAnimationPayload
+import com.algorithmlx.ecr.api.geo.GeoEntityAnimationStopPayload
+import com.algorithmlx.ecr.api.geo.GeoItemAnimationPayload
+import com.algorithmlx.ecr.api.geo.GeoItemAnimationStopPayload
+import com.algorithmlx.ecr.api.geo.client.BedrockGeoAssets
+import com.algorithmlx.ecr.api.geo.client.BedrockGeoItemRenderer
+import com.algorithmlx.ecr.api.geo.client.ClientGeoAnimations
 import com.algorithmlx.ecr.api.particle.BedrockParticles
 import com.algorithmlx.ecr.api.particle.ClientParticleSystems
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.client.book.ResearchBookClient
 import com.algorithmlx.ecr.client.renderer.BoundGemLinkRenderer
 import com.algorithmlx.ecr.client.renderer.EnrichmentChamberControllerRenderer
+import com.algorithmlx.ecr.client.renderer.AssembledMultiblockRenderer
 import com.algorithmlx.ecr.client.renderer.MatrixDestructorRenderer
 import com.algorithmlx.ecr.client.renderer.MithrilineFurnaceRenderer
 import com.algorithmlx.ecr.client.screen.MagicTableMenuScreen
 import com.algorithmlx.ecr.client.screen.MatrixDestructorScreen
 import com.algorithmlx.ecr.client.screen.MithrilineFurnaceScreen
+import com.algorithmlx.ecr.client.screen.RayTowerScreen
+import com.algorithmlx.ecr.common.block.entity.AssembledMultiblockPartBlockEntity
+import com.algorithmlx.ecr.common.block.entity.RayTowerEntity
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.MenuTypeRegistry
 import com.algorithmlx.ecr.fabric.client.MultiblockPreviewGuiBridgeInit
@@ -36,6 +50,7 @@ import net.fabricmc.fabric.api.resource.v1.ResourceLoader
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.MenuScreens
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers
+import net.minecraft.client.renderer.special.SpecialModelRenderers
 import net.minecraft.core.particles.ParticleTypes
 import net.minecraft.server.packs.PackType
 import com.algorithmlx.ecr.api.utils.rl
@@ -46,6 +61,7 @@ import kotlin.random.Random
 object FabricClientInit {
     @JvmStatic
     fun init() {
+        SpecialModelRenderers.ID_MAPPER.put(BedrockGeoItemRenderer.ID, BedrockGeoItemRenderer.Unbaked.CODEC)
         FabricConnectedTextures.init()
         ECRConnectedTextures.init()
         registerBedrockParticles()
@@ -55,6 +71,14 @@ object FabricClientInit {
         ResearchBookClient.init()
 
         BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceRenderer)
+        BlockEntityRenderers.register(
+            BlockEntityTypeRegistry.instance.assembledMultiblockPart,
+            { context -> AssembledMultiblockRenderer<AssembledMultiblockPartBlockEntity>(context) }
+        )
+        BlockEntityRenderers.register(
+            BlockEntityTypeRegistry.instance.rayTower,
+            { context -> AssembledMultiblockRenderer<RayTowerEntity>(context) }
+        )
         BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.matrixDestructor, ::MatrixDestructorRenderer)
         BlockEntityRenderers.register(
             BlockEntityTypeRegistry.instance.enrichmentChamberController,
@@ -68,12 +92,15 @@ object FabricClientInit {
         MenuScreens.register(MenuTypeRegistry.instance.matrixDestructor, ::MatrixDestructorScreen)
         MenuScreens.register(MenuTypeRegistry.instance.enrichmentChamberController, ::EnrichmentChamberControllerScreen)
         MenuScreens.register(MenuTypeRegistry.instance.enrichmentChamberReceiver, ::EnrichmentChamberReceiverScreen)
+        MenuScreens.register(MenuTypeRegistry.instance.rayTower, ::RayTowerScreen)
     }
 
     private fun registerBedrockParticles() {
         BedrockParticleRenderTypes.init()
         ResourceLoader.get(PackType.CLIENT_RESOURCES)
             .registerReloadListener("bedrock_particles".ecRL, BedrockParticles)
+        ResourceLoader.get(PackType.CLIENT_RESOURCES)
+            .registerReloadListener("bedrock_geo".ecRL, BedrockGeoAssets)
         ClientTickEvents.END_LEVEL_TICK.register { level ->
             ClientParticleSystems.get(level)?.update()
         }
@@ -113,6 +140,24 @@ object FabricClientInit {
                 )
             }
         }
+        ClientPlayNetworking.registerGlobalReceiver(GeoBlockAnimationPayload.TYPE) { payload, context ->
+            context.client().execute { ClientGeoAnimations.handle(payload) }
+        }
+        ClientPlayNetworking.registerGlobalReceiver(GeoEntityAnimationPayload.TYPE) { payload, context ->
+            context.client().execute { ClientGeoAnimations.handle(payload) }
+        }
+        ClientPlayNetworking.registerGlobalReceiver(GeoItemAnimationPayload.TYPE) { payload, context ->
+            context.client().execute { ClientGeoAnimations.handle(payload) }
+        }
+        ClientPlayNetworking.registerGlobalReceiver(GeoBlockAnimationStopPayload.TYPE) { payload, context ->
+            context.client().execute { ClientGeoAnimations.handle(payload) }
+        }
+        ClientPlayNetworking.registerGlobalReceiver(GeoEntityAnimationStopPayload.TYPE) { payload, context ->
+            context.client().execute { ClientGeoAnimations.handle(payload) }
+        }
+        ClientPlayNetworking.registerGlobalReceiver(GeoItemAnimationStopPayload.TYPE) { payload, context ->
+            context.client().execute { ClientGeoAnimations.handle(payload) }
+        }
 
         ClientPlayNetworking.registerGlobalReceiver(ResearchSyncPayload.TYPE) { payload, context ->
             context.client().execute { ClientResearchState.apply(payload) }
@@ -134,6 +179,12 @@ object FabricClientInit {
             }
         }
         BoundGemTooltipNetwork.currentDimension = { Minecraft.getInstance().level?.dimension() }
+        GeoAnimationNetwork.playClientBlockAnimation = ClientGeoAnimations::handle
+        GeoAnimationNetwork.playClientEntityAnimation = ClientGeoAnimations::handle
+        GeoAnimationNetwork.playClientItemAnimation = ClientGeoAnimations::handle
+        GeoAnimationNetwork.stopClientBlockAnimation = ClientGeoAnimations::handle
+        GeoAnimationNetwork.stopClientEntityAnimation = ClientGeoAnimations::handle
+        GeoAnimationNetwork.stopClientItemAnimation = ClientGeoAnimations::handle
         BoundGemTooltipNetwork.sendRequestToServer = { payload ->
             runCatching {
                 if (ClientPlayNetworking.canSend(BoundGemTooltipRequestPayload.TYPE)) {

@@ -1,6 +1,7 @@
 package com.algorithmlx.ecr.neoforge.init.registry
 
 import com.algorithmlx.ecr.api.ModId
+import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.common.init.ECRModIDs
@@ -12,15 +13,18 @@ import com.algorithmlx.ecr.common.multiblocks.LightningCollector
 import com.algorithmlx.ecr.common.multiblocks.MithrilineFurnaceMultiblock
 import com.algorithmlx.ecr.common.multiblocks.SoulStoneMultiblock
 import com.algorithmlx.ecr.common.multiblocks.WaterCrystal
+import com.algorithmlx.ecr.common.multiblocks.RayTowerMultiblock
 import com.algorithmlx.ecr.registry.MultiblockRegistry
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
 
 class NeoForgeMultiblockRegistry(bus: IEventBus): MultiblockRegistry {
     private val multiblocks = DeferredRegister.create(ECRegistries.MULTIBLOCK, ModId)
+    private val assembled = DeferredRegister.create(ECRegistries.ASSEMBLED_MULTIBLOCK, ModId)
 
     init {
         multiblocks.register(bus)
+        assembled.register(bus)
     }
 
     private val mithrilineFurnaceMultiblock = multiblocks.register(ECRModIDs.MITHRILINE_FURNACE) { _ -> MithrilineFurnaceMultiblock }
@@ -31,6 +35,7 @@ class NeoForgeMultiblockRegistry(bus: IEventBus): MultiblockRegistry {
     private val airCrystalMultiblock = multiblocks.register(ECRModIDs.AIR_CRYSTAL) { _ -> AirCrystal }
     private val lightningCollectorMultiblock = multiblocks.register(ECRModIDs.LIGHTNING_COLLECTOR) { _ -> LightningCollector }
     private val enrichmentChamberMultiblock = multiblocks.register(ECRModIDs.ENRICHMENT_CHAMBER) { _ -> EnrichmentChamber }
+    private val rayTowerRegistry = assembled.register(ECRModIDs.RAY_TOWER) { _ -> RayTowerMultiblock }
 
     override val mithrilineFurnace: Multiblock by lazy { mithrilineFurnaceMultiblock.get() }
     override val soulStone: Multiblock by lazy { soulStoneMultiblock.get() }
@@ -40,4 +45,5 @@ class NeoForgeMultiblockRegistry(bus: IEventBus): MultiblockRegistry {
     override val airCrystal: Multiblock by lazy { airCrystalMultiblock.get() }
     override val lightningCollector: Multiblock by lazy { lightningCollectorMultiblock.get() }
     override val enrichmentChamber: Multiblock by lazy { enrichmentChamberMultiblock.get() }
+    override val rayTower: AssembledMultiblockDefinition by lazy { rayTowerRegistry.get() }
 }

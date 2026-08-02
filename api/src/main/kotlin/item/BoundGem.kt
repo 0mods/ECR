@@ -4,19 +4,15 @@ import net.minecraft.core.BlockPos
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
-import org.jetbrains.annotations.ApiStatus
 
 interface BoundGem {
     val world: String? get() = null
 
     val dimensionalBounds: Boolean get() = true
 
-    // use a NOT reversed list! I.e., if you are uses 1000, 100, .., 1, the system will count 1, .., 100, 1000, which is wrong!
-    val transferStrength: Array<Int> get() = arrayOf(1, 10, 50, 100, 1000)
+    /** Maximum amount of MRU transferred by one [processReceive][com.algorithmlx.ecr.api.mru.processReceive] call. */
+    val transferStrength: Int get() = 1000
 
-    // TODO it is not work.
-    @get:ApiStatus.Experimental
-    @get:ApiStatus.NonExtendable
     val boundRadius: Double get() = 16.0
 
     fun getBoundPos(stack: ItemStack): BlockPos?
@@ -26,4 +22,20 @@ interface BoundGem {
     fun getWorld(stack: ItemStack): ResourceKey<Level>?
 
     fun setWorld(stack: ItemStack, world: ResourceKey<Level>?)
+
+    /** Whether the last receiving device found the linked block outside [boundRadius]. */
+    fun isOutsideBoundRadius(stack: ItemStack): Boolean = false
+
+    /** Updates the synchronized range status and returns whether the stack changed. */
+    fun setOutsideBoundRadius(stack: ItemStack, outside: Boolean): Boolean = false
+
+    fun isWithinBoundRadius(from: BlockPos, to: BlockPos): Boolean {
+        val radius = boundRadius
+        if (radius < 0.0 || radius.isNaN()) return false
+
+        val x = (to.x - from.x).toDouble()
+        val y = (to.y - from.y).toDouble()
+        val z = (to.z - from.z).toDouble()
+        return x * x + y * y + z * z <= radius * radius
+    }
 }

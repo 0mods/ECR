@@ -2,13 +2,20 @@ package com.algorithmlx.ecr.neoforge.init
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
+import com.algorithmlx.ecr.api.geo.GeoAnimationNetwork
+import com.algorithmlx.ecr.api.geo.GeoBlockAnimationPayload
+import com.algorithmlx.ecr.api.geo.GeoBlockAnimationStopPayload
+import com.algorithmlx.ecr.api.geo.GeoEntityAnimationPayload
+import com.algorithmlx.ecr.api.geo.GeoEntityAnimationStopPayload
+import com.algorithmlx.ecr.api.geo.GeoItemAnimationPayload
+import com.algorithmlx.ecr.api.geo.GeoItemAnimationStopPayload
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.item.HasSubItem
 import com.algorithmlx.ecr.api.item.NoTab
 import com.algorithmlx.ecr.api.item.SoulStoneLike
-import com.algorithmlx.ecr.api.mru.MRUDevice
 import com.algorithmlx.ecr.api.mru.MRUMultiplierWeapon
+import com.algorithmlx.ecr.api.mru.resolveMRUDevice
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.ResearchAction
@@ -139,6 +146,7 @@ object NeoForgeInit {
 
     private fun onNewRegistry(event: NewRegistryEvent) {
         event.register(ECRegistries.MULTIBLOCK)
+        event.register(ECRegistries.ASSEMBLED_MULTIBLOCK)
         event.register(ECRegistries.MRU_TYPE)
         event.register(ECRegistries.BOOK_TYPES)
         event.register(ECRegistries.BOOK_ELEMENT_SERIALIZER)
@@ -178,6 +186,12 @@ object NeoForgeInit {
     private fun onRegisterPayload(event: RegisterPayloadHandlersEvent) {
         val registrar = event.registrar(ModId)
         registrar.playToClient(FinishCraftParticle.TYPE, FinishCraftParticle.STREAM_CODEC)
+        registrar.playToClient(GeoBlockAnimationPayload.TYPE, GeoBlockAnimationPayload.STREAM_CODEC)
+        registrar.playToClient(GeoEntityAnimationPayload.TYPE, GeoEntityAnimationPayload.STREAM_CODEC)
+        registrar.playToClient(GeoItemAnimationPayload.TYPE, GeoItemAnimationPayload.STREAM_CODEC)
+        registrar.playToClient(GeoBlockAnimationStopPayload.TYPE, GeoBlockAnimationStopPayload.STREAM_CODEC)
+        registrar.playToClient(GeoEntityAnimationStopPayload.TYPE, GeoEntityAnimationStopPayload.STREAM_CODEC)
+        registrar.playToClient(GeoItemAnimationStopPayload.TYPE, GeoItemAnimationStopPayload.STREAM_CODEC)
         registrar.playToClient(BoundGemTooltipResponsePayload.TYPE, BoundGemTooltipResponsePayload.STREAM_CODEC)
 
         registrar.playToClient(ResearchSyncPayload.TYPE, ResearchSyncPayload.STREAM_CODEC)
@@ -258,8 +272,8 @@ object NeoForgeInit {
 
         val item = stack.item
         if (item is BoundGem) {
-            val blockEntity = level.getBlockEntity(pos)
-            if (blockEntity !is MRUDevice || !blockEntity.deviceType.isConnectable || item.getBoundPos(stack) == null) return
+            val device = level.resolveMRUDevice(pos)
+            if (device == null || !device.deviceType.isConnectable || item.getBoundPos(stack) != null) return
 
             event.entity.sendOverlayMessage(
                 Component.translatable("tooltip.$ModId.${ECRModIDs.BOUND_GEM}.linked")
@@ -357,6 +371,12 @@ object NeoForgeInit {
         ResearchNetwork.sendToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
         ResearchNetwork.sendProgressToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
         BoundGemTooltipNetwork.sendResponseToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
+        GeoAnimationNetwork.sendToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
+        GeoAnimationNetwork.sendEntityToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
+        GeoAnimationNetwork.sendItemToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
+        GeoAnimationNetwork.sendBlockStopToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
+        GeoAnimationNetwork.sendEntityStopToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
+        GeoAnimationNetwork.sendItemStopToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
 
         countByIngredient = { (it.customIngredient as? CountIngredient)?.count ?: 1 }
 

@@ -20,7 +20,7 @@ data class VariableAccess(val path: List<String>) : AstFloat, AstBoolean {
 
     override fun getFloat(query: Query, variables: Variables): Float {
         return when {
-            path == listOf("math", "pi") -> com.algorithmlx.ecr.api.molang.runtime.Math.pi
+            path == listOf("math", "pi") -> com.algorithmlx.ecr.api.molang.runtime.Math.PI
             base == "q" || base == "query" -> 0f
             else -> variables[path.joinToString(".")]
         }

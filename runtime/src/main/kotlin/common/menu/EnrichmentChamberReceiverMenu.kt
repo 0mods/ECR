@@ -27,10 +27,9 @@ class EnrichmentChamberReceiverMenu(
     )
 
     init {
-        addSlot(VanillaSpecialSlot(container, 0, 80, 35, { stack ->
-            val item = stack.item
-            item is BoundGem && BoundGemHelper.getBoundPos(stack) != null
-        }))
+        addSlot(VanillaSpecialSlot(
+            container, 0, 80, 35, BoundGemHelper::isBoundGemAndHasPositionSpecialSlot
+        ))
         inv.make()
     }
 

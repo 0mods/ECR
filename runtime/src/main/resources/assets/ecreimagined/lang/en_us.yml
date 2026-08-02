@@ -7,6 +7,7 @@ itemGroup.ecreimagined:
   blocks: "Essential Craft: Blocks"
 
 item.ecreimagined:
+  hammer: Hammer
   soul_stone: Soul Stone
   research_book: Research Book
   weakness_elemental_axe: Weakness Elemental Axe
@@ -92,6 +93,7 @@ tooltip.ecreimagined:
       .: Bound gem was bounded at pos
       pos: Currently bound to position at
       not_mru: Bound gem is linked to a position where no MRU devices are detected
+      outside_radius: Linked block is outside the Bound Gem transfer radius
     revoke: Bound gem was unbounded
     dimension:
       .: Dimension

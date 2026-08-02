@@ -8,6 +8,7 @@ object ResearchIds {
     @JvmField val ITEM = "item".ecRL
     @JvmField val BLOCK = "block".ecRL
     @JvmField val MULTIBLOCK = "multiblock".ecRL
+    @JvmField val ASSEMBLED_MULTIBLOCK = "assembled_multiblock".ecRL
     @JvmField val CRAFTING = "crafting".ecRL
     @JvmField val ITEM_TASK = "item".ecRL
     @JvmField val EXPERIENCE_TASK = "experience".ecRL

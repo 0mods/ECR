@@ -5,6 +5,7 @@ import com.algorithmlx.ecr.common.item.tool.*
 import net.minecraft.world.item.Item
 
 interface ItemRegistry {
+    val hammer: Hammer
     val soulStone: SoulStone
     val researchBook: ResearchBookItem
     val boundGem: BoundGemItem

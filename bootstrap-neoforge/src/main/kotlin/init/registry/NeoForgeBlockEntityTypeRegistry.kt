@@ -17,6 +17,12 @@ class NeoForgeBlockEntityTypeRegistry(bus: IEventBus): BlockEntityTypeRegistry {
         blockEntityType.register(bus)
     }
 
+    private val assembledMultiblockPartEntity = blockEntityType.register(ECRModIDs.ASSEMBLED_MULTIBLOCK_PART) { _ ->
+        BlockEntityType(
+            ::AssembledMultiblockPartBlockEntity,
+            setOf(BlockRegistry.instance.assembledMultiblockPart)
+        )
+    }
     private val mithrilineFurnaceEntity = blockEntityType.register(ECRModIDs.MITHRILINE_FURNACE) { _ ->
         BlockEntityType(::MithrilineFurnaceEntity, setOf(BlockRegistry.instance.mithrilineFurnace))
     }
@@ -41,13 +47,20 @@ class NeoForgeBlockEntityTypeRegistry(bus: IEventBus): BlockEntityTypeRegistry {
     private val enrichmentChamberReceiverEntity = blockEntityType.register(ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER) { _ ->
         BlockEntityType(::EnrichmentChamberReceiverEntity, setOf(BlockRegistry.instance.enrichmentChamberReceiver))
     }
+    private val rayTowerEntity = blockEntityType.register(ECRModIDs.RAY_TOWER) { _ ->
+        BlockEntityType(::RayTowerEntity, setOf(BlockRegistry.instance.rayTower))
+    }
 
+    override val assembledMultiblockPart: BlockEntityType<AssembledMultiblockPartBlockEntity> by lazy {
+        assembledMultiblockPartEntity.get()
+    }
     override val mithrilineFurnace: BlockEntityType<MithrilineFurnaceEntity> by lazy { mithrilineFurnaceEntity.get() }
     override val magicTable: BlockEntityType<MagicTableBlockEntity> by lazy { magicTableEntity.get() }
     override val magicalTeleporter: BlockEntityType<MagicalTeleporterEntity> by lazy { magicalTeleporterEntity.get() }
     override val enrichmentChamberController: BlockEntityType<EnrichmentChamberControllerEntity> by lazy { enrichmentChamberControllerEntity.get() }
     override val enrichmentChamberExtractor: BlockEntityType<EnrichmentChamberExtractorEntity> by lazy { enrichmentChamberExtractorEntity.get() }
     override val enrichmentChamberReceiver: BlockEntityType<EnrichmentChamberReceiverEntity> by lazy { enrichmentChamberReceiverEntity.get() }
+    override val rayTower: BlockEntityType<RayTowerEntity> by lazy { rayTowerEntity.get() }
     override val matrixDestructor: BlockEntityType<MatrixDestructorEntity> by lazy { matrixDestructorEntity.get() }
     override val coldDistiller: BlockEntityType<ColdDistillerEntity> by lazy { coldDistillerEntity.get() }
 }

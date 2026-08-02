@@ -1,9 +1,12 @@
 package com.algorithmlx.ecr.api.mru
 
+import com.algorithmlx.ecr.api.assembled.AssembledMultiblocks
 import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
+import net.minecraft.core.BlockPos
 import net.minecraft.world.Container
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.block.entity.BlockEntity
 
 /**
  * Represents an entity that can store, receive, or transfer MRU (Magical Radiation Units).
@@ -97,13 +100,26 @@ interface MRUDevice {
      * @property locatorStorage the container associated with this locator.
      * @property locatorSlot the slot index within the storage.
      */
-    data class LocatorData(val locatorStorage: Container, val locatorSlot: Int)
+    data class LocatorData(
+        val locatorStorage: Container,
+        val locatorSlot: Int,
+        /** Position whose distance to the linked block is constrained by the gem radius. */
+        val position: BlockPos? = (locatorStorage as? BlockEntity)?.blockPos?.immutable()
+    )
+}
+
+/** Resolves a direct device or the controller owning an assembled part at [pos]. */
+fun Level.resolveMRUDevice(pos: BlockPos): MRUDevice? {
+    val direct = getBlockEntity(pos)
+    if (direct is MRUDevice) return direct
+    return AssembledMultiblocks.controllerBlockEntity(this, pos) as? MRUDevice
 }
 
 fun MRUDevice.processReceive(level: Level) {
     if (level.isClientSide) return
 
-    val stack = this.locator?.let { it.locatorStorage.getItem(it.locatorSlot) } ?: return
+    val locatorData = this.locator ?: return
+    val stack = locatorData.locatorStorage.getItem(locatorData.locatorSlot)
     val item = stack.item as? BoundGem ?: return
 
     val pos = item.getBoundPos(stack) ?: return
@@ -111,17 +127,20 @@ fun MRUDevice.processReceive(level: Level) {
     val world = item.getWorld(stack)
 
     val logicalLevel = world?.let { server.getLevel(it) } ?: level
-    val exporter = logicalLevel.getBlockEntity(pos) as? MRUDevice ?: return
+    val outsideRadius = locatorData.position?.let { receiverPos ->
+        logicalLevel !== level || !item.isWithinBoundRadius(receiverPos, pos)
+    } ?: false
+    if (item.setOutsideBoundRadius(stack, outsideRadius)) {
+        locatorData.locatorStorage.setChanged()
+    }
+    if (outsideRadius) return
+
+    val exporter = logicalLevel.resolveMRUDevice(pos) ?: return
 
     if (!exporter.deviceType.isExporter || !this.deviceType.isReceiver) return
 
     val currentContainer = this.mruStorage
     val generator = exporter.mruStorage
 
-    if (!currentContainer.isSameTypes(generator)) return
-
-    val transferCount = item.transferStrength.reversedArray()
-    transferCount.forEach {
-        if (generator.canExtractAndReceive(currentContainer, it)) return@forEach
-    }
+    generator.transferTo(currentContainer, item.transferStrength)
 }

@@ -2,7 +2,7 @@ package com.algorithmlx.ecr.network
 
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.item.BoundGem
-import com.algorithmlx.ecr.api.mru.MRUDevice
+import com.algorithmlx.ecr.api.mru.resolveMRUDevice
 import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.FriendlyByteBuf
@@ -137,7 +137,7 @@ object BoundGemTooltipNetwork {
     private fun resolveTargetStatus(level: ServerLevel, pos: BlockPos): BoundGemTargetStatus {
         if (!level.isLoaded(pos)) return BoundGemTargetStatus.UNKNOWN
 
-        val device = level.getBlockEntity(pos) as? MRUDevice
+        val device = level.resolveMRUDevice(pos)
             ?: return BoundGemTargetStatus.NOT_MRU
 
         return if (device.deviceType.isExporter) {

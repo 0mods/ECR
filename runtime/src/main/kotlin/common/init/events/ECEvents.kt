@@ -72,6 +72,11 @@ object ECEvents {
                 .withStyle(ChatFormatting.GOLD)
         }
 
+        if (item.isOutsideBoundRadius(stack)) {
+            tooltips += Component.translatable("tooltip.$ModId.bound_gem.linked.outside_radius")
+                .withStyle(ChatFormatting.RED)
+        }
+
         if (!item.dimensionalBounds) {
             tooltips += Component.translatable("tooltip.$ModId.bound_gem.dimension.disallowed")
                 .withStyle(ChatFormatting.RED)

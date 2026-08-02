@@ -21,6 +21,8 @@ object ECRModIDs {
     const val ENRICHMENT_CHAMBER_CONTROLLER = "${ENRICHMENT_CHAMBER}_controller"
     const val ENRICHMENT_CHAMBER_EXTRACTOR = "${ENRICHMENT_CHAMBER}_extractor"
     const val ENRICHMENT_CHAMBER_RECEIVER = "${ENRICHMENT_CHAMBER}_receiver"
+    const val ASSEMBLED_MULTIBLOCK_PART = "assembled_multiblock_part"
+    const val RAY_TOWER = "ray_tower"
 
     // Blocks
     const val MITHRILINE_PLATING = "mithriline_plating"
@@ -36,6 +38,7 @@ object ECRModIDs {
     const val AIR_CLUSTER = "air_cluster"
     const val ENRICHMENT_CHAMBER_HOLDER = "${ENRICHMENT_CHAMBER}_holder"
     const val FORTIFIED_GLASS = "fortified_glass"
+    const val RAY_TOWER_BASE = "${RAY_TOWER}_base"
 
     // Data Components
     const val BOOK_TYPE = "book_type"
@@ -48,6 +51,7 @@ object ECRModIDs {
     const val SHADE = "shade"
 
     // Items
+    const val HAMMER = "hammer"
     const val RESEARCH_BOOK = "research_book"
 
     const val WEAKNESS_ELEMENTAL_AXE = "weakness_elemental_axe"
@@ -117,5 +121,6 @@ object ECRModIDs {
     // Ingredients
     const val COUNT = "count"
 
-    fun guiLocation(id: String) = "textures/gui/$id.png".ecRL
+    fun guiLocation(id: String) = textureLocation("gui/$id")
+    fun textureLocation(id: String) = "textures/$id.png".ecRL
 }

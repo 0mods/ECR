@@ -1,6 +1,5 @@
 package com.algorithmlx.ecr.api.mru.storage
 
-import com.algorithmlx.ecr.api.LOGGER
 import com.algorithmlx.ecr.api.mru.MRUType
 
 interface MRUStorage {

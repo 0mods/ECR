@@ -1,7 +1,8 @@
 package com.algorithmlx.ecr.fabric.init.registry
 
 import com.algorithmlx.ecr.api.utils.ecRL
-import com.algorithmlx.ecr.common.api.block.ClusterBlock
+import com.algorithmlx.ecr.common.block.ClusterBlock
+import com.algorithmlx.ecr.common.block.AssembledMultiblockPartBlock
 import com.algorithmlx.ecr.common.block.ColdDistiller
 import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.EnrichmentChamberController
@@ -10,6 +11,7 @@ import com.algorithmlx.ecr.common.block.EnrichmentChamberReceiver
 import com.algorithmlx.ecr.common.block.MagicTable
 import com.algorithmlx.ecr.common.block.MatrixDestructor
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
+import com.algorithmlx.ecr.common.block.RayTower
 import com.algorithmlx.ecr.common.block.SolarPrism
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.registry.BlockCodecRegistry
@@ -19,7 +21,11 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockBehaviour
 
-object FabricBlockCodecRegistry : BlockCodecRegistry {
+object FabricBlockCodecRegistry: BlockCodecRegistry {
+    override val assembledMultiblockPart: MapCodec<AssembledMultiblockPartBlock> = register(
+        ECRModIDs.ASSEMBLED_MULTIBLOCK_PART,
+        BlockBehaviour.simpleCodec(::AssembledMultiblockPartBlock)
+    )
     override val solarPrism: MapCodec<SolarPrism> = register(
         ECRModIDs.SOLAR_PRISM,
         BlockBehaviour.simpleCodec(::SolarPrism)
@@ -59,6 +65,10 @@ object FabricBlockCodecRegistry : BlockCodecRegistry {
     override val enrichmentChamberReceiver: MapCodec<EnrichmentChamberReceiver> = register(
         ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER,
         BlockBehaviour.simpleCodec(::EnrichmentChamberReceiver)
+    )
+    override val rayTower: MapCodec<RayTower> = register(
+        ECRModIDs.RAY_TOWER,
+        BlockBehaviour.simpleCodec(::RayTower)
     )
 
     private fun <B: Block> register(id: String, codec: MapCodec<B>) =

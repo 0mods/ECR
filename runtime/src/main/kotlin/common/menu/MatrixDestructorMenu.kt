@@ -3,6 +3,8 @@ package com.algorithmlx.ecr.common.menu
 import com.algorithmlx.ecr.api.container.AbstractMenu
 import com.algorithmlx.ecr.api.container.slot.VanillaSpecialSlot
 import com.algorithmlx.ecr.api.menu.MenuTypeData
+import com.algorithmlx.ecr.common.api.BoundGemHelper
+import com.algorithmlx.ecr.common.api.BoundGemHelper.isBoundGemAndHasPositionSpecialSlot
 import com.algorithmlx.ecr.common.components.SoulStoneComponent
 import com.algorithmlx.ecr.registry.BlockRegistry
 import com.algorithmlx.ecr.registry.DataComponentRegistry
@@ -27,10 +29,9 @@ class MatrixDestructorMenu(
     )
 
     init {
-        addSlot(VanillaSpecialSlot(container, 0, 80, 60, {
-            val component = it.get(DataComponentRegistry.instance.soulStone)
-            component != null && component != SoulStoneComponent.EMPTY
-        }))
+        addSlot(VanillaSpecialSlot(
+            container, 0, 80, 60, BoundGemHelper::isBoundGemAndHasPositionSpecialSlot
+        ))
 
         inv.make()
     }

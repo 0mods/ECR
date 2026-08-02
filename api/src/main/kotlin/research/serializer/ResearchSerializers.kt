@@ -21,6 +21,8 @@ object ResearchSerializers {
     @JvmField val ITEM_ELEMENT: BookElementSerializer<ItemBookElement> = ItemElementSerializer
     @JvmField val BLOCK_ELEMENT: BookElementSerializer<BlockBookElement> = BlockElementSerializer
     @JvmField val MULTIBLOCK_ELEMENT: BookElementSerializer<MultiblockBookElement> = MultiblockElementSerializer
+    @JvmField val ASSEMBLED_MULTIBLOCK_ELEMENT: BookElementSerializer<AssembledMultiblockBookElement> =
+        AssembledMultiblockElementSerializer
     @JvmField val CRAFTING_ELEMENT: BookElementSerializer<CraftingBookElement> = CraftingElementSerializer
     @JvmField val ITEM_TASK: ResearchTaskSerializer<ItemResearchTask> = ItemTaskSerializer
     @JvmField val EXPERIENCE_TASK: ResearchTaskSerializer<ExperienceResearchTask> = ExperienceTaskSerializer
@@ -86,6 +88,16 @@ private data class BlockElementDto(val block: String)
 @Serializable
 private data class MultiblockElementDto(
     val multiblock: String,
+    val scale: Float = 0.9f,
+    @SerialName("rotation_x") val rotationX: Float = 25f,
+    @SerialName("rotation_y") val rotationY: Float = -30f,
+    val layer: Int = Int.MAX_VALUE
+)
+
+@Serializable
+private data class AssembledMultiblockElementDto(
+    val multiblock: String,
+    val assembled: Boolean = false,
     val scale: Float = 0.9f,
     @SerialName("rotation_x") val rotationX: Float = 25f,
     @SerialName("rotation_y") val rotationY: Float = -30f,
@@ -182,6 +194,34 @@ private object MultiblockElementSerializer: BookElementSerializer<MultiblockBook
     }
     override fun encode(value: MultiblockBookElement): JsonObject = researchJson.encodeToJsonElement(
         MultiblockElementDto(value.multiblock.toString(), value.scale, value.rotationX, value.rotationY, value.layer)
+    ).jsonObject
+}
+
+private object AssembledMultiblockElementSerializer: BookElementSerializer<AssembledMultiblockBookElement> {
+    override val type = ResearchIds.ASSEMBLED_MULTIBLOCK
+    override val defaultWidth = 150
+    override val defaultHeight = 150
+    override fun decode(json: JsonObject): AssembledMultiblockBookElement =
+        researchJson.decodeFromJsonElement<AssembledMultiblockElementDto>(json).let {
+            AssembledMultiblockBookElement(
+                Identifier.parse(it.multiblock),
+                it.assembled,
+                it.scale,
+                it.rotationX,
+                it.rotationY,
+                it.layer
+            )
+        }
+
+    override fun encode(value: AssembledMultiblockBookElement): JsonObject = researchJson.encodeToJsonElement(
+        AssembledMultiblockElementDto(
+            value.multiblock.toString(),
+            value.assembled,
+            value.scale,
+            value.rotationX,
+            value.rotationY,
+            value.layer
+        )
     ).jsonObject
 }
 

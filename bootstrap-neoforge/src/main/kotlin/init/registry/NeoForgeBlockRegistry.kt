@@ -12,6 +12,7 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.TransparentBlock
 import net.minecraft.world.level.block.state.BlockBehaviour
+import net.minecraft.world.level.material.PushReaction
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredBlock
 import net.neoforged.neoforge.registries.DeferredRegister
@@ -25,6 +26,16 @@ class NeoForgeBlockRegistry(bus: IEventBus): BlockRegistry {
         blockItems.register(bus)
     }
 
+    private val assembledMultiblockPartBlock = registerBlock(
+        ECRModIDs.ASSEMBLED_MULTIBLOCK_PART,
+        ::AssembledMultiblockPartBlock,
+        BlockBehaviour.Properties.of()
+            .strength(3.0F)
+            .noOcclusion()
+            .noLootTable()
+            .pushReaction(PushReaction.BLOCK),
+        shouldRegisterItem = false
+    )
     private val mithrilineFurnaceBlock = registerBlock(ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnace)
     private val mithrilineCrystalBlock = registerBlock(ECRModIDs.MITHRILINE_CRYSTAL, ::CrystalBlock)
     private val magicTableBlock = registerBlock(ECRModIDs.MAGIC_TABLE, ::MagicTable)
@@ -61,7 +72,10 @@ class NeoForgeBlockRegistry(bus: IEventBus): BlockRegistry {
         ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER,
         ::EnrichmentChamberReceiver
     )
+    private val rayTowerBaseBlock = registerBasic(ECRModIDs.RAY_TOWER_BASE)
+    private val rayTowerBlock = registerBlock(ECRModIDs.RAY_TOWER, ::RayTower)
 
+    override val assembledMultiblockPart: AssembledMultiblockPartBlock by lazy { assembledMultiblockPartBlock.get() }
     override val mithrilineFurnace: MithrilineFurnace by lazy { mithrilineFurnaceBlock.get() }
     override val mithrilineCrystal: CrystalBlock by lazy { mithrilineCrystalBlock.get() }
     override val magicTable: MagicTable by lazy { magicTableBlock.get() }
@@ -85,6 +99,8 @@ class NeoForgeBlockRegistry(bus: IEventBus): BlockRegistry {
     override val enrichmentChamberController: EnrichmentChamberController by lazy { enrichmentChamberControllerBlock.get() }
     override val enrichmentChamberExtractor: EnrichmentChamberExtractor by lazy { enrichmentChamberExtractorBlock.get() }
     override val enrichmentChamberReceiver: EnrichmentChamberReceiver by lazy { enrichmentChamberReceiverBlock.get() }
+    override val rayTowerBase: Block by lazy { rayTowerBaseBlock.get() }
+    override val rayTower: RayTower by lazy { rayTowerBlock.get() }
 
     private fun registerBasic(
         id: String,

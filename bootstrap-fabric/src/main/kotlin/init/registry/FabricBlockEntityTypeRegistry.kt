@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.fabric.init.registry
 
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.block.entity.ColdDistillerEntity
+import com.algorithmlx.ecr.common.block.entity.AssembledMultiblockPartBlockEntity
 import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberControllerEntity
 import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberExtractorEntity
 import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberReceiverEntity
@@ -9,6 +10,7 @@ import com.algorithmlx.ecr.common.block.entity.MagicTableBlockEntity
 import com.algorithmlx.ecr.common.block.entity.MagicalTeleporterEntity
 import com.algorithmlx.ecr.common.block.entity.MatrixDestructorEntity
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
+import com.algorithmlx.ecr.common.block.entity.RayTowerEntity
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.BlockRegistry
@@ -17,7 +19,14 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 
-object FabricBlockEntityTypeRegistry : BlockEntityTypeRegistry {
+object FabricBlockEntityTypeRegistry: BlockEntityTypeRegistry {
+    override val assembledMultiblockPart: BlockEntityType<AssembledMultiblockPartBlockEntity> = register(
+        ECRModIDs.ASSEMBLED_MULTIBLOCK_PART,
+        BlockEntityType(
+            ::AssembledMultiblockPartBlockEntity,
+            setOf(BlockRegistry.instance.assembledMultiblockPart)
+        )
+    )
     override val mithrilineFurnace: BlockEntityType<MithrilineFurnaceEntity> = register(
         ECRModIDs.MITHRILINE_FURNACE,
         BlockEntityType(::MithrilineFurnaceEntity, setOf(BlockRegistry.instance.mithrilineFurnace))
@@ -41,6 +50,10 @@ object FabricBlockEntityTypeRegistry : BlockEntityTypeRegistry {
     override val enrichmentChamberReceiver: BlockEntityType<EnrichmentChamberReceiverEntity> = register(
         ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER,
         BlockEntityType(::EnrichmentChamberReceiverEntity, setOf(BlockRegistry.instance.enrichmentChamberReceiver))
+    )
+    override val rayTower: BlockEntityType<RayTowerEntity> = register(
+        ECRModIDs.RAY_TOWER,
+        BlockEntityType(::RayTowerEntity, setOf(BlockRegistry.instance.rayTower))
     )
     override val matrixDestructor: BlockEntityType<MatrixDestructorEntity> = register(
         ECRModIDs.MATRIX_DESTRUCTOR,

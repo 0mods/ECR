@@ -4,6 +4,16 @@ import com.algorithmlx.ecr.api.client.render.MultiblockPreviewGuiBridge
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewPictureRenderer
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewRenderState
 import com.algorithmlx.ecr.api.particle.BedrockParticleRenderTypes
+import com.algorithmlx.ecr.api.geo.GeoAnimationNetwork
+import com.algorithmlx.ecr.api.geo.GeoBlockAnimationPayload
+import com.algorithmlx.ecr.api.geo.GeoBlockAnimationStopPayload
+import com.algorithmlx.ecr.api.geo.GeoEntityAnimationPayload
+import com.algorithmlx.ecr.api.geo.GeoEntityAnimationStopPayload
+import com.algorithmlx.ecr.api.geo.GeoItemAnimationPayload
+import com.algorithmlx.ecr.api.geo.GeoItemAnimationStopPayload
+import com.algorithmlx.ecr.api.geo.client.BedrockGeoAssets
+import com.algorithmlx.ecr.api.geo.client.BedrockGeoItemRenderer
+import com.algorithmlx.ecr.api.geo.client.ClientGeoAnimations
 import com.algorithmlx.ecr.api.particle.BedrockParticles
 import com.algorithmlx.ecr.api.particle.ClientParticleSystems
 import com.algorithmlx.ecr.api.research.*
@@ -11,11 +21,15 @@ import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.client.book.ResearchBookClient
 import com.algorithmlx.ecr.client.renderer.BoundGemLinkRenderer
 import com.algorithmlx.ecr.client.renderer.EnrichmentChamberControllerRenderer
+import com.algorithmlx.ecr.client.renderer.AssembledMultiblockRenderer
 import com.algorithmlx.ecr.client.renderer.MatrixDestructorRenderer
 import com.algorithmlx.ecr.client.renderer.MithrilineFurnaceRenderer
 import com.algorithmlx.ecr.client.screen.MagicTableMenuScreen
 import com.algorithmlx.ecr.client.screen.MatrixDestructorScreen
 import com.algorithmlx.ecr.client.screen.MithrilineFurnaceScreen
+import com.algorithmlx.ecr.client.screen.RayTowerScreen
+import com.algorithmlx.ecr.common.block.entity.AssembledMultiblockPartBlockEntity
+import com.algorithmlx.ecr.common.block.entity.RayTowerEntity
 import com.algorithmlx.ecr.neoforge.client.NeoForgeConnectedTextures
 import com.algorithmlx.ecr.client.ECRConnectedTextures
 import com.algorithmlx.ecr.client.screen.EnrichmentChamberReceiverScreen
@@ -37,6 +51,7 @@ import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent
 import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 import net.neoforged.neoforge.client.event.RegisterPictureInPictureRenderersEvent
+import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent
 import net.neoforged.neoforge.client.event.SubmitCustomGeometryEvent
 import net.neoforged.neoforge.client.network.ClientPacketDistributor
 import net.neoforged.neoforge.client.network.event.RegisterClientPayloadHandlersEvent
@@ -53,6 +68,7 @@ object NeoForgeClientInit {
         bus.addListener(::onRegisterClientReloadListeners)
 
         bus.addListener(::onRegisterClientPayloads)
+        bus.addListener(::onRegisterSpecialModelRenderer)
         bus.addListener(::onClientInit)
         bus.addListener(::onMenuScreen)
 
@@ -65,6 +81,7 @@ object NeoForgeClientInit {
 
     private fun onRegisterClientReloadListeners(event: AddClientReloadListenersEvent) {
         event.addListener("bedrock_particles".ecRL, BedrockParticles)
+        event.addListener("bedrock_geo".ecRL, BedrockGeoAssets)
     }
 
     private fun onClientTick(event: ClientTickEvent.Post) {
@@ -89,6 +106,10 @@ object NeoForgeClientInit {
         )
     }
 
+    private fun onRegisterSpecialModelRenderer(event: RegisterSpecialModelRendererEvent) {
+        event.register(BedrockGeoItemRenderer.ID, BedrockGeoItemRenderer.Unbaked.CODEC)
+    }
+
     private fun onClientInit(event: FMLClientSetupEvent) {
         event.enqueueWork {
             ResearchBookClient.init()
@@ -98,8 +119,22 @@ object NeoForgeClientInit {
             ResearchNetwork.updateView = { state -> runCatching { ClientPacketDistributor.sendToServer(UpdateBookViewPayload(state)) } }
             BoundGemTooltipNetwork.currentDimension = { Minecraft.getInstance().level?.dimension() }
             BoundGemTooltipNetwork.sendRequestToServer = { payload -> runCatching { ClientPacketDistributor.sendToServer(payload) } }
+            GeoAnimationNetwork.playClientBlockAnimation = ClientGeoAnimations::handle
+            GeoAnimationNetwork.playClientEntityAnimation = ClientGeoAnimations::handle
+            GeoAnimationNetwork.playClientItemAnimation = ClientGeoAnimations::handle
+            GeoAnimationNetwork.stopClientBlockAnimation = ClientGeoAnimations::handle
+            GeoAnimationNetwork.stopClientEntityAnimation = ClientGeoAnimations::handle
+            GeoAnimationNetwork.stopClientItemAnimation = ClientGeoAnimations::handle
 
             BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceRenderer)
+            BlockEntityRenderers.register(
+                BlockEntityTypeRegistry.instance.assembledMultiblockPart,
+                { context -> AssembledMultiblockRenderer<AssembledMultiblockPartBlockEntity>(context) }
+            )
+            BlockEntityRenderers.register(
+                BlockEntityTypeRegistry.instance.rayTower,
+                { context -> AssembledMultiblockRenderer<RayTowerEntity>(context) }
+            )
             BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.matrixDestructor, ::MatrixDestructorRenderer)
             BlockEntityRenderers.register(
                 BlockEntityTypeRegistry.instance.enrichmentChamberController,
@@ -113,12 +148,19 @@ object NeoForgeClientInit {
         event.register(MenuTypeRegistry.instance.magicTable, ::MagicTableMenuScreen)
         event.register(MenuTypeRegistry.instance.matrixDestructor, ::MatrixDestructorScreen)
         event.register(MenuTypeRegistry.instance.enrichmentChamberReceiver, ::EnrichmentChamberReceiverScreen)
+        event.register(MenuTypeRegistry.instance.rayTower, ::RayTowerScreen)
     }
 
     private fun onRegisterClientPayloads(event: RegisterClientPayloadHandlersEvent) {
         event.register(ResearchSyncPayload.TYPE) { payload, _ -> ClientResearchState.apply(payload) }
         event.register(ResearchProgressPayload.TYPE) { payload, _ -> ClientResearchState.apply(payload) }
         event.register(BoundGemTooltipResponsePayload.TYPE) { payload, _ -> BoundGemTooltipNetwork.acceptResponse(payload) }
+        event.register(GeoBlockAnimationPayload.TYPE) { payload, _ -> ClientGeoAnimations.handle(payload) }
+        event.register(GeoEntityAnimationPayload.TYPE) { payload, _ -> ClientGeoAnimations.handle(payload) }
+        event.register(GeoItemAnimationPayload.TYPE) { payload, _ -> ClientGeoAnimations.handle(payload) }
+        event.register(GeoBlockAnimationStopPayload.TYPE) { payload, _ -> ClientGeoAnimations.handle(payload) }
+        event.register(GeoEntityAnimationStopPayload.TYPE) { payload, _ -> ClientGeoAnimations.handle(payload) }
+        event.register(GeoItemAnimationStopPayload.TYPE) { payload, _ -> ClientGeoAnimations.handle(payload) }
         event.register(FinishCraftParticle.TYPE) { payload, _ ->
             val level = Minecraft.getInstance().level ?: return@register
             (0 ..< payload.count).forEach { _ ->

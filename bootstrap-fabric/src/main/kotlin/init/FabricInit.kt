@@ -3,6 +3,13 @@ package com.algorithmlx.ecr.fabric.init
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
+import com.algorithmlx.ecr.api.geo.GeoAnimationNetwork
+import com.algorithmlx.ecr.api.geo.GeoBlockAnimationPayload
+import com.algorithmlx.ecr.api.geo.GeoBlockAnimationStopPayload
+import com.algorithmlx.ecr.api.geo.GeoEntityAnimationPayload
+import com.algorithmlx.ecr.api.geo.GeoEntityAnimationStopPayload
+import com.algorithmlx.ecr.api.geo.GeoItemAnimationPayload
+import com.algorithmlx.ecr.api.geo.GeoItemAnimationStopPayload
 import com.algorithmlx.ecr.api.item.*
 import com.algorithmlx.ecr.api.menu.MenuTypeData
 import com.algorithmlx.ecr.api.mru.*
@@ -132,6 +139,7 @@ object FabricInit {
     private fun initBuiltinRegistries() {
         register(ECRegistryKeys.MRU_TYPE_KEY, ECRegistries.MRU_TYPE)
         register(ECRegistryKeys.MULTIBLOCK_KEY, ECRegistries.MULTIBLOCK)
+        register(ECRegistryKeys.ASSEMBLED_MULTIBLOCK_KEY, ECRegistries.ASSEMBLED_MULTIBLOCK)
         register(ECRegistryKeys.BOOK_TYPE_KEY, ECRegistries.BOOK_TYPES)
         register(ECRegistryKeys.BOOK_ELEMENT_SERIALIZER_KEY, ECRegistries.BOOK_ELEMENT_SERIALIZER)
         register(ECRegistryKeys.RESEARCH_TASK_SERIALIZER_KEY, ECRegistries.RESEARCH_TASK_SERIALIZER)
@@ -149,6 +157,30 @@ object FabricInit {
         PayloadTypeRegistry.clientboundPlay().register(
             FinishCraftParticle.TYPE,
             FinishCraftParticle.STREAM_CODEC
+        )
+        PayloadTypeRegistry.clientboundPlay().register(
+            GeoBlockAnimationPayload.TYPE,
+            GeoBlockAnimationPayload.STREAM_CODEC
+        )
+        PayloadTypeRegistry.clientboundPlay().register(
+            GeoEntityAnimationPayload.TYPE,
+            GeoEntityAnimationPayload.STREAM_CODEC
+        )
+        PayloadTypeRegistry.clientboundPlay().register(
+            GeoItemAnimationPayload.TYPE,
+            GeoItemAnimationPayload.STREAM_CODEC
+        )
+        PayloadTypeRegistry.clientboundPlay().register(
+            GeoBlockAnimationStopPayload.TYPE,
+            GeoBlockAnimationStopPayload.STREAM_CODEC
+        )
+        PayloadTypeRegistry.clientboundPlay().register(
+            GeoEntityAnimationStopPayload.TYPE,
+            GeoEntityAnimationStopPayload.STREAM_CODEC
+        )
+        PayloadTypeRegistry.clientboundPlay().register(
+            GeoItemAnimationStopPayload.TYPE,
+            GeoItemAnimationStopPayload.STREAM_CODEC
         )
 
         ServerPlayNetworking.registerGlobalReceiver(CompleteResearchPayload.TYPE) { payload, context ->
@@ -265,8 +297,8 @@ object FabricInit {
 
             val item = stack.item
             if (item is BoundGem) {
-                val blockEntity = level.getBlockEntity(hit.blockPos)
-                if (blockEntity !is MRUDevice || !blockEntity.deviceType.isConnectable || item.getBoundPos(stack) != null) return@evt InteractionResult.PASS
+                val device = level.resolveMRUDevice(hit.blockPos)
+                if (device == null || !device.deviceType.isConnectable || item.getBoundPos(stack) != null) return@evt InteractionResult.PASS
 
                 player.sendOverlayMessage(
                     Component.translatable("tooltip.$ModId.${ECRModIDs.BOUND_GEM}.linked")
@@ -328,6 +360,12 @@ object FabricInit {
         ResearchNetwork.sendToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
         ResearchNetwork.sendProgressToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
         BoundGemTooltipNetwork.sendResponseToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
+        GeoAnimationNetwork.sendToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
+        GeoAnimationNetwork.sendEntityToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
+        GeoAnimationNetwork.sendItemToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
+        GeoAnimationNetwork.sendBlockStopToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
+        GeoAnimationNetwork.sendEntityStopToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
+        GeoAnimationNetwork.sendItemStopToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
 
         countByIngredient = { ((it as FabricIngredient).customIngredient as? CountIngredient)?.count ?: 1 }
 

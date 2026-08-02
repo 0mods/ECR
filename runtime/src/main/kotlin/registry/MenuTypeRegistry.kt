@@ -9,6 +9,7 @@ interface MenuTypeRegistry {
     val matrixDestructor: MenuType<MatrixDestructorMenu>
     val enrichmentChamberController: MenuType<EnrichmentChamberControllerMenu>
     val enrichmentChamberReceiver: MenuType<EnrichmentChamberReceiverMenu>
+    val rayTower: MenuType<RayTowerMenu>
 
     companion object {
         @JvmStatic

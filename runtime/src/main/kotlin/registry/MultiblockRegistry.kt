@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.registry
 
+import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 
 interface MultiblockRegistry {
@@ -11,6 +12,7 @@ interface MultiblockRegistry {
     val airCrystal: Multiblock
     val lightningCollector: Multiblock
     val enrichmentChamber: Multiblock
+    val rayTower: AssembledMultiblockDefinition
 
     companion object {
         @JvmStatic

@@ -295,7 +295,7 @@ object MolangCompiler {
     ) {
         val path = ast.path
         if (path == listOf("math", "pi")) {
-            mv.visitFieldInsn(GETSTATIC, "com/algorithmlx/ecr/api/molang/runtime/Math", "pi", "F")
+            mv.visitFieldInsn(GETSTATIC, "com/algorithmlx/ecr/api/molang/runtime/Math", "PI", "F")
             if (isBoolean) convertFloatToBoolean(mv)
             return
         }

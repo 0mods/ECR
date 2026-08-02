@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.Item
 
 object FabricItemRegistry : ItemRegistry {
+    override val hammer: Hammer = register(ECRModIDs.HAMMER, ::Hammer)
     override val soulStone: SoulStone = register(ECRModIDs.SOUL_STONE, ::SoulStone)
     override val researchBook: ResearchBookItem = register(
         ECRModIDs.RESEARCH_BOOK, ::ResearchBookItem, Item.Properties().component(

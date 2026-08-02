@@ -15,4 +15,7 @@ class BoundGemItem(properties: Properties): Item(properties), BoundGem {
     override fun setBoundPos(stack: ItemStack, blockPos: BlockPos?) = BoundGemHelper.setBoundPos(stack, blockPos)
     override fun getWorld(stack: ItemStack): ResourceKey<Level>? = BoundGemHelper.getWorld(stack)
     override fun setWorld(stack: ItemStack, world: ResourceKey<Level>?) = BoundGemHelper.setWorld(stack, world)
+    override fun isOutsideBoundRadius(stack: ItemStack): Boolean = BoundGemHelper.isOutsideBoundRadius(stack)
+    override fun setOutsideBoundRadius(stack: ItemStack, outside: Boolean): Boolean =
+        BoundGemHelper.setOutsideBoundRadius(stack, outside)
 }

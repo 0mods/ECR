@@ -43,6 +43,7 @@ abstract class AbstractMenu(
         return index0
     }
 
+    @JvmOverloads
     @JvmName("makePlayerInventory")
     protected fun Container.make(leftCol: Int = 8, topRow: Int = 84) {
         var topRow0 = topRow

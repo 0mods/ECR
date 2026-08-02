@@ -18,6 +18,7 @@ class NeoForgeResearchSerializerRegistry(bus: IEventBus) {
         registerElement(ResearchSerializers.ITEM_ELEMENT)
         registerElement(ResearchSerializers.BLOCK_ELEMENT)
         registerElement(ResearchSerializers.MULTIBLOCK_ELEMENT)
+        registerElement(ResearchSerializers.ASSEMBLED_MULTIBLOCK_ELEMENT)
         registerElement(ResearchSerializers.CRAFTING_ELEMENT)
         registerTask(ResearchSerializers.ITEM_TASK)
         registerTask(ResearchSerializers.EXPERIENCE_TASK)
