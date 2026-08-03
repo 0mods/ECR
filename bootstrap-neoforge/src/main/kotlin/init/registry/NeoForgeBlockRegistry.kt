@@ -72,7 +72,7 @@ class NeoForgeBlockRegistry(bus: IEventBus): BlockRegistry {
         ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER,
         ::EnrichmentChamberReceiver
     )
-    private val rayTowerBaseBlock = registerBasic(ECRModIDs.RAY_TOWER_BASE)
+    private val rayTowerBaseBlock = registerBlock(ECRModIDs.RAY_TOWER_BASE, ::RayTowerBase)
     private val rayTowerBlock = registerBlock(ECRModIDs.RAY_TOWER, ::RayTower)
 
     override val assembledMultiblockPart: AssembledMultiblockPartBlock by lazy { assembledMultiblockPartBlock.get() }
@@ -99,7 +99,7 @@ class NeoForgeBlockRegistry(bus: IEventBus): BlockRegistry {
     override val enrichmentChamberController: EnrichmentChamberController by lazy { enrichmentChamberControllerBlock.get() }
     override val enrichmentChamberExtractor: EnrichmentChamberExtractor by lazy { enrichmentChamberExtractorBlock.get() }
     override val enrichmentChamberReceiver: EnrichmentChamberReceiver by lazy { enrichmentChamberReceiverBlock.get() }
-    override val rayTowerBase: Block by lazy { rayTowerBaseBlock.get() }
+    override val rayTowerBase: RayTowerBase by lazy { rayTowerBaseBlock.get() }
     override val rayTower: RayTower by lazy { rayTowerBlock.get() }
 
     private fun registerBasic(

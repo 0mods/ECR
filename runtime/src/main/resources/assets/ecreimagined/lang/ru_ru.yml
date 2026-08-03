@@ -62,6 +62,8 @@ block.ecreimagined:
   water_cluster: Water Cluster
   earth_cluster: Earth Cluster
   air_cluster: Air Cluster
+  ray_tower: Реле-Башня
+  ray_tower_base: Основание Реле-Башни
 
 tooltip.ecreimagined:
   sword_multiplier: Бонус получения MRU

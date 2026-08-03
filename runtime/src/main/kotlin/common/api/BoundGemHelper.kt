@@ -51,6 +51,7 @@ object BoundGemHelper {
         return true
     }
 
+    @JvmStatic
     fun isBoundGemAndHasPosition(stack: ItemStack): Boolean = stack.item is BoundGem && getBoundPos(stack) != null
 
     @JvmStatic

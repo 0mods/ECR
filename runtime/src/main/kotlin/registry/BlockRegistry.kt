@@ -11,6 +11,7 @@ import com.algorithmlx.ecr.common.block.MagicalTeleporter
 import com.algorithmlx.ecr.common.block.MatrixDestructor
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
 import com.algorithmlx.ecr.common.block.RayTower
+import com.algorithmlx.ecr.common.block.RayTowerBase
 import com.algorithmlx.ecr.common.block.SolarPrism
 import net.minecraft.world.level.block.Block
 
@@ -39,7 +40,7 @@ interface BlockRegistry {
     val enrichmentChamberController: EnrichmentChamberController
     val enrichmentChamberExtractor: EnrichmentChamberExtractor
     val enrichmentChamberReceiver: EnrichmentChamberReceiver
-    val rayTowerBase: Block
+    val rayTowerBase: RayTowerBase
     val rayTower: RayTower
 
     companion object {

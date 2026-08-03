@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.block.state.StateDefinition
 import net.minecraft.world.level.block.state.properties.BooleanProperty
 import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.CollisionContext
 import net.minecraft.world.phys.shapes.Shapes
 import net.minecraft.world.phys.shapes.VoxelShape
@@ -83,9 +84,7 @@ class RayTower(properties: Properties): Block(properties), EntityBlock, Assemble
         context: CollisionContext
     ): VoxelShape = if (state.getValue(ASSEMBLED)) {
         AssembledMultiblocks.formedSelectionShape(level, pos) ?: Shapes.block()
-    } else {
-        super.getShape(state, level, pos, context)
-    }
+    } else shape
 
     override fun getCollisionShape(
         state: BlockState,
@@ -131,6 +130,26 @@ class RayTower(properties: Properties): Block(properties), EntityBlock, Assemble
         .getOptional(ECRModIDs.RAY_TOWER.ecRL)
         .orElse(null)
         ?.formedModel != null
+
+    private val shape by lazy {
+        var shape = Shapes.empty()
+        shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.75, 0.25, 0.5, 1.0), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.75, 0.0, 0.75, 1.0, 0.5, 1.0), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.75, 0.0, 0.0, 1.0, 0.5, 0.25), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.0, 0.0, 0.0, 0.25, 0.5, 0.25), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.25, 0.0, 0.25, 0.75, 0.5, 0.75), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.1875, 0.4375, 0.1875, 0.8125, 0.5625, 0.8125), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.0625, 0.5, 0.0625, 0.25, 0.9375, 0.25), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.0625, 0.5, 0.75, 0.25, 0.9375, 0.9375), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.75, 0.5, 0.75, 0.9375, 0.9375, 0.9375), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.75, 0.5, 0.0625, 0.9375, 0.9375, 0.25), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.1875, 0.875, 0.1875, 0.8125, 1.0, 0.3125), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.1875, 0.875, 0.6875, 0.8125, 1.0, 0.8125), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.1875, 0.875, 0.3125, 0.3125, 1.0, 0.6875), BooleanOp.OR)
+        shape = Shapes.join(shape, Shapes.box(0.6875, 0.875, 0.3125, 0.8125, 1.0, 0.6875), BooleanOp.OR)
+
+        shape
+    }
 
     companion object {
         @JvmField

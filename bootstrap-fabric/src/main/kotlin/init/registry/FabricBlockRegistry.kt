@@ -12,6 +12,7 @@ import com.algorithmlx.ecr.common.block.MagicalTeleporter
 import com.algorithmlx.ecr.common.block.MatrixDestructor
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
 import com.algorithmlx.ecr.common.block.RayTower
+import com.algorithmlx.ecr.common.block.RayTowerBase
 import com.algorithmlx.ecr.common.block.SolarPrism
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.item.NamedBlockItem
@@ -74,7 +75,7 @@ object FabricBlockRegistry: BlockRegistry {
         ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER,
         ::EnrichmentChamberReceiver
     )
-    override val rayTowerBase: Block = registerBasic(ECRModIDs.RAY_TOWER_BASE)
+    override val rayTowerBase: RayTowerBase = register(ECRModIDs.RAY_TOWER_BASE, ::RayTowerBase)
     override val rayTower: RayTower = register(ECRModIDs.RAY_TOWER, ::RayTower)
 
     private fun registerBasic(

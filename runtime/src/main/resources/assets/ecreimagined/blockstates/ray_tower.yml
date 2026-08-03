@@ -1,0 +1,5 @@
+variants:
+  assembled=false:
+    model: ecreimagined:block/ray_tower
+  assembled=true:
+    model: ecreimagined:block/assembled_multiblock_part
