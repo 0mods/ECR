@@ -30,7 +30,10 @@ class MatrixDestructorMenu(
 
     init {
         addSlot(VanillaSpecialSlot(
-            container, 0, 80, 60, BoundGemHelper::isBoundGemAndHasPositionSpecialSlot
+            container, 0, 80, 60, {
+                val component = it.get(DataComponentRegistry.instance.soulStone)
+                component != null && component != SoulStoneComponent.EMPTY
+            }
         ))
 
         inv.make()
