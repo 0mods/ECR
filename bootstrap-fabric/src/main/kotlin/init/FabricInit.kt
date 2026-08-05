@@ -18,8 +18,7 @@ import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.ResearchAction
 import com.algorithmlx.ecr.api.utils.countByIngredient
 import com.algorithmlx.ecr.api.utils.openMenuScreenInternal
-import com.algorithmlx.ecr.common.components.SoulStoneComponent
-import com.algorithmlx.ecr.common.data.SoulStoneData
+import com.algorithmlx.ecr.common.components.PlayerMatrixStorage
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.config.ConfigManager
 import com.algorithmlx.ecr.common.init.config.ECConfig
@@ -43,17 +42,19 @@ import com.algorithmlx.ecr.fabric.init.registry.FabricMenuTypeRegistry
 import com.algorithmlx.ecr.fabric.init.registry.FabricMobEffectRegistry
 import com.algorithmlx.ecr.fabric.init.registry.FabricMultiblockMatcherTypes
 import com.algorithmlx.ecr.fabric.init.registry.FabricMultiblockRegistry
+import com.algorithmlx.ecr.fabric.init.registry.FabricPlayerMatrixStorage
 import com.algorithmlx.ecr.fabric.init.registry.FabricRecipeDisplayTypeRegistry
 import com.algorithmlx.ecr.fabric.init.registry.FabricRecipeSerializerRegistry
 import com.algorithmlx.ecr.fabric.init.registry.FabricRecipeTypeRegistry
 import com.algorithmlx.ecr.fabric.init.registry.FabricResearchSerializerRegistry
 import com.algorithmlx.ecr.fabric.utils.FabricPlatformUtils
-import com.algorithmlx.ecr.mixin.InventoryAccessor
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
 import com.algorithmlx.ecr.network.BoundGemTooltipRequestPayload
 import com.algorithmlx.ecr.network.BoundGemTooltipResponsePayload
 import com.algorithmlx.ecr.network.FinishCraftParticle
-import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback
+import com.algorithmlx.ecr.network.SoulStoneTooltipNetwork
+import com.algorithmlx.ecr.network.SoulStoneTooltipRequestPayload
+import com.algorithmlx.ecr.network.SoulStoneTooltipResponsePayload
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
@@ -76,10 +77,8 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceKey
 import net.minecraft.server.level.ServerPlayer
 import net.minecraft.server.packs.PackType
-import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.item.ItemEntity
-import net.minecraft.world.entity.monster.Enemy
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
@@ -87,8 +86,6 @@ import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
 import com.algorithmlx.ecr.utils.PlatformUtils
 import java.io.File
-import kotlin.math.roundToInt
-import kotlin.ranges.random
 
 object FabricInit {
     @JvmStatic
@@ -102,7 +99,6 @@ object FabricInit {
         registerReloadListener()
         registerProgressEvents()
         registerAccessEvents()
-        registerTooltipEvent()
         registerTabEvent()
         registerBoundGemEvents()
         registerEntityEvents()
@@ -116,6 +112,7 @@ object FabricInit {
 
     private fun initRegistries() {
         PlatformUtils.instance = FabricPlatformUtils
+        PlayerMatrixStorage.instance = FabricPlayerMatrixStorage
         DataComponentRegistry.instance = FabricDataComponentRegistry
         BlockCodecRegistry.instance = FabricBlockCodecRegistry
         BookTypeRegistry.instance = FabricBookTypeRegistry
@@ -154,6 +151,8 @@ object FabricInit {
         PayloadTypeRegistry.serverboundPlay().register(UpdateBookViewPayload.TYPE, UpdateBookViewPayload.STREAM_CODEC)
         PayloadTypeRegistry.serverboundPlay().register(BoundGemTooltipRequestPayload.TYPE, BoundGemTooltipRequestPayload.STREAM_CODEC)
         PayloadTypeRegistry.clientboundPlay().register(BoundGemTooltipResponsePayload.TYPE, BoundGemTooltipResponsePayload.STREAM_CODEC)
+        PayloadTypeRegistry.serverboundPlay().register(SoulStoneTooltipRequestPayload.TYPE, SoulStoneTooltipRequestPayload.STREAM_CODEC)
+        PayloadTypeRegistry.clientboundPlay().register(SoulStoneTooltipResponsePayload.TYPE, SoulStoneTooltipResponsePayload.STREAM_CODEC)
         PayloadTypeRegistry.clientboundPlay().register(
             FinishCraftParticle.TYPE,
             FinishCraftParticle.STREAM_CODEC
@@ -194,6 +193,9 @@ object FabricInit {
         }
         ServerPlayNetworking.registerGlobalReceiver(BoundGemTooltipRequestPayload.TYPE) { payload, context ->
             context.server().execute { BoundGemTooltipNetwork.handleRequest(context.player(), payload) }
+        }
+        ServerPlayNetworking.registerGlobalReceiver(SoulStoneTooltipRequestPayload.TYPE) { payload, context ->
+            context.server().execute { SoulStoneTooltipNetwork.handleRequest(context.player(), payload) }
         }
     }
 
@@ -238,12 +240,6 @@ object FabricInit {
             val entityAllowed = ResearchAccess.canAccess(player, entity, ResearchAction.ATTACK)
             val itemAllowed = ResearchAccess.canAccess(player, player.getItemInHand(hand), ResearchAction.ATTACK)
             if (entityAllowed && itemAllowed) InteractionResult.PASS else InteractionResult.FAIL
-        }
-    }
-
-    private fun registerTooltipEvent() {
-        ItemTooltipCallback.EVENT.register { stack, _, _, components ->
-            ECEvents.itemTooltip(stack, components)
         }
     }
 
@@ -330,36 +326,14 @@ object FabricInit {
     }
 
     private fun registerEntityEvents() {
-        ServerLivingEntityEvents.AFTER_DEATH.register { entity, source ->
-            val sourceEntity = source.entity
-            if (sourceEntity !is Player) return@register
-
-            val items = (sourceEntity.inventory as InventoryAccessor).items().filter { it.item is SoulStoneLike }
-            if (items.isEmpty()) return@register
-
-            val item = items.random()
-            val component = item.get(DataComponentRegistry.instance.soulStone)
-
-            if (component == null || component == SoulStoneComponent.EMPTY || component.owner != sourceEntity.uuid) return@register
-
-            val weapon = sourceEntity.getItemInHand(InteractionHand.MAIN_HAND).item
-            val multiplier = if (weapon is MRUMultiplierWeapon) weapon.multiplier else 1F
-
-            val addCount = if (SoulStoneData.ENTITY_CAPACITY_ADD.contains(entity.type))
-                SoulStoneData.ENTITY_CAPACITY_ADD[entity.type]!!.random() * multiplier
-            else {
-                if (entity is Enemy) SoulStoneData.defaultEnemyAdd.random() * multiplier
-                else SoulStoneData.defaultCapacityAdd.random() * multiplier
-            }
-
-            item.set(DataComponentRegistry.instance.soulStone, component.copy(capacity = component.capacity + addCount.roundToInt()))
-        }
+        ServerLivingEntityEvents.AFTER_DEATH.register(ECEvents::livingDeath)
     }
 
     private fun extendPlatform() {
         ResearchNetwork.sendToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
         ResearchNetwork.sendProgressToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
         BoundGemTooltipNetwork.sendResponseToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
+        SoulStoneTooltipNetwork.sendResponseToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
         GeoAnimationNetwork.sendToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
         GeoAnimationNetwork.sendEntityToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
         GeoAnimationNetwork.sendItemToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }

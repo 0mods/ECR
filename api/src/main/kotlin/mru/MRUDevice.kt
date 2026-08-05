@@ -68,29 +68,37 @@ interface MRUDevice {
          */
         CONNECTABLE_RECEIVER,
 
+        /**
+         * Represents an entity that cannot be connected, but stores MRU.
+         */
         UNCONNECTABLE;
 
         /**
-         * Determines if this holder is capable of exporting MRU.
+         * Determines if this device is capable of exporting MRU.
          *
          * @return `true` if this type is either [TRANSLATOR] or [IO], otherwise `false`.
          */
         val isExporter: Boolean get() = this == TRANSLATOR || this.isUniversal
 
         /**
-         * Determines if this holder type supports both importing and exporting MRU.
+         * Determines if this device type supports both importing and exporting MRU.
          *
          * @return `true` if this type is [IO], otherwise `false`.
          */
         val isUniversal: Boolean get() = this == IO
 
         /**
-         * Determines if this holder is capable of receiving MRU.
+         * Determines if this device is capable of receiving MRU.
          *
          * @return `true` if this type is either [RECEIVER] or [IO], otherwise `false`.
          */
         val isReceiver: Boolean get() = this == RECEIVER || this.isUniversal
 
+        /**
+         * Determines if this device type supports connecting with bound gem
+         *
+         * @return `true` if this type is [CONNECTABLE_RECEIVER], [TRANSLATOR] or [IO], otherwise `false`
+         */
         val isConnectable: Boolean get() = this == CONNECTABLE_RECEIVER || this.isExporter
     }
 
@@ -115,6 +123,7 @@ fun Level.resolveMRUDevice(pos: BlockPos): MRUDevice? {
     return AssembledMultiblocks.controllerBlockEntity(this, pos) as? MRUDevice
 }
 
+/** Starts receive procedure for [MRUDevice], if it has a configured [MRUDevice.locator]. */
 fun MRUDevice.processReceive(level: Level) {
     if (level.isClientSide) return
 
@@ -130,9 +139,8 @@ fun MRUDevice.processReceive(level: Level) {
     val outsideRadius = locatorData.position?.let { receiverPos ->
         logicalLevel !== level || !item.isWithinBoundRadius(receiverPos, pos)
     } ?: false
-    if (item.setOutsideBoundRadius(stack, outsideRadius)) {
+    if (item.setOutsideBoundRadius(stack, outsideRadius))
         locatorData.locatorStorage.setChanged()
-    }
     if (outsideRadius) return
 
     val exporter = logicalLevel.resolveMRUDevice(pos) ?: return

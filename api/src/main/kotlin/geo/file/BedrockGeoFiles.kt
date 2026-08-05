@@ -198,12 +198,16 @@ object BedrockGeoFileParser {
                 val uv = face["uv"] as? JsonArray
                 val defaultSize = faceSize(direction, size)
                 val uvSize = face["uv_size"] as? JsonArray
+                val rotation = face.int("uv_rotation", 0)
+                require(rotation % 90 == 0) {
+                    "Face '${direction.name.lowercase()}' uv_rotation must be a multiple of 90, got $rotation"
+                }
                 direction to BedrockUv.Face(
                     uv?.getOrNull(0)?.jsonPrimitive?.floatOrNull ?: 0F,
                     uv?.getOrNull(1)?.jsonPrimitive?.floatOrNull ?: 0F,
                     uvSize?.getOrNull(0)?.jsonPrimitive?.floatOrNull ?: defaultSize.first,
                     uvSize?.getOrNull(1)?.jsonPrimitive?.floatOrNull ?: defaultSize.second,
-                    face.int("uv_rotation", 0),
+                    rotation,
                     face.string("material_instance")
                 )
             }.toMap()

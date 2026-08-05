@@ -13,16 +13,13 @@ import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.item.HasSubItem
 import com.algorithmlx.ecr.api.item.NoTab
-import com.algorithmlx.ecr.api.item.SoulStoneLike
-import com.algorithmlx.ecr.api.mru.MRUMultiplierWeapon
 import com.algorithmlx.ecr.api.mru.resolveMRUDevice
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.ResearchAction
 import com.algorithmlx.ecr.api.utils.countByIngredient
 import com.algorithmlx.ecr.api.utils.openMenuScreenInternal
-import com.algorithmlx.ecr.common.components.SoulStoneComponent
-import com.algorithmlx.ecr.common.data.SoulStoneData
+import com.algorithmlx.ecr.common.components.PlayerMatrixStorage
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.config.ConfigManager
 import com.algorithmlx.ecr.common.init.config.ECConfig
@@ -33,7 +30,6 @@ import com.algorithmlx.ecr.common.item.NamedBlockItem
 import com.algorithmlx.ecr.registry.*
 import com.algorithmlx.ecr.common.research.ResearchConfigDisabler
 import com.algorithmlx.ecr.common.research.ResearchCommands
-import com.algorithmlx.ecr.mixin.InventoryAccessor
 import com.algorithmlx.ecr.neoforge.api.CountIngredient
 import com.algorithmlx.ecr.neoforge.init.registry.IngredientRegistry
 import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeBlockCodecRegistry
@@ -48,6 +44,7 @@ import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeMenuTypeRegistry
 import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeMobEffectRegistry
 import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeMultiblockMatcherTypes
 import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeMultiblockRegistry
+import com.algorithmlx.ecr.neoforge.init.registry.NeoForgePlayerMatrixStorage
 import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeRecipeDisplayTypeRegistry
 import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeRecipeSerializerRegistry
 import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeRecipeTypeRegistry
@@ -57,15 +54,16 @@ import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
 import com.algorithmlx.ecr.network.BoundGemTooltipRequestPayload
 import com.algorithmlx.ecr.network.BoundGemTooltipResponsePayload
 import com.algorithmlx.ecr.network.FinishCraftParticle
+import com.algorithmlx.ecr.network.SoulStoneTooltipNetwork
+import com.algorithmlx.ecr.network.SoulStoneTooltipRequestPayload
+import com.algorithmlx.ecr.network.SoulStoneTooltipResponsePayload
 import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
 import net.minecraft.server.level.ServerPlayer
-import net.minecraft.world.InteractionHand
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.MenuProvider
 import net.minecraft.world.entity.item.ItemEntity
-import net.minecraft.world.entity.monster.Enemy
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
@@ -88,7 +86,6 @@ import net.neoforged.neoforge.registries.NewRegistryEvent
 import net.neoforged.neoforge.resource.ListenerKey
 import com.algorithmlx.ecr.utils.PlatformUtils
 import java.io.File
-import kotlin.math.roundToInt
 
 object NeoForgeInit {
     fun init(bus: IEventBus) {
@@ -125,6 +122,7 @@ object NeoForgeInit {
 
     private fun initRegistries(bus: IEventBus) {
         PlatformUtils.instance = NeoForgePlatformUtils
+        PlayerMatrixStorage.instance = NeoForgePlayerMatrixStorage(bus)
         RecipeSerializerRegistry.instance = NeoForgeRecipeSerializerRegistry(bus)
         RecipeTypeRegistry.instance = NeoForgeRecipeTypeRegistry(bus)
         BlockCodecRegistry.instance = NeoForgeBlockCodecRegistry(bus)
@@ -193,6 +191,7 @@ object NeoForgeInit {
         registrar.playToClient(GeoEntityAnimationStopPayload.TYPE, GeoEntityAnimationStopPayload.STREAM_CODEC)
         registrar.playToClient(GeoItemAnimationStopPayload.TYPE, GeoItemAnimationStopPayload.STREAM_CODEC)
         registrar.playToClient(BoundGemTooltipResponsePayload.TYPE, BoundGemTooltipResponsePayload.STREAM_CODEC)
+        registrar.playToClient(SoulStoneTooltipResponsePayload.TYPE, SoulStoneTooltipResponsePayload.STREAM_CODEC)
 
         registrar.playToClient(ResearchSyncPayload.TYPE, ResearchSyncPayload.STREAM_CODEC)
         registrar.playToClient(ResearchProgressPayload.TYPE, ResearchProgressPayload.STREAM_CODEC)
@@ -218,6 +217,12 @@ object NeoForgeInit {
             context.enqueueWork {
                 val player = context.player() as? ServerPlayer ?: return@enqueueWork
                 BoundGemTooltipNetwork.handleRequest(player, payload)
+            }
+        }
+        registrar.playToServer(SoulStoneTooltipRequestPayload.TYPE, SoulStoneTooltipRequestPayload.STREAM_CODEC) { payload, context ->
+            context.enqueueWork {
+                val player = context.player() as? ServerPlayer ?: return@enqueueWork
+                SoulStoneTooltipNetwork.handleRequest(player, payload)
             }
         }
     }
@@ -342,35 +347,14 @@ object NeoForgeInit {
     }
 
     private fun onLivingDeath(e: LivingDeathEvent) {
-        val source = e.source.entity
-        val entity = e.entity
-        if (source !is Player) return
-
-        val items = (source.inventory as InventoryAccessor).items().filter { it.item is SoulStoneLike }
-        if (items.isEmpty()) return
-
-        val item = items.random()
-        val component = item.get(DataComponentRegistry.instance.soulStone)
-
-        if (component == null || component == SoulStoneComponent.EMPTY || component.owner != source.uuid) return
-
-        val weapon = source.getItemInHand(InteractionHand.MAIN_HAND).item
-        val multiplier = if (weapon is MRUMultiplierWeapon) weapon.multiplier else 1F
-
-        val addCount = if (SoulStoneData.ENTITY_CAPACITY_ADD.contains(entity.type))
-            SoulStoneData.ENTITY_CAPACITY_ADD[entity.type]!!.random() * multiplier
-        else {
-            if (entity is Enemy) SoulStoneData.defaultEnemyAdd.random() * multiplier
-            else SoulStoneData.defaultCapacityAdd.random() * multiplier
-        }
-
-        item.set(DataComponentRegistry.instance.soulStone, component.copy(capacity = component.capacity + addCount.roundToInt()))
+        ECEvents.livingDeath(e.entity, e.source)
     }
 
     private fun extendPlatform() {
         ResearchNetwork.sendToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
         ResearchNetwork.sendProgressToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
         BoundGemTooltipNetwork.sendResponseToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
+        SoulStoneTooltipNetwork.sendResponseToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
         GeoAnimationNetwork.sendToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
         GeoAnimationNetwork.sendEntityToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
         GeoAnimationNetwork.sendItemToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }

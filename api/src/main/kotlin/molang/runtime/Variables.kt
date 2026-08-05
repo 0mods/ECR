@@ -18,7 +18,7 @@ interface Variables {
     }
 }
 
-class VariablesMap : Variables {
+class VariablesMap: Variables {
     private val map = mutableMapOf<String, Variable>()
 
     override fun getOrNull(name: String): Variables.Variable? = map[name]

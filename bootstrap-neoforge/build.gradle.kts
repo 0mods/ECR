@@ -22,6 +22,16 @@ repositories {
     maven("https://repo.spongepowered.org/repository/maven-public/")
     maven("https://maven.neoforged.net/releases/")
     maven("https://repo.nyon.dev/releases")
+    exclusiveContent {
+        forRepository {
+            maven("https://api.modrinth.com/maven") {
+                name = "Modrinth"
+            }
+        }
+        filter {
+            includeGroup("maven.modrinth")
+        }
+    }
 }
 
 loom {
@@ -36,6 +46,7 @@ loom {
 
 dependencies {
     val kotlinVersion = providers.gradleProperty("libs.kotlin").get()
+    val irisVersion = rootProject.providers.gradleProperty("libs.iris").get()
 
     minecraft("com.mojang:minecraft:$minecraftVersion")
     neoForge(libs.neoforge)
@@ -47,6 +58,7 @@ dependencies {
     compileOnly(libs.bundles.kotlinx.coroutines)
 
     implementation("org.spongepowered:mixin:0.8.7")
+    compileOnly("maven.modrinth:iris:$irisVersion+$minecraftVersion-neoforge")
 
 
     project.property("mod.depend.klf_loader_version").toString()

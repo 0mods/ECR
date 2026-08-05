@@ -40,8 +40,7 @@ object BedrockGeoRenderEngine {
         context: MolangContext,
         nowSeconds: Double
     ): BedrockGeoRenderData? {
-        val baked = model.geometryResource?.let { resource -> BedrockGeoAssets[resource] }
-            ?: BedrockGeoAssets[model.geometry]
+        val baked = BedrockGeoAssets[model]
         if (baked == null) {
             val reference = model.geometryResource?.toString() ?: model.geometry
             if (loggedMissingGeometries.add(reference)) {
@@ -91,7 +90,13 @@ object BedrockGeoRenderEngine {
             packedLight
         }
         val renderType = renderType(data)
-        if (gpuRenderingEnabled && !BedrockGeoGpuRuntime.failed && collector is BedrockGeoGpuSubmitCollector) {
+        if (
+            gpuRenderingEnabled &&
+            !BedrockGeoGpuRuntime.failed &&
+            collector is BedrockGeoGpuSubmitCollector &&
+            data.renderType.supportsGpuInstancing &&
+            BedrockGeoRenderCompatibility.canUseGpuRendering()
+        ) {
             val pose = poseStack.last()
             collector.submitBedrockGeoGpu(
                 BedrockGeoGpuSubmit(
@@ -142,4 +147,7 @@ object BedrockGeoRenderEngine {
         GeoRenderType.TRANSLUCENT -> RenderTypes.entityTranslucent(data.texture, false)
         GeoRenderType.ADDITIVE -> RenderTypes.energySwirl(data.texture, 0F, 0F)
     }
+
+    private val GeoRenderType.supportsGpuInstancing: Boolean
+        get() = this == GeoRenderType.SOLID || this == GeoRenderType.CUTOUT
 }

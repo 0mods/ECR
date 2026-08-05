@@ -31,6 +31,7 @@ import com.algorithmlx.ecr.client.screen.RayTowerScreen
 import com.algorithmlx.ecr.common.block.entity.AssembledMultiblockPartBlockEntity
 import com.algorithmlx.ecr.common.block.entity.RayTowerEntity
 import com.algorithmlx.ecr.neoforge.client.NeoForgeConnectedTextures
+import com.algorithmlx.ecr.neoforge.client.NeoForgeIrisCompatibility
 import com.algorithmlx.ecr.client.ECRConnectedTextures
 import com.algorithmlx.ecr.client.screen.EnrichmentChamberReceiverScreen
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
@@ -38,6 +39,8 @@ import com.algorithmlx.ecr.registry.MenuTypeRegistry
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
 import com.algorithmlx.ecr.network.BoundGemTooltipResponsePayload
 import com.algorithmlx.ecr.network.FinishCraftParticle
+import com.algorithmlx.ecr.network.SoulStoneTooltipNetwork
+import com.algorithmlx.ecr.network.SoulStoneTooltipResponsePayload
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers
@@ -49,6 +52,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
 import net.neoforged.neoforge.client.event.EntityRenderersEvent
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent
 import net.neoforged.neoforge.client.event.ClientTickEvent
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 import net.neoforged.neoforge.client.event.RegisterPictureInPictureRenderersEvent
 import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent
@@ -60,6 +64,7 @@ import kotlin.random.Random
 
 object NeoForgeClientInit {
     fun init(bus: IEventBus) {
+        NeoForgeIrisCompatibility.init()
         NeoForgeConnectedTextures.init(bus)
         ECRConnectedTextures.init()
         BedrockParticleRenderTypes.init()
@@ -76,6 +81,7 @@ object NeoForgeClientInit {
         bus.addListener(::onRegisterEntityRenderers)
 
         NeoForge.EVENT_BUS.addListener(::onClientTick)
+        NeoForge.EVENT_BUS.addListener(::onClientLogout)
         NeoForge.EVENT_BUS.addListener(::onSubmitCustomGeometry)
     }
 
@@ -86,6 +92,10 @@ object NeoForgeClientInit {
 
     private fun onClientTick(event: ClientTickEvent.Post) {
         Minecraft.getInstance().level?.let { ClientParticleSystems.get(it)?.update() }
+    }
+
+    private fun onClientLogout(event: ClientPlayerNetworkEvent.LoggingOut) {
+        SoulStoneTooltipNetwork.clear()
     }
 
     private fun onSubmitCustomGeometry(event: SubmitCustomGeometryEvent) {
@@ -119,6 +129,7 @@ object NeoForgeClientInit {
             ResearchNetwork.updateView = { state -> runCatching { ClientPacketDistributor.sendToServer(UpdateBookViewPayload(state)) } }
             BoundGemTooltipNetwork.currentDimension = { Minecraft.getInstance().level?.dimension() }
             BoundGemTooltipNetwork.sendRequestToServer = { payload -> runCatching { ClientPacketDistributor.sendToServer(payload) } }
+            SoulStoneTooltipNetwork.sendRequestToServer = { payload -> runCatching { ClientPacketDistributor.sendToServer(payload) } }
             GeoAnimationNetwork.playClientBlockAnimation = ClientGeoAnimations::handle
             GeoAnimationNetwork.playClientEntityAnimation = ClientGeoAnimations::handle
             GeoAnimationNetwork.playClientItemAnimation = ClientGeoAnimations::handle
@@ -155,6 +166,7 @@ object NeoForgeClientInit {
         event.register(ResearchSyncPayload.TYPE) { payload, _ -> ClientResearchState.apply(payload) }
         event.register(ResearchProgressPayload.TYPE) { payload, _ -> ClientResearchState.apply(payload) }
         event.register(BoundGemTooltipResponsePayload.TYPE) { payload, _ -> BoundGemTooltipNetwork.acceptResponse(payload) }
+        event.register(SoulStoneTooltipResponsePayload.TYPE) { payload, _ -> SoulStoneTooltipNetwork.acceptResponse(payload) }
         event.register(GeoBlockAnimationPayload.TYPE) { payload, _ -> ClientGeoAnimations.handle(payload) }
         event.register(GeoEntityAnimationPayload.TYPE) { payload, _ -> ClientGeoAnimations.handle(payload) }
         event.register(GeoItemAnimationPayload.TYPE) { payload, _ -> ClientGeoAnimations.handle(payload) }

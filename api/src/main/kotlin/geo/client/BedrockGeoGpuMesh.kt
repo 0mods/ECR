@@ -67,7 +67,7 @@ internal object BedrockGeoGpuMeshCache {
         invalidationRequested = false
     }
 
-    private fun flushInvalidation() {
+    internal fun flushInvalidation() {
         if (!invalidationRequested) return
         close()
     }

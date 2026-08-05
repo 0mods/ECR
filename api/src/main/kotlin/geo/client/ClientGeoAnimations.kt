@@ -37,11 +37,12 @@ object ClientGeoAnimations {
             LOGGER.error("Cannot play GEO animation '{}': unable to resolve model", animation, error)
             return false
         }
-        if (BedrockGeoAssets[model.geometry] == null) {
+        if (BedrockGeoAssets[model] == null) {
+            val geometry = model.geometryResource?.toString() ?: model.geometry
             LOGGER.error(
                 "Cannot play GEO animation '{}': geometry '{}' is not loaded",
                 animation,
-                model.geometry
+                geometry
             )
             return false
         }
@@ -78,11 +79,12 @@ object ClientGeoAnimations {
             LOGGER.error("Cannot play GEO animation '{}': unable to resolve item model", animation, error)
             return false
         }
-        if (BedrockGeoAssets[model.geometry] == null) {
+        if (BedrockGeoAssets[model] == null) {
+            val geometry = model.geometryResource?.toString() ?: model.geometry
             LOGGER.error(
                 "Cannot play GEO animation '{}': geometry '{}' is not loaded",
                 animation,
-                model.geometry
+                geometry
             )
             return false
         }

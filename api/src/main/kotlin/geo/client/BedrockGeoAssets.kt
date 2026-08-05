@@ -1,6 +1,7 @@
 package com.algorithmlx.ecr.api.geo.client
 
 import com.algorithmlx.ecr.api.LOGGER
+import com.algorithmlx.ecr.api.geo.GeoModel
 import com.algorithmlx.ecr.api.geo.file.BedrockAnimation
 import com.algorithmlx.ecr.api.geo.file.BedrockGeoFileParser
 import kotlinx.serialization.json.Json
@@ -70,6 +71,9 @@ object BedrockGeoAssets: ResourceManagerReloadListener {
     operator fun get(identifier: String): BakedGeoModel? = geometries[identifier]
 
     operator fun get(resource: Identifier): BakedGeoModel? = geometryResources[resource]?.singleOrNull()
+
+    operator fun get(model: GeoModel): BakedGeoModel? =
+        model.geometryResource?.let { resource -> this[resource] } ?: this[model.geometry]
 
     fun geometryCount(resource: Identifier): Int = geometryResources[resource]?.size ?: 0
 

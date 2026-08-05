@@ -7,7 +7,7 @@ import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.registry.MRUTypeRegistry
 import net.minecraft.core.Registry
 
-object FabricMRUTypeRegistry : MRUTypeRegistry {
+object FabricMRUTypeRegistry: MRUTypeRegistry {
     override val espe: MRUType = register(ECRModIDs.ESPE, MRUType())
     override val radiationUnit: MRUType = register(ECRModIDs.MRU, MRUType())
     override val ubmru: MRUType = register(ECRModIDs.UBMRU, MRUType(radiationUnit, 10))

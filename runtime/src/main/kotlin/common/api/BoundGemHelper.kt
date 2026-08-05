@@ -25,7 +25,7 @@ object BoundGemHelper {
     }
 
     @JvmStatic
-    fun setWorld(stack: ItemStack, world: ResourceKey<Level>?) {
+    fun setLevelKey(stack: ItemStack, world: ResourceKey<Level>?) {
         val data = stack.get(DataComponentRegistry.instance.boundGem) ?: return
         stack.set(
             DataComponentRegistry.instance.boundGem,
@@ -34,7 +34,7 @@ object BoundGemHelper {
     }
 
     @JvmStatic
-    fun getWorld(stack: ItemStack): ResourceKey<Level>? = stack.get(DataComponentRegistry.instance.boundGem)
+    fun getLevelKey(stack: ItemStack): ResourceKey<Level>? = stack.get(DataComponentRegistry.instance.boundGem)
         ?.dimension
         ?.getOrNull()
 

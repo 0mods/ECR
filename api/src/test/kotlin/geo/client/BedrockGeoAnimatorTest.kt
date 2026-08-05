@@ -7,6 +7,7 @@ import com.algorithmlx.ecr.api.geo.file.BedrockGeoFileParser
 import com.algorithmlx.ecr.api.molang.runtime.MolangContext
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
+import org.joml.Vector3f
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -35,6 +36,23 @@ class BedrockGeoAnimatorTest {
 
         val frozen = playback.copy(speed = 1F, loop = GeoLoopMode.HOLD)
         assertFalse(BedrockGeoAnimator.isFinished(animation, frozen, MolangContext.EMPTY, 20.0))
+    }
+
+    @Test
+    fun additiveScaleLayersAccumulateRelativeToIdentity() {
+        val scale = Vector3f(1F)
+
+        BedrockGeoAnimator.blendScale(scale, Vector3f(2F), 0.5F, GeoBlendMode.ADDITIVE)
+        BedrockGeoAnimator.blendScale(scale, Vector3f(2F), 0.5F, GeoBlendMode.ADDITIVE)
+
+        assertEquals(Vector3f(2F), scale)
+    }
+
+    @Test
+    fun zeroScaleProducesFiniteNormalScale() {
+        assertEquals(1F, BedrockGeoAnimator.safeNormalScale(0F))
+        assertEquals(0.5F, BedrockGeoAnimator.safeNormalScale(2F))
+        assertTrue(BedrockGeoAnimator.safeNormalScale(Float.NaN).isFinite())
     }
 
     private val animation = BedrockGeoFileParser.parseAnimations(

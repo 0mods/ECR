@@ -9,11 +9,14 @@ import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.DataComponentRegistry
 import com.algorithmlx.ecr.registry.MRUTypeRegistry
 import com.algorithmlx.ecr.common.menu.MatrixDestructorMenu
+import com.algorithmlx.ecr.common.components.playerMatrix
+import com.algorithmlx.ecr.common.components.updatePlayerMatrix
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.BlockPos
 import net.minecraft.core.NonNullList
 import net.minecraft.network.chat.Component
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.ContainerHelper
 import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.inventory.AbstractContainerMenu
@@ -96,6 +99,7 @@ class MatrixDestructorEntity(
         fun onTick(level: Level, be: MatrixDestructorEntity) {
             if (level.isClientSide) return
 
+            val serverLevel = level as ServerLevel
             val stack = be.getItem(0)
 
             if (stack.isEmpty) {
@@ -114,7 +118,10 @@ class MatrixDestructorEntity(
                 return
             }
 
-            val capacity = soulStoneComponent.capacity
+            val owner = serverLevel.server.playerList.getPlayer(soulStoneComponent.owner) ?: return
+            val matrix = owner.playerMatrix
+
+            val capacity = matrix.mru
             val i = stack.item as? SoulStoneLike
             if (i == null) {
                 be.progress = 0
@@ -142,11 +149,7 @@ class MatrixDestructorEntity(
             }
 
             be.setStatusUpdated(MatrixDestructorStatus.WORKING)
-
-            stack.set(
-                DataComponentRegistry.instance.soulStone,
-                soulStoneComponent.copy(capacity = (capacity - convertCost))
-            )
+            owner.updatePlayerMatrix { extract(convertCost) }
             be.progress += convertCost
 
             if (be.progress >= convertCost) {

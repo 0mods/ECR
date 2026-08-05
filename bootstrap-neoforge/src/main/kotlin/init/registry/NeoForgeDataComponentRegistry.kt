@@ -4,6 +4,7 @@ import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.registries.ECRegistryKeys
 import com.algorithmlx.ecr.api.research.BookType
 import com.algorithmlx.ecr.common.components.BoundGemComponent
+import com.algorithmlx.ecr.common.components.PlayerMatrixComponent
 import com.algorithmlx.ecr.common.components.SoulStoneComponent
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.registry.DataComponentRegistry
@@ -34,7 +35,12 @@ class NeoForgeDataComponentRegistry(bus: IEventBus): DataComponentRegistry {
         builder.persistent(BoundGemComponent.CODEC).networkSynchronized(BoundGemComponent.STREAM_CODEC)
     }
 
+    private val playerMatrixComponent = dataComponents.registerComponentType(ECRModIDs.PLAYER_MATRIX) { builder ->
+        builder.persistent(PlayerMatrixComponent.CODEC).networkSynchronized(PlayerMatrixComponent.STREAM_CODEC)
+    }
+
     override val soulStone: DataComponentType<SoulStoneComponent> by lazy { soulStoneComponent.get() }
     override val bookType: DataComponentType<ResourceKey<BookType>> by lazy { bookTypeComponent.get() }
     override val boundGem: DataComponentType<BoundGemComponent> by lazy { boundGemComponent.get() }
+    override val playerMatrix: DataComponentType<PlayerMatrixComponent> by lazy { playerMatrixComponent.get() }
 }

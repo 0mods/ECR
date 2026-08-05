@@ -31,6 +31,8 @@ class BedrockGeoGpuFeatureRenderer: FeatureRenderer<BedrockGeoGpuSubmit> {
     }
 
     override fun beginPrepare(context: FeatureFrameContext) {
+        groups.clear()
+        BedrockGeoGpuMeshCache.flushInvalidation()
         palettes.beginFrame()
     }
 

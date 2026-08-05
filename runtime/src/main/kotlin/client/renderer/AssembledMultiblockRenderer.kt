@@ -20,7 +20,7 @@ import net.minecraft.util.LightCoordsUtil
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.phys.Vec3
 
-class AssembledMultiblockRenderState : BlockEntityRenderState() {
+class AssembledMultiblockRenderState: BlockEntityRenderState() {
     var model: BedrockGeoRenderData? = null
     var facing: Direction = Direction.NORTH
     var anchorX: Float = 0F
@@ -31,7 +31,7 @@ class AssembledMultiblockRenderState : BlockEntityRenderState() {
 
 class AssembledMultiblockRenderer<T : BlockEntity>(
     context: BlockEntityRendererProvider.Context
-) : BlockEntityRenderer<T, AssembledMultiblockRenderState> {
+): BlockEntityRenderer<T, AssembledMultiblockRenderState> {
     override fun createRenderState() = AssembledMultiblockRenderState()
 
     override fun extractRenderState(

@@ -40,8 +40,9 @@ object ECRModIDs {
     const val FORTIFIED_GLASS = "fortified_glass"
     const val RAY_TOWER_BASE = "${RAY_TOWER}_base"
 
-    // Data Components
+    // Data Components / Attachments
     const val BOOK_TYPE = "book_type"
+    const val PLAYER_MATRIX = "player_matrix"
 
     // BookTypes
     const val BASIC = "basic"

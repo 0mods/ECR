@@ -22,6 +22,16 @@ base {
 repositories {
     maven("https://repo.spongepowered.org/repository/maven-public/")
     maven("https://maven.fabricmc.net/")
+    exclusiveContent {
+        forRepository {
+            maven("https://api.modrinth.com/maven") {
+                name = "Modrinth"
+            }
+        }
+        filter {
+            includeGroup("maven.modrinth")
+        }
+    }
 }
 
 loom {
@@ -41,6 +51,8 @@ loom {
 }
 
 dependencies {
+    val irisVersion = rootProject.providers.gradleProperty("libs.iris").get()
+
     minecraft("com.mojang:minecraft:$minecraftVersion")
     implementation(libs.bundles.fabricmc)
     implementation(libs.fabric.language.kotlin)
@@ -52,6 +64,7 @@ dependencies {
     compileOnly(libs.bundles.kotlinx.coroutines)
 
     compileOnly("org.spongepowered:mixin:0.8.7")
+    compileOnly("maven.modrinth:iris:$irisVersion+$minecraftVersion-fabric")
 }
 
 val modMetadata = mapOf(

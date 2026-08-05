@@ -88,16 +88,28 @@ object BedrockGeoBaker {
             geometry.identifier,
             geometry.visibleBoundsWidth,
             geometry.visibleBoundsHeight,
-            -geometry.visibleBoundsOffset.x / MODEL_UNITS,
-            geometry.visibleBoundsOffset.y / MODEL_UNITS,
-            geometry.visibleBoundsOffset.z / MODEL_UNITS,
+            -geometry.visibleBoundsOffset.x,
+            geometry.visibleBoundsOffset.y,
+            geometry.visibleBoundsOffset.z,
             bones,
             indices
         )
     }
 
     private fun topologicalBones(source: List<BedrockBone>): List<BedrockBone> {
+        val duplicates = source.groupingBy(BedrockBone::name)
+            .eachCount()
+            .filterValues { count -> count > 1 }
+            .keys
+        require(duplicates.isEmpty()) {
+            "Duplicate GEO bone name(s): ${duplicates.sorted().joinToString()}"
+        }
+
         val byName = source.associateBy(BedrockBone::name)
+        source.forEach { bone ->
+            val parent = bone.parent ?: return@forEach
+            require(parent in byName) { "GEO bone '${bone.name}' references missing parent '$parent'" }
+        }
         val result = arrayListOf<BedrockBone>()
         val visiting = hashSetOf<String>()
         val visited = hashSetOf<String>()

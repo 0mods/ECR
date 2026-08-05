@@ -137,14 +137,10 @@ object BoundGemTooltipNetwork {
     private fun resolveTargetStatus(level: ServerLevel, pos: BlockPos): BoundGemTargetStatus {
         if (!level.isLoaded(pos)) return BoundGemTargetStatus.UNKNOWN
 
-        val device = level.resolveMRUDevice(pos)
-            ?: return BoundGemTargetStatus.NOT_MRU
+        val device = level.resolveMRUDevice(pos) ?: return BoundGemTargetStatus.NOT_MRU
 
-        return if (device.deviceType.isExporter) {
-            BoundGemTargetStatus.MRU_EXPORTER
-        } else {
-            BoundGemTargetStatus.NOT_MRU
-        }
+        return if (device.deviceType.isExporter) BoundGemTargetStatus.MRU_EXPORTER
+        else BoundGemTargetStatus.NOT_MRU
     }
 
     private fun trimCache() {

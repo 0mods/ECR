@@ -4,6 +4,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class BedrockGeoFileParserTest {
     @Test
@@ -62,5 +63,29 @@ class BedrockGeoFileParserTest {
         val animation = animations.getValue("animation.test_machine.open")
         assertEquals(2F, animation.lengthSeconds)
         assertEquals(GeoInterpolation.CATMULL_ROM, animation.bones.getValue("door").rotation?.keyframes?.last()?.interpolation)
+    }
+
+    @Test
+    fun rejectsUnsupportedUvRotation() {
+        val root = Json.parseToJsonElement(
+            """
+            {
+              "minecraft:geometry": [{
+                "description": {"identifier": "geometry.invalid_uv"},
+                "bones": [{
+                  "name": "root",
+                  "cubes": [{
+                    "size": [1, 1, 1],
+                    "uv": {"north": {"uv": [0, 0], "uv_rotation": 45}}
+                  }]
+                }]
+              }]
+            }
+            """.trimIndent()
+        ).jsonObject
+
+        assertFailsWith<IllegalArgumentException> {
+            BedrockGeoFileParser.parseGeometry(root)
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.registries.ECRegistryKeys
 import com.algorithmlx.ecr.api.research.BookType
 import com.algorithmlx.ecr.common.components.BoundGemComponent
+import com.algorithmlx.ecr.common.components.PlayerMatrixComponent
 import com.algorithmlx.ecr.common.components.SoulStoneComponent
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.registry.DataComponentRegistry
@@ -31,6 +32,13 @@ object FabricDataComponentRegistry : DataComponentRegistry {
         DataComponentType.builder<BoundGemComponent>()
             .persistent(BoundGemComponent.CODEC)
             .networkSynchronized(BoundGemComponent.STREAM_CODEC)
+            .build()
+    )
+    override val playerMatrix: DataComponentType<PlayerMatrixComponent> = register(
+        ECRModIDs.PLAYER_MATRIX,
+        DataComponentType.Builder<PlayerMatrixComponent>()
+            .persistent(PlayerMatrixComponent.CODEC)
+            .networkSynchronized(PlayerMatrixComponent.STREAM_CODEC)
             .build()
     )
 

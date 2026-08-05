@@ -56,7 +56,12 @@ object BedrockGeoAnimator {
             animation.bones.forEach { (boneName, channels) ->
                 val boneIndex = model.boneIndices[boneName] ?: return@forEach
                 val state = states[boneIndex]
-                if (animation.overridePreviousAnimation || playback.blend == GeoBlendMode.OVERRIDE) {
+                val blendMode = if (animation.overridePreviousAnimation) {
+                    GeoBlendMode.OVERRIDE
+                } else {
+                    playback.blend
+                }
+                if (blendMode == GeoBlendMode.OVERRIDE) {
                     state.reset()
                 }
                 channels.position?.let { channel ->
@@ -69,7 +74,7 @@ object BedrockGeoAnimator {
                 }
                 channels.scale?.let { channel ->
                     val value = sample(channel, time, context)
-                    state.scale.lerp(value, weight)
+                    blendScale(state.scale, value, weight, blendMode)
                 }
             }
         }
@@ -87,7 +92,15 @@ object BedrockGeoAnimator {
                 .scale(state.scale)
                 .translate(-bone.pivotX, -bone.pivotY, -bone.pivotZ)
             transforms[index] = matrix
-            normals[index] = Matrix3f(matrix).invert().transpose()
+            normals[index] = (if (bone.parentIndex >= 0) Matrix3f(normals[bone.parentIndex]) else Matrix3f())
+                .rotateZ(bone.rotationZ + radians(state.rotation.z))
+                .rotateY(bone.rotationY + radians(-state.rotation.y))
+                .rotateX(bone.rotationX + radians(-state.rotation.x))
+                .scale(
+                    safeNormalScale(state.scale.x),
+                    safeNormalScale(state.scale.y),
+                    safeNormalScale(state.scale.z)
+                )
         }
 
         return BedrockGeoPose(transforms, normals)
@@ -180,6 +193,26 @@ object BedrockGeoAnimator {
 
     private fun radians(degrees: Float): Float = degrees * (PI.toFloat() / 180F)
 
+    internal fun blendScale(
+        current: Vector3f,
+        sampled: Vector3f,
+        weight: Float,
+        blendMode: GeoBlendMode
+    ) {
+        if (blendMode == GeoBlendMode.OVERRIDE) {
+            current.lerp(sampled, weight)
+        } else {
+            current.add(
+                (sampled.x - 1F) * weight,
+                (sampled.y - 1F) * weight,
+                (sampled.z - 1F) * weight
+            )
+        }
+    }
+
+    internal fun safeNormalScale(scale: Float): Float =
+        if (scale.isFinite() && abs(scale) > MIN_NORMAL_SCALE) 1F / scale else 1F
+
     private class MutableBonePose {
         val position = Vector3f()
         val rotation = Vector3f()
@@ -193,4 +226,5 @@ object BedrockGeoAnimator {
     }
 
     private const val MODEL_UNITS = 16F
+    private const val MIN_NORMAL_SCALE = 1E-6F
 }

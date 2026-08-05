@@ -3,23 +3,34 @@ package com.algorithmlx.ecr.common.init.events
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.item.SoulStoneLike
+import com.algorithmlx.ecr.api.mru.MRUMultiplierWeapon
 import com.algorithmlx.ecr.api.recipe.CachedRecipe
 import com.algorithmlx.ecr.api.utils.countByIngredient
 import com.algorithmlx.ecr.common.components.SoulStoneComponent
+import com.algorithmlx.ecr.common.components.updatePlayerMatrix
+import com.algorithmlx.ecr.common.data.SoulStoneData
 import com.algorithmlx.ecr.registry.DataComponentRegistry
 import com.algorithmlx.ecr.common.recipe.StructureRecipe
 import com.algorithmlx.ecr.network.BoundGemTargetStatus
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
+import com.algorithmlx.ecr.network.SoulStoneTooltipNetwork
+import com.algorithmlx.ecr.registry.ItemRegistry
 import net.minecraft.ChatFormatting
 import net.minecraft.core.BlockPos
 import net.minecraft.network.chat.Component
+import net.minecraft.server.level.ServerPlayer
+import net.minecraft.world.InteractionHand
+import net.minecraft.world.damagesource.DamageSource
 import net.minecraft.world.entity.item.ItemEntity
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.monster.Enemy
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.item.crafting.SingleRecipeInput
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.Vec3
+import kotlin.math.roundToInt
 
 object ECEvents {
     @JvmStatic
@@ -37,16 +48,40 @@ object ECEvents {
                     ).withStyle(ChatFormatting.DARK_GRAY)
                 else Component.translatable("tooltip.$ModId.soul_stone.error").withStyle(ChatFormatting.DARK_RED)
 
-                tooltips += Component.translatable(
-                    "tooltip.$ModId.soul_stone.detected_ubmru",
-                    Component.literal(component.capacity.toString()).withStyle(ChatFormatting.GREEN)
-                ).withStyle(ChatFormatting.DARK_GRAY)
+                val mru = SoulStoneTooltipNetwork.tooltipMru(component.owner)
+                if (mru != null) {
+                    tooltips += Component.translatable(
+                        "tooltip.$ModId.soul_stone.detected_ubmru",
+                        Component.literal(mru.toString()).withStyle(ChatFormatting.GREEN)
+                    ).withStyle(ChatFormatting.DARK_GRAY)
+                }
             }
 
             is BoundGem -> {
                 addBoundGemTooltip(stack, item, tooltips)
             }
         }
+    }
+
+    @JvmStatic
+    fun livingDeath(entity: LivingEntity, source: DamageSource) {
+        val player = source.entity as? ServerPlayer ?: return
+        val hasOwnedSoulStone = player.inventory.contains { stack ->
+            stack.item is SoulStoneLike &&
+                    stack.get(DataComponentRegistry.instance.soulStone)?.owner == player.uuid
+        }
+        if (!hasOwnedSoulStone) return
+
+        val weapon = player.getItemInHand(InteractionHand.MAIN_HAND).item
+        val multiplier = if (weapon is MRUMultiplierWeapon) weapon.multiplier else 1F
+        val addCount = if (entity.type in SoulStoneData.ENTITY_CAPACITY_ADD) {
+            SoulStoneData.ENTITY_CAPACITY_ADD.getValue(entity.type).random() * multiplier
+        } else {
+            val range = if (entity is Enemy) SoulStoneData.defaultEnemyAdd else SoulStoneData.defaultCapacityAdd
+            range.random() * multiplier
+        }
+
+        player.updatePlayerMatrix { insert(addCount.roundToInt()) }
     }
 
     private fun addBoundGemTooltip(stack: ItemStack, item: BoundGem, tooltips: MutableList<Component>) {
@@ -88,6 +123,8 @@ object ECEvents {
         stack: ItemStack, cached: CachedRecipe<SingleRecipeInput, StructureRecipe>, pos: Vec3,
         level: Level, timer: IntArray
     ) {
+        if (stack.`is`(ItemRegistry.instance.hammer)) return
+
         val center = BlockPos.containing(pos).below()
 
         val craftingInput = SingleRecipeInput(stack)

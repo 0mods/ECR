@@ -33,16 +33,23 @@ import com.algorithmlx.ecr.client.screen.MithrilineFurnaceScreen
 import com.algorithmlx.ecr.client.screen.RayTowerScreen
 import com.algorithmlx.ecr.common.block.entity.AssembledMultiblockPartBlockEntity
 import com.algorithmlx.ecr.common.block.entity.RayTowerEntity
+import com.algorithmlx.ecr.common.init.events.ECEvents
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.MenuTypeRegistry
 import com.algorithmlx.ecr.fabric.client.MultiblockPreviewGuiBridgeInit
 import com.algorithmlx.ecr.fabric.client.FabricConnectedTextures
+import com.algorithmlx.ecr.fabric.client.FabricIrisCompatibility
 import com.algorithmlx.ecr.client.ECRConnectedTextures
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
 import com.algorithmlx.ecr.network.BoundGemTooltipRequestPayload
 import com.algorithmlx.ecr.network.BoundGemTooltipResponsePayload
 import com.algorithmlx.ecr.network.FinishCraftParticle
+import com.algorithmlx.ecr.network.SoulStoneTooltipNetwork
+import com.algorithmlx.ecr.network.SoulStoneTooltipRequestPayload
+import com.algorithmlx.ecr.network.SoulStoneTooltipResponsePayload
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents
+import net.fabricmc.fabric.api.client.item.v1.ItemTooltipCallback
 import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents
 import net.fabricmc.fabric.api.client.rendering.v1.level.LevelRenderEvents
@@ -61,11 +68,14 @@ import kotlin.random.Random
 object FabricClientInit {
     @JvmStatic
     fun init() {
+        FabricIrisCompatibility.init()
         SpecialModelRenderers.ID_MAPPER.put(BedrockGeoItemRenderer.ID, BedrockGeoItemRenderer.Unbaked.CODEC)
         FabricConnectedTextures.init()
         ECRConnectedTextures.init()
         registerBedrockParticles()
         registerReceivers()
+        registerTooltipEvent()
+        ClientPlayConnectionEvents.DISCONNECT.register { _, _ -> SoulStoneTooltipNetwork.clear() }
 
         MultiblockPreviewGuiBridgeInit.init()
         ResearchBookClient.init()
@@ -93,6 +103,12 @@ object FabricClientInit {
         MenuScreens.register(MenuTypeRegistry.instance.enrichmentChamberController, ::EnrichmentChamberControllerScreen)
         MenuScreens.register(MenuTypeRegistry.instance.enrichmentChamberReceiver, ::EnrichmentChamberReceiverScreen)
         MenuScreens.register(MenuTypeRegistry.instance.rayTower, ::RayTowerScreen)
+    }
+
+    private fun registerTooltipEvent() {
+        ItemTooltipCallback.EVENT.register { stack, _, _, components ->
+            ECEvents.itemTooltip(stack, components)
+        }
     }
 
     private fun registerBedrockParticles() {
@@ -168,6 +184,9 @@ object FabricClientInit {
         ClientPlayNetworking.registerGlobalReceiver(BoundGemTooltipResponsePayload.TYPE) { payload, context ->
             context.client().execute { BoundGemTooltipNetwork.acceptResponse(payload) }
         }
+        ClientPlayNetworking.registerGlobalReceiver(SoulStoneTooltipResponsePayload.TYPE) { payload, context ->
+            context.client().execute { SoulStoneTooltipNetwork.acceptResponse(payload) }
+        }
 
         ResearchNetwork.completeResearch = { ClientPlayNetworking.send(CompleteResearchPayload(it)) }
         ResearchNetwork.updateFavorite = { research, spread, color -> ClientPlayNetworking.send(FavoriteResearchPayload(research, spread, color)) }
@@ -188,6 +207,13 @@ object FabricClientInit {
         BoundGemTooltipNetwork.sendRequestToServer = { payload ->
             runCatching {
                 if (ClientPlayNetworking.canSend(BoundGemTooltipRequestPayload.TYPE)) {
+                    ClientPlayNetworking.send(payload)
+                }
+            }
+        }
+        SoulStoneTooltipNetwork.sendRequestToServer = { payload ->
+            runCatching {
+                if (ClientPlayNetworking.canSend(SoulStoneTooltipRequestPayload.TYPE)) {
                     ClientPlayNetworking.send(payload)
                 }
             }
