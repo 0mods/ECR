@@ -351,16 +351,16 @@ object NeoForgeInit {
     }
 
     private fun extendPlatform() {
-        ResearchNetwork.sendToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
-        ResearchNetwork.sendProgressToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
-        BoundGemTooltipNetwork.sendResponseToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
-        SoulStoneTooltipNetwork.sendResponseToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
-        GeoAnimationNetwork.sendToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
-        GeoAnimationNetwork.sendEntityToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
-        GeoAnimationNetwork.sendItemToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
-        GeoAnimationNetwork.sendBlockStopToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
-        GeoAnimationNetwork.sendEntityStopToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
-        GeoAnimationNetwork.sendItemStopToPlayer = { player, payload -> PacketDistributor.sendToPlayer(player, payload) }
+        ResearchNetwork.sendToPlayer = PacketDistributor::sendToPlayer
+        ResearchNetwork.sendProgressToPlayer = PacketDistributor::sendToPlayer
+        BoundGemTooltipNetwork.sendResponseToPlayer = PacketDistributor::sendToPlayer
+        SoulStoneTooltipNetwork.sendResponseToPlayer = PacketDistributor::sendToPlayer
+        GeoAnimationNetwork.sendToPlayer = PacketDistributor::sendToPlayer
+        GeoAnimationNetwork.sendEntityToPlayer = PacketDistributor::sendToPlayer
+        GeoAnimationNetwork.sendItemToPlayer = PacketDistributor::sendToPlayer
+        GeoAnimationNetwork.sendBlockStopToPlayer = PacketDistributor::sendToPlayer
+        GeoAnimationNetwork.sendEntityStopToPlayer = PacketDistributor::sendToPlayer
+        GeoAnimationNetwork.sendItemStopToPlayer = PacketDistributor::sendToPlayer
 
         countByIngredient = { (it.customIngredient as? CountIngredient)?.count ?: 1 }
 

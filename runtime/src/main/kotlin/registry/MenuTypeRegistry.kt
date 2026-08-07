@@ -10,6 +10,7 @@ interface MenuTypeRegistry {
     val enrichmentChamberController: MenuType<EnrichmentChamberControllerMenu>
     val enrichmentChamberReceiver: MenuType<EnrichmentChamberReceiverMenu>
     val rayTower: MenuType<RayTowerMenu>
+    val magicalTeleporter: MenuType<MagicalTeleporterMenu>
 
     companion object {
         @JvmStatic

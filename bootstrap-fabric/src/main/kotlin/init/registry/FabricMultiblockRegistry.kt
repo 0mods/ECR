@@ -5,15 +5,7 @@ import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.common.init.ECRModIDs
-import com.algorithmlx.ecr.common.multiblocks.AirCrystal
-import com.algorithmlx.ecr.common.multiblocks.EarthCrystal
-import com.algorithmlx.ecr.common.multiblocks.EnrichmentChamber
-import com.algorithmlx.ecr.common.multiblocks.FlameCrystal
-import com.algorithmlx.ecr.common.multiblocks.LightningCollector
-import com.algorithmlx.ecr.common.multiblocks.MithrilineFurnaceMultiblock
-import com.algorithmlx.ecr.common.multiblocks.SoulStoneMultiblock
-import com.algorithmlx.ecr.common.multiblocks.WaterCrystal
-import com.algorithmlx.ecr.common.multiblocks.RayTowerMultiblock
+import com.algorithmlx.ecr.common.multiblocks.*
 import com.algorithmlx.ecr.registry.MultiblockRegistry
 import net.minecraft.core.Registry
 
@@ -27,6 +19,7 @@ object FabricMultiblockRegistry: MultiblockRegistry {
     override val lightningCollector: Multiblock = register(ECRModIDs.LIGHTNING_COLLECTOR, LightningCollector)
     override val enrichmentChamber: Multiblock = register(ECRModIDs.ENRICHMENT_CHAMBER, EnrichmentChamber)
     override val rayTower: AssembledMultiblockDefinition = register(ECRModIDs.RAY_TOWER, RayTowerMultiblock)
+    override val magicalTeleporter: Multiblock = register(ECRModIDs.MAGICAL_TELEPORTER, MagicalTeleporter)
 
     private fun register(id: String, multiblock: Multiblock) = Registry.register(
         ECRegistries.MULTIBLOCK, id.ecRL, multiblock

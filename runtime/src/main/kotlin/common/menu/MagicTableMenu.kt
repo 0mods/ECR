@@ -2,7 +2,6 @@ package com.algorithmlx.ecr.common.menu
 
 import com.algorithmlx.ecr.api.container.AbstractMenu
 import com.algorithmlx.ecr.api.container.slot.VanillaSpecialSlot
-import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.menu.MenuTypeData
 import com.algorithmlx.ecr.common.api.BoundGemHelper
 import com.algorithmlx.ecr.registry.BlockRegistry
@@ -52,7 +51,7 @@ class MagicTableMenu(
 
         // Bound gem
         addSlot(VanillaSpecialSlot(
-            container, 6, 152, 53, BoundGemHelper::isBoundGemAndHasPositionSpecialSlot
+            container, 6, 152, 53, BoundGemHelper::isConnectionFoundSpecial
         ))
 
         inv.make()

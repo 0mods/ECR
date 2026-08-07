@@ -6,6 +6,7 @@ import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.menu.EnrichmentChamberControllerMenu
 import com.algorithmlx.ecr.common.menu.EnrichmentChamberReceiverMenu
 import com.algorithmlx.ecr.common.menu.MagicTableMenu
+import com.algorithmlx.ecr.common.menu.MagicalTeleporterMenu
 import com.algorithmlx.ecr.common.menu.MatrixDestructorMenu
 import com.algorithmlx.ecr.common.menu.MithrilineFurnaceMenu
 import com.algorithmlx.ecr.common.menu.RayTowerMenu
@@ -22,14 +23,23 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.MenuType
 
 object FabricMenuTypeRegistry: MenuTypeRegistry {
-    override val mithrilineFurnace: MenuType<MithrilineFurnaceMenu> = register(ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnaceMenu)
+    override val mithrilineFurnace: MenuType<MithrilineFurnaceMenu> = register(
+        ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnaceMenu
+    )
     override val magicTable: MenuType<MagicTableMenu> = register(ECRModIDs.MAGIC_TABLE, ::MagicTableMenu)
-    override val matrixDestructor: MenuType<MatrixDestructorMenu> = register(ECRModIDs.MATRIX_DESTRUCTOR, ::MatrixDestructorMenu)
-    override val enrichmentChamberController: MenuType<EnrichmentChamberControllerMenu> =
-        register(ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER, ::EnrichmentChamberControllerMenu)
-    override val enrichmentChamberReceiver: MenuType<EnrichmentChamberReceiverMenu> =
-        register(ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER, ::EnrichmentChamberReceiverMenu)
+    override val matrixDestructor: MenuType<MatrixDestructorMenu> = register(
+        ECRModIDs.MATRIX_DESTRUCTOR, ::MatrixDestructorMenu
+    )
+    override val enrichmentChamberController: MenuType<EnrichmentChamberControllerMenu> = register(
+        ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER, ::EnrichmentChamberControllerMenu
+    )
+    override val enrichmentChamberReceiver: MenuType<EnrichmentChamberReceiverMenu> = register(
+        ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER, ::EnrichmentChamberReceiverMenu
+    )
     override val rayTower: MenuType<RayTowerMenu> = register(ECRModIDs.RAY_TOWER, ::RayTowerMenu)
+    override val magicalTeleporter: MenuType<MagicalTeleporterMenu> = register(
+        ECRModIDs.MAGICAL_TELEPORTER, ::MagicalTeleporterMenu
+    )
 
     private fun <T: AbstractContainerMenu> register(id: String, menu: (Int, Inventory) -> T) =
         register(id, createDefaulted(menu))

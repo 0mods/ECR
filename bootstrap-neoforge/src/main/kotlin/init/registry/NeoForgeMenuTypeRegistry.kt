@@ -6,6 +6,7 @@ import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.menu.EnrichmentChamberControllerMenu
 import com.algorithmlx.ecr.common.menu.EnrichmentChamberReceiverMenu
 import com.algorithmlx.ecr.common.menu.MagicTableMenu
+import com.algorithmlx.ecr.common.menu.MagicalTeleporterMenu
 import com.algorithmlx.ecr.common.menu.MatrixDestructorMenu
 import com.algorithmlx.ecr.common.menu.MithrilineFurnaceMenu
 import com.algorithmlx.ecr.common.menu.RayTowerMenu
@@ -28,12 +29,13 @@ class NeoForgeMenuTypeRegistry(bus: IEventBus): MenuTypeRegistry {
         menuType.register(bus)
     }
 
-    private val mithrilineFurnaceMenu = menuType.register(ECRModIDs.MITHRILINE_FURNACE) { _ -> createTyped(::MithrilineFurnaceMenu) }
-    private val magicTableMenu = menuType.register(ECRModIDs.MAGIC_TABLE) { _ -> createTyped(::MagicTableMenu) }
-    private val matrixDestructorMenu = menuType.register(ECRModIDs.MATRIX_DESTRUCTOR) { _ -> createTyped(::MatrixDestructorMenu) }
-    private val enrichmentChamberControllerMenu = menuType.register(ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER) { _ -> createTyped(::EnrichmentChamberControllerMenu) }
-    private val enrichmentChamberReceiverMenu = menuType.register(ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER) { _ -> createDefaulted(::EnrichmentChamberReceiverMenu) }
-    private val rayTowerMenu = menuType.register(ECRModIDs.RAY_TOWER) { _ -> createTyped(::RayTowerMenu) }
+    private val mithrilineFurnaceMenu = menuType.register(ECRModIDs.MITHRILINE_FURNACE) { _ -> create(::MithrilineFurnaceMenu) }
+    private val magicTableMenu = menuType.register(ECRModIDs.MAGIC_TABLE) { _ -> create(::MagicTableMenu) }
+    private val matrixDestructorMenu = menuType.register(ECRModIDs.MATRIX_DESTRUCTOR) { _ -> create(::MatrixDestructorMenu) }
+    private val enrichmentChamberControllerMenu = menuType.register(ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER) { _ -> create(::EnrichmentChamberControllerMenu) }
+    private val enrichmentChamberReceiverMenu = menuType.register(ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER) { _ -> create(::EnrichmentChamberReceiverMenu) }
+    private val rayTowerMenu = menuType.register(ECRModIDs.RAY_TOWER) { _ -> create(::RayTowerMenu) }
+    private val magicalTeleporterMenu = menuType.register(ECRModIDs.MAGICAL_TELEPORTER) { _ -> create(::MagicalTeleporterMenu) }
 
     override val mithrilineFurnace: MenuType<MithrilineFurnaceMenu> by lazy { mithrilineFurnaceMenu.get() }
     override val magicTable: MenuType<MagicTableMenu> by lazy { magicTableMenu.get() }
@@ -41,12 +43,13 @@ class NeoForgeMenuTypeRegistry(bus: IEventBus): MenuTypeRegistry {
     override val enrichmentChamberController: MenuType<EnrichmentChamberControllerMenu> by lazy { enrichmentChamberControllerMenu.get() }
     override val enrichmentChamberReceiver: MenuType<EnrichmentChamberReceiverMenu> by lazy { enrichmentChamberReceiverMenu.get() }
     override val rayTower: MenuType<RayTowerMenu> by lazy { rayTowerMenu.get() }
+    override val magicalTeleporter: MenuType<MagicalTeleporterMenu> by lazy { magicalTeleporterMenu.get() }
 
-    private fun <T: AbstractContainerMenu> createTyped(
+    private fun <T: AbstractContainerMenu> create(
         factory: (Int, Inventory, MenuTypeData) -> T
     ) = createMenu(MenuTypeData.codec, factory)
 
-    private fun <T: AbstractContainerMenu> createDefaulted(
+    private fun <T: AbstractContainerMenu> create(
         factory: (Int, Inventory) -> T
     ) = MenuType(factory, FeatureFlags.VANILLA_SET)
 

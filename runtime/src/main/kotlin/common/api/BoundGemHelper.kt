@@ -52,8 +52,8 @@ object BoundGemHelper {
     }
 
     @JvmStatic
-    fun isBoundGemAndHasPosition(stack: ItemStack): Boolean = stack.item is BoundGem && getBoundPos(stack) != null
+    fun isConnectionFound(stack: ItemStack): Boolean = stack.item is BoundGem && getBoundPos(stack) != null
 
     @JvmStatic
-    fun isBoundGemAndHasPositionSpecialSlot(@Suppress("unused") encoded: VanillaSpecialSlot, stack: ItemStack) = isBoundGemAndHasPosition(stack)
+    fun isConnectionFoundSpecial(@Suppress("unused") encoded: VanillaSpecialSlot, stack: ItemStack) = isConnectionFound(stack)
 }

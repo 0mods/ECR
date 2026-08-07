@@ -63,6 +63,7 @@ import net.minecraft.server.packs.PackType
 import com.algorithmlx.ecr.api.utils.rl
 import com.algorithmlx.ecr.client.screen.EnrichmentChamberControllerScreen
 import com.algorithmlx.ecr.client.screen.EnrichmentChamberReceiverScreen
+import com.algorithmlx.ecr.client.screen.MagicalTeleporterScreen
 import kotlin.random.Random
 
 object FabricClientInit {
@@ -83,11 +84,11 @@ object FabricClientInit {
         BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceRenderer)
         BlockEntityRenderers.register(
             BlockEntityTypeRegistry.instance.assembledMultiblockPart,
-            { context -> AssembledMultiblockRenderer<AssembledMultiblockPartBlockEntity>(context) }
+            ::AssembledMultiblockRenderer
         )
         BlockEntityRenderers.register(
             BlockEntityTypeRegistry.instance.rayTower,
-            { context -> AssembledMultiblockRenderer<RayTowerEntity>(context) }
+            ::AssembledMultiblockRenderer
         )
         BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.matrixDestructor, ::MatrixDestructorRenderer)
         BlockEntityRenderers.register(
@@ -103,6 +104,7 @@ object FabricClientInit {
         MenuScreens.register(MenuTypeRegistry.instance.enrichmentChamberController, ::EnrichmentChamberControllerScreen)
         MenuScreens.register(MenuTypeRegistry.instance.enrichmentChamberReceiver, ::EnrichmentChamberReceiverScreen)
         MenuScreens.register(MenuTypeRegistry.instance.rayTower, ::RayTowerScreen)
+        MenuScreens.register(MenuTypeRegistry.instance.magicalTeleporter, ::MagicalTeleporterScreen)
     }
 
     private fun registerTooltipEvent() {
@@ -113,10 +115,8 @@ object FabricClientInit {
 
     private fun registerBedrockParticles() {
         BedrockParticleRenderTypes.init()
-        ResourceLoader.get(PackType.CLIENT_RESOURCES)
-            .registerReloadListener("bedrock_particles".ecRL, BedrockParticles)
-        ResourceLoader.get(PackType.CLIENT_RESOURCES)
-            .registerReloadListener("bedrock_geo".ecRL, BedrockGeoAssets)
+        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener("bedrock_particles".ecRL, BedrockParticles)
+        ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener("bedrock_geo".ecRL, BedrockGeoAssets)
         ClientTickEvents.END_LEVEL_TICK.register { level ->
             ClientParticleSystems.get(level)?.update()
         }

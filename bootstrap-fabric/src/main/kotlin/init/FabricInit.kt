@@ -330,16 +330,16 @@ object FabricInit {
     }
 
     private fun extendPlatform() {
-        ResearchNetwork.sendToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
-        ResearchNetwork.sendProgressToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
-        BoundGemTooltipNetwork.sendResponseToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
-        SoulStoneTooltipNetwork.sendResponseToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
-        GeoAnimationNetwork.sendToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
-        GeoAnimationNetwork.sendEntityToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
-        GeoAnimationNetwork.sendItemToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
-        GeoAnimationNetwork.sendBlockStopToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
-        GeoAnimationNetwork.sendEntityStopToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
-        GeoAnimationNetwork.sendItemStopToPlayer = { player, payload -> ServerPlayNetworking.send(player, payload) }
+        ResearchNetwork.sendToPlayer = ServerPlayNetworking::send
+        ResearchNetwork.sendProgressToPlayer = ServerPlayNetworking::send
+        BoundGemTooltipNetwork.sendResponseToPlayer = ServerPlayNetworking::send
+        SoulStoneTooltipNetwork.sendResponseToPlayer = ServerPlayNetworking::send
+        GeoAnimationNetwork.sendToPlayer = ServerPlayNetworking::send
+        GeoAnimationNetwork.sendEntityToPlayer = ServerPlayNetworking::send
+        GeoAnimationNetwork.sendItemToPlayer = ServerPlayNetworking::send
+        GeoAnimationNetwork.sendBlockStopToPlayer = ServerPlayNetworking::send
+        GeoAnimationNetwork.sendEntityStopToPlayer = ServerPlayNetworking::send
+        GeoAnimationNetwork.sendItemStopToPlayer = ServerPlayNetworking::send
 
         countByIngredient = { ((it as FabricIngredient).customIngredient as? CountIngredient)?.count ?: 1 }
 

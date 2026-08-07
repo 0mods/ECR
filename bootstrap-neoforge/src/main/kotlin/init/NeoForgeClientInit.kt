@@ -33,7 +33,9 @@ import com.algorithmlx.ecr.common.block.entity.RayTowerEntity
 import com.algorithmlx.ecr.neoforge.client.NeoForgeConnectedTextures
 import com.algorithmlx.ecr.neoforge.client.NeoForgeIrisCompatibility
 import com.algorithmlx.ecr.client.ECRConnectedTextures
+import com.algorithmlx.ecr.client.screen.EnrichmentChamberControllerScreen
 import com.algorithmlx.ecr.client.screen.EnrichmentChamberReceiverScreen
+import com.algorithmlx.ecr.client.screen.MagicalTeleporterScreen
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.MenuTypeRegistry
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
@@ -44,8 +46,6 @@ import com.algorithmlx.ecr.network.SoulStoneTooltipResponsePayload
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers
-import net.minecraft.client.renderer.item.properties.select.ItemBlockState
-import net.minecraft.client.renderer.rendertype.RenderTypes
 import net.minecraft.core.particles.ParticleTypes
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
@@ -140,11 +140,11 @@ object NeoForgeClientInit {
             BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceRenderer)
             BlockEntityRenderers.register(
                 BlockEntityTypeRegistry.instance.assembledMultiblockPart,
-                { context -> AssembledMultiblockRenderer<AssembledMultiblockPartBlockEntity>(context) }
+                ::AssembledMultiblockRenderer
             )
             BlockEntityRenderers.register(
                 BlockEntityTypeRegistry.instance.rayTower,
-                { context -> AssembledMultiblockRenderer<RayTowerEntity>(context) }
+                ::AssembledMultiblockRenderer
             )
             BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.matrixDestructor, ::MatrixDestructorRenderer)
             BlockEntityRenderers.register(
@@ -158,8 +158,10 @@ object NeoForgeClientInit {
         event.register(MenuTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceScreen)
         event.register(MenuTypeRegistry.instance.magicTable, ::MagicTableMenuScreen)
         event.register(MenuTypeRegistry.instance.matrixDestructor, ::MatrixDestructorScreen)
+        event.register(MenuTypeRegistry.instance.enrichmentChamberController, ::EnrichmentChamberControllerScreen)
         event.register(MenuTypeRegistry.instance.enrichmentChamberReceiver, ::EnrichmentChamberReceiverScreen)
         event.register(MenuTypeRegistry.instance.rayTower, ::RayTowerScreen)
+        event.register(MenuTypeRegistry.instance.magicalTeleporter, ::MagicalTeleporterScreen)
     }
 
     private fun onRegisterClientPayloads(event: RegisterClientPayloadHandlersEvent) {

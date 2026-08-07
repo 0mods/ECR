@@ -216,6 +216,32 @@ object EnrichmentChamber: Multiblock(128, 128, 128, {
     }
 })
 
+object MagicalTeleporter: Multiblock(5, 5, 3, {
+    val a = this.block(BlockRegistry.instance.voidStone.defaultBlockState())
+    val b = this.block(BlockRegistry.instance.magicPlating.defaultBlockState())
+    val c = this.block(BlockRegistry.instance.magicalTeleporter.defaultBlockState())
+
+    pattern(
+        a, a, b, a, a,
+        a, a, a, a, a,
+        b, a, c, a, b,
+        a, a, a, a, a,
+        a, a, b, a, a,
+
+        null, a, null, a, null,
+        a, null, null, null, a,
+        null, null, null, null, null,
+        a, null, null, null, a,
+        null, a, null, a, null,
+
+        null, a, null, a, null,
+        a, null, null, null, a,
+        null, null, null, null, null,
+        a, null, null, null, a,
+        null, a, null, a, null
+    )
+})
+
 private fun Multiblock.makeRecipeMB(left: MultiblockMatcher, center: MultiblockMatcher) {
     pattern(
         null, left, null,

@@ -201,7 +201,11 @@ class EnrichmentChamberControllerEntity(worldPosition: BlockPos, blockState: Blo
                 Math.floorMod(be.blockPos.asLong(), STRUCTURE_CHECK_INTERVAL)
             ) return
 
-            val placement = EnrichmentChamberController.findPlacement(level, be.blockPos, state)
+            var placement = EnrichmentChamberController.findPlacement(level, be.blockPos, state)
+
+            if (placement != null && MultiblockRegistry.instance.enrichmentChamber.countMatchesIn(level, placement, BlockRegistry.instance.enrichmentChamberController) > 1)
+                placement = null
+
             be.synchronizeElements<EnrichmentChamberExtractorEntity>(
                 level,
                 placement,

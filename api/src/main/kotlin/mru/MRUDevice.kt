@@ -92,7 +92,7 @@ interface MRUDevice {
          *
          * @return `true` if this type is either [RECEIVER] or [IO], otherwise `false`.
          */
-        val isReceiver: Boolean get() = this == RECEIVER || this.isUniversal
+        val isReceiver: Boolean get() = this == RECEIVER || this == CONNECTABLE_RECEIVER || this.isUniversal
 
         /**
          * Determines if this device type supports connecting with bound gem

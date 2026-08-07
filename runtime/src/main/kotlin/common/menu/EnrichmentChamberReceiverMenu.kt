@@ -2,8 +2,6 @@ package com.algorithmlx.ecr.common.menu
 
 import com.algorithmlx.ecr.api.container.AbstractMenu
 import com.algorithmlx.ecr.api.container.slot.VanillaSpecialSlot
-import com.algorithmlx.ecr.api.item.BoundGem
-import com.algorithmlx.ecr.api.menu.MenuTypeData
 import com.algorithmlx.ecr.common.api.BoundGemHelper
 import com.algorithmlx.ecr.registry.BlockRegistry
 import com.algorithmlx.ecr.registry.MenuTypeRegistry
@@ -13,7 +11,6 @@ import net.minecraft.world.entity.player.Inventory
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.item.ItemStack
-import net.minecraft.world.level.block.entity.BlockEntity
 
 class EnrichmentChamberReceiverMenu(
     containerId: Int,
@@ -28,7 +25,7 @@ class EnrichmentChamberReceiverMenu(
 
     init {
         addSlot(VanillaSpecialSlot(
-            container, 0, 80, 35, BoundGemHelper::isBoundGemAndHasPositionSpecialSlot
+            container, 0, 80, 35, BoundGemHelper::isConnectionFoundSpecial
         ))
         inv.make()
     }

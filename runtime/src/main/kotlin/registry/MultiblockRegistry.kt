@@ -13,6 +13,7 @@ interface MultiblockRegistry {
     val lightningCollector: Multiblock
     val enrichmentChamber: Multiblock
     val rayTower: AssembledMultiblockDefinition
+    val magicalTeleporter: Multiblock
 
     companion object {
         @JvmStatic

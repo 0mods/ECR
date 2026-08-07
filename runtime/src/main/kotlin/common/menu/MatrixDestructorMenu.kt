@@ -3,8 +3,6 @@ package com.algorithmlx.ecr.common.menu
 import com.algorithmlx.ecr.api.container.AbstractMenu
 import com.algorithmlx.ecr.api.container.slot.VanillaSpecialSlot
 import com.algorithmlx.ecr.api.menu.MenuTypeData
-import com.algorithmlx.ecr.common.api.BoundGemHelper
-import com.algorithmlx.ecr.common.api.BoundGemHelper.isBoundGemAndHasPositionSpecialSlot
 import com.algorithmlx.ecr.common.components.SoulStoneComponent
 import com.algorithmlx.ecr.registry.BlockRegistry
 import com.algorithmlx.ecr.registry.DataComponentRegistry
