@@ -4,6 +4,7 @@ import com.algorithmlx.ecr.api.mru.MRUDevice
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.api.block.entity.SynchronizedContainerBlockEntity
+import com.algorithmlx.ecr.api.chunk.ChunkLoadingManager
 import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.mru.processReceive
 import com.algorithmlx.ecr.common.api.BoundGemHelper
@@ -32,7 +33,8 @@ class MagicalTeleporterEntity(
     private var items: NonNullList<ItemStack> = NonNullList.withSize(2, ItemStack.EMPTY)
     private var progressTime = 0
 
-    var structureIsValid = false
+    private var structureIsValid = false
+    private var isChunkLoaded = false
 
     override fun getDefaultName(): Component = Component.empty()
 
@@ -76,6 +78,17 @@ class MagicalTeleporterEntity(
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.CONNECTABLE_RECEIVER
     override val locator: MRUDevice.LocatorData = MRUDevice.LocatorData(this, 0)
 
+    override fun preRemoveSideEffects(pos: BlockPos, state: BlockState) {
+        if (isChunkLoaded) {
+            (level as? ServerLevel)?.let {
+                ChunkLoadingManager.remove(it, pos)
+            }
+            this.isChunkLoaded = false
+        }
+
+        super.preRemoveSideEffects(pos, state)
+    }
+
     companion object {
         private val config = ECConfig.current.magicalTeleporter
 
@@ -97,7 +110,16 @@ class MagicalTeleporterEntity(
 
             if (!blockEntity.structureIsValid) {
                 blockEntity.resetProgress()
+                if (blockEntity.isChunkLoaded) {
+                    blockEntity.isChunkLoaded = false
+                    ChunkLoadingManager.remove(level as ServerLevel, pos)
+                }
                 return
+            }
+
+            if (!blockEntity.isChunkLoaded) {
+                blockEntity.isChunkLoaded = true
+                ChunkLoadingManager.update(level as ServerLevel, pos, 0)
             }
 
             blockEntity.processReceive(level)

@@ -1,6 +1,7 @@
 package com.algorithmlx.ecr.fabric.init
 
 import com.algorithmlx.ecr.api.ModId
+import com.algorithmlx.ecr.api.chunk.ChunkLoadingPlatform
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
 import com.algorithmlx.ecr.api.geo.GeoAnimationNetwork
@@ -30,6 +31,7 @@ import com.algorithmlx.ecr.registry.*
 import com.algorithmlx.ecr.common.research.ResearchConfigDisabler
 import com.algorithmlx.ecr.common.research.ResearchCommands
 import com.algorithmlx.ecr.fabric.api.CountIngredient
+import com.algorithmlx.ecr.fabric.chunk.FabricChunkLoadingPlatform
 import com.algorithmlx.ecr.fabric.init.registry.FabricBlockCodecRegistry
 import com.algorithmlx.ecr.fabric.init.registry.FabricBlockEntityTypeRegistry
 import com.algorithmlx.ecr.fabric.init.registry.FabricBlockRegistry
@@ -112,6 +114,7 @@ object FabricInit {
 
     private fun initRegistries() {
         PlatformUtils.instance = FabricPlatformUtils
+        ChunkLoadingPlatform.instance = FabricChunkLoadingPlatform
         PlayerMatrixStorage.instance = FabricPlayerMatrixStorage
         DataComponentRegistry.instance = FabricDataComponentRegistry
         BlockCodecRegistry.instance = FabricBlockCodecRegistry

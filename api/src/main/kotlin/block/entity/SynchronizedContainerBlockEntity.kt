@@ -12,7 +12,6 @@ import net.minecraft.world.level.block.state.BlockState
 
 abstract class SynchronizedContainerBlockEntity(
     type: BlockEntityType<*>, worldPosition: BlockPos, blockState: BlockState
-
 ): BaseContainerBlockEntity(type, worldPosition, blockState) {
     override fun setChanged() {
         super.setChanged()

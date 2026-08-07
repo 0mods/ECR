@@ -5,6 +5,7 @@ import com.algorithmlx.ecr.api.assembled.AssembledMultiblockPartData
 import com.algorithmlx.ecr.api.assembled.AssembledMultiblockPartEntity
 import com.algorithmlx.ecr.api.assembled.AssembledMultiblocks
 import com.algorithmlx.ecr.api.block.entity.SynchronizedContainerBlockEntity
+import com.algorithmlx.ecr.api.chunk.ChunkLoadingManager
 import com.algorithmlx.ecr.api.geo.GeoAnimatable
 import com.algorithmlx.ecr.api.geo.GeoAnimationState
 import com.algorithmlx.ecr.api.geo.GeoModel
@@ -23,6 +24,7 @@ import com.algorithmlx.ecr.registry.MRUTypeRegistry
 import net.minecraft.core.BlockPos
 import net.minecraft.core.NonNullList
 import net.minecraft.network.chat.Component
+import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.Container
 import net.minecraft.world.ContainerHelper
 import net.minecraft.world.entity.player.Inventory
@@ -45,6 +47,7 @@ class RayTowerEntity(
     override val geoAnimationState = GeoAnimationState()
     private val geoQuery = BlockEntityQuery(this)
     private var items = NonNullList.withSize(1, ItemStack.EMPTY)
+    private var isChunkLoaded: Boolean = false
 
     override val geoModel: GeoModel
         get() {
@@ -114,11 +117,36 @@ class RayTowerEntity(
     override val locator: MRUDevice.LocatorData?
         get() = if (isAssembledMultiblock) MRUDevice.LocatorData(this, 0) else null
 
+    override fun preRemoveSideEffects(pos: BlockPos, state: BlockState) {
+        if (this.isChunkLoaded) {
+            (level as? ServerLevel)?.let {
+                ChunkLoadingManager.remove(it, pos)
+            }
+            this.isChunkLoaded = false
+        }
+
+        super.preRemoveSideEffects(pos, state)
+    }
+
     companion object {
         @JvmStatic
         fun onTick(level: Level, blockPos: BlockPos, be: RayTowerEntity) {
             AssembledMultiblocks.tick(level, blockPos)
-            if (!be.isAssembledMultiblock) return
+
+            val serverLevel = level as? ServerLevel ?: return
+
+            if (!be.isAssembledMultiblock) {
+                if (be.isChunkLoaded) {
+                    ChunkLoadingManager.remove(serverLevel, blockPos)
+                    be.isChunkLoaded = false
+                }
+                return
+            }
+
+            if (!be.isChunkLoaded) {
+                ChunkLoadingManager.update(serverLevel, blockPos, 0)
+                be.isChunkLoaded = true
+            }
 
             val itemStack = be.getItem(0)
             if (itemStack.item !is BoundGem) return

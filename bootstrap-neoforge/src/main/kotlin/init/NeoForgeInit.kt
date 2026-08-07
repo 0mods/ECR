@@ -1,6 +1,7 @@
 package com.algorithmlx.ecr.neoforge.init
 
 import com.algorithmlx.ecr.api.ModId
+import com.algorithmlx.ecr.api.chunk.ChunkLoadingPlatform
 import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
 import com.algorithmlx.ecr.api.geo.GeoAnimationNetwork
 import com.algorithmlx.ecr.api.geo.GeoBlockAnimationPayload
@@ -49,6 +50,7 @@ import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeRecipeDisplayTypeRegis
 import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeRecipeSerializerRegistry
 import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeRecipeTypeRegistry
 import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeResearchSerializerRegistry
+import com.algorithmlx.ecr.neoforge.chunk.NeoForgeChunkLoadingPlatform
 import com.algorithmlx.ecr.neoforge.utils.NeoForgePlatformUtils
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
 import com.algorithmlx.ecr.network.BoundGemTooltipRequestPayload
@@ -122,6 +124,7 @@ object NeoForgeInit {
 
     private fun initRegistries(bus: IEventBus) {
         PlatformUtils.instance = NeoForgePlatformUtils
+        ChunkLoadingPlatform.instance = NeoForgeChunkLoadingPlatform(bus)
         PlayerMatrixStorage.instance = NeoForgePlayerMatrixStorage(bus)
         RecipeSerializerRegistry.instance = NeoForgeRecipeSerializerRegistry(bus)
         RecipeTypeRegistry.instance = NeoForgeRecipeTypeRegistry(bus)
