@@ -25,13 +25,8 @@ class MithrilineFurnaceScreen(
         addRenderableOnly(MithrilineFurnaceProgressArrow(this.leftPos + 84, this.topPos + 41, this.menu))
     }
 
-    override fun containerTick() {
-        super.containerTick()
-        (menu.blockEntity as? MithrilineFurnaceEntity)?.let { mruAnimation.tick(it.mruStorage) }
-    }
-
-    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, partialTick: Float) {
-        super.extractBackground(graphics, mouseX, mouseY, partialTick)
+    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+        super.extractBackground(graphics, mouseX, mouseY, deltaTicks)
         graphics.blit(
             RenderPipelines.GUI_TEXTURED,
             TEXTURE,
@@ -52,7 +47,7 @@ class MithrilineFurnaceScreen(
                 mouseX, mouseY,
                 COLOR, COLOR,
                 animation = mruAnimation,
-                partialTick = partialTick
+                deltaTicks = deltaTicks
             )
         }
     }

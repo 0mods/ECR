@@ -18,13 +18,8 @@ class MatrixDestructorScreen(
 ): AbstractContainerScreen<MatrixDestructorMenu>(menu, inv, title) {
     private val mruAnimation = MRULineAnimation()
 
-    override fun containerTick() {
-        super.containerTick()
-        (menu.blockEntity as? MatrixDestructorEntity)?.let { mruAnimation.tick(it.mruStorage) }
-    }
-
-    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, partialTick: Float) {
-        super.extractBackground(graphics, mouseX, mouseY, partialTick)
+    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+        super.extractBackground(graphics, mouseX, mouseY, deltaTicks)
         graphics.blit(
             RenderPipelines.GUI_TEXTURED,
             TEXTURE,
@@ -41,7 +36,7 @@ class MatrixDestructorScreen(
         drawMRULine(
             graphics, mru, 37, 17, this.leftPos, this.topPos, 102, 10, mouseX, mouseY,
             animation = mruAnimation,
-            partialTick = partialTick
+            deltaTicks = deltaTicks
         )
 
         val statusX = when (status) {

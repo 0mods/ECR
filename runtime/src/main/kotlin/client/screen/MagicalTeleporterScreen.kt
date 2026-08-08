@@ -22,13 +22,8 @@ class MagicalTeleporterScreen(
 ) {
     private val mruAnimation = MRULineAnimation()
 
-    override fun containerTick() {
-        super.containerTick()
-        (menu.blockEntity as? MagicalTeleporterEntity)?.let { mruAnimation.tick(it.mruStorage) }
-    }
-
-    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, partialTick: Float) {
-        super.extractBackground(graphics, mouseX, mouseY, partialTick)
+    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, deltaTicks: Float) {
+        super.extractBackground(graphics, mouseX, mouseY, deltaTicks)
         graphics.blit(
             RenderPipelines.GUI_TEXTURED,
             TEXTURE,
@@ -48,7 +43,7 @@ class MagicalTeleporterScreen(
                 124, 8,
                 mouseX, mouseY,
                 animation = mruAnimation,
-                partialTick = partialTick
+                deltaTicks = deltaTicks
             )
         }
     }
