@@ -123,6 +123,9 @@ object ECRModIDs {
     // Ingredients
     const val COUNT = "count"
 
+    // Effects
+    const val MRU_CORRUPTION = "${MRU}_corruption"
+
     fun guiLocation(id: String) = textureLocation("gui/$id")
     fun textureLocation(id: String) = "textures/$id.png".ecRL
 }

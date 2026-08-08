@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.client.screen
 
+import com.algorithmlx.ecr.api.client.MRULineAnimation
 import com.algorithmlx.ecr.api.client.drawMRULine
 import com.algorithmlx.ecr.common.block.entity.MatrixDestructorEntity
 import com.algorithmlx.ecr.common.init.ECRModIDs
@@ -15,8 +16,15 @@ class MatrixDestructorScreen(
     inv: Inventory,
     title: Component
 ): AbstractContainerScreen<MatrixDestructorMenu>(menu, inv, title) {
-    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
-        super.extractBackground(graphics, mouseX, mouseY, a)
+    private val mruAnimation = MRULineAnimation()
+
+    override fun containerTick() {
+        super.containerTick()
+        (menu.blockEntity as? MatrixDestructorEntity)?.let { mruAnimation.tick(it.mruStorage) }
+    }
+
+    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, partialTick: Float) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTick)
         graphics.blit(
             RenderPipelines.GUI_TEXTURED,
             TEXTURE,
@@ -30,7 +38,11 @@ class MatrixDestructorScreen(
         val mru = be.mruStorage
         val status = be.status
 
-        drawMRULine(graphics, mru, 37, 17, this.leftPos, this.topPos, 102, 10, mouseX, mouseY)
+        drawMRULine(
+            graphics, mru, 37, 17, this.leftPos, this.topPos, 102, 10, mouseX, mouseY,
+            animation = mruAnimation,
+            partialTick = partialTick
+        )
 
         val statusX = when (status) {
             MatrixDestructorEntity.MatrixDestructorStatus.WORKING -> 10F

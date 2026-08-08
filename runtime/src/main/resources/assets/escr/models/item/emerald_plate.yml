@@ -1,0 +1,3 @@
+rparent: minecraft:item/generated
+textures:
+  layer0: escr:item/emerald_plate

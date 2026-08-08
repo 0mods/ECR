@@ -10,7 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.effect.MobEffect
 
 object FabricMobEffectRegistry : MobEffectRegistry {
-    override val mru: Holder<MobEffect> = register(ECRModIDs.MRU, MRUCorruption())
+    override val mruCorruption: Holder<MobEffect> = register(ECRModIDs.MRU_CORRUPTION, MRUCorruption())
 
     private fun register(id: String, value: MobEffect) = Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT, id.ecRL, value)
 }

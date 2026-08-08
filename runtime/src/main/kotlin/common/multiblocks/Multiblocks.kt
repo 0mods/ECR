@@ -68,7 +68,7 @@ val RayTowerMultiblock = assembledMultiblock(
     formedModel(
         ECRModIDs.RAY_TOWER.ecRL,
         ECRModIDs.textureLocation("block/assembled/${ECRModIDs.RAY_TOWER}"),
-        lightMode = GeoLightMode.FULL_BRIGHT
+        lightMode = GeoLightMode.WORLD
     )
 }
 

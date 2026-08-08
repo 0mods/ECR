@@ -91,7 +91,7 @@ import java.io.File
 
 object NeoForgeInit {
     fun init(bus: IEventBus) {
-        ECConfig.instance = ConfigManager.saveOrLoad(File("config/ecr.json"), ECConfig())
+        ECConfig.instance = ConfigManager.saveOrLoad(File("config/$ModId.json"), ECConfig())
 
         val forgeBus = NeoForge.EVENT_BUS
         ResearchConfigDisabler.init()

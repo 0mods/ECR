@@ -6,7 +6,6 @@ import net.minecraft.core.BlockPos
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.level.ChunkPos
 import net.neoforged.bus.api.IEventBus
-import net.neoforged.neoforge.common.world.chunk.LoadingValidationCallback
 import net.neoforged.neoforge.common.world.chunk.RegisterTicketControllersEvent
 import net.neoforged.neoforge.common.world.chunk.TicketController
 import net.neoforged.neoforge.common.world.chunk.TicketHelper

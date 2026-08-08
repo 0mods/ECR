@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.api.particle.file
 
+import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.molang.compiler.eval
 import com.algorithmlx.ecr.api.molang.runtime.MolangContext
 import com.algorithmlx.ecr.api.molang.runtime.Query
@@ -38,7 +39,7 @@ class BedrockParticleFileTest {
                   "identifier": "snowstorm:test",
                   "basic_render_parameters": {
                     "material": "particles_alpha",
-                    "texture": "ecreimagined:textures/particle/test.png"
+                    "texture": "${ModId}:textures/particle/test.png"
                   }
                 },
                 "components": {

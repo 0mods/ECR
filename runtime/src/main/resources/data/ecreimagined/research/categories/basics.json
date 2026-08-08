@@ -1,9 +1,0 @@
-{
-  "title": "book.ecreimagined.title.basics",
-  "icon": {
-    "item": "ecreimagined:research_book"
-  },
-  "order": 0,
-  "book_level": "ecreimagined:basic",
-  "thread_color": "#6AA8FF"
-}

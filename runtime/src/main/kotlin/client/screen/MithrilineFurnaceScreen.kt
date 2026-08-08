@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.client.screen
 
+import com.algorithmlx.ecr.api.client.MRULineAnimation
 import com.algorithmlx.ecr.api.client.drawMRULine
 import com.algorithmlx.ecr.client.widget.MithrilineFurnaceProgressArrow
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
@@ -17,13 +18,20 @@ class MithrilineFurnaceScreen(
     inv: Inventory,
     title: Component
 ): AbstractContainerScreen<MithrilineFurnaceMenu>(menu, inv, title) {
+    private val mruAnimation = MRULineAnimation()
+
     override fun init() {
         super.init()
         addRenderableOnly(MithrilineFurnaceProgressArrow(this.leftPos + 84, this.topPos + 41, this.menu))
     }
 
-    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
-        super.extractBackground(graphics, mouseX, mouseY, a)
+    override fun containerTick() {
+        super.containerTick()
+        (menu.blockEntity as? MithrilineFurnaceEntity)?.let { mruAnimation.tick(it.mruStorage) }
+    }
+
+    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, partialTick: Float) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTick)
         graphics.blit(
             RenderPipelines.GUI_TEXTURED,
             TEXTURE,
@@ -42,7 +50,9 @@ class MithrilineFurnaceScreen(
                 leftPos, topPos,
                 16, 16,
                 mouseX, mouseY,
-                COLOR, COLOR
+                COLOR, COLOR,
+                animation = mruAnimation,
+                partialTick = partialTick
             )
         }
     }

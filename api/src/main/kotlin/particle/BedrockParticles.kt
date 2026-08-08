@@ -3,7 +3,6 @@ package com.algorithmlx.ecr.api.particle
 import com.algorithmlx.ecr.api.LOGGER
 import com.algorithmlx.ecr.api.particle.file.BedrockParticleFile
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.decodeFromString
 import net.minecraft.resources.Identifier
 import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener

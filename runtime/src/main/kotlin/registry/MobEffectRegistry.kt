@@ -4,7 +4,7 @@ import net.minecraft.core.Holder
 import net.minecraft.world.effect.MobEffect
 
 interface MobEffectRegistry {
-    val mru: Holder<MobEffect>
+    val mruCorruption: Holder<MobEffect>
 
     companion object {
         @JvmStatic

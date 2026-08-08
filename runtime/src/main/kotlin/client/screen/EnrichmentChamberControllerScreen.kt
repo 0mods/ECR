@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.client.screen
 
+import com.algorithmlx.ecr.api.client.MRULineAnimation
 import com.algorithmlx.ecr.api.client.drawMRULine
 import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberControllerEntity
 import com.algorithmlx.ecr.common.init.ECRModIDs
@@ -15,8 +16,15 @@ class EnrichmentChamberControllerScreen(
     inventory: Inventory,
     component: Component
 ): AbstractContainerScreen<EnrichmentChamberControllerMenu>(menu, inventory, component) {
-    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
-        super.extractBackground(graphics, mouseX, mouseY, a)
+    private val mruAnimation = MRULineAnimation()
+
+    override fun containerTick() {
+        super.containerTick()
+        (menu.blockEntity as? EnrichmentChamberControllerEntity)?.let { mruAnimation.tick(it.mruStorage) }
+    }
+
+    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, partialTick: Float) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTick)
         graphics.blit(
             RenderPipelines.GUI_TEXTURED,
             TEXTURE,
@@ -33,7 +41,9 @@ class EnrichmentChamberControllerScreen(
             26, 39,
             this.leftPos, this.topPos,
             124, 8,
-            mouseX, mouseY
+            mouseX, mouseY,
+            animation = mruAnimation,
+            partialTick = partialTick
         )
     }
 

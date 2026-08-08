@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.client.renderer
 
+import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberControllerEntity
 import com.algorithmlx.ecr.mixin.client.RenderPipelinesAccessor
@@ -504,7 +505,7 @@ class EnrichmentChamberControllerRenderer(
             )
 
             RenderTypeAccessor.ecrCreate(
-                "ecreimagined_enrichment_chamber_energy",
+                "${ModId}_enrichment_chamber_energy",
                 RenderSetup.builder(pipeline)
                     .sortOnUpload()
                     .createRenderSetup()

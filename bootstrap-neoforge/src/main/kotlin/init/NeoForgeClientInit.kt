@@ -28,8 +28,6 @@ import com.algorithmlx.ecr.client.screen.MagicTableMenuScreen
 import com.algorithmlx.ecr.client.screen.MatrixDestructorScreen
 import com.algorithmlx.ecr.client.screen.MithrilineFurnaceScreen
 import com.algorithmlx.ecr.client.screen.RayTowerScreen
-import com.algorithmlx.ecr.common.block.entity.AssembledMultiblockPartBlockEntity
-import com.algorithmlx.ecr.common.block.entity.RayTowerEntity
 import com.algorithmlx.ecr.neoforge.client.NeoForgeConnectedTextures
 import com.algorithmlx.ecr.neoforge.client.NeoForgeIrisCompatibility
 import com.algorithmlx.ecr.client.ECRConnectedTextures

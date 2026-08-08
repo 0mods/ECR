@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.client.screen
 
+import com.algorithmlx.ecr.api.client.MRULineAnimation
 import com.algorithmlx.ecr.api.client.drawMRULine
 import com.algorithmlx.ecr.client.widget.MagicTableProgressArrow
 import com.algorithmlx.ecr.common.block.entity.MagicTableBlockEntity
@@ -16,13 +17,20 @@ class MagicTableMenuScreen(
     inv: Inventory,
     title: Component
 ): AbstractContainerScreen<MagicTableMenu>(menu, inv, title) {
+    private val mruAnimation = MRULineAnimation()
+
     override fun init() {
         super.init()
         addRenderableOnly(MagicTableProgressArrow(this.leftPos + 85, this.topPos + 39, this.menu))
     }
 
-    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, a: Float) {
-        super.extractBackground(graphics, mouseX, mouseY, a)
+    override fun containerTick() {
+        super.containerTick()
+        (menu.blockEntity as? MagicTableBlockEntity)?.let { mruAnimation.tick(it.mruStorage) }
+    }
+
+    override fun extractBackground(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int, partialTick: Float) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTick)
         graphics.blit(
             RenderPipelines.GUI_TEXTURED,
             TEXTURE,
@@ -39,7 +47,9 @@ class MagicTableMenuScreen(
             98, 17,
             this.leftPos, this.topPos,
             52, 8,
-            mouseX, mouseY
+            mouseX, mouseY,
+            animation = mruAnimation,
+            partialTick = partialTick
         )
     }
 

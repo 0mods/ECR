@@ -9,7 +9,6 @@ import net.minecraft.commands.Commands
 import net.minecraft.commands.arguments.EntityArgument
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
-import net.minecraft.world.item.Items
 
 object ResearchCommands {
     fun register(dispatcher: CommandDispatcher<CommandSourceStack>) {

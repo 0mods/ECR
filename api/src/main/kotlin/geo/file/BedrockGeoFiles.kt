@@ -13,7 +13,6 @@ import kotlinx.serialization.json.booleanOrNull
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.floatOrNull
 import kotlinx.serialization.json.intOrNull
-import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
@@ -292,7 +291,6 @@ object BedrockGeoFileParser {
                 BedrockKeyframe(keyframeTime, expression, expression, GeoInterpolation.LINEAR)
             }
         }.sortedBy(BedrockKeyframe::timeSeconds))
-        else -> throw SerializationException("Invalid animation channel: $element")
     }
 
     private fun parseEvents(

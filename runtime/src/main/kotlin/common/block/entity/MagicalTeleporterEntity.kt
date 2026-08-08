@@ -21,9 +21,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.ContainerLevelAccess
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
-import net.minecraft.world.level.block.EndPortalBlock
 import net.minecraft.world.level.block.state.BlockState
-import net.minecraft.world.level.portal.TeleportTransition
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
 
@@ -137,7 +135,12 @@ class MagicalTeleporterEntity(
                 return
             }
 
-            val entityAtTeleporter = level.getNearestPlayer(pos.x + 0.5, pos.y + 1.0, pos.z + 0.5, 1.0, false) ?: return
+            val entityAtTeleporter = level.getNearestPlayer(pos.x + 0.5, pos.y + 1.0, pos.z + 0.5, 0.5, false)
+
+            if (entityAtTeleporter == null) {
+                if (blockEntity.progressTime > 0) blockEntity.resetProgress()
+                return
+            }
 
             val destOpt = dimensionalLevel.getBlockEntity(destPos, BlockEntityTypeRegistry.instance.magicalTeleporter)
             if (!destOpt.isPresent) {

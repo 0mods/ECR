@@ -9,7 +9,8 @@
   ],
   "mixins": [
     "ItemEntityMixin",
-    "InventoryAccessor"
+    "InventoryAccessor",
+    "LivingEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1

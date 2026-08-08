@@ -6,5 +6,4 @@ import org.slf4j.LoggerFactory
 @JvmField
 val LOGGER: Logger = LoggerFactory.getLogger("ECR")
 
-const val ModId = "ecreimagined"
-const val SHORT_ID = "ecr"
+const val ModId = "escr"

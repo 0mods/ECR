@@ -1,12 +1,12 @@
 {
   "replace": false,
   "values": [
-    "ecreimagined:mithriline_furnace",
-    "ecreimagined:mithriline_plating",
-    "ecreimagined:mithriline_crystal",
-    "ecreimagined:flame_cluster",
-    "ecreimagined:water_cluster",
-    "ecreimagined:earth_cluster",
-    "ecreimagined:air_cluster"
+    "escr:mithriline_furnace",
+    "escr:mithriline_plating",
+    "escr:mithriline_crystal",
+    "escr:flame_cluster",
+    "escr:water_cluster",
+    "escr:earth_cluster",
+    "escr:air_cluster"
   ]
 }
