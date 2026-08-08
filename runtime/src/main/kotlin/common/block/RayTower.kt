@@ -77,6 +77,9 @@ class RayTower(properties: Properties): Block(properties), EntityBlock, Assemble
     override fun getRenderShape(state: BlockState): RenderShape =
         if (state.getValue(ASSEMBLED) && hasFormedModel()) RenderShape.INVISIBLE else super.getRenderShape(state)
 
+    override fun getOcclusionShape(state: BlockState): VoxelShape =
+        if (state.getValue(ASSEMBLED)) Shapes.empty() else super.getOcclusionShape(state)
+
     override fun getShape(
         state: BlockState,
         level: BlockGetter,
