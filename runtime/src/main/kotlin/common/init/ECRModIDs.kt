@@ -95,6 +95,7 @@ object ECRModIDs {
     const val MITHRILINE_CRYSTAL_GEM = "mithriline_crystal_gem"
     const val MRU_RESONATING_CRYSTAL = "mru_resonating_crystal"
     const val FADING_CRYSTAL = "fading_crystal"
+    const val EYE_OF_ABSORPTION = "eye_of_absorption"
 
     // MRU Types
     const val UBMRU = "ubmru"

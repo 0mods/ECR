@@ -15,7 +15,7 @@ import net.minecraft.resources.Identifier
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.Item
 
-object FabricItemRegistry : ItemRegistry {
+object FabricItemRegistry: ItemRegistry {
     override val hammer: Hammer = register(ECRModIDs.HAMMER, ::Hammer)
     override val soulStone: SoulStone = register(ECRModIDs.SOUL_STONE, ::SoulStone)
     override val researchBook: ResearchBookItem = register(
@@ -66,6 +66,7 @@ object FabricItemRegistry : ItemRegistry {
     override val mithrilineCrystalGem: Item = basicItem(ECRModIDs.MITHRILINE_CRYSTAL_GEM)
     override val mruResonatingCrystal: Item = basicItem(ECRModIDs.MRU_RESONATING_CRYSTAL)
     override val fadingCrystal: Item = basicItem(ECRModIDs.FADING_CRYSTAL)
+    override val eyeOfAbsorption: Item = basicItem(ECRModIDs.EYE_OF_ABSORPTION)
 
     private fun basicItem(id: String, properties: Item.Properties = Item.Properties()) = register(id, ::Item, properties)
 

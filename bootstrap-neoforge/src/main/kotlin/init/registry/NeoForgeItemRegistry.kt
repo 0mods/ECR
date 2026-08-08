@@ -85,6 +85,7 @@ class NeoForgeItemRegistry(bus: IEventBus): ItemRegistry {
     val mithrilineCrystalGemItem = basicItem(ECRModIDs.MITHRILINE_CRYSTAL_GEM)
     val mruResonatingCrystalItem = basicItem(ECRModIDs.MRU_RESONATING_CRYSTAL)
     val fadingCrystalItem = basicItem(ECRModIDs.FADING_CRYSTAL)
+    val eyeOfAbsorptionItem = basicItem(ECRModIDs.EYE_OF_ABSORPTION)
 
     // implements
     override val hammer: Hammer by lazy { hammerItem.get() }
@@ -132,6 +133,7 @@ class NeoForgeItemRegistry(bus: IEventBus): ItemRegistry {
     override val mithrilineCrystalGem: Item by lazy { mithrilineCrystalGemItem.get() }
     override val mruResonatingCrystal: Item by lazy { mruResonatingCrystalItem.get() }
     override val fadingCrystal: Item by lazy { fadingCrystalItem.get() }
+    override val eyeOfAbsorption: Item by lazy { eyeOfAbsorptionItem.get() }
 
     private fun basicItem(
         id: String,

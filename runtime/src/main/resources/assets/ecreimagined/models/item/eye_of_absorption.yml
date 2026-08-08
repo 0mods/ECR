@@ -1,0 +1,3 @@
+parent: minecraft:item/generated
+textures:
+  layer0: ecreimagined:item/eye_of_absorption

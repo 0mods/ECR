@@ -5,19 +5,48 @@ itemGroup.ecreimagined:
 
 item.ecreimagined:
   hammer: Молот
-  research_book: Книга исследований
-  elemental_gem: Элементальный кристалл
-  flame_gem: Пылающий кристалл
-  water_gem: Водный кристалл
-  earth_gem: Земляной кристалл
-  air_gem: Воздушный кристалл
   soul_stone: Камень души
   research_book: Книга исследований
   weakness_elemental_axe: Ослабленный элементальный топор
   weakness_elemental_hoe: Ослабленная элементальная мотыга
   weakness_elemental_pickaxe: Ослабленная элементальная кирка
   weakness_elemental_shovel: Ослабленная элементальная лопата
-  weakness_elemental_sword: Ослабленный элементальный меч
+  weakness_elemental_sword: Ослабленная элементальный меч
+  elemental_gem: Элементальный кристалл
+  flame_gem: Пылающий кристалл
+  water_gem: Водный кристалл
+  earth_gem: Земляной кристалл
+  air_gem: Воздушный кристалл
+  bound_gem: Кристалл привязки
+  elemental_core: Элементальное ядро
+  combined_magic_alloys: Комбинированный магический сплав
+  demonic_core: Демоническое ядро
+  diamond_plate: Алмазная пластина
+  emerald_plate: Изумрудная пластина
+  ender_scale_alloy: Сплав чешуи края
+  forcefield_core: Ядро силового поля
+  forcefield_plating: Покрытие силового поля
+  fortified_frame: Укрепленная рамка
+  fortified_plate: Укрепленная пластина
+  magic_plate: Магическая пластина
+  magic_purified_blaze_alloy: Магически очищенный огненный сплав
+  magic_purified_ender_scale_alloy: Магически очищенный сплав чешуи края
+  magic_purified_glass_alloy: Магически очищенный стеклянный сплав
+  obsidian_plate: Обсидиановая пластина
+  pale_core: Тусклое ядро
+  pale_plate: Туская пластина
+  particle_catcher: Улавливатель частиц
+  particle_emitter: Излучатель частиц
+  sun_imbued_glass: Стекло укреплённое солнцем
+  void_plating: Пустотная пластина
+  mithriline_ingot: Мифрилиновый слиток
+  magical_ingot: Магический слиток
+  mithriline_dust: Мифрилиновая пыль
+  heating_rod: Тепловой стержень
+  mithriline_crystal_gem: Мифрилиновый кристалл
+  mru_resonating_crystal: Резонирующий MRU кристалл
+  fading_crystal: Увядающий кристалл
+  eye_of_absorption: Глаз поглащения
 
 block.ecreimagined:
   mithriline_plating: Мифрилиновое покрытие
@@ -25,24 +54,31 @@ block.ecreimagined:
   matrix_destructor: Matrix Destructor
   envoyer: Envoyer
   mithriline_crystal: Мифрилиновый кристалл
-  void_stone: Void Stone
-  pale_block: Pale Block
-  pale_plating: Pale Plating
-  magic_plating: Magic Plating
-  demonic_plating: Demonic Plating
-  flame_cluster: Flame Cluster
-  water_cluster: Water Cluster
-  earth_cluster: Earth Cluster
-  air_cluster: Air Cluster
-  ray_tower: Реле-Башня
-  ray_tower_base: Основание Реле-Башни
+  void_stone: Пустотный камень
+  pale_block: Ослабленный блок
+  pale_plating: Ослабленное покрытие
+  magic_plating: Магическое покрытие
+  demonic_plating: Демоническое покрытие
+  flame_cluster: Огненный кластер
+  water_cluster: Водянной кластер
+  earth_cluster: Землянной кластер
+  air_cluster: Воздушный кластер
+  solar_prism: Солнечная призма
+  cold_distiller: Cold Distiller
+  enrichment_chamber_controller: Контроллер камеры поглащения
+  enrichment_chamber_extractor: Экстрактор камеры поглащения
+  enrichment_chamber_receiver: Приемник камеры поглащения
+  enrichment_chamber_holder: Усилитель камеры поглащения
+  fortified_glass: Усиленное стекло
+  fortified_stone: Усиленный камень
+  magical_teleporter: Магический телепорт
+  ray_tower: Реле-башня
+  ray_tower_base: Основание реле-башни
 
 tooltip.ecreimagined:
   sword_multiplier: Бонус получения MRU
   rmc: ПКМ
   book:
-    upgrade: Зажмите %s чтобы улучшить книгу
-    downgrade: Зажмите %s чтобы сбросить все знания в книге
     knowledge_contains: Содержит знания
     more: И еще %s знаний
   soul_stone:
@@ -50,10 +86,6 @@ tooltip.ecreimagined:
     tracking: Отслеживается MRU матрица %s
     detected_ubmru: Обнаружено %s UBMRU энергии
     matrix: Матрица MRU пульсирует %s энергией
-    bounded: Камень души привязан к %s
-    can_not_unbound: Вы не можете отвязать этот камень души
-    unbounded: Камень души отвязан
-    creative: Творческий
   bound_gem:
     linked:
       .: Кристалл привязки был привязан к позиции
@@ -61,6 +93,7 @@ tooltip.ecreimagined:
       pos: Привязан к позиции
       not_mru: Кристал привязки настроен к позиции, где отсутствуют MRU устройства
       outside_radius: Привязанный блок находится вне радиуса передачи кристалла
+    revoke: Камень привязки отвязан
     dimension:
       .: Измерение
       disallowed: Данный кристалл привязки не поддерживает привязывания между измерениями
@@ -77,12 +110,6 @@ book_type.ecreimagined:
 
 matrix.ecreimagined:
   neutral: Нейтральная
-
-config.jade.plugin_ecreimagined:
-  mru_component: MRU девайсы
-  mithriline_furnace:
-    .: Мифрилиновая печь
-    espe_collector: "Активные сборщики ESPE: %s/%s"
 
 screen.ecreimagined:
   research_book:
@@ -118,3 +145,12 @@ toast.ecreimagined:
 
 message.ecreimagined:
   research_required: "Требуемое(ые) исследования: %s"
+
+book.ecreimagined:
+  title:
+    basics: Основы
+  entry:
+    welcome:
+      title: "Welcome to Essential Craft: Reimagined"
+      description: Where I am?
+      content: Welcome to ECR Mod!

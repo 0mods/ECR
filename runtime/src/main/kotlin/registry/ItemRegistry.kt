@@ -50,6 +50,7 @@ interface ItemRegistry {
     val mithrilineCrystalGem: Item
     val mruResonatingCrystal: Item
     val fadingCrystal: Item
+    val eyeOfAbsorption: Item
 
     companion object {
         @JvmStatic

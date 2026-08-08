@@ -49,6 +49,7 @@ item.ecreimagined:
   mithriline_crystal_gem: Mithriline Crystal
   mru_resonating_crystal: MRU Resonating Crystal
   fading_crystal: Fading Crystal
+  eye_of_absorption: Eye Of Absorption
 
 block.ecreimagined:
   mithriline_plating: Mithriline Plating
@@ -81,8 +82,6 @@ tooltip.ecreimagined:
   sword_multiplier: MRU Gain Bonus
   rmc: RMC
   book:
-    upgrade: Hold %s to upgrade the book
-    downgrade: Hold %s to reset all knowledge in the book
     knowledge_contains: Contains Knowledge
     more: And %s more knowledge
   soul_stone:
