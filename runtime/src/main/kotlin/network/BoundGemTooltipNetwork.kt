@@ -17,7 +17,7 @@ import net.minecraft.world.level.Level
 data class BoundGemTooltipRequestPayload(
     val pos: BlockPos,
     val dimension: ResourceKey<Level>
-) : CustomPacketPayload {
+): CustomPacketPayload {
     override fun type(): CustomPacketPayload.Type<out CustomPacketPayload> = TYPE
 
     companion object {
@@ -44,7 +44,7 @@ data class BoundGemTooltipResponsePayload(
     val pos: BlockPos,
     val dimension: ResourceKey<Level>,
     val status: BoundGemTargetStatus
-) : CustomPacketPayload {
+): CustomPacketPayload {
     override fun type(): CustomPacketPayload.Type<out CustomPacketPayload> = TYPE
 
     companion object {
@@ -72,6 +72,7 @@ data class BoundGemTooltipResponsePayload(
 enum class BoundGemTargetStatus {
     UNKNOWN,
     MRU_EXPORTER,
+    MRU_CONNECTABLE_NOT_EXPORTER,
     NOT_MRU;
 
     companion object {
@@ -140,6 +141,7 @@ object BoundGemTooltipNetwork {
         val device = level.resolveMRUDevice(pos) ?: return BoundGemTargetStatus.NOT_MRU
 
         return if (device.deviceType.isExporter) BoundGemTargetStatus.MRU_EXPORTER
+        else if (device.deviceType.isConnectable) BoundGemTargetStatus.MRU_CONNECTABLE_NOT_EXPORTER
         else BoundGemTargetStatus.NOT_MRU
     }
 

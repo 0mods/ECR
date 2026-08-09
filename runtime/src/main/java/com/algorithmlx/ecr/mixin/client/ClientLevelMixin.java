@@ -30,7 +30,7 @@ public class ClientLevelMixin {
         ClientLevel level = (ClientLevel) (Object) this;
         BlockState worldState = level.getBlockState(pos);
         if (worldState.getBlock() instanceof FullBlockParticles fbp) {
-            if (!fbp.isEnableForPart(worldState)) return Shapes.empty();
+            if (!fbp.isEnableForPart(level, pos, worldState)) return Shapes.empty();
             return Shapes.block();
         }
         return shape;
@@ -49,7 +49,7 @@ public class ClientLevelMixin {
     private AABB ecr$useFullBreakingParticleShape(AABB shape, BlockPos pos, Direction direction) {
         ClientLevel level = (ClientLevel) (Object) this;
         BlockState worldState = level.getBlockState(pos);
-        if (worldState.getBlock() instanceof FullBlockParticles fbp && fbp.isEnableForPart(worldState)) {
+        if (worldState.getBlock() instanceof FullBlockParticles fbp && fbp.isEnableForPart(level, pos, worldState)) {
             return Shapes.block().bounds();
         }
         return shape;

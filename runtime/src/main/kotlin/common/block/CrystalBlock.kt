@@ -57,7 +57,10 @@ class CrystalBlock(properties: Properties) : Block(properties), Multipart<Crysta
         }
     }
 
-    override fun isEnableForPart(state: BlockState): Boolean = state.getValue(PART) != CrystalPart.UP
+    override fun isEnableForPart(level: Level, blockPos: BlockPos, state: BlockState): Boolean =
+        (state.getValue(PART) == CrystalPart.UP)
+                || ((state.getValue(PART) == CrystalPart.DOWN)
+                    && !level.getBlockState(blockPos.above()).getOptionalValue(PART).isPresent)
 
     override fun playerWillDestroy(level: Level, pos: BlockPos, state: BlockState, player: Player): BlockState {
         val part = state.getValue(PART)

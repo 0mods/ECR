@@ -242,6 +242,89 @@ object MagicalTeleporter: Multiblock(5, 5, 3, {
     )
 })
 
+object SunAbsorber: Multiblock(5, 5, 9, {
+    val a = this.block(Blocks.AIR.defaultBlockState())
+    val b = this.block(BlockRegistry.instance.fortifiedStone.defaultBlockState())
+    val c = this.block(BlockRegistry.instance.fortifiedGlass.defaultBlockState())
+    val d = this.block(BlockRegistry.instance.voidStone.defaultBlockState())
+    val e = this.block(BlockRegistry.instance.solarPrism.defaultBlockState())
+    val f = null
+
+    pattern(
+        d, d, b, null, b, d, d,
+        d, b, b, b, b, b, d,
+        b, b, d, d, d, b, b,
+        null, b, d, null, d, b, null,
+        b, b, d, d, d, b, b,
+        d, b, b, b, b, b, d,
+        d, d, b, null, b, d, d,
+
+        a, a, a, a, a, a, a, a,
+        a, a, a, b, a, a, a,
+        a, a, a, a, a, a, a, a,
+        a, b, a, f, a, b, a,
+        a, a, a, a, a, a, a, a,
+        a, a, a, b, a, a, a,
+        a, a, a, a, a, a, a, a,
+
+        a, a, a, b, a, a, a,
+        a, a, a, a, a, a, a, a,
+        a, a, a, a, a, a, a, a,
+        b, a, a, a, a, a, b,
+        a, a, a, a, a, a, a, a,
+        a, a, a, a, a, a, a, a,
+        a, a, a, b, a, a, a,
+
+        a, a, a, c, a, a, a,
+        a, a, a, a, a, a, a, a,
+        a, a, a, a, a, a, a, a,
+        c, a, a, a, a, a, c,
+        a, a, a, a, a, a, a, a,
+        a, a, a, a, a, a, a, a,
+        a, a, a, c, a, a, a,
+
+        a, b, c, c, c, b, a,
+        b, b, a, a, a, b, b,
+        c, a, a, a, a, a, c,
+        c, a, a, a, a, a, c,
+        c, a, a, a, a, a, c,
+        b, b, a, a, a, b, b,
+        a, b, c, c, c, b, a,
+
+        a, a, a, c, a, a, a,
+        a, a, a, a, a, a, a, a,
+        a, a, a, a, a, a, a, a,
+        c, a, a, a, a, a, c,
+        a, a, a, a, a, a, a, a,
+        a, a, a, a, a, a, a, a,
+        a, a, a, c, a, a, a,
+
+        a, a, a, b, a, a, a,
+        a, a, a, a, a, a, a, a,
+        a, a, a, a, a, a, a, a,
+        b, a, a, a, a, a, b,
+        a, a, a, a, a, a, a, a,
+        a, a, a, a, a, a, a, a,
+        a, a, a, b, a, a, a,
+
+        a, a, a, a, a, a, a, a,
+        a, a, a, b, a, a, a,
+        a, a, a, a, a, a, a, a,
+        a, b, a, a, a, b, a,
+        a, a, a, a, a, a, a, a,
+        a, a, a, b, a, a, a,
+        a, a, a, a, a, a, a, a,
+
+        b, b, d, null, d, b, b,
+        b, e, e, d, e, e, b,
+        d, e, e, e, e, e, d,
+        null, d, e, e, e, d, null,
+        d, e, e, e, e, e, d,
+        b, e, e, d, e, e, b,
+        b, b, d, null, d, b, b,
+    )
+})
+
 private fun Multiblock.makeRecipeMB(left: MultiblockMatcher, center: MultiblockMatcher) {
     pattern(
         null, left, null,

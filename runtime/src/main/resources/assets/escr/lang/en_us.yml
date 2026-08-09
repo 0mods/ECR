@@ -95,6 +95,7 @@ tooltip.escr:
       pos: Currently bound to position at
       not_mru: Bound gem is linked to a position where no MRU devices are detected
       outside_radius: Linked block is outside the Bound Gem transfer radius
+      mru_connectable_not_exporter: Bound gem is linked to a position where has MRU device but it's not transfers MRU
     revoke: Bound gem was unbounded
     dimension:
       .: Dimension

@@ -23,6 +23,7 @@ object ECRModIDs {
     const val ENRICHMENT_CHAMBER_RECEIVER = "${ENRICHMENT_CHAMBER}_receiver"
     const val ASSEMBLED_MULTIBLOCK_PART = "assembled_multiblock_part"
     const val RAY_TOWER = "ray_tower"
+    const val SUN_ABSORBER = "sun_absorber"
 
     // Blocks
     const val MITHRILINE_PLATING = "mithriline_plating"

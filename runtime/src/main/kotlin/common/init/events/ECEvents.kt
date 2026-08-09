@@ -9,6 +9,7 @@ import com.algorithmlx.ecr.api.utils.countByIngredient
 import com.algorithmlx.ecr.common.components.SoulStoneComponent
 import com.algorithmlx.ecr.common.components.updatePlayerMatrix
 import com.algorithmlx.ecr.common.data.SoulStoneData
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.registry.DataComponentRegistry
 import com.algorithmlx.ecr.common.recipe.StructureRecipe
 import com.algorithmlx.ecr.network.BoundGemTargetStatus
@@ -87,33 +88,33 @@ object ECEvents {
     private fun addBoundGemTooltip(stack: ItemStack, item: BoundGem, tooltips: MutableList<Component>) {
         val pos = item.getBoundPos(stack) ?: return
 
-        tooltips += Component.translatable("tooltip.$ModId.bound_gem.linked.pos")
+        tooltips += Component.translatable("tooltip.$ModId.${ECRModIDs.BOUND_GEM}.linked.pos")
             .append(":")
             .withStyle(ChatFormatting.GOLD)
         tooltips += Component.literal("X").withStyle(ChatFormatting.RED)
-            .append(": ")
-            .append(Component.literal(pos.x.toString()))
-            .append(" ")
-            .append(Component.literal("Y").withStyle(ChatFormatting.GREEN))
-            .append(": ")
-            .append(Component.literal(pos.y.toString()))
-            .append(" ")
-            .append(Component.literal("Z").withStyle(ChatFormatting.BLUE))
-            .append(": ")
-            .append(Component.literal(pos.z.toString()))
+            .append(": ").append(Component.literal(pos.x.toString()))
+            .append(" ").append(Component.literal("Y").withStyle(ChatFormatting.GREEN))
+            .append(": ").append(Component.literal(pos.y.toString()))
+            .append(" ").append(Component.literal("Z").withStyle(ChatFormatting.BLUE))
+            .append(": ").append(Component.literal(pos.z.toString()))
 
         if (BoundGemTooltipNetwork.tooltipStatus(stack, item) == BoundGemTargetStatus.NOT_MRU) {
-            tooltips += Component.translatable("tooltip.$ModId.bound_gem.linked.not_mru")
+            tooltips += Component.translatable("tooltip.$ModId.${ECRModIDs.BOUND_GEM}.linked.not_mru")
                 .withStyle(ChatFormatting.GOLD)
         }
 
+        if (BoundGemTooltipNetwork.tooltipStatus(stack, item) == BoundGemTargetStatus.MRU_CONNECTABLE_NOT_EXPORTER) {
+            tooltips += Component.translatable("tooltip.$ModId.${ECRModIDs.BOUND_GEM}.linked.mru_connectable_not_exporter")
+                .withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD)
+        }
+
         if (item.isOutsideBoundRadius(stack)) {
-            tooltips += Component.translatable("tooltip.$ModId.bound_gem.linked.outside_radius")
+            tooltips += Component.translatable("tooltip.$ModId.${ECRModIDs.BOUND_GEM}.linked.outside_radius")
                 .withStyle(ChatFormatting.RED)
         }
 
         if (!item.dimensionalBounds) {
-            tooltips += Component.translatable("tooltip.$ModId.bound_gem.dimension.disallowed")
+            tooltips += Component.translatable("tooltip.$ModId.${ECRModIDs.BOUND_GEM}.dimension.disallowed")
                 .withStyle(ChatFormatting.RED)
         }
     }
