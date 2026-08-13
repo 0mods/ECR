@@ -219,7 +219,7 @@ object EnrichmentChamber: Multiblock(128, 128, 128, {
 object MagicalTeleporter: Multiblock(5, 5, 3, {
     val a = this.block(BlockRegistry.instance.voidStone.defaultBlockState())
     val b = this.block(BlockRegistry.instance.magicPlating.defaultBlockState())
-    val c = this.block(BlockRegistry.instance.magicalTeleporter.defaultBlockState())
+    val c = this.block(BlockRegistry.instance.magicalTeleporter.defaultBlockState(), ignoreTag = true)
 
     pattern(
         a, a, b, a, a,

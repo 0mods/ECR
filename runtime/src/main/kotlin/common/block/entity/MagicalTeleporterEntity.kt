@@ -7,7 +7,13 @@ import com.algorithmlx.ecr.api.block.entity.SynchronizedContainerBlockEntity
 import com.algorithmlx.ecr.api.chunk.ChunkLoadingManager
 import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.mru.processReceive
+import com.algorithmlx.ecr.api.particle.BedrockParticles
+import com.algorithmlx.ecr.api.particle.ClientParticleSystems
+import com.algorithmlx.ecr.api.particle.ParticleEmitter
+import com.algorithmlx.ecr.api.particle.Transform
+import com.algorithmlx.ecr.api.utils.ecPrefix
 import com.algorithmlx.ecr.common.api.BoundGemHelper
+import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.config.ECConfig
 import com.algorithmlx.ecr.common.menu.MagicalTeleporterMenu
 import com.algorithmlx.ecr.registry.*
@@ -24,6 +30,8 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
+import org.joml.Quaternionf
+import org.joml.Vector3f
 
 class MagicalTeleporterEntity(
     worldPosition: BlockPos, blockState: BlockState
@@ -33,6 +41,19 @@ class MagicalTeleporterEntity(
 
     private var structureIsValid = false
     private var isChunkLoaded = false
+
+    // client only
+    private var playerParticleSpawned = false
+    private val snowstormEmitters = mutableListOf<ParticleEmitter>()
+    private val snowstormTransform = object : Transform {
+        override val parent: Transform? = null
+        override val isValid: Boolean get() = !isRemoved
+        override val position: Vector3f
+            get() = Vector3f(blockPos.x + 0.5F, blockPos.y + 0.15F, blockPos.z + 0.5F)
+        override val rotation: Quaternionf get() = Quaternionf()
+        override val velocity: Vector3f get() = Vector3f()
+
+    }
 
     override fun getDefaultName(): Component = Component.empty()
 
@@ -104,7 +125,35 @@ class MagicalTeleporterEntity(
                 blockEntity.setChanged()
             }
 
-            if (level.isClientSide) return
+            val entityAtTeleporter = level.getNearestPlayer(pos.x + 0.5, pos.y + 1.0, pos.z + 0.5, 0.5, false)
+
+            if (level.isClientSide) {
+                val system = ClientParticleSystems.system(level)
+                val activeId = "${ECRModIDs.MAGICAL_TELEPORTER}/active".ecPrefix
+                val hasPlayerId = "${ECRModIDs.MAGICAL_TELEPORTER}/teleport".ecPrefix
+
+                if (blockEntity.snowstormEmitters.isEmpty() && blockEntity.structureIsValid) {
+                    val active = BedrockParticles[activeId] ?: return
+                    blockEntity.snowstormEmitters += system.spawn(active, transform = blockEntity.snowstormTransform)
+                } else if (!blockEntity.structureIsValid && blockEntity.snowstormEmitters.isNotEmpty()) {
+                    blockEntity.snowstormEmitters.forEach { it.stopLoop() }
+                    blockEntity.snowstormEmitters.clear()
+                }
+
+                if (entityAtTeleporter != null && blockEntity.structureIsValid && !blockEntity.playerParticleSpawned) {
+                    val hasPlayer = BedrockParticles[hasPlayerId] ?: return
+                    blockEntity.snowstormEmitters += system.spawn(hasPlayer, transform = blockEntity.snowstormTransform)
+                    blockEntity.playerParticleSpawned = true
+                } else if (entityAtTeleporter == null && blockEntity.playerParticleSpawned) {
+                    blockEntity.playerParticleSpawned = false
+                    blockEntity.snowstormEmitters.filter { it.effect.identifier == hasPlayerId }.forEach {
+                        it.stopLoop()
+                    }
+                    blockEntity.snowstormEmitters.removeIf { it.effect.identifier == hasPlayerId }
+                }
+
+                return
+            }
 
             if (!blockEntity.structureIsValid) {
                 blockEntity.resetProgress()
@@ -134,8 +183,6 @@ class MagicalTeleporterEntity(
                 blockEntity.resetProgress()
                 return
             }
-
-            val entityAtTeleporter = level.getNearestPlayer(pos.x + 0.5, pos.y + 1.0, pos.z + 0.5, 0.5, false)
 
             if (entityAtTeleporter == null) {
                 if (blockEntity.progressTime > 0) blockEntity.resetProgress()
