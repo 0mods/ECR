@@ -3,7 +3,7 @@ package com.algorithmlx.ecr.common.block
 import com.algorithmlx.ecr.api.multiblock.MultiblockPlacement
 import com.algorithmlx.ecr.api.utils.checkAndOpenMenu
 import com.algorithmlx.ecr.api.utils.simpleTicker
-import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberControllerEntity
+import com.algorithmlx.ecr.common.block.entity.enrichment.EnrichmentChamberControllerEntity
 import com.algorithmlx.ecr.common.init.ECTags
 import com.algorithmlx.ecr.registry.BlockCodecRegistry
 import com.algorithmlx.ecr.registry.BlockRegistry

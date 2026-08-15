@@ -238,10 +238,7 @@ object NeoForgeInit {
     private fun onAddReloadListener(event: AddServerReloadListenersEvent) {
         event.addRetainedListener(
             ListenerKey.create("multiblocks".ecRL),
-            MultiblockDataReloadListener(
-                { ECConfig.current.multiblocks.customIds },
-                { ECConfig.current.multiblocks.customAssembledIds }
-            )
+            MultiblockDataReloadListener()
         )
         event.addRetainedListener(ListenerKey.create("research".ecRL), ResearchReloadListener())
         event.addRetainedListener(

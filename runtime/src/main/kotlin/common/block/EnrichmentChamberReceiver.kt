@@ -1,7 +1,7 @@
 package com.algorithmlx.ecr.common.block
 
 import com.algorithmlx.ecr.api.utils.simpleTicker
-import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberReceiverEntity
+import com.algorithmlx.ecr.common.block.entity.enrichment.EnrichmentChamberReceiverEntity
 import net.minecraft.core.BlockPos
 import net.minecraft.world.InteractionResult
 import net.minecraft.world.entity.player.Player

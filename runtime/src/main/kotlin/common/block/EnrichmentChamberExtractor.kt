@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.common.block
 
-import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberExtractorEntity
+import com.algorithmlx.ecr.common.block.entity.enrichment.EnrichmentChamberExtractorEntity
 import net.minecraft.core.BlockPos
 import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.EntityBlock

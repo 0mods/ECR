@@ -30,38 +30,23 @@ import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.shapes.Shapes
 
 /** Loads regular and assembled multiblock definitions from server data resources. */
-class MultiblockDataReloadListener(
-    private val customMultiblockIds: () -> Collection<String> = { emptyList() },
-    private val customAssembledMultiblockIds: () -> Collection<String> = { emptyList() }
-) : SimplePreparableReloadListener<MultiblockDataReloadListener.Prepared>() {
+class MultiblockDataReloadListener : SimplePreparableReloadListener<MultiblockDataReloadListener.Prepared>() {
     override fun prepare(resourceManager: ResourceManager, profiler: ProfilerFiller): Prepared {
-        val custom = parseConfiguredIds(customMultiblockIds(), "custom multiblock")
-        val customAssembled = parseConfiguredIds(
-            customAssembledMultiblockIds(),
-            "custom assembled multiblock"
-        )
-        val required = MultiblockDefinitions.requiredJsonIds()
-        val requiredAssembled = MultiblockDefinitions.requiredJsonAssembledIds()
-        val jsonOnlyCodeConflicts = required intersect ECRegistries.MULTIBLOCK.keySet()
-        require(jsonOnlyCodeConflicts.isEmpty()) {
-            "JSON-only multiblock ID(s) also have code registrations: ${jsonOnlyCodeConflicts.joinToString()}"
+        val allowed = ECRegistries.MULTIBLOCK.keySet()
+        val allowedAssembled = ECRegistries.ASSEMBLED_MULTIBLOCK.keySet()
+        val required = allowed.filterTo(linkedSetOf()) { id ->
+            ECRegistries.MULTIBLOCK.getValue(id)?.requiresJsonDefinition == true
         }
-        val jsonOnlyAssembledCodeConflicts = requiredAssembled intersect
-            ECRegistries.ASSEMBLED_MULTIBLOCK.keySet()
-        require(jsonOnlyAssembledCodeConflicts.isEmpty()) {
-            "JSON-only assembled multiblock ID(s) also have code registrations: " +
-                jsonOnlyAssembledCodeConflicts.joinToString()
+        val requiredAssembled = allowedAssembled.filterTo(linkedSetOf()) { id ->
+            ECRegistries.ASSEMBLED_MULTIBLOCK.getValue(id)?.requiresJsonDefinition == true
         }
-        val allowed = ECRegistries.MULTIBLOCK.keySet() + required + custom
-        val allowedAssembled = ECRegistries.ASSEMBLED_MULTIBLOCK.keySet() +
-            requiredAssembled + customAssembled
 
         val multiblockJson = readJson(resourceManager, MULTIBLOCK_CONVERTER)
         val assembledJson = readJson(resourceManager, ASSEMBLED_CONVERTER)
         rejectUnregistered(multiblockJson.keys, allowed, "multiblock")
         rejectUnregistered(assembledJson.keys, allowedAssembled, "assembled multiblock")
-        requirePresent(required + custom, multiblockJson.keys, MULTIBLOCK_DIRECTORY)
-        requirePresent(requiredAssembled + customAssembled, assembledJson.keys, ASSEMBLED_DIRECTORY)
+        requirePresent(required, multiblockJson.keys, MULTIBLOCK_DIRECTORY)
+        requirePresent(requiredAssembled, assembledJson.keys, ASSEMBLED_DIRECTORY)
 
         val multiblocks = multiblockJson.mapValues { (id, json) ->
             decodeWithContext(id, MULTIBLOCK_DIRECTORY) { decodeMultiblock(json) }
@@ -115,6 +100,7 @@ class MultiblockDataReloadListener(
         json: JsonObject,
         fallback: AssembledMultiblockDefinition?
     ): AssembledMultiblockDefinition {
+        val effectiveFallback = fallback?.takeUnless { it.requiresJsonDefinition }
         val layout = decodePattern(json.requiredArray("pattern"))
         val keys = decodeKeys(json.requiredObject("keys"))
         val controller = decodeCoordinate(json.get("controller"), "controller", layout)
@@ -127,7 +113,7 @@ class MultiblockDataReloadListener(
             "Assembled multiblock controller must use a required matcher"
         }
 
-        val fallbackParts = fallback?.parts?.associateBy(AssembledMultiblockPart::offset).orEmpty()
+        val fallbackParts = effectiveFallback?.parts?.associateBy(AssembledMultiblockPart::offset).orEmpty()
         val parts = layout.symbols.mapIndexedNotNull { index, symbol ->
             if (symbol == EMPTY_SYMBOL && symbol !in keys) return@mapIndexedNotNull null
             val matcher = keys[symbol]
@@ -143,18 +129,18 @@ class MultiblockDataReloadListener(
         }
         val anchor = json.get("model_anchor")?.let {
             decodeCoordinate(it, "model_anchor", layout).subtract(controller)
-        } ?: fallback?.formedModelAnchor ?: BlockPos.ZERO
+        } ?: effectiveFallback?.formedModelAnchor ?: BlockPos.ZERO
         val shapeOrigin = json.get("formed_shape_origin")?.let {
             decodeCoordinate(it, "formed_shape_origin", layout).subtract(controller)
-        } ?: fallback?.formedShapeOrigin ?: anchor
+        } ?: effectiveFallback?.formedShapeOrigin ?: anchor
         val formedModel = when {
-            !json.has("formed_model") -> fallback?.formedModel
+            !json.has("formed_model") -> effectiveFallback?.formedModel
             json.get("formed_model") is JsonNull -> null
             else -> decodeGeoModel(json.getAsJsonObject("formed_model"))
         }
         val allowAnyPart = json.optionalBoolean(
             "allow_assembly_from_any_part",
-            fallback?.allowAssemblyFromAnyPart ?: false
+            effectiveFallback?.allowAssemblyFromAnyPart ?: false
         )
 
         return AssembledMultiblockDefinition(
@@ -163,7 +149,7 @@ class MultiblockDataReloadListener(
             formedModel,
             allowAnyPart,
             anchor,
-            fallback?.formedStructureShape,
+            effectiveFallback?.formedStructureShape,
             shapeOrigin
         )
     }
@@ -322,13 +308,6 @@ class MultiblockDataReloadListener(
                 missing.sortedBy(Identifier::toString).joinToString()
         }
     }
-
-    private fun parseConfiguredIds(values: Collection<String>, kind: String): Set<Identifier> =
-        values.mapTo(linkedSetOf()) { value ->
-            val normalized = value.trim()
-            require(normalized.isNotEmpty()) { "Blank $kind ID in config" }
-            parseId(if (':' in normalized) normalized else "$ModId:$normalized", kind)
-        }
 
     private fun parseId(value: String, description: String): Identifier =
         Identifier.tryParse(value) ?: error("Invalid $description identifier '$value'")

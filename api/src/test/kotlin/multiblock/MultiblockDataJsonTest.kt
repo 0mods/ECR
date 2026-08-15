@@ -1,5 +1,6 @@
 package com.algorithmlx.ecr.api.multiblock
 
+import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
 import com.google.gson.JsonParser
 import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
 import com.algorithmlx.ecr.api.registries.ECRegistries
@@ -19,6 +20,23 @@ import kotlin.test.assertTrue
 
 class MultiblockDataJsonTest {
     private val decoder = MultiblockDataReloadListener()
+
+    @Test
+    fun marksJsonOnlyRegistryPlaceholders() {
+        val regular = Multiblock.jsonOnly()
+        val assembled = AssembledMultiblockDefinition.jsonOnly(
+            Identifier.parse("test:json_only")
+        )
+
+        assertTrue(regular.requiresJsonDefinition)
+        assertTrue(assembled.requiresJsonDefinition)
+        assertFalse(decoder.decodeMultiblock(json("""
+            {
+              "pattern": [["A"]],
+              "keys": { "A": "minecraft:stone" }
+            }
+        """)).requiresJsonDefinition)
+    }
 
     @Test
     fun flattensFoundationFirstWithXThenZThenYOrder() {

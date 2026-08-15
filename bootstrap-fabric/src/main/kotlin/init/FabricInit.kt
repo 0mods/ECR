@@ -93,7 +93,7 @@ import java.io.File
 object FabricInit {
     @JvmStatic
     fun init() {
-        ECConfig.instance = ConfigManager.saveOrLoad(File("config/ecr.json"), ECConfig())
+        ECConfig.instance = ConfigManager.saveOrLoad(File("config/$ModId.json"), ECConfig())
 
         initBuiltinRegistries()
         ResearchConfigDisabler.init()
@@ -206,10 +206,7 @@ object FabricInit {
     private fun registerReloadListener() {
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
             "multiblocks".ecRL,
-            MultiblockDataReloadListener(
-                { ECConfig.current.multiblocks.customIds },
-                { ECConfig.current.multiblocks.customAssembledIds }
-            )
+            MultiblockDataReloadListener()
         )
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener("research".ecRL, ResearchReloadListener())
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(

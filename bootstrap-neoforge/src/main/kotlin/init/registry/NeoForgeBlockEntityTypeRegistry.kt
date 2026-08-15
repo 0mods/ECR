@@ -2,6 +2,9 @@ package com.algorithmlx.ecr.neoforge.init.registry
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.common.block.entity.*
+import com.algorithmlx.ecr.common.block.entity.enrichment.EnrichmentChamberControllerEntity
+import com.algorithmlx.ecr.common.block.entity.enrichment.EnrichmentChamberExtractorEntity
+import com.algorithmlx.ecr.common.block.entity.enrichment.EnrichmentChamberReceiverEntity
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.BlockRegistry

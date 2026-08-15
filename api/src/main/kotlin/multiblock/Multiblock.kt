@@ -44,7 +44,21 @@ open class Multiblock(
                 }
             }
         }
+
+        /**
+         * Creates a registry placeholder for a multiblock whose structure must
+         * be supplied by a data JSON definition.
+         */
+        @JvmStatic
+        fun jsonOnly(): Multiblock = object : Multiblock(1, 1, 1, {
+            pattern(empty())
+        }) {
+            override val requiresJsonDefinition: Boolean = true
+        }
     }
+
+    /** True for registry placeholders that are invalid without a matching data JSON. */
+    open val requiresJsonDefinition: Boolean = false
 
     private val maximumXSize = xSize
     private val maximumZSize = zSize

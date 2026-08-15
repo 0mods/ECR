@@ -3,9 +3,9 @@ package com.algorithmlx.ecr.fabric.init.registry
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.block.entity.ColdDistillerEntity
 import com.algorithmlx.ecr.common.block.entity.AssembledMultiblockPartBlockEntity
-import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberControllerEntity
-import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberExtractorEntity
-import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberReceiverEntity
+import com.algorithmlx.ecr.common.block.entity.enrichment.EnrichmentChamberControllerEntity
+import com.algorithmlx.ecr.common.block.entity.enrichment.EnrichmentChamberExtractorEntity
+import com.algorithmlx.ecr.common.block.entity.enrichment.EnrichmentChamberReceiverEntity
 import com.algorithmlx.ecr.common.block.entity.MagicTableBlockEntity
 import com.algorithmlx.ecr.common.block.entity.MagicalTeleporterEntity
 import com.algorithmlx.ecr.common.block.entity.MatrixDestructorEntity

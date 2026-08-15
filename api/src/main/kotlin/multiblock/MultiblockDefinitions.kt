@@ -8,13 +8,11 @@ import java.util.Collections
 /**
  * Resolves the effective multiblock definitions used at runtime.
  *
- * Code registrations remain the fallback. Definitions loaded from data JSON are
- * installed here and always take priority over that fallback.
+ * Minecraft registry entries are the source of valid IDs and the code fallback.
+ * Definitions loaded from data JSON are installed here and always take priority.
+ * Registry placeholders marked as JSON-only are never exposed as definitions.
  */
 object MultiblockDefinitions {
-    private val requiredJsonMultiblocks = linkedSetOf<Identifier>()
-    private val requiredJsonAssembledMultiblocks = linkedSetOf<Identifier>()
-
     @Volatile
     private var jsonMultiblocks: Map<Identifier, Multiblock> = emptyMap()
 
@@ -24,45 +22,15 @@ object MultiblockDefinitions {
     @Volatile
     private var loadedJsonResources: MultiblockJsonResources = MultiblockJsonResources.EMPTY
 
-    /** Registers an ID whose regular multiblock definition must come from data JSON. */
-    @JvmStatic
-    @Synchronized
-    fun registerJsonOnly(id: Identifier) {
-        check(id !in requiredJsonAssembledMultiblocks) {
-            "Multiblock ID $id is already registered as a JSON-only assembled multiblock"
-        }
-        check(!ECRegistries.MULTIBLOCK.containsKey(id)) {
-            "Multiblock $id already has a code registration"
-        }
-        requiredJsonMultiblocks += id
-    }
-
-    @JvmStatic
-    fun registerJsonOnly(id: String) = registerJsonOnly(Identifier.parse(id))
-
-    /** Registers an ID whose assembled multiblock definition must come from data JSON. */
-    @JvmStatic
-    @Synchronized
-    fun registerJsonOnlyAssembled(id: Identifier) {
-        check(id !in requiredJsonMultiblocks) {
-            "Multiblock ID $id is already registered as a JSON-only regular multiblock"
-        }
-        check(!ECRegistries.ASSEMBLED_MULTIBLOCK.containsKey(id)) {
-            "Assembled multiblock $id already has a code registration"
-        }
-        requiredJsonAssembledMultiblocks += id
-    }
-
-    @JvmStatic
-    fun registerJsonOnlyAssembled(id: String) = registerJsonOnlyAssembled(Identifier.parse(id))
-
     @JvmStatic
     operator fun get(id: Identifier): Multiblock? =
         jsonMultiblocks[id] ?: ECRegistries.MULTIBLOCK.getOptional(id).orElse(null)
+            ?.takeUnless(Multiblock::requiresJsonDefinition)
 
     @JvmStatic
     fun assembled(id: Identifier): AssembledMultiblockDefinition? =
         jsonAssembledMultiblocks[id] ?: ECRegistries.ASSEMBLED_MULTIBLOCK.getOptional(id).orElse(null)
+            ?.takeUnless(AssembledMultiblockDefinition::requiresJsonDefinition)
 
     @JvmStatic
     fun id(definition: Multiblock): Identifier? =
@@ -96,12 +64,6 @@ object MultiblockDefinitions {
 
     @JvmStatic
     fun jsonResources(): MultiblockJsonResources = loadedJsonResources
-
-    @Synchronized
-    internal fun requiredJsonIds(): Set<Identifier> = requiredJsonMultiblocks.toSet()
-
-    @Synchronized
-    internal fun requiredJsonAssembledIds(): Set<Identifier> = requiredJsonAssembledMultiblocks.toSet()
 
     @Synchronized
     internal fun installJsonDefinitions(

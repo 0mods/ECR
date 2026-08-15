@@ -138,23 +138,52 @@ uses the same absolute pattern-coordinate format as `model_anchor`.
 
 ## Which IDs may be loaded
 
-A data pack cannot introduce arbitrary IDs by itself. A JSON file is accepted
-only when one of these is true:
+A data pack cannot introduce an arbitrary ID by itself. A JSON file is accepted
+only if its ID is present in `ECRegistries.MULTIBLOCK` or
+`ECRegistries.ASSEMBLED_MULTIBLOCK`. A normal code definition makes JSON an
+optional override. A registry value created with `jsonOnly()` makes JSON
+mandatory.
 
-1. the same regular/assembled ID is registered in code;
-2. a developer registered it as JSON-only;
-3. a player added it to the corresponding config allowlist.
-
-Register a mandatory JSON-only definition during mod initialization:
+For a built-in JSON-only definition, declare the property in the common
+`MultiblockRegistry` in the same way as any other multiblock:
 
 ```kotlin
-MultiblockDefinitions.registerJsonOnly("example:ritual")
-MultiblockDefinitions.registerJsonOnlyAssembled("example:assembled_machine")
+val ritual: Multiblock
+val assembledMachine: AssembledMultiblockDefinition
 ```
 
-If its JSON file is missing, data-resource loading fails immediately. The same
-strict check applies to player-configured custom IDs. In the ECR config
-(`config/ecr.json` on Fabric or `config/escr.json` on NeoForge):
+Register placeholder values on Fabric:
+
+```kotlin
+private val ritualRegistration = register("ritual", Multiblock.jsonOnly())
+private val assembledMachineRegistration = register(
+    "assembled_machine",
+    AssembledMultiblockDefinition.jsonOnly("assembled_machine".ecRL)
+)
+
+override val ritual: Multiblock
+    get() = requireNotNull(MultiblockDefinitions["ritual".ecRL])
+override val assembledMachine: AssembledMultiblockDefinition
+    get() = requireNotNull(MultiblockDefinitions.assembled("assembled_machine".ecRL))
+```
+
+The equivalent NeoForge registrations use the existing deferred registries:
+
+```kotlin
+private val ritualRegistration = multiblocks.register("ritual") { _ ->
+    Multiblock.jsonOnly()
+}
+private val assembledMachineRegistration = assembled.register("assembled_machine") { id ->
+    AssembledMultiblockDefinition.jsonOnly(id)
+}
+```
+
+If a JSON-only registry entry has no matching file, data-resource loading fails
+immediately. `MultiblockDefinitions` no longer registers IDs; it only resolves
+the current JSON override over the frozen registry value, which is necessary for
+`/reload` support.
+
+Players can register additional JSON-only IDs in `config/escr.json`:
 
 ```json
 {
@@ -165,8 +194,14 @@ strict check applies to player-configured custom IDs. In the ECR config
 }
 ```
 
-IDs without a namespace use `escr`. An unregistered JSON resource is rejected
-instead of being silently loaded. Code that needs to resolve custom or
-overridden definitions should use `MultiblockDefinitions[id]`,
-`MultiblockDefinitions.assembled(id)`, `all()`, or `allAssembled()` rather than
-reading the backing frozen registries directly.
+These IDs are inserted into the same Minecraft registries during Fabric or
+NeoForge startup. IDs without a namespace use `escr`; changing either list
+requires a restart because registries are frozen after initialization. Do not
+list an ID that is already registered in code: its JSON file is already allowed
+as an override. Unregistered JSON resources are rejected instead of being
+silently loaded.
+
+Code that needs the effective, reloadable structure should use
+`MultiblockDefinitions[id]`, `MultiblockDefinitions.assembled(id)`, `all()`, or
+`allAssembled()`. Direct registry access intentionally returns the static code
+value or JSON-only placeholder, not the current JSON override.

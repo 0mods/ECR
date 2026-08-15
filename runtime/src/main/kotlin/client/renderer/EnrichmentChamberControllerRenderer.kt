@@ -2,7 +2,7 @@ package com.algorithmlx.ecr.client.renderer
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.utils.ecRL
-import com.algorithmlx.ecr.common.block.entity.EnrichmentChamberControllerEntity
+import com.algorithmlx.ecr.common.block.entity.enrichment.EnrichmentChamberControllerEntity
 import com.algorithmlx.ecr.mixin.client.RenderPipelinesAccessor
 import com.algorithmlx.ecr.mixin.client.RenderTypeAccessor
 import com.mojang.blaze3d.pipeline.RenderPipeline

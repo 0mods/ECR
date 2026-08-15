@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.common.block.entity
+package com.algorithmlx.ecr.common.block.entity.enrichment
 
 import com.algorithmlx.ecr.api.block.entity.SynchronizedBlockEntity
 import com.algorithmlx.ecr.api.multiblock.MultiblockPlacement

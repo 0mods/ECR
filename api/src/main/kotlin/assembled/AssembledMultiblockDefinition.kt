@@ -10,6 +10,7 @@ import net.minecraft.resources.Identifier
 import net.minecraft.tags.TagKey
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.level.block.state.BlockState
 import net.minecraft.world.phys.shapes.BooleanOp
 import net.minecraft.world.phys.shapes.Shapes
@@ -66,7 +67,9 @@ class AssembledMultiblockDefinition(
     val allowAssemblyFromAnyPart: Boolean = false,
     formedModelAnchor: BlockPos = BlockPos.ZERO,
     val formedStructureShape: VoxelShape? = null,
-    formedShapeOrigin: BlockPos = formedModelAnchor
+    formedShapeOrigin: BlockPos = formedModelAnchor,
+    /** True for a registry placeholder that requires a matching data JSON. */
+    val requiresJsonDefinition: Boolean = false
 ) {
     val parts: List<AssembledMultiblockPart> = parts.map { part ->
         part.copy(offset = part.offset.immutable())
@@ -196,6 +199,23 @@ class AssembledMultiblockDefinition(
     )
 
     companion object {
+        /**
+         * Creates a registry placeholder for an assembled multiblock whose
+         * structure must be supplied by a data JSON definition.
+         */
+        @JvmStatic
+        fun jsonOnly(id: Identifier): AssembledMultiblockDefinition =
+            AssembledMultiblockDefinition(
+                id,
+                listOf(
+                    AssembledMultiblockPart(
+                        BlockPos.ZERO,
+                        AssembledBlockMatcher.block(Blocks.AIR)
+                    )
+                ),
+                requiresJsonDefinition = true
+            )
+
         @JvmStatic
         fun rotate(offset: BlockPos, facing: Direction): BlockPos? =
             when (facing.horizontalRotation()) {

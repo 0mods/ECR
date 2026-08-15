@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.common.init.config
 import com.algorithmlx.ecr.api.ModId
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import net.minecraft.resources.Identifier
 import kotlin.random.Random
 
 @JsonComment([
@@ -37,18 +38,34 @@ data class ECConfig(
 @Serializable
 data class MultiblockDataConfig(
     @JsonComment([
-        "IDs enabled for custom JSON multiblocks in data/<namespace>/multiblocks/.",
-        "An ID without a namespace uses the escr namespace. Every listed ID must have a JSON file."
+        "IDs registered as custom JSON-only multiblocks in data/<namespace>/multiblocks/.",
+        "An ID without a namespace uses the escr namespace. Every listed ID must have a JSON file.",
+        "Changing this list requires a game/server restart because Minecraft registries are frozen after startup."
     ])
     @SerialName("custom_ids")
     val customIds: List<String> = emptyList(),
     @JsonComment([
-        "IDs enabled for custom JSON assembled multiblocks in data/<namespace>/assembled_multiblocks/.",
-        "An ID without a namespace uses the escr namespace. Every listed ID must have a JSON file."
+        "IDs registered as custom JSON-only assembled multiblocks in data/<namespace>/assembled_multiblocks/.",
+        "An ID without a namespace uses the escr namespace. Every listed ID must have a JSON file.",
+        "Changing this list requires a game/server restart because Minecraft registries are frozen after startup."
     ])
     @SerialName("custom_assembled_ids")
     val customAssembledIds: List<String> = emptyList()
-)
+) {
+    fun customMultiblockRegistryIds(): Set<Identifier> =
+        parseRegistryIds(customIds, "custom multiblock")
+
+    fun customAssembledRegistryIds(): Set<Identifier> =
+        parseRegistryIds(customAssembledIds, "custom assembled multiblock")
+
+    private fun parseRegistryIds(values: Collection<String>, kind: String): Set<Identifier> =
+        values.mapTo(linkedSetOf()) { value ->
+            val normalized = value.trim()
+            require(normalized.isNotEmpty()) { "Blank $kind ID in config" }
+            val namespaced = if (':' in normalized) normalized else "$ModId:$normalized"
+            Identifier.tryParse(namespaced) ?: error("Invalid $kind identifier '$value'")
+        }
+}
 
 @JsonDefaults
 @Serializable

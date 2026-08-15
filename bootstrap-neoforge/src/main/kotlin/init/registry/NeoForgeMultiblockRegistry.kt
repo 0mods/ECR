@@ -7,19 +7,17 @@ import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.common.init.ECRModIDs
+import com.algorithmlx.ecr.common.init.config.ECConfig
 import com.algorithmlx.ecr.common.multiblocks.*
 import com.algorithmlx.ecr.registry.MultiblockRegistry
+import net.minecraft.core.Registry
+import net.minecraft.resources.Identifier
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
 
 class NeoForgeMultiblockRegistry(bus: IEventBus): MultiblockRegistry {
     private val multiblocks = DeferredRegister.create(ECRegistries.MULTIBLOCK, ModId)
     private val assembled = DeferredRegister.create(ECRegistries.ASSEMBLED_MULTIBLOCK, ModId)
-
-    init {
-        multiblocks.register(bus)
-        assembled.register(bus)
-    }
 
     private val mithrilineFurnaceMultiblock = multiblocks.register(ECRModIDs.MITHRILINE_FURNACE) { _ -> MithrilineFurnaceMultiblock }
     private val soulStoneMultiblock = multiblocks.register(ECRModIDs.SOUL_STONE) { _ -> SoulStoneMultiblock }
@@ -31,6 +29,29 @@ class NeoForgeMultiblockRegistry(bus: IEventBus): MultiblockRegistry {
     private val enrichmentChamberMultiblock = multiblocks.register(ECRModIDs.ENRICHMENT_CHAMBER) { _ -> EnrichmentChamber }
     private val rayToweMultiblock = assembled.register(ECRModIDs.RAY_TOWER) { _ -> RayTowerMultiblock }
     private val magicalTeleporterMultiblock = multiblocks.register(ECRModIDs.MAGICAL_TELEPORTER) { _ -> MagicalTeleporter }
+
+    private val configuredMultiblocks = createConfiguredRegistries(
+        ECRegistries.MULTIBLOCK,
+        ECConfig.current.multiblocks.customMultiblockRegistryIds(),
+        multiblocks.entries.mapTo(linkedSetOf()) { holder -> holder.id },
+        "custom_ids",
+        "multiblock"
+    ) { Multiblock.jsonOnly() }
+    private val configuredAssembledMultiblocks = createConfiguredRegistries(
+        ECRegistries.ASSEMBLED_MULTIBLOCK,
+        ECConfig.current.multiblocks.customAssembledRegistryIds(),
+        assembled.entries.mapTo(linkedSetOf()) { holder -> holder.id },
+        "custom_assembled_ids",
+        "assembled multiblock",
+        AssembledMultiblockDefinition::jsonOnly
+    )
+
+    init {
+        multiblocks.register(bus)
+        assembled.register(bus)
+        configuredMultiblocks.forEach { registry -> registry.register(bus) }
+        configuredAssembledMultiblocks.forEach { registry -> registry.register(bus) }
+    }
 
     override val mithrilineFurnace: Multiblock
         get() = MultiblockDefinitions[ECRModIDs.MITHRILINE_FURNACE.ecRL] ?: mithrilineFurnaceMultiblock.get()
@@ -52,4 +73,28 @@ class NeoForgeMultiblockRegistry(bus: IEventBus): MultiblockRegistry {
         get() = MultiblockDefinitions.assembled(ECRModIDs.RAY_TOWER.ecRL) ?: rayToweMultiblock.get()
     override val magicalTeleporter: Multiblock
         get() = MultiblockDefinitions[ECRModIDs.MAGICAL_TELEPORTER.ecRL] ?: magicalTeleporterMultiblock.get()
+
+    private fun <T : Any> createConfiguredRegistries(
+        registry: Registry<T>,
+        ids: Set<Identifier>,
+        occupiedIds: Set<Identifier>,
+        configKey: String,
+        kind: String,
+        factory: (Identifier) -> T
+    ): List<DeferredRegister<T>> {
+        ids.forEach { id ->
+            check(id !in occupiedIds) {
+                "Configured custom $kind $id is already registered; remove it from $configKey " +
+                    "and use its JSON file as an override"
+            }
+        }
+
+        return ids.groupBy(Identifier::getNamespace).map { (namespace, namespaceIds) ->
+            DeferredRegister.create(registry, namespace).also { deferred ->
+                namespaceIds.forEach { id ->
+                    deferred.register(id.path) { registeredId -> factory(registeredId) }
+                }
+            }
+        }
+    }
 }

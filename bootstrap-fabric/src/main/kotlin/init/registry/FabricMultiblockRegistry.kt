@@ -6,9 +6,11 @@ import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.common.init.ECRModIDs
+import com.algorithmlx.ecr.common.init.config.ECConfig
 import com.algorithmlx.ecr.common.multiblocks.*
 import com.algorithmlx.ecr.registry.MultiblockRegistry
 import net.minecraft.core.Registry
+import net.minecraft.resources.Identifier
 
 object FabricMultiblockRegistry: MultiblockRegistry {
     private val codeMithrilineFurnace = register(ECRModIDs.MITHRILINE_FURNACE, MithrilineFurnaceMultiblock)
@@ -21,6 +23,13 @@ object FabricMultiblockRegistry: MultiblockRegistry {
     private val codeEnrichmentChamber = register(ECRModIDs.ENRICHMENT_CHAMBER, EnrichmentChamber)
     private val codeRayTower = register(ECRModIDs.RAY_TOWER, RayTowerMultiblock)
     private val codeMagicalTeleporter = register(ECRModIDs.MAGICAL_TELEPORTER, MagicalTeleporter)
+
+    init {
+        registerConfiguredMultiblocks(ECConfig.current.multiblocks.customMultiblockRegistryIds())
+        registerConfiguredAssembledMultiblocks(
+            ECConfig.current.multiblocks.customAssembledRegistryIds()
+        )
+    }
 
     override val mithrilineFurnace: Multiblock
         get() = MultiblockDefinitions[ECRModIDs.MITHRILINE_FURNACE.ecRL] ?: codeMithrilineFurnace
@@ -50,4 +59,28 @@ object FabricMultiblockRegistry: MultiblockRegistry {
     private fun register(id: String, multiblock: AssembledMultiblockDefinition) = Registry.register(
         ECRegistries.ASSEMBLED_MULTIBLOCK, id.ecRL, multiblock
     )
+
+    private fun registerConfiguredMultiblocks(ids: Set<Identifier>) {
+        ids.forEach { id ->
+            check(!ECRegistries.MULTIBLOCK.containsKey(id)) {
+                "Configured custom multiblock $id is already registered; remove it from custom_ids " +
+                    "and use its JSON file as an override"
+            }
+            Registry.register(ECRegistries.MULTIBLOCK, id, Multiblock.jsonOnly())
+        }
+    }
+
+    private fun registerConfiguredAssembledMultiblocks(ids: Set<Identifier>) {
+        ids.forEach { id ->
+            check(!ECRegistries.ASSEMBLED_MULTIBLOCK.containsKey(id)) {
+                "Configured custom assembled multiblock $id is already registered; remove it from " +
+                    "custom_assembled_ids and use its JSON file as an override"
+            }
+            Registry.register(
+                ECRegistries.ASSEMBLED_MULTIBLOCK,
+                id,
+                AssembledMultiblockDefinition.jsonOnly(id)
+            )
+        }
+    }
 }
