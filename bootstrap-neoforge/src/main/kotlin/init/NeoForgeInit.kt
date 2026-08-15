@@ -31,7 +31,7 @@ import com.algorithmlx.ecr.common.init.reload.SoulStoneDataReloadListener
 import com.algorithmlx.ecr.common.item.NamedBlockItem
 import com.algorithmlx.ecr.registry.*
 import com.algorithmlx.ecr.common.research.ResearchConfigDisabler
-import com.algorithmlx.ecr.common.research.ResearchCommands
+import com.algorithmlx.ecr.common.init.ECRCommands
 import com.algorithmlx.ecr.neoforge.api.CountIngredient
 import com.algorithmlx.ecr.neoforge.init.registry.IngredientRegistry
 import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeBlockCodecRegistry
@@ -232,7 +232,7 @@ object NeoForgeInit {
     }
 
     private fun onRegisterCommands(event: RegisterCommandsEvent) {
-        ResearchCommands.register(event.dispatcher)
+        ECRCommands.register(event.dispatcher)
     }
 
     private fun onAddReloadListener(event: AddServerReloadListenersEvent) {

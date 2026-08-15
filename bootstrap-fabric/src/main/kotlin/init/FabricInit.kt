@@ -30,7 +30,7 @@ import com.algorithmlx.ecr.common.init.reload.SoulStoneDataReloadListener
 import com.algorithmlx.ecr.common.item.NamedBlockItem
 import com.algorithmlx.ecr.registry.*
 import com.algorithmlx.ecr.common.research.ResearchConfigDisabler
-import com.algorithmlx.ecr.common.research.ResearchCommands
+import com.algorithmlx.ecr.common.init.ECRCommands
 import com.algorithmlx.ecr.fabric.api.CountIngredient
 import com.algorithmlx.ecr.fabric.chunk.FabricChunkLoadingPlatform
 import com.algorithmlx.ecr.fabric.init.registry.FabricBlockCodecRegistry
@@ -108,7 +108,7 @@ object FabricInit {
 
         initRegistries()
 
-        CommandRegistrationCallback.EVENT.register { dispatcher, _, _ -> ResearchCommands.register(dispatcher) }
+        CommandRegistrationCallback.EVENT.register { dispatcher, _, _ -> ECRCommands.register(dispatcher) }
 
         extendPlatform()
     }

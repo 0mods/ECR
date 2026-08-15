@@ -8,7 +8,7 @@ import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.algorithmlx.ecr.api.multiblock.MultiblockMatcher
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.init.ECRModIDs
-import com.algorithmlx.ecr.common.init.ECTags
+import com.algorithmlx.ecr.common.init.ECRTags
 import com.algorithmlx.ecr.registry.BlockRegistry
 import net.minecraft.core.BlockPos
 import net.minecraft.tags.BlockTags
@@ -201,7 +201,7 @@ object LightningCollector: Multiblock(11, 11, 4, {
 object EnrichmentChamber: Multiblock(128, 128, 128, {
     val outerFrame = this.block(BlockRegistry.instance.magicPlating.defaultBlockState())
     val innerFrame = this.list(
-        this.tag(ECTags.Blocks.ENRICHMENT_CHAMBER),
+        this.tag(ECRTags.Blocks.ENRICHMENT_CHAMBER),
         this.block(
             BlockRegistry.instance.enrichmentChamberController.defaultBlockState(),
             ignoreTag = true

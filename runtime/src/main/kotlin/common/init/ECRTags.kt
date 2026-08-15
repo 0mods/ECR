@@ -4,7 +4,7 @@ import com.algorithmlx.ecr.api.utils.ecRL
 import net.minecraft.core.registries.Registries
 import net.minecraft.tags.TagKey
 
-class ECTags {
+class ECRTags {
     object Blocks {
         @JvmField val ENRICHMENT_CHAMBER = register(ECRModIDs.ENRICHMENT_CHAMBER)
 
