@@ -17,21 +17,6 @@ class PlayerMatrixComponent(mru: Int): ModifiableMRUStorage {
 
     override val isFilled: Boolean = this.mutableMRU == Int.MAX_VALUE
 
-    fun selfSet(amount: Int): PlayerMatrixComponent {
-        this.set(amount)
-        return this
-    }
-
-    fun selfExtract(amount: Int): PlayerMatrixComponent {
-        this.extract(amount)
-        return this
-    }
-
-    fun selfInsert(amount: Int): PlayerMatrixComponent {
-        this.insert(amount)
-        return this
-    }
-
     fun copy(): PlayerMatrixComponent = PlayerMatrixComponent(this.mutableMRU)
 
     override fun set(amount: Int) {

@@ -40,8 +40,7 @@ data class BookResearchLink(
                 .asSequence()
                 .map(String::trim)
                 .filter(String::isNotBlank)
-                .mapNotNull(::parseSpreadToken)
-                .firstOrNull()
+                .firstNotNullOfOrNull(::parseSpreadToken)
         }
 
         private fun parseSpreadToken(value: String): Int? {
