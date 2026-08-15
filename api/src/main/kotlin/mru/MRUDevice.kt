@@ -107,11 +107,11 @@ interface MRUDevice {
      *
      * @property locatorStorage the container associated with this locator.
      * @property locatorSlot the slot index within the storage.
+     * @property position whose distance to the linked block is constrained by the gem radius.
      */
     data class LocatorData(
         val locatorStorage: Container,
         val locatorSlot: Int,
-        /** Position whose distance to the linked block is constrained by the gem radius. */
         val position: BlockPos? = (locatorStorage as? BlockEntity)?.blockPos?.immutable()
     )
 }

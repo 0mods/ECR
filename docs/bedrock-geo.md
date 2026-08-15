@@ -122,6 +122,28 @@ BlockEntityRenderers.register(TYPE) { context ->
 }
 ```
 
+### Block-state rotation
+
+The generic block-entity renderer can rotate a model from the block's standard
+horizontal `facing` property. Rotation is opt-in, and the resolved facing may
+be inverted independently:
+
+```kotlin
+val MODEL = GeoModel(
+    geometry = "geometry.arcane_device",
+    texture = "escr:textures/block/arcane_device.png".rl,
+    blockRotation = GeoBlockRotation(
+        enabled = true,
+        opposite = true
+    )
+)
+```
+
+`GeoBlockRotation.FACING`, `GeoBlockRotation.OPPOSITE`, and
+`GeoBlockRotation.NONE` are predefined configurations. `NONE` is the default,
+so existing models keep their previous orientation. The mapping uses north as
+the unrotated model direction, just like a normal horizontal block state.
+
 Play by block position. Server levels send a packet; client levels call the
 validated client handler immediately:
 
@@ -175,6 +197,36 @@ GeoAnimationNetwork.play(
 
 `GeoModel.shadowRadius` controls the entity shadow. The generic renderer also
 keeps the vanilla name, leash and fire submissions from `EntityRenderer`.
+
+### Attach Bedrock particles to a bone
+
+On the client, create a live particle transform from a GEO entity and a bone
+name, then pass it to the normal Bedrock particle spawn call:
+
+```kotlin
+val effect = BedrockParticles["escr:arcane_construct/hand".rl] ?: return
+val hand = Transform.bone(entity, "right_hand")
+val emitter = ClientParticleSystems.system(entity.level()).spawn(
+    effect,
+    transform = hand
+)
+```
+
+An optional third argument is a bone-local offset in model-space blocks:
+
+```kotlin
+val hand = Transform.bone(entity, "right_hand", Vector3f(0F, 0.125F, 0F))
+```
+
+The transform samples the current animation pose and follows the model scale,
+entity body rotation, world position, and velocity. The emitter expires when
+the entity is removed or when its model/bone can no longer be resolved. Spawn
+fails immediately with a descriptive error if the entity is not
+`GeoAnimatable`, the geometry is not loaded, or the requested bone is absent.
+The emitter origin always follows the bone. To make already emitted particles
+remain bone-local too, enable the appropriate position/rotation flags in the
+effect's `minecraft:emitter_local_space` component; without it, particles leave
+the moving bone in world space after they spawn, matching Bedrock semantics.
 
 ## Items
 

@@ -32,8 +32,8 @@ data class BookSpread(val elements: List<BookElementPlacement>)
 object BookPageLayout {
     private const val FIRST_X = 16
     private const val SECOND_X = 271
-    private const val TOP = 16
-    private const val BOTTOM = 240
+    private const val TOP = 26
+    private const val BOTTOM = 230
     private const val PAGE_WIDTH = 225
     private const val PAGE_HEIGHT = BOTTOM - TOP
 

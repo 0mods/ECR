@@ -1,6 +1,7 @@
 package com.algorithmlx.ecr.api.assembled
 
 import com.algorithmlx.ecr.api.geo.GeoModel
+import com.algorithmlx.ecr.api.geo.GeoBlockRotation
 import com.algorithmlx.ecr.api.geo.GeoLightMode
 import com.algorithmlx.ecr.api.geo.GeoRenderType
 import net.minecraft.core.BlockPos
@@ -324,9 +325,19 @@ class AssembledMultiblockBuilder internal constructor() {
         texture: Identifier,
         renderType: GeoRenderType = GeoRenderType.CUTOUT,
         scale: Float = 1F,
-        lightMode: GeoLightMode = GeoLightMode.WORLD
+        lightMode: GeoLightMode = GeoLightMode.WORLD,
+        blockRotation: GeoBlockRotation = GeoBlockRotation.NONE
     ) {
-        formedModel(GeoModel(geometry, texture, renderType, scale, lightMode = lightMode))
+        formedModel(
+            GeoModel(
+                geometry,
+                texture,
+                renderType,
+                scale,
+                lightMode = lightMode,
+                blockRotation = blockRotation
+            )
+        )
     }
 
     fun formedModel(
@@ -334,9 +345,19 @@ class AssembledMultiblockBuilder internal constructor() {
         texture: Identifier,
         renderType: GeoRenderType = GeoRenderType.CUTOUT,
         scale: Float = 1F,
-        lightMode: GeoLightMode = GeoLightMode.WORLD
+        lightMode: GeoLightMode = GeoLightMode.WORLD,
+        blockRotation: GeoBlockRotation = GeoBlockRotation.NONE
     ) {
-        formedModel(GeoModel(geometry, texture, renderType, scale, lightMode = lightMode))
+        formedModel(
+            GeoModel(
+                geometry,
+                texture,
+                renderType,
+                scale,
+                lightMode = lightMode,
+                blockRotation = blockRotation
+            )
+        )
     }
 
     internal fun build(id: Identifier, allowAssemblyFromAnyPart: Boolean): AssembledMultiblockDefinition {

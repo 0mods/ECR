@@ -15,6 +15,7 @@ import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.item.HasSubItem
 import com.algorithmlx.ecr.api.item.NoTab
 import com.algorithmlx.ecr.api.mru.resolveMRUDevice
+import com.algorithmlx.ecr.api.multiblock.MultiblockDataReloadListener
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.ResearchAction
@@ -235,6 +236,13 @@ object NeoForgeInit {
     }
 
     private fun onAddReloadListener(event: AddServerReloadListenersEvent) {
+        event.addRetainedListener(
+            ListenerKey.create("multiblocks".ecRL),
+            MultiblockDataReloadListener(
+                { ECConfig.current.multiblocks.customIds },
+                { ECConfig.current.multiblocks.customAssembledIds }
+            )
+        )
         event.addRetainedListener(ListenerKey.create("research".ecRL), ResearchReloadListener())
         event.addRetainedListener(
             ListenerKey.create("settings/${ECRModIDs.SOUL_STONE}".ecRL),

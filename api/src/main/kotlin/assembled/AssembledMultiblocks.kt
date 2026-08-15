@@ -3,7 +3,7 @@ package com.algorithmlx.ecr.api.assembled
 import com.algorithmlx.ecr.api.LOGGER
 import com.algorithmlx.ecr.api.geo.AnimationType
 import com.algorithmlx.ecr.api.geo.GeoAnimationNetwork
-import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
 import net.minecraft.world.level.Level
@@ -54,6 +54,10 @@ object AssembledMultiblocks {
         facing: Direction,
         stateFactory: AssembledStateFactory
     ): AssemblyResult {
+        val effectiveDefinition = MultiblockDefinitions.assembled(definition.id)
+        if (effectiveDefinition != null && effectiveDefinition !== definition) {
+            return assemble(level, effectiveDefinition, controllerPos, facing, stateFactory)
+        }
         if (level.isClientSide) return AssemblyResult.Failure(AssemblyFailureReason.CLIENT_SIDE)
         if (!facing.axis.isHorizontal) return AssemblyResult.Failure(AssemblyFailureReason.INVALID_FACING)
 
@@ -282,14 +286,14 @@ object AssembledMultiblocks {
     @JvmStatic
     fun formedPartShape(level: BlockGetter, partPos: BlockPos): VoxelShape? {
         val data = partData(level, partPos) ?: return null
-        val definition = ECRegistries.ASSEMBLED_MULTIBLOCK.getOptional(data.definitionId).orElse(null) ?: return null
+        val definition = MultiblockDefinitions.assembled(data.definitionId) ?: return null
         return definition.formedShapeAt(data.controllerPos, data.facing, partPos)
     }
 
     @JvmStatic
     fun formedSelectionShape(level: BlockGetter, partPos: BlockPos): VoxelShape? {
         val data = partData(level, partPos) ?: return null
-        val definition = ECRegistries.ASSEMBLED_MULTIBLOCK.getOptional(data.definitionId).orElse(null) ?: return null
+        val definition = MultiblockDefinitions.assembled(data.definitionId) ?: return null
         return definition.formedSelectionShapeAt(data.controllerPos, data.facing, partPos)
     }
 
@@ -305,7 +309,7 @@ object AssembledMultiblocks {
             LOGGER.error("Cannot play GEO animation '{}': {} is not an assembled multiblock part", animation, partPos)
             return false
         }
-        val definition = ECRegistries.ASSEMBLED_MULTIBLOCK.getOptional(data.definitionId).orElse(null)
+        val definition = MultiblockDefinitions.assembled(data.definitionId)
         if (definition?.formedModel == null) {
             LOGGER.error(
                 "Cannot play GEO animation '{}': assembled multiblock {} has no formed model",
@@ -364,7 +368,7 @@ object AssembledMultiblocks {
             if (controller.instanceId == source.instanceId) controller.fullSnapshot?.let { return it }
         }
 
-        val definition = ECRegistries.ASSEMBLED_MULTIBLOCK.getOptional(source.definitionId).orElse(null) ?: return null
+        val definition = MultiblockDefinitions.assembled(source.definitionId) ?: return null
         return definition.worldPositions(source.controllerPos, source.facing).firstNotNullOfOrNull { position ->
             if (!level.isLoaded(position)) return@firstNotNullOfOrNull null
             partData(level, position)
@@ -377,7 +381,7 @@ object AssembledMultiblocks {
         level: Level,
         source: AssembledMultiblockPartData
     ): List<OriginalBlockSnapshot> {
-        val definition = ECRegistries.ASSEMBLED_MULTIBLOCK.getOptional(source.definitionId).orElse(null)
+        val definition = MultiblockDefinitions.assembled(source.definitionId)
             ?: return listOf(source.original)
         return definition.worldPositions(source.controllerPos, source.facing).mapNotNull { position ->
             if (!level.isLoaded(position)) return@mapNotNull null

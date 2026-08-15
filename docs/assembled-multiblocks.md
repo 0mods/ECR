@@ -57,6 +57,11 @@ result to Minecraft's `Registry.register` during initialization. There is no
 separate ECR registry facade. Avoid registering definitions from gameplay code,
 because registries are frozen by then.
 
+Data packs may replace a registered definition's structure, or provide a
+definition explicitly registered as JSON-only. See
+[multiblock-json.md](multiblock-json.md) for the layer order, key matcher
+format, priority rules, config allowlist, and assembled metadata inheritance.
+
 ```kotlin
 // Fabric initializer
 val teleporterId = "ecreimagined:teleporter".ecRL

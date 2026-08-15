@@ -3,7 +3,7 @@ package com.algorithmlx.ecr.common.block
 import com.algorithmlx.ecr.api.assembled.AssembledMultiblockControllerBlock
 import com.algorithmlx.ecr.api.assembled.AssembledMultiblocks
 import com.algorithmlx.ecr.api.block.FullBlockParticles
-import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.algorithmlx.ecr.api.utils.checkAndOpenMenu
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.utils.simpleTicker
@@ -129,9 +129,8 @@ class RayTower(properties: Properties): Block(properties), EntityBlock, Assemble
         super.onExplosionHit(state, level, pos, explosion, dropConsumer)
     }
 
-    private fun hasFormedModel(): Boolean = ECRegistries.ASSEMBLED_MULTIBLOCK
-        .getOptional(ECRModIDs.RAY_TOWER.ecRL)
-        .orElse(null)
+    private fun hasFormedModel(): Boolean = MultiblockDefinitions
+        .assembled(ECRModIDs.RAY_TOWER.ecRL)
         ?.formedModel != null
 
     private val shape by lazy {

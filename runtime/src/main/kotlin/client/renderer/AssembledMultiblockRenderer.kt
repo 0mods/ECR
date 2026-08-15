@@ -6,7 +6,7 @@ import com.algorithmlx.ecr.api.geo.client.ClientGeoAnimations
 import com.algorithmlx.ecr.api.geo.GeoAnimatable
 import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.assembled.AssembledMultiblockPartEntity
-import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis
 import net.minecraft.client.renderer.SubmitNodeCollector
@@ -15,14 +15,13 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
 import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer
 import net.minecraft.client.renderer.state.level.CameraRenderState
-import net.minecraft.core.Direction
 import net.minecraft.util.LightCoordsUtil
 import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.phys.Vec3
 
 class AssembledMultiblockRenderState: BlockEntityRenderState() {
     var model: BedrockGeoRenderData? = null
-    var facing: Direction = Direction.NORTH
+    var modelYRotation = 0F
     var anchorX: Float = 0F
     var anchorY: Float = 0F
     var anchorZ: Float = 0F
@@ -43,14 +42,19 @@ class AssembledMultiblockRenderer<T : BlockEntity>(
     ) {
         super.extractRenderState(blockEntity, state, partialTick, cameraPosition, null)
         state.model = null
+        state.modelYRotation = 0F
         val partEntity = blockEntity as? AssembledMultiblockPartEntity ?: return
         val partData = partEntity.assembledMultiblockData ?: return
         if (partData.controllerPos != blockEntity.blockPos) return
-        val definition = ECRegistries.ASSEMBLED_MULTIBLOCK.getOptional(partData.definitionId).orElse(null)
-            ?: return
+        val definition = MultiblockDefinitions.assembled(partData.definitionId) ?: return
         val model = definition.formedModel ?: return
         val animatable = blockEntity as? GeoAnimatable ?: return
-        state.facing = partData.facing
+        val modelFacing = if (model.blockRotation.opposite) partData.facing.opposite else partData.facing
+        state.modelYRotation = if (model.blockRotation.enabled) {
+            BedrockGeoRenderEngine.horizontalRotationDegrees(modelFacing)
+        } else {
+            0F
+        }
         val anchor = AssembledMultiblockDefinition.rotate(definition.formedModelAnchor, partData.facing)
             ?: return
         state.anchorX = anchor.x.toFloat()
@@ -83,11 +87,8 @@ class AssembledMultiblockRenderer<T : BlockEntity>(
             state.anchorY.toDouble(),
             state.anchorZ.toDouble() + 0.5
         )
-        when (state.facing) {
-            Direction.SOUTH -> poseStack.mulPose(Axis.YP.rotationDegrees(180F))
-            Direction.WEST -> poseStack.mulPose(Axis.YP.rotationDegrees(90F))
-            Direction.EAST -> poseStack.mulPose(Axis.YN.rotationDegrees(90F))
-            else -> Unit
+        if (state.modelYRotation != 0F) {
+            poseStack.mulPose(Axis.YP.rotationDegrees(state.modelYRotation))
         }
         BedrockGeoRenderEngine.submit(model, poseStack, collector, state.modelLight)
         poseStack.popPose()

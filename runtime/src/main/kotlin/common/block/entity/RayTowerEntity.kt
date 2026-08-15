@@ -19,7 +19,7 @@ import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.common.api.BoundGemHelper
 import com.algorithmlx.ecr.common.menu.RayTowerMenu
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
-import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.algorithmlx.ecr.registry.MRUTypeRegistry
 import net.minecraft.core.BlockPos
 import net.minecraft.core.NonNullList
@@ -53,7 +53,7 @@ class RayTowerEntity(
         get() {
             val definitionId = assembledMultiblockData?.definitionId
                 ?: error("Ray tower GEO model requested before assembly")
-            return ECRegistries.ASSEMBLED_MULTIBLOCK.getOptional(definitionId).orElse(null)?.formedModel
+            return MultiblockDefinitions.assembled(definitionId)?.formedModel
                 ?: error("Assembled multiblock $definitionId has no formed GEO model")
         }
 

@@ -3,6 +3,8 @@ package com.algorithmlx.ecr.neoforge.init.registry
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.multiblock.Multiblock
+import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.multiblocks.*
@@ -30,14 +32,24 @@ class NeoForgeMultiblockRegistry(bus: IEventBus): MultiblockRegistry {
     private val rayToweMultiblock = assembled.register(ECRModIDs.RAY_TOWER) { _ -> RayTowerMultiblock }
     private val magicalTeleporterMultiblock = multiblocks.register(ECRModIDs.MAGICAL_TELEPORTER) { _ -> MagicalTeleporter }
 
-    override val mithrilineFurnace: Multiblock by lazy { mithrilineFurnaceMultiblock.get() }
-    override val soulStone: Multiblock by lazy { soulStoneMultiblock.get() }
-    override val flameCrystal: Multiblock by lazy { flameCrystalMultiblock.get() }
-    override val waterCrystal: Multiblock by lazy { waterCrystalMultiblock.get() }
-    override val earthCrystal: Multiblock by lazy { earthCrystalMultiblock.get() }
-    override val airCrystal: Multiblock by lazy { airCrystalMultiblock.get() }
-    override val lightningCollector: Multiblock by lazy { lightningCollectorMultiblock.get() }
-    override val enrichmentChamber: Multiblock by lazy { enrichmentChamberMultiblock.get() }
-    override val rayTower: AssembledMultiblockDefinition by lazy { rayToweMultiblock.get() }
-    override val magicalTeleporter: Multiblock by lazy { magicalTeleporterMultiblock.get() }
+    override val mithrilineFurnace: Multiblock
+        get() = MultiblockDefinitions[ECRModIDs.MITHRILINE_FURNACE.ecRL] ?: mithrilineFurnaceMultiblock.get()
+    override val soulStone: Multiblock
+        get() = MultiblockDefinitions[ECRModIDs.SOUL_STONE.ecRL] ?: soulStoneMultiblock.get()
+    override val flameCrystal: Multiblock
+        get() = MultiblockDefinitions[ECRModIDs.FLAME_CRYSTAL.ecRL] ?: flameCrystalMultiblock.get()
+    override val waterCrystal: Multiblock
+        get() = MultiblockDefinitions[ECRModIDs.WATER_CRYSTAL.ecRL] ?: waterCrystalMultiblock.get()
+    override val earthCrystal: Multiblock
+        get() = MultiblockDefinitions[ECRModIDs.EARTH_CRYSTAL.ecRL] ?: earthCrystalMultiblock.get()
+    override val airCrystal: Multiblock
+        get() = MultiblockDefinitions[ECRModIDs.AIR_CRYSTAL.ecRL] ?: airCrystalMultiblock.get()
+    override val lightningCollector: Multiblock
+        get() = MultiblockDefinitions[ECRModIDs.LIGHTNING_COLLECTOR.ecRL] ?: lightningCollectorMultiblock.get()
+    override val enrichmentChamber: Multiblock
+        get() = MultiblockDefinitions[ECRModIDs.ENRICHMENT_CHAMBER.ecRL] ?: enrichmentChamberMultiblock.get()
+    override val rayTower: AssembledMultiblockDefinition
+        get() = MultiblockDefinitions.assembled(ECRModIDs.RAY_TOWER.ecRL) ?: rayToweMultiblock.get()
+    override val magicalTeleporter: Multiblock
+        get() = MultiblockDefinitions[ECRModIDs.MAGICAL_TELEPORTER.ecRL] ?: magicalTeleporterMultiblock.get()
 }

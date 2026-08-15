@@ -31,6 +31,8 @@ class BookBookmarkController {
     private var value = 1f
     private var pickerX = -1
     private var pickerY = -1
+    private var pickerDragOffsetX = 0
+    private var pickerDragOffsetY = 0
     private var draggingPicker = false
     private var draggingHue = false
     private var draggingSaturation = false
@@ -182,7 +184,11 @@ class BookBookmarkController {
         val cancelX = cancelButtonX(hueX)
         val saveX = confirmButtonX(cancelX)
         when (mouseX) {
-            in pickerX until pickerX + PICKER_WIDTH if mouseY in pickerY until pickerY + HEADER_HEIGHT -> draggingPicker = true
+            in pickerX until pickerX + PICKER_WIDTH if mouseY in pickerY until pickerY + HEADER_HEIGHT -> {
+                pickerDragOffsetX = mouseX - pickerX
+                pickerDragOffsetY = mouseY - pickerY
+                draggingPicker = true
+            }
             in svX until svX + SV_SIZE if mouseY in svY until svY + SV_SIZE -> {
                 draggingSaturation = true
                 updateSaturation(mouseX - svX, mouseY - svY)
@@ -204,15 +210,15 @@ class BookBookmarkController {
         return true
     }
 
-    fun drag(mouseX: Int, mouseY: Int, dragX: Double, dragY: Double, screenWidth: Int, screenHeight: Int): Boolean {
+    fun drag(mouseX: Int, mouseY: Int, screenWidth: Int, screenHeight: Int): Boolean {
         if (draggingGlobalSlider) {
             updateGlobalSlider(mouseY, screenHeight)
             return true
         }
         if (target == null) return false
         if (draggingPicker) {
-            pickerX += dragX.toInt()
-            pickerY += dragY.toInt()
+            pickerX = mouseX - pickerDragOffsetX
+            pickerY = mouseY - pickerDragOffsetY
             constrain(screenWidth, screenHeight)
             return true
         }

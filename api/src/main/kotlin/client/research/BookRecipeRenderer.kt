@@ -2,7 +2,7 @@ package com.algorithmlx.ecr.api.client.research
 
 import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.multiblock.Multiblock
-import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.algorithmlx.ecr.api.research.content.BookResearchLink
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderPipelines
@@ -466,7 +466,7 @@ class BookRecipeRenderBuilder private constructor(
     )
 
     private fun Multiblock.id(): Identifier =
-        requireNotNull(ECRegistries.MULTIBLOCK.getKey(this)) { "Multiblock is not registered" }
+        requireNotNull(MultiblockDefinitions.id(this)) { "Multiblock is not registered" }
 
     companion object {
         private const val SLOT_SIZE = 32

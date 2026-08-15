@@ -3,7 +3,7 @@ package com.algorithmlx.ecr.common.item
 import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.assembled.AssemblyResult
 import com.algorithmlx.ecr.api.recipe.CachedRecipe
-import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.algorithmlx.ecr.common.assembled.AssembledMultiblockRuntime
 import com.algorithmlx.ecr.common.recipe.StructureRecipe
 import com.algorithmlx.ecr.registry.RecipeTypeRegistry
@@ -78,7 +78,7 @@ class Hammer(properties: Properties): Item(properties) {
 
     private fun findMatchingDefinition(
         level: Level, selectedPos: BlockPos, facing: Direction
-    ): AssembledMultiblockDefinition? = ECRegistries.ASSEMBLED_MULTIBLOCK.firstOrNull { definition ->
+    ): AssembledMultiblockDefinition? = MultiblockDefinitions.allAssembled().values.firstOrNull { definition ->
         definition.controllerCandidates(selectedPos, facing).any { controllerPos ->
             definition.matches(level, controllerPos, facing)
         }

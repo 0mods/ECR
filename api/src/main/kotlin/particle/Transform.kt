@@ -1,5 +1,7 @@
 package com.algorithmlx.ecr.api.particle
 
+import com.algorithmlx.ecr.api.geo.GeoAnimatable
+import net.minecraft.world.entity.Entity
 import org.joml.Quaternionf
 import org.joml.Vector3f
 
@@ -29,5 +31,18 @@ interface Transform {
             override val rotation: Quaternionf get() = rotation
             override val velocity: Vector3f get() = Vector3f()
         }
+
+        /**
+         * Creates a live transform attached to [bone] of a Bedrock GEO entity.
+         * The entity must implement [GeoAnimatable]. The optional [offset] is in
+         * model-space blocks and follows the bone's animated rotation.
+         */
+        @JvmStatic
+        @JvmOverloads
+        fun bone(
+            entity: Entity,
+            bone: String,
+            offset: Vector3f = Vector3f()
+        ): Transform = GeoEntityBoneTransform.create(entity, bone, offset)
     }
 }

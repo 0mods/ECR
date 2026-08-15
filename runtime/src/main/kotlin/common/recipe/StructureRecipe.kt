@@ -2,7 +2,7 @@ package com.algorithmlx.ecr.common.recipe
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.multiblock.Multiblock
-import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.registry.RecipeDisplayTypeRegistry
 import com.algorithmlx.ecr.registry.RecipeSerializerRegistry
@@ -34,7 +34,7 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 class StructureRecipe(
-    val multiblock: Multiblock,
+    val multiblockId: Identifier,
     val time: Int,
     val ingredient: Ingredient,
     private val result: Optional<ItemStackTemplate>,
@@ -43,19 +43,44 @@ class StructureRecipe(
     val blockForPlace: Block?,
     val consumeStructure: Boolean = false
 ): Recipe<SingleRecipeInput> {
+    val multiblock: Multiblock
+        get() = MultiblockDefinitions[multiblockId]
+            ?: error("Multiblock $multiblockId is not loaded")
+
+    constructor(
+        multiblock: Multiblock,
+        time: Int,
+        ingredient: Ingredient,
+        result: Optional<ItemStackTemplate>,
+        chance: Range,
+        structureCenter: Block?,
+        blockForPlace: Block?,
+        consumeStructure: Boolean = false
+    ) : this(
+        requireNotNull(MultiblockDefinitions.id(multiblock)) { "Multiblock is not registered" },
+        time,
+        ingredient,
+        result,
+        chance,
+        structureCenter,
+        blockForPlace,
+        consumeStructure
+    )
+
     init {
         require(blockForPlace != null || result.isPresent) {
             "Item result and block place is not present. One of values must exists."
         }
         require(!(result.isPresent && blockForPlace != null)) { "Item result and block place cannot be specified at the same time." }
+        val definition = MultiblockDefinitions[multiblockId]
         require(
-            structureCenter == null ||
-                multiblock.variants.asSequence()
+            structureCenter == null || definition == null ||
+                definition.variants.asSequence()
                     .flatMap { it.blocks.asSequence() }
                     .map { it.default() }
                     .any { it.`is`(structureCenter) }
         ) {
-            "Structure center is not contains in ${ECRegistries.MULTIBLOCK.getKey(multiblock)}"
+            "Structure center is not contained in $multiblockId"
         }
     }
 
@@ -122,7 +147,7 @@ class StructureRecipe(
         val CODEC: MapCodec<StructureRecipe> = RecordCodecBuilder.mapCodec {
             it.group(
                 Identifier.CODEC.fieldOf("multiblock")
-                    .forGetter { fg -> ECRegistries.MULTIBLOCK.getKey(fg.multiblock) ?: throw NullPointerException("Multiblock is not registered") },
+                    .forGetter(StructureRecipe::multiblockId),
                 Codec.INT.fieldOf("time").forGetter(StructureRecipe::time),
                 Ingredient.CODEC.fieldOf("input").forGetter(StructureRecipe::ingredient),
                 ItemStackTemplate.CODEC.optionalFieldOf("result").forGetter(StructureRecipe::result),
@@ -134,7 +159,7 @@ class StructureRecipe(
                 Codec.BOOL.fieldOf("consume_structure").orElseGet { false }.forGetter(StructureRecipe::consumeStructure)
             ).apply(it) { multiblockId, time, ingredient, result, chance, center, placement, consumeStructure ->
                 StructureRecipe(
-                    ECRegistries.MULTIBLOCK.getOptional(multiblockId).getOrNull() ?: throw NullPointerException("Multiblock is not registered"),
+                    multiblockId,
                     time, ingredient, result,
                     chance,
                     center.getOrNull()?.let { l ->
@@ -152,8 +177,7 @@ class StructureRecipe(
         val STREAM_CODEC = StreamCodec.of(::encode, ::decode)
 
         private fun encode(buf: RegistryFriendlyByteBuf, recipe: StructureRecipe) {
-            Identifier.STREAM_CODEC.encode(buf, ECRegistries.MULTIBLOCK.getKey(recipe.multiblock)
-                ?: throw NullPointerException("Multiblock is not registered"))
+            Identifier.STREAM_CODEC.encode(buf, recipe.multiblockId)
             buf.writeInt(recipe.time)
             Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.ingredient)
             buf.writeOptional(recipe.result) { buffer, item ->
@@ -175,11 +199,18 @@ class StructureRecipe(
             val blockForPlaceId = buf.readNullable { Identifier.STREAM_CODEC.decode(it) }
             val consumeStructure = buf.readBoolean()
 
-            val multiblock = ECRegistries.MULTIBLOCK.getOptional(multiblockId).getOrNull()
-                ?: throw NullPointerException("Multiblock is not registered")
             val structureCenter = BuiltInRegistries.BLOCK.getOptional(structureCenterId).getOrNull()
             val blockForPlace = BuiltInRegistries.BLOCK.getOptional(blockForPlaceId).getOrNull()
-            return StructureRecipe(multiblock, time, ingredient, result, chance, structureCenter, blockForPlace, consumeStructure)
+            return StructureRecipe(
+                multiblockId,
+                time,
+                ingredient,
+                result,
+                chance,
+                structureCenter,
+                blockForPlace,
+                consumeStructure
+            )
         }
     }
 

@@ -10,7 +10,6 @@ import com.algorithmlx.ecr.api.particle.file.ParticleComponents
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
 import net.minecraft.util.LightCoordsUtil
-import net.minecraft.client.renderer.texture.OverlayTexture
 import org.joml.Quaternionf
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -430,13 +429,10 @@ internal data class ParticleQuad(
     fun render(pose: PoseStack.Pose, consumer: VertexConsumer) {
         fun vertex(x: Float, y: Float, u: Float, v: Float) {
             val point = Vector3f(x, y, 0f).rotate(rotation).add(position)
-            val normal = Vector3f(0f, 0f, -1f).rotate(rotation)
             consumer.addVertex(pose, point)
                 .setUv(u, v)
                 .setColor(color)
-                .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(light)
-                .setNormal(pose, normal)
         }
         if (!flip) {
             vertex(-size.x, -size.y, maxUv.x, maxUv.y)

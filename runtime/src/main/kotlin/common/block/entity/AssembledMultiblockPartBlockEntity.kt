@@ -8,7 +8,7 @@ import com.algorithmlx.ecr.api.geo.GeoAnimationState
 import com.algorithmlx.ecr.api.geo.GeoModel
 import com.algorithmlx.ecr.api.molang.runtime.BlockEntityQuery
 import com.algorithmlx.ecr.api.molang.runtime.MolangContext
-import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import net.minecraft.core.BlockPos
 import net.minecraft.nbt.CompoundTag
@@ -39,7 +39,7 @@ class AssembledMultiblockPartBlockEntity(
         get() {
             val definitionId = assembledMultiblockData?.definitionId
                 ?: error("Assembled multiblock GEO model requested before part data was loaded")
-            return ECRegistries.ASSEMBLED_MULTIBLOCK.getOptional(definitionId).orElse(null)?.formedModel
+            return MultiblockDefinitions.assembled(definitionId)?.formedModel
                 ?: error("Assembled multiblock $definitionId has no formed GEO model")
         }
 

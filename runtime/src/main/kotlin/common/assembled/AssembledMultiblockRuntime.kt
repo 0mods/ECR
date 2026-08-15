@@ -6,7 +6,7 @@ import com.algorithmlx.ecr.api.assembled.AssembledMultiblocks
 import com.algorithmlx.ecr.api.assembled.AssemblyFailureReason
 import com.algorithmlx.ecr.api.assembled.AssemblyResult
 import com.algorithmlx.ecr.api.geo.AnimationType
-import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.algorithmlx.ecr.common.block.AssembledMultiblockPartBlock
 import com.algorithmlx.ecr.registry.BlockRegistry
 import net.minecraft.core.BlockPos
@@ -44,7 +44,7 @@ object AssembledMultiblockRuntime {
         controllerPos: BlockPos,
         facing: Direction
     ): AssemblyResult {
-        val definition = ECRegistries.ASSEMBLED_MULTIBLOCK.getOptional(definitionId).orElse(null)
+        val definition = MultiblockDefinitions.assembled(definitionId)
             ?: return AssemblyResult.Failure(AssemblyFailureReason.UNKNOWN_DEFINITION)
         return assemble(level, definition, controllerPos, facing)
     }

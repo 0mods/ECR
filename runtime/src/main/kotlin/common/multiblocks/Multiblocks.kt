@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.common.multiblocks
 import com.algorithmlx.ecr.api.assembled.AssembledBlockMatcher
 import com.algorithmlx.ecr.api.assembled.assembledMultiblock
 import com.algorithmlx.ecr.api.geo.GeoLightMode
+import com.algorithmlx.ecr.api.geo.GeoBlockRotation
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.algorithmlx.ecr.api.multiblock.MultiblockMatcher
 import com.algorithmlx.ecr.api.utils.ecRL
@@ -68,7 +69,8 @@ val RayTowerMultiblock = assembledMultiblock(
     formedModel(
         ECRModIDs.RAY_TOWER.ecRL,
         ECRModIDs.textureLocation("block/assembled/${ECRModIDs.RAY_TOWER}"),
-        lightMode = GeoLightMode.WORLD
+        lightMode = GeoLightMode.WORLD,
+        blockRotation = GeoBlockRotation.NONE
     )
 }
 

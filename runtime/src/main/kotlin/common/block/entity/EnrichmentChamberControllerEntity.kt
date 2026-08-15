@@ -163,7 +163,8 @@ class EnrichmentChamberControllerEntity(worldPosition: BlockPos, blockState: Blo
 
     companion object {
         private val config = ECConfig.instance.enrichmentChamber
-        private val multiblock = MultiblockRegistry.instance.enrichmentChamber
+        private val multiblock
+            get() = MultiblockRegistry.instance.enrichmentChamber
         private const val MRU_CAPACITY_TAG = "mru_capacity"
         private const val HAS_PLACEMENT_TAG = "has_multiblock_placement"
         private const val PLACEMENT_DIRECTION_TAG = "multiblock_direction"

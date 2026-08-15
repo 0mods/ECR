@@ -18,6 +18,11 @@ public interface RenderPipelinesAccessor {
         throw new AssertionError();
     }
 
+    @Accessor("PARTICLE_SNIPPET")
+    static RenderPipeline.Snippet ecrApiParticleSnippet() {
+        throw new AssertionError();
+    }
+
     @Invoker("register")
     static RenderPipeline ecrApiRegister(RenderPipeline pipeline) {
         throw new AssertionError();

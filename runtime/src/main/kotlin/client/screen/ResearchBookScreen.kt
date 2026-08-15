@@ -194,7 +194,7 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
 
         if (selectedEntry != null && MultiblockBookPreviewController.mouseDragged(dragX, dragY, isShiftDown())) return true
         if (event.button() != 0) return super.mouseDragged(event, dragX, dragY)
-        if (bookmarks.drag(event.x().toInt(), event.y().toInt(), dragX, dragY, width, height)) return true
+        if (bookmarks.drag(event.x().toInt(), event.y().toInt(), width, height)) return true
 
         if (draggingCategorySlider) {
             updateCategorySlider(event.x().toInt())
@@ -542,7 +542,7 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
 
         val font = Minecraft.getInstance().font
         val title = entry.title.component(entry.titleShadow)
-        graphics.text(font, title, BOOK_WIDTH / 2 - font.width(title) / 2, 8, 0xFF263746.toInt(), entry.titleShadow)
+        graphics.text(font, title, TITLE_X, TITLE_Y, 0xFF263746.toInt(), entry.titleShadow)
         renderCompleteButton(graphics, entry, localMouseX, localMouseY)
 
         graphics.pose().popMatrix()
@@ -889,9 +889,11 @@ class ResearchBookScreen(private val bookType: BookType? = null) : Screen(Compon
         private const val BOOK_HEIGHT = 256
         private const val FIRST_PAGE_X = 16
         private const val SECOND_PAGE_X = 271
-        private const val PAGE_TOP = 16
+        private const val PAGE_TOP = 26
         private const val PAGE_WIDTH = 225
-        private const val PAGE_HEIGHT = 224
+        private const val PAGE_HEIGHT = 204
+        private const val TITLE_X = FIRST_PAGE_X
+        private const val TITLE_Y = 13
 
         private const val BOOKMARK_Y = BookBookmarkController.BOOKMARK_Y
 

@@ -12,7 +12,8 @@ data class GeoModel(
     val scale: Float = 1F,
     val shadowRadius: Float = 0F,
     val geometryResource: Identifier? = null,
-    val lightMode: GeoLightMode = GeoLightMode.WORLD
+    val lightMode: GeoLightMode = GeoLightMode.WORLD,
+    val blockRotation: GeoBlockRotation = GeoBlockRotation.NONE
 ) {
     constructor(
         geometry: Identifier,
@@ -20,8 +21,9 @@ data class GeoModel(
         renderType: GeoRenderType = GeoRenderType.CUTOUT,
         scale: Float = 1F,
         shadowRadius: Float = 0F,
-        lightMode: GeoLightMode = GeoLightMode.WORLD
-    ) : this(geometry.toString(), texture, renderType, scale, shadowRadius, geometry, lightMode)
+        lightMode: GeoLightMode = GeoLightMode.WORLD,
+        blockRotation: GeoBlockRotation = GeoBlockRotation.NONE
+    ) : this(geometry.toString(), texture, renderType, scale, shadowRadius, geometry, lightMode, blockRotation)
 
     init {
         require(geometry.isNotBlank()) { "GEO geometry identifier must not be blank" }
@@ -29,6 +31,30 @@ data class GeoModel(
         require(shadowRadius >= 0F && shadowRadius.isFinite()) {
             "GEO model shadow radius must be non-negative and finite"
         }
+    }
+}
+
+/**
+ * Controls automatic horizontal rotation for GEO block-entity models.
+ *
+ * When [enabled] is true, [com.algorithmlx.ecr.api.geo.client.GeoBlockEntityRenderer]
+ * reads [net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING] from the
+ * rendered block state. [opposite] turns the resolved direction around before it is
+ * applied to the model.
+ */
+data class GeoBlockRotation(
+    val enabled: Boolean = true,
+    val opposite: Boolean = false
+) {
+    companion object {
+        @JvmField
+        val NONE = GeoBlockRotation(enabled = false)
+
+        @JvmField
+        val FACING = GeoBlockRotation()
+
+        @JvmField
+        val OPPOSITE_FACING = GeoBlockRotation(opposite = true)
     }
 }
 

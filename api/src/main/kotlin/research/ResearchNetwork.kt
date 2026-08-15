@@ -5,6 +5,8 @@ import com.algorithmlx.ecr.api.research.content.BookCategory
 import com.algorithmlx.ecr.api.research.content.BookEntry
 import com.algorithmlx.ecr.api.research.content.ResearchRequirement
 import com.algorithmlx.ecr.api.research.content.ResearchTaskDefinition
+import com.algorithmlx.ecr.api.multiblock.MultiblockJsonResources
+import com.algorithmlx.ecr.api.multiblock.MultiblockJsonSync
 import net.minecraft.network.FriendlyByteBuf
 import net.minecraft.network.RegistryFriendlyByteBuf
 import net.minecraft.network.codec.StreamCodec
@@ -15,6 +17,7 @@ import net.minecraft.world.item.crafting.Recipe
 
 data class ResearchSyncPayload(
     val catalog: String,
+    val multiblockDefinitions: MultiblockJsonResources,
     val unlocked: Set<Identifier>,
     val bookmarks: List<BookBookmark>,
     val taskProgress: Map<Identifier, List<ResearchTaskProgress>>,
@@ -30,6 +33,7 @@ data class ResearchSyncPayload(
         @JvmField val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, ResearchSyncPayload> = StreamCodec.of(
             { buffer, value ->
                 buffer.writeUtf(value.catalog, MAX_CATALOG_SIZE)
+                MultiblockJsonResources.STREAM_CODEC.encode(buffer, value.multiblockDefinitions)
                 buffer.writeVarInt(value.unlocked.size)
                 value.unlocked.forEach(buffer::writeIdentifier)
                 buffer.writeVarInt(value.bookmarks.size)
@@ -63,6 +67,7 @@ data class ResearchSyncPayload(
             },
             { buffer ->
                 val catalog = buffer.readUtf(MAX_CATALOG_SIZE)
+                val multiblockDefinitions = MultiblockJsonResources.STREAM_CODEC.decode(buffer)
                 val unlocked = LinkedHashSet<Identifier>().apply {
                     repeat(buffer.readVarInt()) { add(buffer.readIdentifier()) }
                 }
@@ -82,7 +87,17 @@ data class ResearchSyncPayload(
                 val recipes = LinkedHashMap<Identifier, Recipe<*>>().apply {
                     repeat(buffer.readVarInt()) { put(buffer.readIdentifier(), Recipe.STREAM_CODEC.decode(buffer)) }
                 }
-                ResearchSyncPayload(catalog, unlocked, bookmarks, progress, completedTaskLevels, bookLevel, recipes, buffer.readViewState())
+                ResearchSyncPayload(
+                    catalog,
+                    multiblockDefinitions,
+                    unlocked,
+                    bookmarks,
+                    progress,
+                    completedTaskLevels,
+                    bookLevel,
+                    recipes,
+                    buffer.readViewState()
+                )
             }
         )
         private const val MAX_CATALOG_SIZE = 8 * 1024 * 1024
@@ -167,6 +182,7 @@ object ClientResearchState {
     @JvmStatic fun apply(payload: ResearchSyncPayload) {
         val previous = unlockedResearch
         val previousProgress = progress
+        MultiblockJsonSync.apply(payload.multiblockDefinitions)
         ResearchCatalog.importJson(payload.catalog)
         val nextUnlocked = payload.unlocked.toSet()
         val added = if (stateRevision == 0L && previous.isEmpty()) emptySet() else nextUnlocked - previous

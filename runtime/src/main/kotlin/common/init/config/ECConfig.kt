@@ -18,6 +18,7 @@ data class ECConfig(
     @SerialName("disabled_researches")
     val disabledResearches: List<String> = emptyList(),
     @SerialName("research_book") val researchBook: ResearchBookConfig = ResearchBookConfig(),
+    val multiblocks: MultiblockDataConfig = MultiblockDataConfig(),
     @SerialName("cold_distiller") val coldDistillerConfig: ColdDistillerConfig = ColdDistillerConfig(),
     @SerialName("magical_teleporter") val magicalTeleporter: MagicalTeleporterConfig = MagicalTeleporterConfig(),
     @SerialName("enrichment_chamber") val enrichmentChamber: EnrichmentChamberConfig = EnrichmentChamberConfig()
@@ -31,6 +32,23 @@ data class ECConfig(
             get() = if (::instance.isInitialized) instance else ECConfig()
     }
 }
+
+@JsonDefaults
+@Serializable
+data class MultiblockDataConfig(
+    @JsonComment([
+        "IDs enabled for custom JSON multiblocks in data/<namespace>/multiblocks/.",
+        "An ID without a namespace uses the escr namespace. Every listed ID must have a JSON file."
+    ])
+    @SerialName("custom_ids")
+    val customIds: List<String> = emptyList(),
+    @JsonComment([
+        "IDs enabled for custom JSON assembled multiblocks in data/<namespace>/assembled_multiblocks/.",
+        "An ID without a namespace uses the escr namespace. Every listed ID must have a JSON file."
+    ])
+    @SerialName("custom_assembled_ids")
+    val customAssembledIds: List<String> = emptyList()
+)
 
 @JsonDefaults
 @Serializable

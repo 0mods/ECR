@@ -14,6 +14,7 @@ import com.algorithmlx.ecr.api.geo.GeoItemAnimationStopPayload
 import com.algorithmlx.ecr.api.item.*
 import com.algorithmlx.ecr.api.menu.MenuTypeData
 import com.algorithmlx.ecr.api.mru.*
+import com.algorithmlx.ecr.api.multiblock.MultiblockDataReloadListener
 import com.algorithmlx.ecr.api.registries.*
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.ResearchAction
@@ -203,6 +204,13 @@ object FabricInit {
     }
 
     private fun registerReloadListener() {
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
+            "multiblocks".ecRL,
+            MultiblockDataReloadListener(
+                { ECConfig.current.multiblocks.customIds },
+                { ECConfig.current.multiblocks.customAssembledIds }
+            )
+        )
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener("research".ecRL, ResearchReloadListener())
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
             "settings/${ECRModIDs.SOUL_STONE}".ecRL,

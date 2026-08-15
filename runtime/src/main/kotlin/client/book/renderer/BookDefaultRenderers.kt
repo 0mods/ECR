@@ -3,7 +3,7 @@ package com.algorithmlx.ecr.client.book.renderer
 import com.algorithmlx.ecr.api.client.research.BookElementRenderContext
 import com.algorithmlx.ecr.api.client.research.BookElementRenderers
 import com.algorithmlx.ecr.api.client.research.BookRecipeRenderers
-import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.AssembledMultiblockBookElement
 import com.algorithmlx.ecr.api.research.content.BlockBookElement
@@ -64,7 +64,7 @@ object BookDefaultRenderers {
     }
 
     private fun renderMultiblock(context: BookElementRenderContext, element: MultiblockBookElement) {
-        val multiblock = ECRegistries.MULTIBLOCK.getOptional(element.multiblock).orElse(null) ?: return
+        val multiblock = MultiblockDefinitions[element.multiblock] ?: return
         MultiblockBookPreviewController.render(context, element, multiblock)
     }
 
@@ -72,7 +72,7 @@ object BookDefaultRenderers {
         context: BookElementRenderContext,
         element: AssembledMultiblockBookElement
     ) {
-        val multiblock = ECRegistries.ASSEMBLED_MULTIBLOCK.getOptional(element.multiblock).orElse(null) ?: return
+        val multiblock = MultiblockDefinitions.assembled(element.multiblock) ?: return
         MultiblockBookPreviewController.render(context, element, multiblock)
     }
 }

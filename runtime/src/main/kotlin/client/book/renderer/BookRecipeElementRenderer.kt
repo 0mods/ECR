@@ -3,7 +3,7 @@ package com.algorithmlx.ecr.client.book.renderer
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.client.research.*
 import com.algorithmlx.ecr.api.utils.ecRL
-import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.mojang.blaze3d.platform.cursor.CursorTypes
 import com.algorithmlx.ecr.api.research.ClientResearchState
 import com.algorithmlx.ecr.api.research.content.CraftingBookElement
@@ -109,7 +109,7 @@ object BookRecipeElementRenderer {
     }
 
     private fun renderMultiblock(context: BookElementRenderContext, element: BookRecipeMultiblock, index: Int) {
-        val multiblock = ECRegistries.MULTIBLOCK.getOptional(element.multiblock).orElse(null) ?: return
+        val multiblock = MultiblockDefinitions[element.multiblock] ?: return
 
         val x = context.x + element.x
         val y = context.y + element.y
@@ -147,7 +147,7 @@ object BookRecipeElementRenderer {
         element: BookRecipeAssembledMultiblock,
         index: Int
     ) {
-        val multiblock = ECRegistries.ASSEMBLED_MULTIBLOCK.getOptional(element.multiblock).orElse(null) ?: return
+        val multiblock = MultiblockDefinitions.assembled(element.multiblock) ?: return
         val subContext = previewContext(context, element.x, element.y, element.width, element.height, index, true)
         MultiblockBookPreviewController.render(
             subContext,

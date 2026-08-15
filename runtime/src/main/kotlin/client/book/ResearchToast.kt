@@ -62,7 +62,7 @@ class ResearchToast private constructor(private val entry: BookEntry) : Toast {
         if (detailsProgress <= 0f) return
 
         val alpha = (detailsProgress * 255).toInt().coerceIn(0, 255)
-        val titleLines = font.split(entry.title.component(), TEXT_WIDTH).take(if (description() == null) 2 else 1)
+        val titleLines = font.split(entry.title.component(), TEXT_WIDTH)
         val descriptionLines = description()?.let { font.split(it, TEXT_WIDTH).take(2) }.orEmpty()
         val textHeight = textBlockHeight(titleLines.size, descriptionLines.size, font)
         var y = (contentHeight - textHeight) / 2
@@ -80,7 +80,7 @@ class ResearchToast private constructor(private val entry: BookEntry) : Toast {
     }
 
     private fun contentHeight(font: Font): Int {
-        val titleLines = font.split(entry.title.component(), TEXT_WIDTH).take(if (description() == null) 2 else 1).size.coerceAtLeast(1)
+        val titleLines = font.split(entry.title.component(), TEXT_WIDTH).size.coerceAtLeast(1)
         val descriptionLines = description()?.let { font.split(it, TEXT_WIDTH).take(2).size } ?: 0
         val bodyHeight = max(ICON_SIZE, textBlockHeight(titleLines, descriptionLines, font)) + VERTICAL_PADDING * 2
         return max(MIN_CONTENT_HEIGHT, bodyHeight)

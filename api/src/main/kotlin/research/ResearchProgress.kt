@@ -2,6 +2,7 @@ package com.algorithmlx.ecr.api.research
 
 import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.algorithmlx.ecr.api.research.content.BookCategory
 import com.algorithmlx.ecr.api.research.content.BookEntry
 import com.algorithmlx.ecr.api.research.content.CraftingBookElement
@@ -267,6 +268,7 @@ object ResearchProgress {
             player,
             ResearchSyncPayload(
                 ResearchCatalog.exportJson(),
+                MultiblockDefinitions.jsonResources(),
                 playerData.unlocked,
                 playerData.bookmarks,
                 progress,

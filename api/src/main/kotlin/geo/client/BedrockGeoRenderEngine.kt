@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.rendertype.RenderType
 import net.minecraft.client.renderer.rendertype.RenderTypes
 import net.minecraft.client.renderer.texture.OverlayTexture
 import net.minecraft.util.LightCoordsUtil
+import net.minecraft.core.Direction
 import org.joml.Matrix3f
 import org.joml.Matrix4f
 import org.joml.Vector3f
@@ -139,6 +140,14 @@ object BedrockGeoRenderEngine {
             }
         }
         poseStack.popPose()
+    }
+
+    @JvmStatic
+    fun horizontalRotationDegrees(facing: Direction): Float = when (facing) {
+        Direction.SOUTH -> 180F
+        Direction.WEST -> 90F
+        Direction.EAST -> -90F
+        else -> 0F
     }
 
     private fun renderType(data: BedrockGeoRenderData): RenderType = when (data.renderType) {
