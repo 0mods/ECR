@@ -20,8 +20,7 @@ object ResearchConfigDisabler {
         ResearchCatalog.refresh()
     }
 
-    private fun configuredResearches(): Collection<Identifier> =
-        ECConfig.current.disabledResearches.mapNotNull(::parseResearch)
+    private fun configuredResearches(): Collection<Identifier> = ECConfig.current.disabledResearches.mapNotNull(::parseResearch)
 
     private fun parseResearch(value: String): Identifier? {
         val id = value.trim()

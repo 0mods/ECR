@@ -41,11 +41,12 @@ class StructureRecipe(
     val chance: Range,
     val structureCenter: Block?,
     val blockForPlace: Block?,
-    val consumeStructure: Boolean = false
-): Recipe<SingleRecipeInput> {
+    val consumeStructure: Boolean = false,
+) : Recipe<SingleRecipeInput> {
     val multiblock: Multiblock
-        get() = MultiblockDefinitions[multiblockId]
-            ?: error("Multiblock $multiblockId is not loaded")
+        get() =
+            MultiblockDefinitions[multiblockId]
+                ?: error("Multiblock $multiblockId is not loaded")
 
     constructor(
         multiblock: Multiblock,
@@ -55,7 +56,7 @@ class StructureRecipe(
         chance: Range,
         structureCenter: Block?,
         blockForPlace: Block?,
-        consumeStructure: Boolean = false
+        consumeStructure: Boolean = false,
     ) : this(
         requireNotNull(MultiblockDefinitions.id(multiblock)) { "Multiblock is not registered" },
         time,
@@ -64,7 +65,7 @@ class StructureRecipe(
         chance,
         structureCenter,
         blockForPlace,
-        consumeStructure
+        consumeStructure,
     )
 
     init {
@@ -75,37 +76,53 @@ class StructureRecipe(
         val definition = MultiblockDefinitions[multiblockId]
         require(
             structureCenter == null || definition == null ||
-                definition.variants.asSequence()
+                definition.variants
+                    .asSequence()
                     .flatMap { it.blocks.asSequence() }
                     .map { it.default() }
-                    .any { it.`is`(structureCenter) }
+                    .any { it.`is`(structureCenter) },
         ) {
             "Structure center is not contained in $multiblockId"
         }
     }
 
     override fun getSerializer(): RecipeSerializer<StructureRecipe> = RecipeSerializerRegistry.instance.structure
+
     override fun getType(): RecipeType<StructureRecipe> = RecipeTypeRegistry.instance.structure
+
     override fun placementInfo(): PlacementInfo = PlacementInfo.NOT_PLACEABLE
-    override fun matches(input: SingleRecipeInput, level: Level): Boolean = ingredient.test(input.item())
+
+    override fun matches(
+        input: SingleRecipeInput,
+        level: Level,
+    ): Boolean = ingredient.test(input.item())
+
     override fun assemble(input: SingleRecipeInput): ItemStack = result.getOrNull()?.create() ?: ItemStack.EMPTY
+
     override fun showNotification(): Boolean = false
+
     override fun group(): String = "$ModId:${ECRModIDs.STRUCTURE}"
+
     override fun recipeBookCategory(): RecipeBookCategory = RecipeBookCategories.CAMPFIRE
-    override fun display(): List<RecipeDisplay> = listOf(
-        Display(
-            this.ingredient.display(),
-            if (blockForPlace != null) SlotDisplay.ItemSlotDisplay(blockForPlace.asItem())
-            else SlotDisplay.ItemStackSlotDisplay(result.get()),
-            Optional.ofNullable(structureCenter?.let { SlotDisplay.ItemSlotDisplay(it.asItem()) })
+
+    override fun display(): List<RecipeDisplay> =
+        listOf(
+            Display(
+                this.ingredient.display(),
+                if (blockForPlace != null) {
+                    SlotDisplay.ItemSlotDisplay(blockForPlace.asItem())
+                } else {
+                    SlotDisplay.ItemStackSlotDisplay(result.get())
+                },
+                Optional.ofNullable(structureCenter?.let { SlotDisplay.ItemSlotDisplay(it.asItem()) }),
+            ),
         )
-    )
 
     data class Display(
         val ingredient: SlotDisplay,
         private val resultDisplay: SlotDisplay,
-        val structureCenter: Optional<SlotDisplay>
-    ): RecipeDisplay {
+        val structureCenter: Optional<SlotDisplay>,
+    ) : RecipeDisplay {
         override fun result(): SlotDisplay = this.resultDisplay
 
         override fun craftingStation(): SlotDisplay = this.ingredient
@@ -114,18 +131,23 @@ class StructureRecipe(
 
         companion object {
             @JvmField
-            val MAP_CODEC: MapCodec<Display> = RecordCodecBuilder.mapCodec {
-                it.group(
-                    SlotDisplay.CODEC.fieldOf("input").forGetter(Display::ingredient),
-                    SlotDisplay.CODEC.fieldOf("result").forGetter(Display::resultDisplay),
-                    SlotDisplay.CODEC.optionalFieldOf("structure_center").forGetter(Display::structureCenter)
-                ).apply(it, ::Display)
-            }
+            val MAP_CODEC: MapCodec<Display> =
+                RecordCodecBuilder.mapCodec {
+                    it
+                        .group(
+                            SlotDisplay.CODEC.fieldOf("input").forGetter(Display::ingredient),
+                            SlotDisplay.CODEC.fieldOf("result").forGetter(Display::resultDisplay),
+                            SlotDisplay.CODEC.optionalFieldOf("structure_center").forGetter(Display::structureCenter),
+                        ).apply(it, ::Display)
+                }
 
             @JvmField
             val STREAM_CODEC = StreamCodec.of(::encode, ::decode)
 
-            private fun encode(buf: RegistryFriendlyByteBuf, display: Display) {
+            private fun encode(
+                buf: RegistryFriendlyByteBuf,
+                display: Display,
+            ) {
                 SlotDisplay.STREAM_CODEC.encode(buf, display.ingredient)
                 SlotDisplay.STREAM_CODEC.encode(buf, display.resultDisplay)
                 buf.writeOptional(display.structureCenter) { b, slotDisplay ->
@@ -144,39 +166,56 @@ class StructureRecipe(
 
     companion object {
         @JvmField
-        val CODEC: MapCodec<StructureRecipe> = RecordCodecBuilder.mapCodec {
-            it.group(
-                Identifier.CODEC.fieldOf("multiblock")
-                    .forGetter(StructureRecipe::multiblockId),
-                Codec.INT.fieldOf("time").forGetter(StructureRecipe::time),
-                Ingredient.CODEC.fieldOf("input").forGetter(StructureRecipe::ingredient),
-                ItemStackTemplate.CODEC.optionalFieldOf("result").forGetter(StructureRecipe::result),
-                Range.CODEC.optionalFieldOf("chance", Range(0, 0)).forGetter(StructureRecipe::chance),
-                Codec.optionalField("structure_center", Identifier.CODEC, true)
-                    .forGetter { fg -> Optional.ofNullable(fg.structureCenter?.let { thing -> BuiltInRegistries.BLOCK.getKey(thing) }) },
-                Codec.optionalField("placement", Identifier.CODEC, true)
-                    .forGetter { fg -> Optional.ofNullable(fg.blockForPlace?.let { thing -> BuiltInRegistries.BLOCK.getKey(thing) }) },
-                Codec.BOOL.fieldOf("consume_structure").orElseGet { false }.forGetter(StructureRecipe::consumeStructure)
-            ).apply(it) { multiblockId, time, ingredient, result, chance, center, placement, consumeStructure ->
-                StructureRecipe(
-                    multiblockId,
-                    time, ingredient, result,
-                    chance,
-                    center.getOrNull()?.let { l ->
-                        BuiltInRegistries.BLOCK.getOptional(l).getOrNull()
-                    },
-                    placement.getOrNull()?.let { l ->
-                        BuiltInRegistries.BLOCK.getOptional(l).getOrNull()
-                    },
-                    consumeStructure
-                )
+        val CODEC: MapCodec<StructureRecipe> =
+            RecordCodecBuilder.mapCodec {
+                it
+                    .group(
+                        Identifier.CODEC
+                            .fieldOf("multiblock")
+                            .forGetter(StructureRecipe::multiblockId),
+                        Codec.INT.fieldOf("time").forGetter(StructureRecipe::time),
+                        Ingredient.CODEC.fieldOf("input").forGetter(StructureRecipe::ingredient),
+                        ItemStackTemplate.CODEC.optionalFieldOf("result").forGetter(StructureRecipe::result),
+                        Range.CODEC.optionalFieldOf("chance", Range(0, 0)).forGetter(StructureRecipe::chance),
+                        Codec
+                            .optionalField("structure_center", Identifier.CODEC, true)
+                            .forGetter { fg ->
+                                Optional.ofNullable(fg.structureCenter?.let { thing -> BuiltInRegistries.BLOCK.getKey(thing) })
+                            },
+                        Codec
+                            .optionalField("placement", Identifier.CODEC, true)
+                            .forGetter { fg ->
+                                Optional.ofNullable(fg.blockForPlace?.let { thing -> BuiltInRegistries.BLOCK.getKey(thing) })
+                            },
+                        Codec.BOOL
+                            .fieldOf("consume_structure")
+                            .orElseGet { false }
+                            .forGetter(StructureRecipe::consumeStructure),
+                    ).apply(it) { multiblockId, time, ingredient, result, chance, center, placement, consumeStructure ->
+                        StructureRecipe(
+                            multiblockId,
+                            time,
+                            ingredient,
+                            result,
+                            chance,
+                            center.getOrNull()?.let { l ->
+                                BuiltInRegistries.BLOCK.getOptional(l).getOrNull()
+                            },
+                            placement.getOrNull()?.let { l ->
+                                BuiltInRegistries.BLOCK.getOptional(l).getOrNull()
+                            },
+                            consumeStructure,
+                        )
+                    }
             }
-        }
 
         @JvmField
         val STREAM_CODEC = StreamCodec.of(::encode, ::decode)
 
-        private fun encode(buf: RegistryFriendlyByteBuf, recipe: StructureRecipe) {
+        private fun encode(
+            buf: RegistryFriendlyByteBuf,
+            recipe: StructureRecipe,
+        ) {
             Identifier.STREAM_CODEC.encode(buf, recipe.multiblockId)
             buf.writeInt(recipe.time)
             Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.ingredient)
@@ -209,29 +248,37 @@ class StructureRecipe(
                 chance,
                 structureCenter,
                 blockForPlace,
-                consumeStructure
+                consumeStructure,
             )
         }
     }
 
-    data class Range(val min: Int, val max: Int){
+    data class Range(
+        val min: Int,
+        val max: Int,
+    ) {
         fun isEmpty() = this.min == 0 && max == 0
 
         companion object {
             @JvmField
-            val CODEC: Codec<Range> = RecordCodecBuilder.create {
-                it.group(
-                    Codec.INT.fieldOf("min").forGetter(Range::min),
-                    Codec.INT.fieldOf("max").forGetter(Range::max)
-                ).apply(it, ::Range)
-            }
+            val CODEC: Codec<Range> =
+                RecordCodecBuilder.create {
+                    it
+                        .group(
+                            Codec.INT.fieldOf("min").forGetter(Range::min),
+                            Codec.INT.fieldOf("max").forGetter(Range::max),
+                        ).apply(it, ::Range)
+                }
 
             @JvmField
-            val STREAM_CODEC: StreamCodec<ByteBuf, Range> = StreamCodec.composite(
-                ByteBufCodecs.INT, Range::min,
-                ByteBufCodecs.INT, Range::max,
-                ::Range
-            )
+            val STREAM_CODEC: StreamCodec<ByteBuf, Range> =
+                StreamCodec.composite(
+                    ByteBufCodecs.INT,
+                    Range::min,
+                    ByteBufCodecs.INT,
+                    Range::max,
+                    ::Range,
+                )
         }
     }
 }

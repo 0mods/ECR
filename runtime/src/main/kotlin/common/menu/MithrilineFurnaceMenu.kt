@@ -21,15 +21,15 @@ class MithrilineFurnaceMenu(
     container: Container,
     val blockEntity: BlockEntity?,
     access: ContainerLevelAccess,
-    val data: ContainerData
-): AbstractMenu(MenuTypeRegistry.instance.mithrilineFurnace, containerId, access) {
-    constructor(containerId: Int, inventory: Inventory, typeData: MenuTypeData): this(
+    val data: ContainerData,
+) : AbstractMenu(MenuTypeRegistry.instance.mithrilineFurnace, containerId, access) {
+    constructor(containerId: Int, inventory: Inventory, typeData: MenuTypeData) : this(
         containerId,
         inventory,
         SimpleContainer(2),
         inventory.player.level().getBlockEntity(typeData.pos),
         ContainerLevelAccess.NULL,
-        SimpleContainerData(2)
+        SimpleContainerData(2),
     )
 
     init {
@@ -41,7 +41,10 @@ class MithrilineFurnaceMenu(
         addDataSlots(data)
     }
 
-    override fun quickMoveStack(player: Player, index: Int): ItemStack {
+    override fun quickMoveStack(
+        player: Player,
+        index: Int,
+    ): ItemStack {
         var qms = ItemStack.EMPTY
         val ms = this.slots[index]
 
@@ -52,32 +55,45 @@ class MithrilineFurnaceMenu(
 
             when (index) {
                 0 -> {
-                    if (!this.moveItemStackTo(raw, 2, 38, false))
+                    if (!this.moveItemStackTo(raw, 2, 38, false)) {
                         return ItemStack.EMPTY
+                    }
 
                     ms.onQuickCraft(raw, qms)
                 }
+
                 1 -> {
-                    if (!this.moveItemStackTo(raw, 2, 38, true))
+                    if (!this.moveItemStackTo(raw, 2, 38, true)) {
                         return ItemStack.EMPTY
+                    }
 
                     ms.onQuickCraft(raw, qms)
                 }
-                in 2 ..< 38 -> {
+
+                in 2..<38 -> {
                     if (!this.moveItemStackTo(raw, 0, 1, false)) {
-                        if (index in 12 ..< 38) {
-                            if (!this.moveItemStackTo(raw, 2, 11, false))
+                        if (index in 12..<38) {
+                            if (!this.moveItemStackTo(raw, 2, 11, false)) {
                                 return ItemStack.EMPTY
-                        } else if (!this.moveItemStackTo(raw, 12, 38, false))
+                            }
+                        } else if (!this.moveItemStackTo(raw, 12, 38, false)) {
                             return ItemStack.EMPTY
+                        }
                     }
                 }
-                else -> if (!this.moveItemStackTo(raw, 2, 38, false))
-                    return ItemStack.EMPTY
+
+                else -> {
+                    if (!this.moveItemStackTo(raw, 2, 38, false)) {
+                        return ItemStack.EMPTY
+                    }
+                }
             }
 
-            if (raw.isEmpty) ms.set(ItemStack.EMPTY)
-            else ms.setChanged()
+            if (raw.isEmpty) {
+                ms.set(ItemStack.EMPTY)
+            } else {
+                ms.setChanged()
+            }
 
             if (raw.count == qms.count) return ItemStack.EMPTY
 

@@ -1,7 +1,7 @@
 package com.algorithmlx.ecr.registry
 
-import com.algorithmlx.ecr.common.block.ClusterBlock
 import com.algorithmlx.ecr.common.block.AssembledMultiblockPartBlock
+import com.algorithmlx.ecr.common.block.ClusterBlock
 import com.algorithmlx.ecr.common.block.ColdDistiller
 import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.EnrichmentChamberController

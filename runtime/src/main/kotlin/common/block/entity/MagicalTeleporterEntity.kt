@@ -1,12 +1,12 @@
 package com.algorithmlx.ecr.common.block.entity
 
-import com.algorithmlx.ecr.api.mru.MRUDevice
-import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
-import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.api.block.entity.SynchronizedContainerBlockEntity
 import com.algorithmlx.ecr.api.chunk.ChunkLoadingManager
 import com.algorithmlx.ecr.api.item.BoundGem
+import com.algorithmlx.ecr.api.mru.MRUDevice
 import com.algorithmlx.ecr.api.mru.processReceive
+import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
+import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.api.particle.BedrockParticles
 import com.algorithmlx.ecr.api.particle.ClientParticleSystems
 import com.algorithmlx.ecr.api.particle.ParticleEmitter
@@ -16,7 +16,9 @@ import com.algorithmlx.ecr.common.api.BoundGemHelper
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.config.ECConfig
 import com.algorithmlx.ecr.common.menu.MagicalTeleporterMenu
-import com.algorithmlx.ecr.registry.*
+import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
+import com.algorithmlx.ecr.registry.MRUTypeRegistry
+import com.algorithmlx.ecr.registry.MultiblockRegistry
 import net.minecraft.core.BlockPos
 import net.minecraft.core.NonNullList
 import net.minecraft.network.chat.Component
@@ -34,8 +36,10 @@ import org.joml.Quaternionf
 import org.joml.Vector3f
 
 class MagicalTeleporterEntity(
-    worldPosition: BlockPos, blockState: BlockState
-): SynchronizedContainerBlockEntity(BlockEntityTypeRegistry.instance.magicalTeleporter, worldPosition, blockState), MRUDevice {
+    worldPosition: BlockPos,
+    blockState: BlockState,
+) : SynchronizedContainerBlockEntity(BlockEntityTypeRegistry.instance.magicalTeleporter, worldPosition, blockState),
+    MRUDevice {
     private var items: NonNullList<ItemStack> = NonNullList.withSize(2, ItemStack.EMPTY)
     private var progressTime = 0
 
@@ -45,15 +49,15 @@ class MagicalTeleporterEntity(
     // client only
     private var playerParticleSpawned = false
     private val snowstormEmitters = mutableListOf<ParticleEmitter>()
-    private val snowstormTransform = object : Transform {
-        override val parent: Transform? = null
-        override val isValid: Boolean get() = !isRemoved
-        override val position: Vector3f
-            get() = Vector3f(blockPos.x + 0.5F, blockPos.y + 0.15F, blockPos.z + 0.5F)
-        override val rotation: Quaternionf get() = Quaternionf()
-        override val velocity: Vector3f get() = Vector3f()
-
-    }
+    private val snowstormTransform =
+        object : Transform {
+            override val parent: Transform? = null
+            override val isValid: Boolean get() = !isRemoved
+            override val position: Vector3f
+                get() = Vector3f(blockPos.x + 0.5F, blockPos.y + 0.15F, blockPos.z + 0.5F)
+            override val rotation: Quaternionf get() = Quaternionf()
+            override val velocity: Vector3f get() = Vector3f()
+        }
 
     override fun getDefaultName(): Component = Component.empty()
 
@@ -65,12 +69,15 @@ class MagicalTeleporterEntity(
 
     override fun createMenu(
         containerId: Int,
-        inventory: Inventory
-    ): AbstractContainerMenu = MagicalTeleporterMenu(
-        containerId, inventory,
-        this, this,
-        ContainerLevelAccess.create(this.level!!, this.blockPos)
-    )
+        inventory: Inventory,
+    ): AbstractContainerMenu =
+        MagicalTeleporterMenu(
+            containerId,
+            inventory,
+            this,
+            this,
+            ContainerLevelAccess.create(this.level!!, this.blockPos),
+        )
 
     override fun saveAdditional(output: ValueOutput) {
         ContainerHelper.saveAllItems(output, this.items)
@@ -93,11 +100,15 @@ class MagicalTeleporterEntity(
     }
 
     override fun getContainerSize(): Int = this.items.size
+
     override val mruStorage: IOMRUStorage = MRUStorageContainer(50000, MRUTypeRegistry.instance.radiationUnit) { this.setChanged() }
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.CONNECTABLE_RECEIVER
     override val locator: MRUDevice.LocatorData = MRUDevice.LocatorData(this, 0)
 
-    override fun preRemoveSideEffects(pos: BlockPos, state: BlockState) {
+    override fun preRemoveSideEffects(
+        pos: BlockPos,
+        state: BlockState,
+    ) {
         if (isChunkLoaded) {
             (level as? ServerLevel)?.let {
                 ChunkLoadingManager.remove(it, pos)
@@ -112,11 +123,17 @@ class MagicalTeleporterEntity(
         private val config = ECConfig.current.magicalTeleporter
 
         @JvmStatic
-        fun hasValidStructure(level: Level, pos: BlockPos): Boolean =
-            MultiblockRegistry.instance.magicalTeleporter.findPlacement(level, pos, BlockPos(2, 0, 2)) != null
+        fun hasValidStructure(
+            level: Level,
+            pos: BlockPos,
+        ): Boolean = MultiblockRegistry.instance.magicalTeleporter.findPlacement(level, pos, BlockPos(2, 0, 2)) != null
 
         @JvmStatic
-        fun onTick(level: Level, pos: BlockPos, blockEntity: MagicalTeleporterEntity) {
+        fun onTick(
+            level: Level,
+            pos: BlockPos,
+            blockEntity: MagicalTeleporterEntity,
+        ) {
             val oldValid = blockEntity.structureIsValid
             val newValid = hasValidStructure(level, pos)
 
@@ -214,7 +231,7 @@ class MagicalTeleporterEntity(
                 setOf(),
                 entityAtTeleporter.yRot,
                 entityAtTeleporter.xRot,
-                false
+                false,
             )
 
             blockEntity.resetProgress()

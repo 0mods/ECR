@@ -21,48 +21,56 @@ class RayTowerMenu(
     inv: Inventory,
     container: Container,
     val blockEntity: BlockEntity?,
-    access: ContainerLevelAccess
-): AbstractMenu(MenuTypeRegistry.instance.rayTower, containerId, access) {
-    constructor(containerId: Int, inv: Inventory, typeData: MenuTypeData): this(
-        containerId, inv, SimpleContainer(1), inv.player.level().getBlockEntity(typeData.pos), ContainerLevelAccess.NULL
+    access: ContainerLevelAccess,
+) : AbstractMenu(MenuTypeRegistry.instance.rayTower, containerId, access) {
+    constructor(containerId: Int, inv: Inventory, typeData: MenuTypeData) : this(
+        containerId,
+        inv,
+        SimpleContainer(1),
+        inv.player.level().getBlockEntity(typeData.pos),
+        ContainerLevelAccess.NULL,
     )
 
     init {
-        addSlot(VanillaSpecialSlot(container, 0, 80, 48, { stack ->
-            val item = stack.item
-            isAssembled() && item is BoundGem && BoundGemHelper.getBoundPos(stack) != null
-        }, { _ -> isAssembled() }))
+        addSlot(
+            VanillaSpecialSlot(container, 0, 80, 48, { stack ->
+                val item = stack.item
+                isAssembled() && item is BoundGem && BoundGemHelper.getBoundPos(stack) != null
+            }, { _ -> isAssembled() }),
+        )
 
         inv.make()
     }
 
     override fun quickMoveStack(
         player: Player,
-        slotIndex: Int
+        slotIndex: Int,
     ): ItemStack {
         val slot = this.slots.getOrNull(slotIndex) ?: return ItemStack.EMPTY
         val stack = slot.item.takeIf { it.count > 0 } ?: return ItemStack.EMPTY
 
         val copy = stack.copy()
-        val moved = when (slotIndex) {
-            0 -> moveItemStackTo(stack, 1, 36, true)
-            in 1 .. 9 -> moveItemStackTo(stack, 0, 1, false) || moveItemStackTo(stack, 10, 36, false)
-            in 10 .. 36 -> moveItemStackTo(stack, 0, 1, false) || moveItemStackTo(stack, 1, 9, false)
-            else -> moveItemStackTo(stack, 1, 36, false)
-        }
+        val moved =
+            when (slotIndex) {
+                0 -> moveItemStackTo(stack, 1, 36, true)
+                in 1..9 -> moveItemStackTo(stack, 0, 1, false) || moveItemStackTo(stack, 10, 36, false)
+                in 10..36 -> moveItemStackTo(stack, 0, 1, false) || moveItemStackTo(stack, 1, 9, false)
+                else -> moveItemStackTo(stack, 1, 36, false)
+            }
 
         if (!moved) return ItemStack.EMPTY
 
-        if (stack.isEmpty) slot.set(ItemStack.EMPTY)
-        else slot.setChanged()
+        if (stack.isEmpty) {
+            slot.set(ItemStack.EMPTY)
+        } else {
+            slot.setChanged()
+        }
 
         slot.onTake(player, stack)
         return if (stack.count == copy.count) ItemStack.EMPTY else copy
     }
 
-    override fun stillValid(player: Player): Boolean =
-        stillValid(access, player, BlockRegistry.instance.rayTower) && isAssembled()
+    override fun stillValid(player: Player): Boolean = stillValid(access, player, BlockRegistry.instance.rayTower) && isAssembled()
 
-    private fun isAssembled(): Boolean =
-        (blockEntity as? AssembledMultiblockPartEntity)?.isAssembledMultiblock == true
+    private fun isAssembled(): Boolean = (blockEntity as? AssembledMultiblockPartEntity)?.isAssembledMultiblock == true
 }

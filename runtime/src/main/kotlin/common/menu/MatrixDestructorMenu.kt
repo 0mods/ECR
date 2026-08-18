@@ -20,24 +20,37 @@ class MatrixDestructorMenu(
     inv: Inventory,
     container: Container,
     val blockEntity: BlockEntity?,
-    access: ContainerLevelAccess
-): AbstractMenu(MenuTypeRegistry.instance.matrixDestructor, containerId, access) {
-    constructor(containerId: Int, inv: Inventory, typeData: MenuTypeData): this(
-        containerId, inv, SimpleContainer(1), inv.player.level().getBlockEntity(typeData.pos), ContainerLevelAccess.NULL
+    access: ContainerLevelAccess,
+) : AbstractMenu(MenuTypeRegistry.instance.matrixDestructor, containerId, access) {
+    constructor(containerId: Int, inv: Inventory, typeData: MenuTypeData) : this(
+        containerId,
+        inv,
+        SimpleContainer(1),
+        inv.player.level().getBlockEntity(typeData.pos),
+        ContainerLevelAccess.NULL,
     )
 
     init {
-        addSlot(VanillaSpecialSlot(
-            container, 0, 80, 60, {
-                val component = it.get(DataComponentRegistry.instance.soulStone)
-                component != null && component != SoulStoneComponent.EMPTY
-            }
-        ))
+        addSlot(
+            VanillaSpecialSlot(
+                container,
+                0,
+                80,
+                60,
+                {
+                    val component = it.get(DataComponentRegistry.instance.soulStone)
+                    component != null && component != SoulStoneComponent.EMPTY
+                },
+            ),
+        )
 
         inv.make()
     }
 
-    override fun quickMoveStack(player: Player, index: Int): ItemStack {
+    override fun quickMoveStack(
+        player: Player,
+        index: Int,
+    ): ItemStack {
         var qms = ItemStack.EMPTY
         val ms = this.slots[index]
 
@@ -47,21 +60,28 @@ class MatrixDestructorMenu(
             qms = raw.copy()
 
             if (index == 0) {
-                if (!this.moveItemStackTo(raw, 1, 37, true))
+                if (!this.moveItemStackTo(raw, 1, 37, true)) {
                     return ItemStack.EMPTY
-            } else if (index in 1 ..< 37) {
-                if (!this.moveItemStackTo(raw, 0, 1, false)) {
-                    if (index in 11 ..< 37) {
-                        if (!this.moveItemStackTo(raw, 1, 10, false))
-                            return ItemStack.EMPTY
-                    } else if (!this.moveItemStackTo(raw, 11, 37, false))
-                        return ItemStack.EMPTY
                 }
-            } else if (!this.moveItemStackTo(raw, 1, 37, false))
+            } else if (index in 1..<37) {
+                if (!this.moveItemStackTo(raw, 0, 1, false)) {
+                    if (index in 11..<37) {
+                        if (!this.moveItemStackTo(raw, 1, 10, false)) {
+                            return ItemStack.EMPTY
+                        }
+                    } else if (!this.moveItemStackTo(raw, 11, 37, false)) {
+                        return ItemStack.EMPTY
+                    }
+                }
+            } else if (!this.moveItemStackTo(raw, 1, 37, false)) {
                 return ItemStack.EMPTY
+            }
 
-            if (raw.isEmpty) ms.set(ItemStack.EMPTY)
-            else ms.setChanged()
+            if (raw.isEmpty) {
+                ms.set(ItemStack.EMPTY)
+            } else {
+                ms.setChanged()
+            }
 
             if (raw.count == qms.count) return ItemStack.EMPTY
 

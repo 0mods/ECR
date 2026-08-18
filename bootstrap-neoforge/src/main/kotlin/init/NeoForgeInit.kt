@@ -2,7 +2,6 @@ package com.algorithmlx.ecr.neoforge.init
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.chunk.ChunkLoadingPlatform
-import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
 import com.algorithmlx.ecr.api.geo.GeoAnimationNetwork
 import com.algorithmlx.ecr.api.geo.GeoBlockAnimationPayload
 import com.algorithmlx.ecr.api.geo.GeoBlockAnimationStopPayload
@@ -10,7 +9,7 @@ import com.algorithmlx.ecr.api.geo.GeoEntityAnimationPayload
 import com.algorithmlx.ecr.api.geo.GeoEntityAnimationStopPayload
 import com.algorithmlx.ecr.api.geo.GeoItemAnimationPayload
 import com.algorithmlx.ecr.api.geo.GeoItemAnimationStopPayload
-import com.algorithmlx.ecr.api.utils.ecRL
+import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
 import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.item.HasSubItem
 import com.algorithmlx.ecr.api.item.NoTab
@@ -20,8 +19,10 @@ import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.ResearchAction
 import com.algorithmlx.ecr.api.utils.countByIngredient
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.utils.openMenuScreenInternal
 import com.algorithmlx.ecr.common.components.PlayerMatrixStorage
+import com.algorithmlx.ecr.common.init.ECRCommands
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.config.ConfigManager
 import com.algorithmlx.ecr.common.init.config.ECConfig
@@ -29,10 +30,9 @@ import com.algorithmlx.ecr.common.init.events.ECEvents
 import com.algorithmlx.ecr.common.init.reload.ResearchReloadListener
 import com.algorithmlx.ecr.common.init.reload.SoulStoneDataReloadListener
 import com.algorithmlx.ecr.common.item.NamedBlockItem
-import com.algorithmlx.ecr.registry.*
 import com.algorithmlx.ecr.common.research.ResearchConfigDisabler
-import com.algorithmlx.ecr.common.init.ECRCommands
 import com.algorithmlx.ecr.neoforge.api.CountIngredient
+import com.algorithmlx.ecr.neoforge.chunk.NeoForgeChunkLoadingPlatform
 import com.algorithmlx.ecr.neoforge.init.registry.IngredientRegistry
 import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeBlockCodecRegistry
 import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeBlockEntityTypeRegistry
@@ -51,15 +51,15 @@ import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeRecipeDisplayTypeRegis
 import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeRecipeSerializerRegistry
 import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeRecipeTypeRegistry
 import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeResearchSerializerRegistry
-import com.algorithmlx.ecr.neoforge.chunk.NeoForgeChunkLoadingPlatform
 import com.algorithmlx.ecr.neoforge.utils.NeoForgePlatformUtils
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
 import com.algorithmlx.ecr.network.BoundGemTooltipRequestPayload
 import com.algorithmlx.ecr.network.BoundGemTooltipResponsePayload
-import com.algorithmlx.ecr.network.FinishCraftParticle
 import com.algorithmlx.ecr.network.SoulStoneTooltipNetwork
 import com.algorithmlx.ecr.network.SoulStoneTooltipRequestPayload
 import com.algorithmlx.ecr.network.SoulStoneTooltipResponsePayload
+import com.algorithmlx.ecr.registry.*
+import com.algorithmlx.ecr.utils.PlatformUtils
 import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.network.chat.Component
@@ -87,7 +87,6 @@ import net.neoforged.neoforge.network.PacketDistributor
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent
 import net.neoforged.neoforge.registries.NewRegistryEvent
 import net.neoforged.neoforge.resource.ListenerKey
-import com.algorithmlx.ecr.utils.PlatformUtils
 import java.io.File
 
 object NeoForgeInit {
@@ -117,8 +116,9 @@ object NeoForgeInit {
         forgeBus.addListener(::onRegisterCommands)
         forgeBus.addListener(::onLivingDeath)
 
-        if (FMLEnvironment.getDist().isClient)
+        if (FMLEnvironment.getDist().isClient) {
             NeoForgeClientInit.init(bus)
+        }
 
         extendPlatform()
     }
@@ -164,8 +164,9 @@ object NeoForgeInit {
         BuiltInRegistries.ITEM.keySet().filter { it.namespace == ModId }.forEach {
             val item = BuiltInRegistries.ITEM.getOptional(it).get()
             if (event.tab == CreativeTabRegistry.instance.blocks) {
-                if ((item is BlockItem || item is NamedBlockItem)  && item.block !is NoTab)
+                if ((item is BlockItem || item is NamedBlockItem) && item.block !is NoTab) {
                     event.accept(item)
+                }
                 return@forEach
             }
 
@@ -187,7 +188,6 @@ object NeoForgeInit {
 
     private fun onRegisterPayload(event: RegisterPayloadHandlersEvent) {
         val registrar = event.registrar(ModId)
-        registrar.playToClient(FinishCraftParticle.TYPE, FinishCraftParticle.STREAM_CODEC)
         registrar.playToClient(GeoBlockAnimationPayload.TYPE, GeoBlockAnimationPayload.STREAM_CODEC)
         registrar.playToClient(GeoEntityAnimationPayload.TYPE, GeoEntityAnimationPayload.STREAM_CODEC)
         registrar.playToClient(GeoItemAnimationPayload.TYPE, GeoItemAnimationPayload.STREAM_CODEC)
@@ -238,12 +238,12 @@ object NeoForgeInit {
     private fun onAddReloadListener(event: AddServerReloadListenersEvent) {
         event.addRetainedListener(
             ListenerKey.create("multiblocks".ecRL),
-            MultiblockDataReloadListener()
+            MultiblockDataReloadListener(),
         )
         event.addRetainedListener(ListenerKey.create("research".ecRL), ResearchReloadListener())
         event.addRetainedListener(
             ListenerKey.create("settings/${ECRModIDs.SOUL_STONE}".ecRL),
-            SoulStoneDataReloadListener(ConfigManager.json)
+            SoulStoneDataReloadListener(ConfigManager.json),
         )
     }
 
@@ -289,26 +289,31 @@ object NeoForgeInit {
             if (device == null || !device.deviceType.isConnectable || item.getBoundPos(stack) != null) return
 
             event.entity.sendOverlayMessage(
-                Component.translatable("tooltip.$ModId.${ECRModIDs.BOUND_GEM}.linked")
+                Component
+                    .translatable("tooltip.$ModId.${ECRModIDs.BOUND_GEM}.linked")
                     .append(": ")
-                    .append("X: ${pos.x} Y: ${pos.y} Z: ${pos.z}")
+                    .append("X: ${pos.x} Y: ${pos.y} Z: ${pos.z}"),
             )
 
             if (stack.count > 1) {
-                val copied = stack.copy().apply {
-                    this.count = 1
-                    item.setBoundPos(this, pos)
-                }
+                val copied =
+                    stack.copy().apply {
+                        this.count = 1
+                        item.setBoundPos(this, pos)
+                    }
 
                 stack.shrink(1)
 
-                val itemEntity = ItemEntity(level, event.entity.x, event.entity.y, event.entity.z, copied).apply {
-                    this.setNoPickUpDelay()
-                    this.setThrower(event.entity)
-                }
+                val itemEntity =
+                    ItemEntity(level, event.entity.x, event.entity.y, event.entity.z, copied).apply {
+                        this.setNoPickUpDelay()
+                        this.setThrower(event.entity)
+                    }
 
                 event.level.addFreshEntity(itemEntity)
-            } else item.setBoundPos(stack, pos)
+            } else {
+                item.setBoundPos(stack, pos)
+            }
 
             event.cancellationResult = InteractionResult.SUCCESS
         }
@@ -345,13 +350,14 @@ object NeoForgeInit {
     }
 
     private fun allowEntityInteraction(event: PlayerInteractEvent): Boolean {
-        val target = when (event) {
-            is PlayerInteractEvent.EntityInteract -> event.target
-            is PlayerInteractEvent.EntityInteractSpecific -> event.target
-            else -> return true
-        }
+        val target =
+            when (event) {
+                is PlayerInteractEvent.EntityInteract -> event.target
+                is PlayerInteractEvent.EntityInteractSpecific -> event.target
+                else -> return true
+            }
         return ResearchAccess.canAccess(event.entity, target, ResearchAction.INTERACT) &&
-                ResearchAccess.canAccess(event.entity, event.itemStack, ResearchAction.USE)
+            ResearchAccess.canAccess(event.entity, event.itemStack, ResearchAction.USE)
     }
 
     private fun onLivingDeath(e: LivingDeathEvent) {

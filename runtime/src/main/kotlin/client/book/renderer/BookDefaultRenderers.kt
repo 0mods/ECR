@@ -47,30 +47,42 @@ object BookDefaultRenderers {
         BookRecipeRenderers.register(RecipeTypeRegistry.instance.structure, StructureRecipeRenderer)
     }
 
-    private fun renderText(context: BookElementRenderContext, element: TextBookElement) {
+    private fun renderText(
+        context: BookElementRenderContext,
+        element: TextBookElement,
+    ) {
         BookLinkedTextLayout.render(context, element)
     }
 
-    private fun renderItem(context: BookElementRenderContext, element: ItemBookElement) {
+    private fun renderItem(
+        context: BookElementRenderContext,
+        element: ItemBookElement,
+    ) {
         val item = BuiltInRegistries.ITEM.getOptional(element.item).orElse(null) ?: return
         val stack = ItemStack(item, element.count)
         context.graphics.item(stack, context.x, context.y)
         if (element.count > 1) context.graphics.itemDecorations(Minecraft.getInstance().font, stack, context.x, context.y)
     }
 
-    private fun renderBlock(context: BookElementRenderContext, element: BlockBookElement) {
+    private fun renderBlock(
+        context: BookElementRenderContext,
+        element: BlockBookElement,
+    ) {
         val block = BuiltInRegistries.BLOCK.getOptional(element.block).orElse(null) ?: return
         context.graphics.item(ItemStack(block.asItem()), context.x, context.y)
     }
 
-    private fun renderMultiblock(context: BookElementRenderContext, element: MultiblockBookElement) {
+    private fun renderMultiblock(
+        context: BookElementRenderContext,
+        element: MultiblockBookElement,
+    ) {
         val multiblock = MultiblockDefinitions[element.multiblock] ?: return
         MultiblockBookPreviewController.render(context, element, multiblock)
     }
 
     private fun renderAssembledMultiblock(
         context: BookElementRenderContext,
-        element: AssembledMultiblockBookElement
+        element: AssembledMultiblockBookElement,
     ) {
         val multiblock = MultiblockDefinitions.assembled(element.multiblock) ?: return
         MultiblockBookPreviewController.render(context, element, multiblock)

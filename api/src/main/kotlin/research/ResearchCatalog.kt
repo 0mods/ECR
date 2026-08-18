@@ -19,10 +19,9 @@ data class ResearchCatalogSnapshot(
     val categories: Map<Identifier, BookCategory>,
     val entries: Map<Identifier, BookEntry>,
     val layout: Map<Identifier, ResolvedBookEntry>,
-    val disabledEntries: Set<Identifier> = emptySet()
+    val disabledEntries: Set<Identifier> = emptySet(),
 ) {
-    fun entriesIn(category: Identifier): List<ResolvedBookEntry> =
-        layout.values.filter { it.category == category }
+    fun entriesIn(category: Identifier): List<ResolvedBookEntry> = layout.values.filter { it.category == category }
 }
 
 object ResearchCatalog {
@@ -33,6 +32,7 @@ object ResearchCatalog {
     private val disabledEntries = LinkedHashSet<Identifier>()
     private val disabledProviders = CopyOnWriteArrayList<() -> Collection<Identifier>>()
     private val reloadListeners = CopyOnWriteArrayList<(ResearchCatalogSnapshot) -> Unit>()
+
     @Volatile private var current = ResearchCatalogSnapshot(emptyMap(), emptyMap(), emptyMap())
 
     @JvmStatic
@@ -120,22 +120,29 @@ object ResearchCatalog {
 
     @JvmStatic
     @Synchronized
-    fun replace(categories: Collection<BookCategory>, entries: Collection<BookEntry>) {
+    fun replace(
+        categories: Collection<BookCategory>,
+        entries: Collection<BookEntry>,
+    ) {
         loadedCategories = categories.toList()
         loadedEntries = entries.toList()
         refresh()
     }
 
-    private fun install(categoryMap: LinkedHashMap<Identifier, BookCategory>, entryMap: LinkedHashMap<Identifier, BookEntry>) {
+    private fun install(
+        categoryMap: LinkedHashMap<Identifier, BookCategory>,
+        entryMap: LinkedHashMap<Identifier, BookEntry>,
+    ) {
         val disabled = disabledResearches()
         val filtered = filterDisabled(categoryMap, entryMap, disabled)
         val layout = ResearchLayout.resolve(filtered.categories, filtered.entries)
-        current = ResearchCatalogSnapshot(
-            Collections.unmodifiableMap(filtered.categories),
-            Collections.unmodifiableMap(filtered.entries),
-            Collections.unmodifiableMap(layout),
-            Collections.unmodifiableSet(filtered.disabled)
-        )
+        current =
+            ResearchCatalogSnapshot(
+                Collections.unmodifiableMap(filtered.categories),
+                Collections.unmodifiableMap(filtered.entries),
+                Collections.unmodifiableMap(layout),
+                Collections.unmodifiableSet(filtered.disabled),
+            )
         reloadListeners.forEach { it(current) }
     }
 
@@ -148,20 +155,21 @@ object ResearchCatalog {
         synchronized(this) {
             install(
                 LinkedHashMap<Identifier, BookCategory>().apply { categories.forEach { put(it.id, it) } },
-                LinkedHashMap<Identifier, BookEntry>().apply { entries.forEach { put(it.id, it) } }
+                LinkedHashMap<Identifier, BookEntry>().apply { entries.forEach { put(it.id, it) } },
             )
         }
     }
 
-    private fun disabledResearches(): Set<Identifier> = buildSet {
-        addAll(disabledEntries)
-        disabledProviders.forEach { provider -> addAll(provider()) }
-    }
+    private fun disabledResearches(): Set<Identifier> =
+        buildSet {
+            addAll(disabledEntries)
+            disabledProviders.forEach { provider -> addAll(provider()) }
+        }
 
     private fun filterDisabled(
         categories: LinkedHashMap<Identifier, BookCategory>,
         entries: LinkedHashMap<Identifier, BookEntry>,
-        explicitDisabled: Set<Identifier>
+        explicitDisabled: Set<Identifier>,
     ): FilteredResearchCatalog {
         val activeCategories = LinkedHashMap(categories)
         val activeEntries = LinkedHashMap(entries)
@@ -171,26 +179,27 @@ object ResearchCatalog {
         var changed: Boolean
         do {
             changed = false
-            val removedEntries = activeEntries.values
-                .filter { entry ->
-                    entry.id in disabled ||
-                        entry.dependencies.any { it in disabled || (it in knownEntries && it !in activeEntries) } ||
-                        entry.requirements.any { requirement ->
-                            val target = requirement.researchId(entry.id)
-                            target in disabled || (target in knownEntries && target !in activeEntries)
-                        } ||
-                        entry.category?.let { it in knownCategories && it !in activeCategories } == true
-                }
-                .mapTo(LinkedHashSet(), BookEntry::id)
+            val removedEntries =
+                activeEntries.values
+                    .filter { entry ->
+                        entry.id in disabled ||
+                            entry.dependencies.any { it in disabled || (it in knownEntries && it !in activeEntries) } ||
+                            entry.requirements.any { requirement ->
+                                val target = requirement.researchId(entry.id)
+                                target in disabled || (target in knownEntries && target !in activeEntries)
+                            } ||
+                            entry.category?.let { it in knownCategories && it !in activeCategories } == true
+                    }.mapTo(LinkedHashSet(), BookEntry::id)
             if (removedEntries.isNotEmpty()) {
                 activeEntries.keys.removeAll(removedEntries)
                 disabled += removedEntries
                 changed = true
             }
 
-            val removedCategories = activeCategories.values
-                .filter { category -> category.dependencies.any { it in disabled || (it in knownEntries && it !in activeEntries) } }
-                .mapTo(LinkedHashSet(), BookCategory::id)
+            val removedCategories =
+                activeCategories.values
+                    .filter { category -> category.dependencies.any { it in disabled || (it in knownEntries && it !in activeEntries) } }
+                    .mapTo(LinkedHashSet(), BookCategory::id)
             if (removedCategories.isNotEmpty()) {
                 activeCategories.keys.removeAll(removedCategories)
                 changed = true
@@ -202,19 +211,23 @@ object ResearchCatalog {
     private data class FilteredResearchCatalog(
         val categories: LinkedHashMap<Identifier, BookCategory>,
         val entries: LinkedHashMap<Identifier, BookEntry>,
-        val disabled: Set<Identifier>
+        val disabled: Set<Identifier>,
     )
 }
 
 private object ResearchLayout {
     fun resolve(
         categories: Map<Identifier, BookCategory>,
-        entries: Map<Identifier, BookEntry>
+        entries: Map<Identifier, BookEntry>,
     ): LinkedHashMap<Identifier, ResolvedBookEntry> {
         if (entries.isNotEmpty()) require(categories.isNotEmpty()) { "Research entries require at least one category" }
         categories.values.forEach { category ->
             category.dependencies.forEach { require(it in entries) { "Unknown dependency $it in category ${category.id}" } }
-            category.bookLevel?.let { require(ECRegistries.BOOK_TYPES.containsKey(it)) { "Unknown book level $it in category ${category.id}" } }
+            category.bookLevel?.let {
+                require(
+                    ECRegistries.BOOK_TYPES.containsKey(it),
+                ) { "Unknown book level $it in category ${category.id}" }
+            }
         }
         entries.values.forEach { entry ->
             entry.category?.let { require(it in categories) { "Unknown category $it in ${entry.id}" } }
@@ -228,19 +241,26 @@ private object ResearchLayout {
         return result
     }
 
-    private fun validateTextRequirements(entry: BookEntry, entries: Map<Identifier, BookEntry>) {
-        entry.pages.asSequence()
+    private fun validateTextRequirements(
+        entry: BookEntry,
+        entries: Map<Identifier, BookEntry>,
+    ) {
+        entry.pages
+            .asSequence()
             .flatMap { it.elements.asSequence() }
             .mapNotNull { it.content as? TextBookElement }
             .flatMap { element ->
                 sequenceOf(element.requirement) + element.variants.asSequence().map(BookTextVariant::requirement)
-            }
-            .filterNotNull()
+            }.filterNotNull()
             .filter { it.researchId(entry.id) in entries }
             .forEach { validateRequirement(entry.id, it, entries) }
     }
 
-    private fun validateRequirement(owner: Identifier, requirement: ResearchRequirement, entries: Map<Identifier, BookEntry>) {
+    private fun validateRequirement(
+        owner: Identifier,
+        requirement: ResearchRequirement,
+        entries: Map<Identifier, BookEntry>,
+    ) {
         val targetId = requirement.researchId(owner)
         val target = entries[targetId] ?: error("Unknown research $targetId in $owner")
         requirement.task?.let { taskId ->
@@ -254,20 +274,22 @@ private object ResearchLayout {
         categories: Map<Identifier, BookCategory>,
         entries: Map<Identifier, BookEntry>,
         result: LinkedHashMap<Identifier, ResolvedBookEntry>,
-        visiting: MutableSet<Identifier>
+        visiting: MutableSet<Identifier>,
     ): ResolvedBookEntry {
         result[id]?.let { return it }
         check(visiting.add(id)) { "Cyclic research dependency at $id" }
         val entry = entries.getValue(id)
         val dependencies = entry.dependencies.map { resolveEntry(it, categories, entries, result, visiting) }
-        val category = entry.category ?: dependencies.lastOrNull()?.category
-            ?: categories.values.minWith(compareBy<BookCategory> { it.order }.thenBy { it.id.toString() }).id
+        val category =
+            entry.category ?: dependencies.lastOrNull()?.category
+                ?: categories.values.minWith(compareBy<BookCategory> { it.order }.thenBy { it.id.toString() }).id
         val parent = dependencies.lastOrNull()
-        val desired = entry.position
-            ?: parent?.let { alignedPosition(entry, it) }
-            ?: parent
-                ?.takeIf { entry.category == null }
-                ?.let { BookPosition(it.position.x, it.position.y + nodeHeight(it.entry) + NODE_GAP) }
+        val desired =
+            entry.position
+                ?: parent?.let { alignedPosition(entry, it) }
+                ?: parent
+                    ?.takeIf { entry.category == null }
+                    ?.let { BookPosition(it.position.x, it.position.y + nodeHeight(it.entry) + NODE_GAP) }
         val position = findFree(category, desired, entry, result.values)
         val resolved = ResolvedBookEntry(entry, category, position)
         result[id] = resolved
@@ -275,7 +297,10 @@ private object ResearchLayout {
         return resolved
     }
 
-    private fun alignedPosition(entry: BookEntry, parent: ResolvedBookEntry): BookPosition? {
+    private fun alignedPosition(
+        entry: BookEntry,
+        parent: ResolvedBookEntry,
+    ): BookPosition? {
         val align = entry.align
         if (align.isEmpty()) return null
         if (BookEntryAlign.UP in align && BookEntryAlign.DOWN in align) return null
@@ -298,7 +323,7 @@ private object ResearchLayout {
         category: Identifier,
         desired: BookPosition?,
         entry: BookEntry,
-        existing: Collection<ResolvedBookEntry>
+        existing: Collection<ResolvedBookEntry>,
     ): BookPosition {
         val occupied = existing.filter { it.category == category }
         if (desired != null && occupied.none { overlaps(desired, entry, it.position, it.entry) }) return desired
@@ -315,7 +340,12 @@ private object ResearchLayout {
         error("Unable to place research ${entry.id}")
     }
 
-    private fun overlaps(a: BookPosition, aEntry: BookEntry, b: BookPosition, bEntry: BookEntry): Boolean {
+    private fun overlaps(
+        a: BookPosition,
+        aEntry: BookEntry,
+        b: BookPosition,
+        bEntry: BookEntry,
+    ): Boolean {
         val padding = NODE_GAP
         return a.x < b.x + nodeWidth(bEntry) + padding &&
             a.x + nodeWidth(aEntry) + padding > b.x &&
@@ -324,6 +354,7 @@ private object ResearchLayout {
     }
 
     private fun nodeWidth(entry: BookEntry) = entry.frame?.width ?: 18
+
     private fun nodeHeight(entry: BookEntry) = entry.frame?.height ?: 18
 
     private const val NODE_GAP = 14

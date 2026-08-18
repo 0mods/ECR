@@ -48,7 +48,7 @@ interface Query {
     }
 }
 
-class BlockEntityQuery(val blockEntity: BlockEntity) : Query {
+class BlockEntityQuery(val blockEntity: BlockEntity): Query {
     private val startTime = anim_time
 
     override val anim_time: Float

@@ -9,8 +9,11 @@ import net.minecraft.network.chat.Component
 import net.minecraft.world.item.ItemStack
 import java.util.Locale
 
-object StructureRecipeRenderer: BookRecipeRenderer<StructureRecipe> {
-    override fun build(recipe: StructureRecipe, builder: BookRecipeRenderBuilder) {
+object StructureRecipeRenderer : BookRecipeRenderer<StructureRecipe> {
+    override fun build(
+        recipe: StructureRecipe,
+        builder: BookRecipeRenderBuilder,
+    ) {
         val display = recipe.display().filterIsInstance<StructureRecipe.Display>().firstOrNull() ?: return
         val font = builder.mc.font
 
@@ -37,7 +40,7 @@ object StructureRecipeRenderer: BookRecipeRenderer<StructureRecipe> {
         listOf(
             Component.translatable("tooltip.$ModId.during", recipe.time),
             Component.translatable("screen.$ModId.research_book.recipe.structure.consume", recipe.consumeStructure),
-            Component.translatable("screen.$ModId.research_book.recipe.structure.chance", chancePercent(recipe.chance))
+            Component.translatable("screen.$ModId.research_book.recipe.structure.chance", chancePercent(recipe.chance)),
         ).forEach { text ->
             renderCenteredText(builder, text, y)
             y += font.lineHeight
@@ -48,13 +51,13 @@ object StructureRecipeRenderer: BookRecipeRenderer<StructureRecipe> {
             (builder.width - MULTIBLOCK_WIDTH) / 2,
             y + SECTION_GAP,
             MULTIBLOCK_WIDTH,
-            MULTIBLOCK_HEIGHT
+            MULTIBLOCK_HEIGHT,
         )
     }
 
     override fun width(recipe: StructureRecipe): Int = RENDER_WIDTH
-    override fun height(recipe: StructureRecipe): Int =
-        if (recipe.structureCenter == null) RENDER_HEIGHT else RENDER_HEIGHT_WITH_CENTER
+
+    override fun height(recipe: StructureRecipe): Int = if (recipe.structureCenter == null) RENDER_HEIGHT else RENDER_HEIGHT_WITH_CENTER
 
     private fun chancePercent(chance: StructureRecipe.Range): String {
         if (chance.isEmpty()) return "100%"
@@ -67,18 +70,22 @@ object StructureRecipeRenderer: BookRecipeRenderer<StructureRecipe> {
         return String.format(Locale.ROOT, "%.2f%%", percent)
     }
 
-    private fun renderCenteredText(builder: BookRecipeRenderBuilder, text: Component, y: Int) {
+    private fun renderCenteredText(
+        builder: BookRecipeRenderBuilder,
+        text: Component,
+        y: Int,
+    ) {
         builder.text(text, centeredX(builder, text), y)
     }
 
-    private fun centeredX(builder: BookRecipeRenderBuilder, text: Component): Int =
-        (builder.width - builder.mc.font.width(text)) / 2
+    private fun centeredX(
+        builder: BookRecipeRenderBuilder,
+        text: Component,
+    ): Int = (builder.width - builder.mc.font.width(text)) / 2
 
-    private fun centeredSlotX(builder: BookRecipeRenderBuilder): Int =
-        (builder.width - SLOT_SIZE) / 2
+    private fun centeredSlotX(builder: BookRecipeRenderBuilder): Int = (builder.width - SLOT_SIZE) / 2
 
-    private fun centeredItemX(builder: BookRecipeRenderBuilder): Int =
-        (builder.width - ITEM_SIZE) / 2
+    private fun centeredItemX(builder: BookRecipeRenderBuilder): Int = (builder.width - ITEM_SIZE) / 2
 
     private const val RENDER_WIDTH = 225
     private const val RENDER_HEIGHT = 192

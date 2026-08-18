@@ -27,26 +27,36 @@ data class BookElementRenderContext(
     val research: Identifier? = null,
     val textLineStart: Int = 0,
     val textLineCount: Int = textLines?.size ?: 0,
-    val scissorArea: ScreenRectangle? = null
+    val scissorArea: ScreenRectangle? = null,
 ) {
     val mc: Minecraft = Minecraft.getInstance()
 }
 
 fun interface BookElementRenderer<T : BookElement> {
-    fun render(context: BookElementRenderContext, element: T)
+    fun render(
+        context: BookElementRenderContext,
+        element: T,
+    )
 }
 
 object BookElementRenderers {
     private val renderers = ConcurrentHashMap<Identifier, BookElementRenderer<out BookElement>>()
 
     @JvmStatic
-    fun <T : BookElement> register(type: Identifier, renderer: BookElementRenderer<T>) {
+    fun <T : BookElement> register(
+        type: Identifier,
+        renderer: BookElementRenderer<T>,
+    ) {
         check(renderers.putIfAbsent(type, renderer) == null) { "Duplicate book element renderer: $type" }
     }
 
     @JvmStatic
     @Suppress("UNCHECKED_CAST")
-    fun render(type: Identifier, context: BookElementRenderContext, element: BookElement): Boolean {
+    fun render(
+        type: Identifier,
+        context: BookElementRenderContext,
+        element: BookElement,
+    ): Boolean {
         val renderer = renderers[type] as? BookElementRenderer<BookElement> ?: return false
         renderer.render(context, element)
         return true

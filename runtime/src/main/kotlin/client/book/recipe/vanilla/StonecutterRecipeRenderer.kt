@@ -8,10 +8,10 @@ import net.minecraft.world.item.Items
 import net.minecraft.world.item.crafting.StonecutterRecipe
 import net.minecraft.world.item.crafting.display.StonecutterRecipeDisplay
 
-object StonecutterRecipeRenderer: BookRecipeRenderer<StonecutterRecipe> {
+object StonecutterRecipeRenderer : BookRecipeRenderer<StonecutterRecipe> {
     override fun build(
         recipe: StonecutterRecipe,
-        builder: BookRecipeRenderBuilder
+        builder: BookRecipeRenderBuilder,
     ) {
         val display = recipe.display().filterIsInstance<StonecutterRecipeDisplay>().firstOrNull() ?: return
 
@@ -36,6 +36,7 @@ object StonecutterRecipeRenderer: BookRecipeRenderer<StonecutterRecipe> {
     }
 
     override fun width(recipe: StonecutterRecipe): Int = RENDER_WIDTH
+
     override fun height(recipe: StonecutterRecipe): Int = RENDER_HEIGHT
 
     private const val RENDER_WIDTH = 128

@@ -1,18 +1,18 @@
 package com.algorithmlx.ecr.common.block.entity
 
+import com.algorithmlx.ecr.api.block.entity.SynchronizedContainerBlockEntity
 import com.algorithmlx.ecr.api.mru.MRUDevice
 import com.algorithmlx.ecr.api.mru.processReceive
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.api.recipe.CachedRecipe
-import com.algorithmlx.ecr.api.utils.count
-import com.algorithmlx.ecr.api.block.entity.SynchronizedContainerBlockEntity
 import com.algorithmlx.ecr.api.utils.StackHelper
+import com.algorithmlx.ecr.api.utils.count
+import com.algorithmlx.ecr.common.menu.MagicTableMenu
+import com.algorithmlx.ecr.common.recipe.MagicTableRecipe
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.MRUTypeRegistry
 import com.algorithmlx.ecr.registry.RecipeTypeRegistry
-import com.algorithmlx.ecr.common.menu.MagicTableMenu
-import com.algorithmlx.ecr.common.recipe.MagicTableRecipe
 import net.minecraft.core.BlockPos
 import net.minecraft.core.NonNullList
 import net.minecraft.network.chat.Component
@@ -33,26 +33,32 @@ import kotlin.jvm.optionals.getOrNull
 
 class MagicTableBlockEntity(
     worldPosition: BlockPos,
-    blockState: BlockState
-): SynchronizedContainerBlockEntity(BlockEntityTypeRegistry.instance.magicTable, worldPosition, blockState), MRUDevice {
+    blockState: BlockState,
+) : SynchronizedContainerBlockEntity(BlockEntityTypeRegistry.instance.magicTable, worldPosition, blockState),
+    MRUDevice {
     private var items: NonNullList<ItemStack> = NonNullList.withSize(8, ItemStack.EMPTY)
 
-    private val containerData: ContainerData = object : ContainerData {
-        override fun get(index: Int): Int  = when (index) {
-            0 -> this@MagicTableBlockEntity.progress
-            1 -> this@MagicTableBlockEntity.maxProgress
-            else -> 0
-        }
+    private val containerData: ContainerData =
+        object : ContainerData {
+            override fun get(index: Int): Int =
+                when (index) {
+                    0 -> this@MagicTableBlockEntity.progress
+                    1 -> this@MagicTableBlockEntity.maxProgress
+                    else -> 0
+                }
 
-        override fun set(index: Int, value: Int) {
-            when (index) {
-                0 -> this@MagicTableBlockEntity.progress = value
-                1 -> this@MagicTableBlockEntity.maxProgress = value
+            override fun set(
+                index: Int,
+                value: Int,
+            ) {
+                when (index) {
+                    0 -> this@MagicTableBlockEntity.progress = value
+                    1 -> this@MagicTableBlockEntity.maxProgress = value
+                }
             }
-        }
 
-        override fun getCount(): Int = 2
-    }
+            override fun getCount(): Int = 2
+        }
 
     private val recipe = CachedRecipe(RecipeTypeRegistry.instance.magicTable)
 
@@ -69,12 +75,16 @@ class MagicTableBlockEntity(
 
     override fun createMenu(
         containerId: Int,
-        inventory: Inventory
-    ): AbstractContainerMenu = MagicTableMenu(
-        containerId, inventory, this, this,
-        ContainerLevelAccess.create(this.level!!, this.blockPos),
-        containerData
-    )
+        inventory: Inventory,
+    ): AbstractContainerMenu =
+        MagicTableMenu(
+            containerId,
+            inventory,
+            this,
+            this,
+            ContainerLevelAccess.create(this.level!!, this.blockPos),
+            containerData,
+        )
 
     override fun saveAdditional(output: ValueOutput) {
         ContainerHelper.saveAllItems(output, this.items)
@@ -94,7 +104,10 @@ class MagicTableBlockEntity(
 
     override fun getContainerSize(): Int = this.items.size
 
-    override fun canPlaceItem(slot: Int, itemStack: ItemStack): Boolean = if (slot == 5) false else super.canPlaceItem(slot, itemStack)
+    override fun canPlaceItem(
+        slot: Int,
+        itemStack: ItemStack,
+    ): Boolean = if (slot == 5) false else super.canPlaceItem(slot, itemStack)
 
     override val mruStorage: IOMRUStorage = MRUStorageContainer(5000, MRUTypeRegistry.instance.radiationUnit) { setChanged() }
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.RECEIVER
@@ -103,19 +116,22 @@ class MagicTableBlockEntity(
 
     companion object {
         @JvmStatic
-        fun onTick(level: Level, be: MagicTableBlockEntity) {
+        fun onTick(
+            level: Level,
+            be: MagicTableBlockEntity,
+        ) {
             if (level.isClientSide) return
             be.processReceive(level)
             be.processRecipeIfPresent(level)
         }
 
         private fun MagicTableBlockEntity.processRecipeIfPresent(level: Level) {
-            if ((0 ..< 5).all { this.getItem(it).isEmpty }) {
+            if ((0..<5).all { this.getItem(it).isEmpty }) {
                 this.resetProgress()
                 return
             }
 
-            val input = MagicTableRecipe.Input((0 ..< 5).map { this.getItem(it) })
+            val input = MagicTableRecipe.Input((0..<5).map { this.getItem(it) })
 
             val recipe = this.recipe.testAndGet(input, level)
             if (recipe == null) {
@@ -135,7 +151,7 @@ class MagicTableBlockEntity(
 
             if (time > this.progress) return
 
-            val inputs = recipe.inputs.getOrNull()
+            val inputs = recipe.input.getOrNull()
 
             if (inputs != null) {
                 val positioned = input.craftingInput()
@@ -143,8 +159,8 @@ class MagicTableBlockEntity(
                 val ingredients = inputs.ingredients()
                 val mirrored = shouldConsumeMirrored(inputs, craftingInput)
 
-                (0 ..< inputs.height()).forEach { y ->
-                    (0 ..< inputs.width()).forEach { x ->
+                (0..<inputs.height()).forEach { y ->
+                    (0..<inputs.width()).forEach { x ->
                         val ingredientX = if (mirrored) inputs.width() - x - 1 else x
                         val ingredient = ingredients[ingredientX + y * inputs.width()].getOrNull() ?: return@forEach
                         val slot = x + positioned.left() + (y + positioned.top()) * 2
@@ -156,14 +172,19 @@ class MagicTableBlockEntity(
             val catalyst = recipe.catalyst.getOrNull()
             catalyst?.let { this.removeItem(4, it.count) }
 
-            if (this.getItem(5).isEmpty)
+            if (this.getItem(5).isEmpty) {
                 this.setItem(5, result.create())
-            else this.getItem(5).grow(result.count())
+            } else {
+                this.getItem(5).grow(result.count())
+            }
 
             this.resetProgress()
         }
 
-        private fun MagicTableBlockEntity.processTick(time: Int, mru: Int) {
+        private fun MagicTableBlockEntity.processTick(
+            time: Int,
+            mru: Int,
+        ) {
             val storage = this.mruStorage
             if (this.progress >= time || !storage.canExtract(mru)) return
 
@@ -178,14 +199,20 @@ class MagicTableBlockEntity(
             this.setChanged()
         }
 
-        private fun shouldConsumeMirrored(pattern: ShapedRecipePattern, input: CraftingInput): Boolean =
-            !matchesPattern(pattern, input, mirrored = false) && matchesPattern(pattern, input, mirrored = true)
+        private fun shouldConsumeMirrored(
+            pattern: ShapedRecipePattern,
+            input: CraftingInput,
+        ): Boolean = !matchesPattern(pattern, input, mirrored = false) && matchesPattern(pattern, input, mirrored = true)
 
-        private fun matchesPattern(pattern: ShapedRecipePattern, input: CraftingInput, mirrored: Boolean): Boolean {
+        private fun matchesPattern(
+            pattern: ShapedRecipePattern,
+            input: CraftingInput,
+            mirrored: Boolean,
+        ): Boolean {
             val ingredients = pattern.ingredients()
 
-            (0 ..< pattern.height()).forEach { y ->
-                (0 ..< pattern.width()).forEach { x ->
+            (0..<pattern.height()).forEach { y ->
+                (0..<pattern.width()).forEach { x ->
                     val ingredientX = if (mirrored) pattern.width() - x - 1 else x
                     val ingredient = ingredients[ingredientX + y * pattern.width()]
                     if (!Ingredient.testOptionalIngredient(ingredient, input.getItem(x, y))) return false

@@ -8,7 +8,13 @@ import kotlin.math.roundToInt
 import kotlin.math.sin
 
 object BookThreadRenderer {
-    fun render(graphics: GuiGraphicsExtractor, from: Pair<Int, Int>, to: Pair<Int, Int>, completed: Boolean, baseColor: Int? = null) {
+    fun render(
+        graphics: GuiGraphicsExtractor,
+        from: Pair<Int, Int>,
+        to: Pair<Int, Int>,
+        completed: Boolean,
+        baseColor: Int? = null,
+    ) {
         val dx = (to.first - from.first).toFloat()
         val dy = (to.second - from.second).toFloat()
         val distance = hypot(dx.toDouble(), dy.toDouble()).toFloat()
@@ -23,27 +29,36 @@ object BookThreadRenderer {
                 if (!completed && (step + (time * 10f).toInt() + strand * 3) % 10 >= 6) continue
                 val progress = step.toFloat() / steps
                 val envelope = sin(Math.PI.toFloat() * progress)
-                val wave = if (completed) {
-                    sin(progress * Math.PI.toFloat() * 2f + time * 1.4f) * 0.35f * envelope
-                } else {
-                    val spread = (strand - 1) * 1.35f
-                    val frequency = Math.PI.toFloat() * (4.5f + strand)
-                    (spread + sin(progress * frequency + time * (1.6f + strand * 0.18f) + strand * 2.1f) *
-                        (2.1f + strand * 0.45f)) * envelope
-                }
+                val wave =
+                    if (completed) {
+                        sin(progress * Math.PI.toFloat() * 2f + time * 1.4f) * 0.35f * envelope
+                    } else {
+                        val spread = (strand - 1) * 1.35f
+                        val frequency = Math.PI.toFloat() * (4.5f + strand)
+                        (
+                            spread + sin(progress * frequency + time * (1.6f + strand * 0.18f) + strand * 2.1f) *
+                                (2.1f + strand * 0.45f)
+                        ) * envelope
+                    }
                 val x = Mth.lerp(progress, from.first.toFloat(), to.first.toFloat()) + normalX * wave
                 val y = Mth.lerp(progress, from.second.toFloat(), to.second.toFloat()) + normalY * wave
-                val color = if (baseColor == null) {
-                    if (completed) DEFAULT_COMPLETED else DEFAULT_UNFINISHED[strand]
-                } else {
-                    threadColor(baseColor, strand, progress, completed)
-                }
+                val color =
+                    if (baseColor == null) {
+                        if (completed) DEFAULT_COMPLETED else DEFAULT_UNFINISHED[strand]
+                    } else {
+                        threadColor(baseColor, strand, progress, completed)
+                    }
                 graphics.fill(BookRenderPipelines.THREAD, x.toInt(), y.toInt(), x.toInt() + 2, y.toInt() + 2, color)
             }
         }
     }
 
-    private fun threadColor(baseColor: Int, strand: Int, progress: Float, completed: Boolean): Int {
+    private fun threadColor(
+        baseColor: Int,
+        strand: Int,
+        progress: Float,
+        completed: Boolean,
+    ): Int {
         val alpha = if (baseColor ushr 24 == 0) 0xFF else baseColor ushr 24
         val red = (baseColor ushr 16) and 0xFF
         val green = (baseColor ushr 8) and 0xFF

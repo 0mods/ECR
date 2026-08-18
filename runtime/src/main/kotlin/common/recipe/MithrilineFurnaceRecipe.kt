@@ -28,11 +28,11 @@ import net.minecraft.world.level.Level
 class MithrilineFurnaceRecipe(
     val input: Ingredient,
     val espe: Int,
-    private val result: ItemStackTemplate
-): Recipe<SingleRecipeInput> {
+    private val result: ItemStackTemplate,
+) : Recipe<SingleRecipeInput> {
     override fun matches(
         input: SingleRecipeInput,
-        level: Level
+        level: Level,
     ): Boolean {
         if (level.isClientSide || input.isEmpty) return false
 
@@ -42,22 +42,32 @@ class MithrilineFurnaceRecipe(
     override fun assemble(input: SingleRecipeInput): ItemStack = this.result.create()
 
     override fun showNotification(): Boolean = false
+
     override fun group(): String = "$ModId:${ECRModIDs.MITHRILINE_FURNACE}"
+
     override fun getSerializer(): RecipeSerializer<out Recipe<SingleRecipeInput>> = RecipeSerializerRegistry.instance.mithrilineFurnace
+
     override fun getType(): RecipeType<out Recipe<SingleRecipeInput>> = RecipeTypeRegistry.instance.mithrilineFurnace
+
     override fun placementInfo(): PlacementInfo = PlacementInfo.NOT_PLACEABLE
+
     override fun recipeBookCategory(): RecipeBookCategory = RecipeBookCategories.FURNACE_MISC
 
-    override fun display(): List<RecipeDisplay> = listOf(
-        Display(
-            input.display(),
-            SlotDisplay.ItemStackSlotDisplay(result),
-            SlotDisplay.ItemSlotDisplay(BlockRegistry.instance.mithrilineFurnace.asItem())
+    override fun display(): List<RecipeDisplay> =
+        listOf(
+            Display(
+                input.display(),
+                SlotDisplay.ItemStackSlotDisplay(result),
+                SlotDisplay.ItemSlotDisplay(BlockRegistry.instance.mithrilineFurnace.asItem()),
+            ),
         )
-    )
 
     @JvmRecord
-    data class Display(val ingredient: SlotDisplay, private val resultDisplay: SlotDisplay, private val station: SlotDisplay): RecipeDisplay {
+    data class Display(
+        val ingredient: SlotDisplay,
+        private val resultDisplay: SlotDisplay,
+        private val station: SlotDisplay,
+    ) : RecipeDisplay {
         override fun result(): SlotDisplay = resultDisplay
 
         override fun craftingStation(): SlotDisplay = station
@@ -66,38 +76,53 @@ class MithrilineFurnaceRecipe(
 
         companion object {
             @JvmField
-            val MAP_CODEC: MapCodec<Display> = RecordCodecBuilder.mapCodec {
-                it.group(
-                    SlotDisplay.CODEC.fieldOf("input").forGetter(Display::ingredient),
-                    SlotDisplay.CODEC.fieldOf("result").forGetter(Display::resultDisplay),
-                    SlotDisplay.CODEC.fieldOf("station").forGetter(Display::station)
-                ).apply(it, ::Display)
-            }
+            val MAP_CODEC: MapCodec<Display> =
+                RecordCodecBuilder.mapCodec {
+                    it
+                        .group(
+                            SlotDisplay.CODEC.fieldOf("input").forGetter(Display::ingredient),
+                            SlotDisplay.CODEC.fieldOf("result").forGetter(Display::resultDisplay),
+                            SlotDisplay.CODEC.fieldOf("station").forGetter(Display::station),
+                        ).apply(it, ::Display)
+                }
 
             @JvmField
-            val STREAM_CODEC = StreamCodec.composite(
-                SlotDisplay.STREAM_CODEC, Display::ingredient, SlotDisplay.STREAM_CODEC,
-                Display::resultDisplay, SlotDisplay.STREAM_CODEC, Display::station, ::Display
-            )
+            val STREAM_CODEC =
+                StreamCodec.composite(
+                    SlotDisplay.STREAM_CODEC,
+                    Display::ingredient,
+                    SlotDisplay.STREAM_CODEC,
+                    Display::resultDisplay,
+                    SlotDisplay.STREAM_CODEC,
+                    Display::station,
+                    ::Display,
+                )
         }
     }
 
     companion object {
         @JvmField
-        val CODEC: MapCodec<MithrilineFurnaceRecipe> = RecordCodecBuilder.mapCodec {
-            it.group(
-                Ingredient.CODEC.fieldOf("input").forGetter(MithrilineFurnaceRecipe::input),
-                Codec.INT.fieldOf("espe").forGetter(MithrilineFurnaceRecipe::espe),
-                ItemStackTemplate.CODEC.fieldOf("result").forGetter(MithrilineFurnaceRecipe::result)
-            ).apply(it, ::MithrilineFurnaceRecipe)
-        }
+        val CODEC: MapCodec<MithrilineFurnaceRecipe> =
+            RecordCodecBuilder.mapCodec {
+                it
+                    .group(
+                        Ingredient.CODEC.fieldOf("input").forGetter(MithrilineFurnaceRecipe::input),
+                        Codec.INT.fieldOf("espe").forGetter(MithrilineFurnaceRecipe::espe),
+                        ItemStackTemplate.CODEC.fieldOf("result").forGetter(MithrilineFurnaceRecipe::result),
+                    ).apply(it, ::MithrilineFurnaceRecipe)
+            }
 
         @JvmField
-        val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, MithrilineFurnaceRecipe> = StreamCodec.of(
-            ::encode, ::decode
-        )
+        val STREAM_CODEC: StreamCodec<RegistryFriendlyByteBuf, MithrilineFurnaceRecipe> =
+            StreamCodec.of(
+                ::encode,
+                ::decode,
+            )
 
-        private fun encode(buf: RegistryFriendlyByteBuf, recipe: MithrilineFurnaceRecipe) {
+        private fun encode(
+            buf: RegistryFriendlyByteBuf,
+            recipe: MithrilineFurnaceRecipe,
+        ) {
             Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.input)
             buf.writeInt(recipe.espe)
             ItemStackTemplate.STREAM_CODEC.encode(buf, recipe.result)

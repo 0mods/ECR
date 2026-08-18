@@ -10,9 +10,13 @@ import net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay
 import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay
 import net.minecraft.world.item.crafting.display.SlotDisplay
 
-object CraftingTableRecipeRenderer: BookRecipeRenderer<CraftingRecipe> {
+object CraftingTableRecipeRenderer : BookRecipeRenderer<CraftingRecipe> {
     private val item by lazy { ItemStack(Items.CRAFTING_TABLE) }
-    override fun build(recipe: CraftingRecipe, builder: BookRecipeRenderBuilder) {
+
+    override fun build(
+        recipe: CraftingRecipe,
+        builder: BookRecipeRenderBuilder,
+    ) {
         when (val display = recipe.display().firstOrNull { it is ShapedCraftingRecipeDisplay || it is ShapelessCraftingRecipeDisplay }) {
             is ShapedCraftingRecipeDisplay -> {
                 renderGrid(builder) { row, column ->
@@ -33,12 +37,13 @@ object CraftingTableRecipeRenderer: BookRecipeRenderer<CraftingRecipe> {
 
                 renderResult(builder, display.result())
             }
-
-            else -> Unit
         }
     }
 
-    private fun renderGrid(builder: BookRecipeRenderBuilder, ingredientAt: (row: Int, column: Int) -> SlotDisplay?) {
+    private fun renderGrid(
+        builder: BookRecipeRenderBuilder,
+        ingredientAt: (row: Int, column: Int) -> SlotDisplay?,
+    ) {
         for (row in 0 until GRID_WIDTH) {
             for (column in 0 until GRID_WIDTH) {
                 val x = column * SLOT_SIZE
@@ -53,15 +58,19 @@ object CraftingTableRecipeRenderer: BookRecipeRenderer<CraftingRecipe> {
         }
     }
 
-    private fun renderResult(builder: BookRecipeRenderBuilder, result: SlotDisplay) {
+    private fun renderResult(
+        builder: BookRecipeRenderBuilder,
+        result: SlotDisplay,
+    ) {
         builder.slot(result, BookRecipeSlotType.RESULT, RESULT_X, RESULT_Y)
         val itemX = RESULT_X - (SLOT_SIZE / 2 + ITEM_OFFSET)
         val itemY = RESULT_Y + ITEM_OFFSET
         builder.item(item, itemX, itemY)
         builder.tooltip(
             item.itemName,
-            itemX, itemY,
-            16
+            itemX,
+            itemY,
+            16,
         )
     }
 

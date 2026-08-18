@@ -1,8 +1,8 @@
 package com.algorithmlx.ecr.network
 
-import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.mru.resolveMRUDevice
+import com.algorithmlx.ecr.api.utils.ecRL
 import net.minecraft.core.BlockPos
 import net.minecraft.core.registries.Registries
 import net.minecraft.network.FriendlyByteBuf
@@ -16,8 +16,8 @@ import net.minecraft.world.level.Level
 
 data class BoundGemTooltipRequestPayload(
     val pos: BlockPos,
-    val dimension: ResourceKey<Level>
-): CustomPacketPayload {
+    val dimension: ResourceKey<Level>,
+) : CustomPacketPayload {
     override fun type(): CustomPacketPayload.Type<out CustomPacketPayload> = TYPE
 
     companion object {
@@ -25,26 +25,27 @@ data class BoundGemTooltipRequestPayload(
         val TYPE = CustomPacketPayload.Type<BoundGemTooltipRequestPayload>("bound_gem_tooltip_request".ecRL)
 
         @JvmField
-        val STREAM_CODEC: StreamCodec<FriendlyByteBuf, BoundGemTooltipRequestPayload> = StreamCodec.of(
-            { buffer, value ->
-                buffer.writeLong(value.pos.asLong())
-                buffer.writeIdentifier(value.dimension.identifier())
-            },
-            { buffer ->
-                BoundGemTooltipRequestPayload(
-                    BlockPos.of(buffer.readLong()),
-                    ResourceKey.create(Registries.DIMENSION, buffer.readIdentifier())
-                )
-            }
-        )
+        val STREAM_CODEC: StreamCodec<FriendlyByteBuf, BoundGemTooltipRequestPayload> =
+            StreamCodec.of(
+                { buffer, value ->
+                    buffer.writeLong(value.pos.asLong())
+                    buffer.writeIdentifier(value.dimension.identifier())
+                },
+                { buffer ->
+                    BoundGemTooltipRequestPayload(
+                        BlockPos.of(buffer.readLong()),
+                        ResourceKey.create(Registries.DIMENSION, buffer.readIdentifier()),
+                    )
+                },
+            )
     }
 }
 
 data class BoundGemTooltipResponsePayload(
     val pos: BlockPos,
     val dimension: ResourceKey<Level>,
-    val status: BoundGemTargetStatus
-): CustomPacketPayload {
+    val status: BoundGemTargetStatus,
+) : CustomPacketPayload {
     override fun type(): CustomPacketPayload.Type<out CustomPacketPayload> = TYPE
 
     companion object {
@@ -52,20 +53,21 @@ data class BoundGemTooltipResponsePayload(
         val TYPE = CustomPacketPayload.Type<BoundGemTooltipResponsePayload>("bound_gem_tooltip_response".ecRL)
 
         @JvmField
-        val STREAM_CODEC: StreamCodec<FriendlyByteBuf, BoundGemTooltipResponsePayload> = StreamCodec.of(
-            { buffer, value ->
-                buffer.writeLong(value.pos.asLong())
-                buffer.writeIdentifier(value.dimension.identifier())
-                buffer.writeVarInt(value.status.ordinal)
-            },
-            { buffer ->
-                BoundGemTooltipResponsePayload(
-                    BlockPos.of(buffer.readLong()),
-                    ResourceKey.create(Registries.DIMENSION, buffer.readIdentifier()),
-                    BoundGemTargetStatus.byOrdinal(buffer.readVarInt())
-                )
-            }
-        )
+        val STREAM_CODEC: StreamCodec<FriendlyByteBuf, BoundGemTooltipResponsePayload> =
+            StreamCodec.of(
+                { buffer, value ->
+                    buffer.writeLong(value.pos.asLong())
+                    buffer.writeIdentifier(value.dimension.identifier())
+                    buffer.writeVarInt(value.status.ordinal)
+                },
+                { buffer ->
+                    BoundGemTooltipResponsePayload(
+                        BlockPos.of(buffer.readLong()),
+                        ResourceKey.create(Registries.DIMENSION, buffer.readIdentifier()),
+                        BoundGemTargetStatus.byOrdinal(buffer.readVarInt()),
+                    )
+                },
+            )
     }
 }
 
@@ -73,11 +75,11 @@ enum class BoundGemTargetStatus {
     UNKNOWN,
     MRU_EXPORTER,
     MRU_CONNECTABLE_NOT_EXPORTER,
-    NOT_MRU;
+    NOT_MRU,
+    ;
 
     companion object {
-        fun byOrdinal(ordinal: Int): BoundGemTargetStatus =
-            entries.getOrElse(ordinal) { UNKNOWN }
+        fun byOrdinal(ordinal: Int): BoundGemTargetStatus = entries.getOrElse(ordinal) { UNKNOWN }
     }
 }
 
@@ -99,7 +101,10 @@ object BoundGemTooltipNetwork {
     private val pendingRequests = mutableMapOf<TargetKey, Long>()
 
     @JvmStatic
-    fun tooltipStatus(stack: ItemStack, item: BoundGem): BoundGemTargetStatus? {
+    fun tooltipStatus(
+        stack: ItemStack,
+        item: BoundGem,
+    ): BoundGemTargetStatus? {
         val pos = item.getBoundPos(stack) ?: return null
         val dimension = item.getWorld(stack) ?: currentDimension() ?: return null
         val key = TargetKey(pos.immutable(), dimension)
@@ -120,14 +125,20 @@ object BoundGemTooltipNetwork {
     }
 
     @JvmStatic
-    fun handleRequest(player: ServerPlayer, payload: BoundGemTooltipRequestPayload) {
+    fun handleRequest(
+        player: ServerPlayer,
+        payload: BoundGemTooltipRequestPayload,
+    ) {
         val level = player.level().server.getLevel(payload.dimension)
         val status = level?.let { resolveTargetStatus(it, payload.pos) } ?: BoundGemTargetStatus.UNKNOWN
 
         sendResponseToPlayer(player, BoundGemTooltipResponsePayload(payload.pos, payload.dimension, status))
     }
 
-    private fun requestStatus(key: TargetKey, now: Long) {
+    private fun requestStatus(
+        key: TargetKey,
+        now: Long,
+    ) {
         val lastRequestAt = pendingRequests[key]
         if (lastRequestAt != null && now - lastRequestAt < REQUEST_THROTTLE_MS) return
 
@@ -135,14 +146,21 @@ object BoundGemTooltipNetwork {
         sendRequestToServer(BoundGemTooltipRequestPayload(key.pos, key.dimension))
     }
 
-    private fun resolveTargetStatus(level: ServerLevel, pos: BlockPos): BoundGemTargetStatus {
+    private fun resolveTargetStatus(
+        level: ServerLevel,
+        pos: BlockPos,
+    ): BoundGemTargetStatus {
         if (!level.isLoaded(pos)) return BoundGemTargetStatus.UNKNOWN
 
         val device = level.resolveMRUDevice(pos) ?: return BoundGemTargetStatus.NOT_MRU
 
-        return if (device.deviceType.isExporter) BoundGemTargetStatus.MRU_EXPORTER
-        else if (device.deviceType.isConnectable) BoundGemTargetStatus.MRU_CONNECTABLE_NOT_EXPORTER
-        else BoundGemTargetStatus.NOT_MRU
+        return if (device.deviceType.isExporter) {
+            BoundGemTargetStatus.MRU_EXPORTER
+        } else if (device.deviceType.isConnectable) {
+            BoundGemTargetStatus.MRU_CONNECTABLE_NOT_EXPORTER
+        } else {
+            BoundGemTargetStatus.NOT_MRU
+        }
     }
 
     private fun trimCache() {
@@ -156,11 +174,11 @@ object BoundGemTooltipNetwork {
 
     private data class TargetKey(
         val pos: BlockPos,
-        val dimension: ResourceKey<Level>
+        val dimension: ResourceKey<Level>,
     )
 
     private data class CachedStatus(
         val status: BoundGemTargetStatus,
-        val updatedAt: Long
+        val updatedAt: Long,
     )
 }

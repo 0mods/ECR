@@ -9,7 +9,9 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload
 import net.minecraft.server.level.ServerPlayer
 import java.util.UUID
 
-data class SoulStoneTooltipRequestPayload(val owner: UUID) : CustomPacketPayload {
+data class SoulStoneTooltipRequestPayload(
+    val owner: UUID,
+) : CustomPacketPayload {
     override fun type(): CustomPacketPayload.Type<out CustomPacketPayload> = TYPE
 
     companion object {
@@ -17,16 +19,17 @@ data class SoulStoneTooltipRequestPayload(val owner: UUID) : CustomPacketPayload
         val TYPE = CustomPacketPayload.Type<SoulStoneTooltipRequestPayload>("soul_stone_tooltip_request".ecRL)
 
         @JvmField
-        val STREAM_CODEC: StreamCodec<FriendlyByteBuf, SoulStoneTooltipRequestPayload> = StreamCodec.of(
-            { buffer, value -> UUIDUtil.STREAM_CODEC.encode(buffer, value.owner) },
-            { buffer -> SoulStoneTooltipRequestPayload(UUIDUtil.STREAM_CODEC.decode(buffer)) }
-        )
+        val STREAM_CODEC: StreamCodec<FriendlyByteBuf, SoulStoneTooltipRequestPayload> =
+            StreamCodec.of(
+                { buffer, value -> UUIDUtil.STREAM_CODEC.encode(buffer, value.owner) },
+                { buffer -> SoulStoneTooltipRequestPayload(UUIDUtil.STREAM_CODEC.decode(buffer)) },
+            )
     }
 }
 
 data class SoulStoneTooltipResponsePayload(
     val owner: UUID,
-    val mru: Int?
+    val mru: Int?,
 ) : CustomPacketPayload {
     override fun type(): CustomPacketPayload.Type<out CustomPacketPayload> = TYPE
 
@@ -35,19 +38,20 @@ data class SoulStoneTooltipResponsePayload(
         val TYPE = CustomPacketPayload.Type<SoulStoneTooltipResponsePayload>("soul_stone_tooltip_response".ecRL)
 
         @JvmField
-        val STREAM_CODEC: StreamCodec<FriendlyByteBuf, SoulStoneTooltipResponsePayload> = StreamCodec.of(
-            { buffer, value ->
-                UUIDUtil.STREAM_CODEC.encode(buffer, value.owner)
-                buffer.writeBoolean(value.mru != null)
-                value.mru?.let(buffer::writeVarInt)
-            },
-            { buffer ->
-                SoulStoneTooltipResponsePayload(
-                    UUIDUtil.STREAM_CODEC.decode(buffer),
-                    if (buffer.readBoolean()) buffer.readVarInt() else null
-                )
-            }
-        )
+        val STREAM_CODEC: StreamCodec<FriendlyByteBuf, SoulStoneTooltipResponsePayload> =
+            StreamCodec.of(
+                { buffer, value ->
+                    UUIDUtil.STREAM_CODEC.encode(buffer, value.owner)
+                    buffer.writeBoolean(value.mru != null)
+                    value.mru?.let(buffer::writeVarInt)
+                },
+                { buffer ->
+                    SoulStoneTooltipResponsePayload(
+                        UUIDUtil.STREAM_CODEC.decode(buffer),
+                        if (buffer.readBoolean()) buffer.readVarInt() else null,
+                    )
+                },
+            )
     }
 }
 
@@ -81,8 +85,15 @@ object SoulStoneTooltipNetwork {
     }
 
     @JvmStatic
-    fun handleRequest(requester: ServerPlayer, payload: SoulStoneTooltipRequestPayload) {
-        val owner = requester.level().server.playerList.getPlayer(payload.owner)
+    fun handleRequest(
+        requester: ServerPlayer,
+        payload: SoulStoneTooltipRequestPayload,
+    ) {
+        val owner =
+            requester
+                .level()
+                .server.playerList
+                .getPlayer(payload.owner)
         val mru = owner?.playerMatrix?.mru
         sendResponseToPlayer(requester, SoulStoneTooltipResponsePayload(payload.owner, mru))
     }
@@ -93,7 +104,10 @@ object SoulStoneTooltipNetwork {
         pendingRequests.clear()
     }
 
-    private fun request(owner: UUID, now: Long) {
+    private fun request(
+        owner: UUID,
+        now: Long,
+    ) {
         val lastRequestAt = pendingRequests[owner]
         if (lastRequestAt != null && now - lastRequestAt < REQUEST_THROTTLE_MS) return
 
@@ -110,5 +124,8 @@ object SoulStoneTooltipNetwork {
         }
     }
 
-    private data class CachedMatrix(val mru: Int?, val updatedAt: Long)
+    private data class CachedMatrix(
+        val mru: Int?,
+        val updatedAt: Long,
+    )
 }

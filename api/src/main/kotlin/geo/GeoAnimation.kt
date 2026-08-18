@@ -6,19 +6,19 @@ enum class GeoLoopMode {
     FROM_FILE,
     ONCE,
     LOOP,
-    HOLD
+    HOLD,
 }
 
 enum class GeoBlendMode {
     ADDITIVE,
-    OVERRIDE
+    OVERRIDE,
 }
 
 enum class AnimationType {
     PLAY_ONCE,
     PLAY_FREEZE,
     PLAY_LOOPED,
-    PLAY_REVERSED
+    PLAY_REVERSED,
 }
 
 data class GeoAnimationPlayback(
@@ -28,7 +28,7 @@ data class GeoAnimationPlayback(
     val speed: Float,
     val weight: Float,
     val loop: GeoLoopMode,
-    val blend: GeoBlendMode
+    val blend: GeoBlendMode,
 )
 
 class GeoAnimationState {
@@ -38,22 +38,25 @@ class GeoAnimationState {
     fun play(
         animation: String,
         type: AnimationType = AnimationType.PLAY_ONCE,
-        nowSeconds: Double = Double.NaN
+        nowSeconds: Double = Double.NaN,
     ) = play(
         MAIN_LAYER,
         animation,
         nowSeconds = nowSeconds,
         speed = if (type == AnimationType.PLAY_REVERSED) -1F else 1F,
-        loop = when (type) {
-            AnimationType.PLAY_ONCE, AnimationType.PLAY_REVERSED -> GeoLoopMode.ONCE
-            AnimationType.PLAY_FREEZE -> GeoLoopMode.HOLD
-            AnimationType.PLAY_LOOPED -> GeoLoopMode.LOOP
-        }
+        loop =
+            when (type) {
+                AnimationType.PLAY_ONCE, AnimationType.PLAY_REVERSED -> GeoLoopMode.ONCE
+                AnimationType.PLAY_FREEZE -> GeoLoopMode.HOLD
+                AnimationType.PLAY_LOOPED -> GeoLoopMode.LOOP
+            },
     )
 
     @Synchronized
-    fun play(animation: String, nowSeconds: Double) =
-        play(animation, AnimationType.PLAY_ONCE, nowSeconds)
+    fun play(
+        animation: String,
+        nowSeconds: Double,
+    ) = play(animation, AnimationType.PLAY_ONCE, nowSeconds)
 
     @Synchronized
     fun play(
@@ -64,7 +67,7 @@ class GeoAnimationState {
         weight: Float = 1F,
         loop: GeoLoopMode = GeoLoopMode.FROM_FILE,
         blend: GeoBlendMode = GeoBlendMode.ADDITIVE,
-        restart: Boolean = true
+        restart: Boolean = true,
     ) {
         require(layer.isNotBlank()) { "Animation layer must not be blank" }
         require(animation.isNotBlank()) { "Animation identifier must not be blank" }
@@ -74,14 +77,15 @@ class GeoAnimationState {
         val current = playbacks[layer]
         if (!restart && current?.animation == animation) return
 
-        playbacks[layer] = MutablePlayback(
-            animation,
-            nowSeconds.takeIf(Double::isFinite),
-            speed,
-            weight,
-            loop,
-            blend
-        )
+        playbacks[layer] =
+            MutablePlayback(
+                animation,
+                nowSeconds.takeIf(Double::isFinite),
+                speed,
+                weight,
+                loop,
+                blend,
+            )
     }
 
     @Synchronized
@@ -90,7 +94,7 @@ class GeoAnimationState {
         animation: String,
         speed: Float = 1F,
         weight: Float = 1F,
-        blend: GeoBlendMode = GeoBlendMode.ADDITIVE
+        blend: GeoBlendMode = GeoBlendMode.ADDITIVE,
     ) = play(layer, animation, speed = speed, weight = weight, loop = GeoLoopMode.LOOP, blend = blend, restart = false)
 
     @Synchronized
@@ -104,8 +108,10 @@ class GeoAnimationState {
     }
 
     @Synchronized
-    fun isPlaying(layer: String, animation: String? = null): Boolean =
-        playbacks[layer]?.let { animation == null || it.animation == animation } == true
+    fun isPlaying(
+        layer: String,
+        animation: String? = null,
+    ): Boolean = playbacks[layer]?.let { animation == null || it.animation == animation } == true
 
     @Synchronized
     internal fun removeIfCurrent(playback: GeoAnimationPlayback): Boolean {
@@ -123,18 +129,19 @@ class GeoAnimationState {
     }
 
     @Synchronized
-    fun snapshot(nowSeconds: Double): List<GeoAnimationPlayback> = playbacks.map { (layer, playback) ->
-        val start = playback.startTimeSeconds ?: nowSeconds.also { playback.startTimeSeconds = it }
-        GeoAnimationPlayback(
-            layer,
-            playback.animation,
-            start,
-            playback.speed,
-            playback.weight,
-            playback.loop,
-            playback.blend
-        )
-    }
+    fun snapshot(nowSeconds: Double): List<GeoAnimationPlayback> =
+        playbacks.map { (layer, playback) ->
+            val start = playback.startTimeSeconds ?: nowSeconds.also { playback.startTimeSeconds = it }
+            GeoAnimationPlayback(
+                layer,
+                playback.animation,
+                start,
+                playback.speed,
+                playback.weight,
+                playback.loop,
+                playback.blend,
+            )
+        }
 
     private data class MutablePlayback(
         val animation: String,
@@ -142,7 +149,7 @@ class GeoAnimationState {
         val speed: Float,
         val weight: Float,
         val loop: GeoLoopMode,
-        val blend: GeoBlendMode
+        val blend: GeoBlendMode,
     )
 
     companion object {

@@ -2,8 +2,6 @@ package com.algorithmlx.ecr.fabric.init
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.chunk.ChunkLoadingPlatform
-import com.algorithmlx.ecr.api.utils.ecRL
-import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
 import com.algorithmlx.ecr.api.geo.GeoAnimationNetwork
 import com.algorithmlx.ecr.api.geo.GeoBlockAnimationPayload
 import com.algorithmlx.ecr.api.geo.GeoBlockAnimationStopPayload
@@ -11,6 +9,7 @@ import com.algorithmlx.ecr.api.geo.GeoEntityAnimationPayload
 import com.algorithmlx.ecr.api.geo.GeoEntityAnimationStopPayload
 import com.algorithmlx.ecr.api.geo.GeoItemAnimationPayload
 import com.algorithmlx.ecr.api.geo.GeoItemAnimationStopPayload
+import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
 import com.algorithmlx.ecr.api.item.*
 import com.algorithmlx.ecr.api.menu.MenuTypeData
 import com.algorithmlx.ecr.api.mru.*
@@ -19,8 +18,10 @@ import com.algorithmlx.ecr.api.registries.*
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.ResearchAction
 import com.algorithmlx.ecr.api.utils.countByIngredient
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.utils.openMenuScreenInternal
 import com.algorithmlx.ecr.common.components.PlayerMatrixStorage
+import com.algorithmlx.ecr.common.init.ECRCommands
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.init.config.ConfigManager
 import com.algorithmlx.ecr.common.init.config.ECConfig
@@ -28,9 +29,7 @@ import com.algorithmlx.ecr.common.init.events.ECEvents
 import com.algorithmlx.ecr.common.init.reload.ResearchReloadListener
 import com.algorithmlx.ecr.common.init.reload.SoulStoneDataReloadListener
 import com.algorithmlx.ecr.common.item.NamedBlockItem
-import com.algorithmlx.ecr.registry.*
 import com.algorithmlx.ecr.common.research.ResearchConfigDisabler
-import com.algorithmlx.ecr.common.init.ECRCommands
 import com.algorithmlx.ecr.fabric.api.CountIngredient
 import com.algorithmlx.ecr.fabric.chunk.FabricChunkLoadingPlatform
 import com.algorithmlx.ecr.fabric.init.registry.FabricBlockCodecRegistry
@@ -54,10 +53,11 @@ import com.algorithmlx.ecr.fabric.utils.FabricPlatformUtils
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
 import com.algorithmlx.ecr.network.BoundGemTooltipRequestPayload
 import com.algorithmlx.ecr.network.BoundGemTooltipResponsePayload
-import com.algorithmlx.ecr.network.FinishCraftParticle
 import com.algorithmlx.ecr.network.SoulStoneTooltipNetwork
 import com.algorithmlx.ecr.network.SoulStoneTooltipRequestPayload
 import com.algorithmlx.ecr.network.SoulStoneTooltipResponsePayload
+import com.algorithmlx.ecr.registry.*
+import com.algorithmlx.ecr.utils.PlatformUtils
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
@@ -87,7 +87,6 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
-import com.algorithmlx.ecr.utils.PlatformUtils
 import java.io.File
 
 object FabricInit {
@@ -158,32 +157,28 @@ object FabricInit {
         PayloadTypeRegistry.serverboundPlay().register(SoulStoneTooltipRequestPayload.TYPE, SoulStoneTooltipRequestPayload.STREAM_CODEC)
         PayloadTypeRegistry.clientboundPlay().register(SoulStoneTooltipResponsePayload.TYPE, SoulStoneTooltipResponsePayload.STREAM_CODEC)
         PayloadTypeRegistry.clientboundPlay().register(
-            FinishCraftParticle.TYPE,
-            FinishCraftParticle.STREAM_CODEC
-        )
-        PayloadTypeRegistry.clientboundPlay().register(
             GeoBlockAnimationPayload.TYPE,
-            GeoBlockAnimationPayload.STREAM_CODEC
+            GeoBlockAnimationPayload.STREAM_CODEC,
         )
         PayloadTypeRegistry.clientboundPlay().register(
             GeoEntityAnimationPayload.TYPE,
-            GeoEntityAnimationPayload.STREAM_CODEC
+            GeoEntityAnimationPayload.STREAM_CODEC,
         )
         PayloadTypeRegistry.clientboundPlay().register(
             GeoItemAnimationPayload.TYPE,
-            GeoItemAnimationPayload.STREAM_CODEC
+            GeoItemAnimationPayload.STREAM_CODEC,
         )
         PayloadTypeRegistry.clientboundPlay().register(
             GeoBlockAnimationStopPayload.TYPE,
-            GeoBlockAnimationStopPayload.STREAM_CODEC
+            GeoBlockAnimationStopPayload.STREAM_CODEC,
         )
         PayloadTypeRegistry.clientboundPlay().register(
             GeoEntityAnimationStopPayload.TYPE,
-            GeoEntityAnimationStopPayload.STREAM_CODEC
+            GeoEntityAnimationStopPayload.STREAM_CODEC,
         )
         PayloadTypeRegistry.clientboundPlay().register(
             GeoItemAnimationStopPayload.TYPE,
-            GeoItemAnimationStopPayload.STREAM_CODEC
+            GeoItemAnimationStopPayload.STREAM_CODEC,
         )
 
         ServerPlayNetworking.registerGlobalReceiver(CompleteResearchPayload.TYPE) { payload, context ->
@@ -206,12 +201,12 @@ object FabricInit {
     private fun registerReloadListener() {
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
             "multiblocks".ecRL,
-            MultiblockDataReloadListener()
+            MultiblockDataReloadListener(),
         )
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener("research".ecRL, ResearchReloadListener())
         ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
             "settings/${ECRModIDs.SOUL_STONE}".ecRL,
-            SoulStoneDataReloadListener(ConfigManager.json)
+            SoulStoneDataReloadListener(ConfigManager.json),
         )
     }
 
@@ -225,7 +220,16 @@ object FabricInit {
 
     private fun registerAccessEvents() {
         UseItemCallback.EVENT.register { player, _, hand ->
-            if (ResearchAccess.canAccess(player, player.getItemInHand(hand), ResearchAction.USE)) InteractionResult.PASS else InteractionResult.FAIL
+            if (ResearchAccess.canAccess(
+                    player,
+                    player.getItemInHand(hand),
+                    ResearchAction.USE,
+                )
+            ) {
+                InteractionResult.PASS
+            } else {
+                InteractionResult.FAIL
+            }
         }
         UseBlockCallback.EVENT.register { player, level, hand, hit ->
             val blockAllowed = ResearchAccess.canAccess(player, level.getBlockState(hit.blockPos), ResearchAction.INTERACT)
@@ -256,8 +260,9 @@ object FabricInit {
             BuiltInRegistries.ITEM.keySet().filter { it.namespace == ModId }.forEach {
                 val item = BuiltInRegistries.ITEM.getOptional(it).get()
                 if (tab == CreativeTabRegistry.instance.blocks) {
-                    if ((item is BlockItem || item is NamedBlockItem) && item.block !is NoTab)
+                    if ((item is BlockItem || item is NamedBlockItem) && item.block !is NoTab) {
                         output.accept(item)
+                    }
                     return@forEach
                 }
 
@@ -305,26 +310,31 @@ object FabricInit {
                 if (device == null || !device.deviceType.isConnectable || item.getBoundPos(stack) != null) return@evt InteractionResult.PASS
 
                 player.sendOverlayMessage(
-                    Component.translatable("tooltip.$ModId.${ECRModIDs.BOUND_GEM}.linked")
+                    Component
+                        .translatable("tooltip.$ModId.${ECRModIDs.BOUND_GEM}.linked")
                         .append(": ")
-                        .append("X: ${pos.x} Y: ${pos.y} Z: ${pos.z}")
+                        .append("X: ${pos.x} Y: ${pos.y} Z: ${pos.z}"),
                 )
 
                 if (stack.count > 1) {
-                    val copied = stack.copy().apply {
-                        this.count = 1
-                        item.setBoundPos(this, pos)
-                    }
+                    val copied =
+                        stack.copy().apply {
+                            this.count = 1
+                            item.setBoundPos(this, pos)
+                        }
 
                     stack.shrink(1)
 
-                    val itemEntity = ItemEntity(level, player.x, player.y, player.z, copied).apply {
-                        this.setNoPickUpDelay()
-                        this.setThrower(player)
-                    }
+                    val itemEntity =
+                        ItemEntity(level, player.x, player.y, player.z, copied).apply {
+                            this.setNoPickUpDelay()
+                            this.setThrower(player)
+                        }
 
                     level.addFreshEntity(itemEntity)
-                } else item.setBoundPos(stack, pos)
+                } else {
+                    item.setBoundPos(stack, pos)
+                }
 
                 return@evt InteractionResult.SUCCESS
             }
@@ -354,21 +364,25 @@ object FabricInit {
         openMenuScreenInternal = menuScreen@{ player, provider, level, pos ->
             if (level.isClientSide) return@menuScreen
             val serverPlayer = player as ServerPlayer
-            serverPlayer.openMenu(object : ExtendedMenuProvider<MenuTypeData> {
-                override fun getDisplayName(): Component = provider.displayName
+            serverPlayer.openMenu(
+                object : ExtendedMenuProvider<MenuTypeData> {
+                    override fun getDisplayName(): Component = provider.displayName
 
-                override fun createMenu(
-                    containerId: Int,
-                    inventory: Inventory,
-                    player: Player
-                ): AbstractContainerMenu? = provider.createMenu(containerId, inventory, player)
+                    override fun createMenu(
+                        containerId: Int,
+                        inventory: Inventory,
+                        player: Player,
+                    ): AbstractContainerMenu? = provider.createMenu(containerId, inventory, player)
 
-                override fun getScreenOpeningData(player: ServerPlayer): MenuTypeData = MenuTypeData(pos)
-            })
+                    override fun getScreenOpeningData(player: ServerPlayer): MenuTypeData = MenuTypeData(pos)
+                },
+            )
         }
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun <T: Registry<*>> register(resourceKey: ResourceKey<T>, t: T): T =
-        Registry.register(BuiltInRegistries.REGISTRY as Registry<Registry<*>>, resourceKey.identifier(), t)
+    private fun <T : Registry<*>> register(
+        resourceKey: ResourceKey<T>,
+        t: T,
+    ): T = Registry.register(BuiltInRegistries.REGISTRY as Registry<Registry<*>>, resourceKey.identifier(), t)
 }

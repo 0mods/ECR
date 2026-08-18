@@ -6,6 +6,10 @@ import net.minecraft.network.codec.StreamCodec
 
 data class MenuTypeData(val pos: BlockPos) {
     companion object {
-        val codec: StreamCodec<RegistryFriendlyByteBuf, MenuTypeData> = StreamCodec.composite(BlockPos.STREAM_CODEC, MenuTypeData::pos, ::MenuTypeData)
+        val codec: StreamCodec<RegistryFriendlyByteBuf, MenuTypeData> = StreamCodec.composite(
+            BlockPos.STREAM_CODEC,
+            MenuTypeData::pos,
+            ::MenuTypeData
+        )
     }
 }

@@ -20,7 +20,10 @@ import net.minecraft.world.item.Items
 object BookTaskRenderer {
     private val checkmark = Identifier.withDefaultNamespace("icon/checkmark")
 
-    fun render(context: BookElementRenderContext, element: TaskListBookElement) {
+    fun render(
+        context: BookElementRenderContext,
+        element: TaskListBookElement,
+    ) {
         val entry = ResearchCatalog.snapshot().entries[element.research] ?: return
         val level = entry.taskLevels.getOrNull(element.level) ?: return
         val offset = entry.taskLevels.take(element.level).sumOf { it.tasks.size }
@@ -44,7 +47,7 @@ object BookTaskRenderer {
         definition: ResearchTaskDefinition,
         progress: ResearchTaskProgress,
         x: Int,
-        y: Int
+        y: Int,
     ) {
         val customIcon = entry.taskIcons[definition.id].takeUnless { definition.task is ItemResearchTask }
         val stack = taskStack(definition.task, customIcon)
@@ -70,36 +73,77 @@ object BookTaskRenderer {
                 Minecraft.getInstance().font,
                 tooltip(definition, stack, progress),
                 mouseX,
-                mouseY
+                mouseY,
             )
         }
     }
 
-    private fun taskStack(task: ResearchTask, customIcon: BookIcon?): ItemStack? = when {
-        task is ItemResearchTask -> Minecraft.getInstance().level?.registryAccess()?.let { task.createStack(it) }
-        customIcon != null -> null
-        task is CraftingResearchTask -> ItemStack(Items.CRAFTING_TABLE)
-        task is ExperienceResearchTask -> ItemStack(Items.EXPERIENCE_BOTTLE)
-        else -> null
-    }
+    private fun taskStack(
+        task: ResearchTask,
+        customIcon: BookIcon?,
+    ): ItemStack? =
+        when {
+            task is ItemResearchTask -> {
+                Minecraft
+                    .getInstance()
+                    .level
+                    ?.registryAccess()
+                    ?.let { task.createStack(it) }
+            }
+
+            customIcon != null -> {
+                null
+            }
+
+            task is CraftingResearchTask -> {
+                ItemStack(Items.CRAFTING_TABLE)
+            }
+
+            task is ExperienceResearchTask -> {
+                ItemStack(Items.EXPERIENCE_BOTTLE)
+            }
+
+            else -> {
+                null
+            }
+        }
 
     private fun tooltip(
         definition: ResearchTaskDefinition,
         stack: ItemStack?,
-        progress: ResearchTaskProgress
-    ): List<Component> = buildList {
-        add(taskTitle(definition, stack))
-        add(Component.literal("${progress.current}/${progress.required}"))
-    }
-
-    private fun taskTitle(definition: ResearchTaskDefinition, stack: ItemStack?): Component =
-        definition.title?.component() ?: when (val task = definition.task) {
-            is CraftingResearchTask -> Component.literal(task.recipe.toString())
-            is ExperienceResearchTask -> Component.translatable(if (task.levels) "screen.$ModId.research_book.experience.levels" else "screen.$ModId.research_book.experience")
-            else -> stack?.hoverName ?: Component.literal("screen.$ModId.research_book.task")
+        progress: ResearchTaskProgress,
+    ): List<Component> =
+        buildList {
+            add(taskTitle(definition, stack))
+            add(Component.literal("${progress.current}/${progress.required}"))
         }
 
-    private fun renderIcon(context: BookElementRenderContext, icon: BookIcon?, x: Int, y: Int) {
+    private fun taskTitle(
+        definition: ResearchTaskDefinition,
+        stack: ItemStack?,
+    ): Component =
+        definition.title?.component() ?: when (val task = definition.task) {
+            is CraftingResearchTask -> {
+                Component.literal(task.recipe.toString())
+            }
+
+            is ExperienceResearchTask -> {
+                Component.translatable(
+                    if (task.levels) "screen.$ModId.research_book.experience.levels" else "screen.$ModId.research_book.experience",
+                )
+            }
+
+            else -> {
+                stack?.hoverName ?: Component.literal("screen.$ModId.research_book.task")
+            }
+        }
+
+    private fun renderIcon(
+        context: BookElementRenderContext,
+        icon: BookIcon?,
+        x: Int,
+        y: Int,
+    ) {
         icon ?: return
         icon.item?.let { id ->
             BuiltInRegistries.ITEM.getOptional(id).ifPresent { context.graphics.item(ItemStack(it), x, y) }
@@ -113,5 +157,4 @@ object BookTaskRenderer {
     private const val TASKS_PER_ROW = 11
 }
 
-private fun BookText.component(): Component =
-    if (translated) Component.translatable(value) else Component.literal(value)
+private fun BookText.component(): Component = if (translated) Component.translatable(value) else Component.literal(value)

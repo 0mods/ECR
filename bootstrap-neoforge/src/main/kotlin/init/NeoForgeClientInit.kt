@@ -3,7 +3,6 @@ package com.algorithmlx.ecr.neoforge.init
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewGuiBridge
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewPictureRenderer
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewRenderState
-import com.algorithmlx.ecr.api.particle.BedrockParticleRenderTypes
 import com.algorithmlx.ecr.api.geo.GeoAnimationNetwork
 import com.algorithmlx.ecr.api.geo.GeoBlockAnimationPayload
 import com.algorithmlx.ecr.api.geo.GeoBlockAnimationStopPayload
@@ -14,43 +13,43 @@ import com.algorithmlx.ecr.api.geo.GeoItemAnimationStopPayload
 import com.algorithmlx.ecr.api.geo.client.BedrockGeoAssets
 import com.algorithmlx.ecr.api.geo.client.BedrockGeoItemRenderer
 import com.algorithmlx.ecr.api.geo.client.ClientGeoAnimations
+import com.algorithmlx.ecr.api.particle.BedrockParticleRenderTypes
 import com.algorithmlx.ecr.api.particle.BedrockParticles
 import com.algorithmlx.ecr.api.particle.ClientParticleSystems
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.utils.ecRL
+import com.algorithmlx.ecr.client.ECRConnectedTextures
 import com.algorithmlx.ecr.client.book.ResearchBookClient
+import com.algorithmlx.ecr.client.renderer.AssembledMultiblockRenderer
 import com.algorithmlx.ecr.client.renderer.BoundGemLinkRenderer
 import com.algorithmlx.ecr.client.renderer.EnrichmentChamberControllerRenderer
-import com.algorithmlx.ecr.client.renderer.AssembledMultiblockRenderer
 import com.algorithmlx.ecr.client.renderer.MatrixDestructorRenderer
 import com.algorithmlx.ecr.client.renderer.MithrilineFurnaceRenderer
+import com.algorithmlx.ecr.client.screen.EnrichmentChamberControllerScreen
+import com.algorithmlx.ecr.client.screen.EnrichmentChamberReceiverScreen
 import com.algorithmlx.ecr.client.screen.MagicTableMenuScreen
+import com.algorithmlx.ecr.client.screen.MagicalTeleporterScreen
 import com.algorithmlx.ecr.client.screen.MatrixDestructorScreen
 import com.algorithmlx.ecr.client.screen.MithrilineFurnaceScreen
 import com.algorithmlx.ecr.client.screen.RayTowerScreen
 import com.algorithmlx.ecr.neoforge.client.NeoForgeConnectedTextures
 import com.algorithmlx.ecr.neoforge.client.NeoForgeIrisCompatibility
-import com.algorithmlx.ecr.client.ECRConnectedTextures
-import com.algorithmlx.ecr.client.screen.EnrichmentChamberControllerScreen
-import com.algorithmlx.ecr.client.screen.EnrichmentChamberReceiverScreen
-import com.algorithmlx.ecr.client.screen.MagicalTeleporterScreen
-import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
-import com.algorithmlx.ecr.registry.MenuTypeRegistry
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
 import com.algorithmlx.ecr.network.BoundGemTooltipResponsePayload
-import com.algorithmlx.ecr.network.FinishCraftParticle
 import com.algorithmlx.ecr.network.SoulStoneTooltipNetwork
 import com.algorithmlx.ecr.network.SoulStoneTooltipResponsePayload
+import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
+import com.algorithmlx.ecr.registry.MenuTypeRegistry
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiGraphicsExtractor
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers
 import net.minecraft.core.particles.ParticleTypes
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent
-import net.neoforged.neoforge.client.event.EntityRenderersEvent
 import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent
-import net.neoforged.neoforge.client.event.ClientTickEvent
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent
+import net.neoforged.neoforge.client.event.ClientTickEvent
+import net.neoforged.neoforge.client.event.EntityRenderersEvent
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent
 import net.neoforged.neoforge.client.event.RegisterPictureInPictureRenderersEvent
 import net.neoforged.neoforge.client.event.RegisterSpecialModelRendererEvent
@@ -110,7 +109,7 @@ object NeoForgeClientInit {
         BoundGemLinkRenderer.submit(
             event.poseStack,
             event.submitNodeCollector,
-            event.levelRenderState
+            event.levelRenderState,
         )
     }
 
@@ -123,7 +122,8 @@ object NeoForgeClientInit {
             ResearchBookClient.init()
 
             ResearchNetwork.completeResearch = { ClientPacketDistributor.sendToServer(CompleteResearchPayload(it)) }
-            ResearchNetwork.updateFavorite = { research, spread, color -> ClientPacketDistributor.sendToServer(FavoriteResearchPayload(research, spread, color)) }
+            ResearchNetwork.updateFavorite =
+                { research, spread, color -> ClientPacketDistributor.sendToServer(FavoriteResearchPayload(research, spread, color)) }
             ResearchNetwork.updateView = { state -> runCatching { ClientPacketDistributor.sendToServer(UpdateBookViewPayload(state)) } }
             BoundGemTooltipNetwork.currentDimension = { Minecraft.getInstance().level?.dimension() }
             BoundGemTooltipNetwork.sendRequestToServer = { payload -> runCatching { ClientPacketDistributor.sendToServer(payload) } }
@@ -138,16 +138,16 @@ object NeoForgeClientInit {
             BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceRenderer)
             BlockEntityRenderers.register(
                 BlockEntityTypeRegistry.instance.assembledMultiblockPart,
-                ::AssembledMultiblockRenderer
+                ::AssembledMultiblockRenderer,
             )
             BlockEntityRenderers.register(
                 BlockEntityTypeRegistry.instance.rayTower,
-                ::AssembledMultiblockRenderer
+                ::AssembledMultiblockRenderer,
             )
             BlockEntityRenderers.register(BlockEntityTypeRegistry.instance.matrixDestructor, ::MatrixDestructorRenderer)
             BlockEntityRenderers.register(
                 BlockEntityTypeRegistry.instance.enrichmentChamberController,
-                ::EnrichmentChamberControllerRenderer
+                ::EnrichmentChamberControllerRenderer,
             )
         }
     }
@@ -173,16 +173,6 @@ object NeoForgeClientInit {
         event.register(GeoBlockAnimationStopPayload.TYPE) { payload, _ -> ClientGeoAnimations.handle(payload) }
         event.register(GeoEntityAnimationStopPayload.TYPE) { payload, _ -> ClientGeoAnimations.handle(payload) }
         event.register(GeoItemAnimationStopPayload.TYPE) { payload, _ -> ClientGeoAnimations.handle(payload) }
-        event.register(FinishCraftParticle.TYPE) { payload, _ ->
-            val level = Minecraft.getInstance().level ?: return@register
-            (0 ..< payload.count).forEach { _ ->
-                level.addParticle(
-                    ParticleTypes.POOF, payload.x, payload.y + Random.nextDouble(0.15, 0.6), payload.z,
-                    Random.nextDouble(-0.06, 0.06), Random.nextDouble(0.0, 0.15),
-                    Random.nextDouble(-0.06, 0.06)
-                )
-            }
-        }
     }
 
     private fun onRegisterPIPRenders(event: RegisterPictureInPictureRenderersEvent) {
