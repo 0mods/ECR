@@ -94,7 +94,7 @@ class ResearchBookScreen(
     private var frameDt = 0f
 
     init {
-        BookDefaultRenderers.init()
+//        BookDefaultRenderers.init()
     }
 
     override fun init() {

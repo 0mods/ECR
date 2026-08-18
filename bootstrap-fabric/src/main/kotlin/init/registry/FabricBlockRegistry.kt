@@ -1,8 +1,9 @@
 package com.algorithmlx.ecr.fabric.init.registry
 
 import com.algorithmlx.ecr.api.utils.ecRL
-import com.algorithmlx.ecr.common.block.ColdDistiller
 import com.algorithmlx.ecr.common.block.AssembledMultiblockPartBlock
+import com.algorithmlx.ecr.common.block.ClusterBlock
+import com.algorithmlx.ecr.common.block.ColdDistiller
 import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.EnrichmentChamberController
 import com.algorithmlx.ecr.common.block.EnrichmentChamberExtractor
@@ -28,17 +29,19 @@ import net.minecraft.world.level.block.TransparentBlock
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.PushReaction
 
-object FabricBlockRegistry: BlockRegistry {
-    override val assembledMultiblockPart: AssembledMultiblockPartBlock = register(
-        ECRModIDs.ASSEMBLED_MULTIBLOCK_PART,
-        ::AssembledMultiblockPartBlock,
-        BlockBehaviour.Properties.of()
-            .strength(3.0F)
-            .noOcclusion()
-            .noLootTable()
-            .pushReaction(PushReaction.BLOCK),
-        shouldRegisterItem = false
-    )
+object FabricBlockRegistry : BlockRegistry {
+    override val assembledMultiblockPart: AssembledMultiblockPartBlock =
+        register(
+            ECRModIDs.ASSEMBLED_MULTIBLOCK_PART,
+            ::AssembledMultiblockPartBlock,
+            BlockBehaviour.Properties
+                .of()
+                .strength(3.0F)
+                .noOcclusion()
+                .noLootTable()
+                .pushReaction(PushReaction.BLOCK),
+            shouldRegisterItem = false,
+        )
     override val mithrilineFurnace: MithrilineFurnace = register(ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnace)
     override val mithrilineCrystal: CrystalBlock = register(ECRModIDs.MITHRILINE_CRYSTAL, ::CrystalBlock)
     override val magicTable: MagicTable = register(ECRModIDs.MAGIC_TABLE, ::MagicTable)
@@ -53,42 +56,46 @@ object FabricBlockRegistry: BlockRegistry {
     override val magicPlating: Block = registerBasic(ECRModIDs.MAGIC_PLATING)
     override val demonicPlating: Block = registerBasic(ECRModIDs.DEMONIC_PLATING)
     override val fortifiedStone: Block = registerBasic(ECRModIDs.FORTIFIED_STONE)
-    override val flameCluster: Block = registerBasic(ECRModIDs.FLAME_CLUSTER, shouldRegisterItem = false)
-    override val waterCluster: Block = registerBasic(ECRModIDs.WATER_CLUSTER, shouldRegisterItem = false)
-    override val earthCluster: Block = registerBasic(ECRModIDs.EARTH_CLUSTER, shouldRegisterItem = false)
-    override val airCluster: Block = registerBasic(ECRModIDs.AIR_CLUSTER, shouldRegisterItem = false)
-    override val fortifiedGlass: Block = register(
-        ECRModIDs.FORTIFIED_GLASS,
-        ::TransparentBlock,
-        BlockBehaviour.Properties.of().noOcclusion(),
-    )
+    override val flameCluster: ClusterBlock = register(ECRModIDs.FLAME_CLUSTER, ::ClusterBlock, shouldRegisterItem = false)
+    override val waterCluster: ClusterBlock = register(ECRModIDs.WATER_CLUSTER, ::ClusterBlock, shouldRegisterItem = false)
+    override val earthCluster: ClusterBlock = register(ECRModIDs.EARTH_CLUSTER, ::ClusterBlock, shouldRegisterItem = false)
+    override val airCluster: ClusterBlock = register(ECRModIDs.AIR_CLUSTER, ::ClusterBlock, shouldRegisterItem = false)
+    override val fortifiedGlass: Block =
+        register(
+            ECRModIDs.FORTIFIED_GLASS,
+            ::TransparentBlock,
+            BlockBehaviour.Properties.of().noOcclusion(),
+        )
     override val enrichmentChamberHolder: Block = registerBasic(ECRModIDs.ENRICHMENT_CHAMBER_HOLDER)
-    override val enrichmentChamberController: EnrichmentChamberController = register(
-        ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER,
-        ::EnrichmentChamberController
-    )
-    override val enrichmentChamberExtractor: EnrichmentChamberExtractor = register(
-        ECRModIDs.ENRICHMENT_CHAMBER_EXTRACTOR,
-        ::EnrichmentChamberExtractor
-    )
-    override val enrichmentChamberReceiver: EnrichmentChamberReceiver = register(
-        ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER,
-        ::EnrichmentChamberReceiver
-    )
+    override val enrichmentChamberController: EnrichmentChamberController =
+        register(
+            ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER,
+            ::EnrichmentChamberController,
+        )
+    override val enrichmentChamberExtractor: EnrichmentChamberExtractor =
+        register(
+            ECRModIDs.ENRICHMENT_CHAMBER_EXTRACTOR,
+            ::EnrichmentChamberExtractor,
+        )
+    override val enrichmentChamberReceiver: EnrichmentChamberReceiver =
+        register(
+            ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER,
+            ::EnrichmentChamberReceiver,
+        )
     override val rayTowerBase: RayTowerBase = register(ECRModIDs.RAY_TOWER_BASE, ::RayTowerBase)
     override val rayTower: RayTower = register(ECRModIDs.RAY_TOWER, ::RayTower)
 
     private fun registerBasic(
         id: String,
         properties: BlockBehaviour.Properties = BlockBehaviour.Properties.of(),
-        shouldRegisterItem: Boolean = true
+        shouldRegisterItem: Boolean = true,
     ) = register(id, ::Block, properties, shouldRegisterItem)
 
-    private fun <B: Block> register(
+    private fun <B : Block> register(
         id: String,
         block: (BlockBehaviour.Properties) -> B,
         properties: BlockBehaviour.Properties = BlockBehaviour.Properties.of(),
-        shouldRegisterItem: Boolean = true
+        shouldRegisterItem: Boolean = true,
     ): B {
         val blockKey = { it: Identifier -> ResourceKey.create(Registries.BLOCK, it) }
         val regId = id.ecRL
@@ -96,12 +103,15 @@ object FabricBlockRegistry: BlockRegistry {
 
         if (shouldRegisterItem) {
             Registry.register(
-                BuiltInRegistries.ITEM, regId,
+                BuiltInRegistries.ITEM,
+                regId,
                 NamedBlockItem(
-                    bl, Item.Properties()
+                    bl,
+                    Item
+                        .Properties()
                         .setId(ResourceKey.create(Registries.ITEM, regId))
-                        .useBlockDescriptionPrefix()
-                )
+                        .useBlockDescriptionPrefix(),
+                ),
             )
         }
 

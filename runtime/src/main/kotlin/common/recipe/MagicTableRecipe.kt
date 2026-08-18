@@ -30,6 +30,7 @@ import net.minecraft.world.item.crafting.display.SlotDisplay
 import net.minecraft.world.level.Level
 import java.util.Optional
 import kotlin.jvm.optionals.getOrElse
+import kotlin.jvm.optionals.getOrNull
 
 class MagicTableRecipe(
     val input: Optional<ShapedRecipePattern>,
@@ -79,21 +80,20 @@ class MagicTableRecipe(
 
     override fun recipeBookCategory(): RecipeBookCategory = RecipeBookCategories.CAMPFIRE
 
-    @Suppress(
-        "ktlint:standard:if-else-wrapping",
-        "ktlint:standard:indent",
-        "ktlint:standard:multiline-if-else",
-        "ktlint:standard:wrapping",
-        "ktlint:standard:multiline-expression-wrapping",
-    )
     override fun display(): List<RecipeDisplay> =
         listOf(
             Display(
-                if (input.isPresent) Optional.of(input.get().ingredients().map {
-                    it.map(Ingredient::display).getOrElse { SlotDisplay.Empty.INSTANCE }
-                }) else Optional.empty(),
-                if (catalyst.isPresent) Optional.of(catalyst.get().display())
-                else Optional.empty(),
+                Optional.ofNullable(
+                    input
+                        .getOrNull()
+                        ?.ingredients()
+                        ?.map {
+                            it
+                                .map(Ingredient::display)
+                                .getOrElse { SlotDisplay.Empty.INSTANCE }
+                        },
+                ),
+                Optional.ofNullable(catalyst.getOrNull()?.display()),
                 SlotDisplay.ItemStackSlotDisplay(result),
                 SlotDisplay.ItemSlotDisplay(BlockRegistry.instance.magicTable.asItem()),
             ),

@@ -15,7 +15,31 @@
       "elements": [
         {
           "type": "text",
-          "text": "book.escr.entry.welcome.content"
+          "text": "book.escr.entry.welcome.content.1"
+        },
+        {
+          "type": "text",
+          "text": "book.escr.entry.welcome.content.2"
+        },
+        {
+          "type": "space",
+          "height": 8
+        },
+        {
+          "type": "text",
+          "text": "book.escr.entry.welcome.content.3"
+        }
+      ]
+    },
+    {
+      "elements": [
+        {
+          "type": "recipe",
+          "recipe": "escr:flame_gem"
+        },
+        {
+          "type": "recipe",
+          "recipe": "ecsr:feather"
         }
       ]
     }

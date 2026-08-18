@@ -12,7 +12,9 @@ interface BookElementSerializer<T : BookElement> {
     val type: Identifier
     val defaultWidth: Int
     val defaultHeight: Int
+
     fun decode(json: JsonObject): T
+
     fun encode(value: T): JsonObject
 }
 
@@ -22,7 +24,7 @@ data object SpaceBookElement : BookElement {
 
 data class TaskListBookElement(
     val research: Identifier,
-    val level: Int
+    val level: Int,
 ) : BookElement {
     override val type: Identifier = ResearchIds.TASK_LIST
 }
@@ -33,21 +35,21 @@ data class TextBookElement(
     val centered: Boolean = false,
     val shadow: Boolean = false,
     val requirement: BookTextRequirement? = null,
-    val variants: List<BookTextVariant> = emptyList()
+    val variants: List<BookTextVariant> = emptyList(),
 ) : BookElement {
     override val type: Identifier = ResearchIds.TEXT
 }
 
 data class BookTextVariant(
     val text: BookText,
-    val requirement: BookTextRequirement? = null
+    val requirement: BookTextRequirement? = null,
 )
 
 typealias BookTextRequirement = ResearchRequirement
 
 data class ItemBookElement(
     val item: Identifier,
-    var count: Int = 1
+    var count: Int = 1,
 ) : BookElement {
     override val type: Identifier = ResearchIds.ITEM
 
@@ -56,7 +58,9 @@ data class ItemBookElement(
     }
 }
 
-data class BlockBookElement(val block: Identifier) : BookElement {
+data class BlockBookElement(
+    val block: Identifier,
+) : BookElement {
     override val type: Identifier = ResearchIds.BLOCK
 }
 
@@ -65,7 +69,7 @@ data class MultiblockBookElement(
     val scale: Float = 0.9F,
     val rotationX: Float = 25F,
     val rotationY: Float = -30F,
-    val layer: Int = Int.MAX_VALUE
+    val layer: Int = Int.MAX_VALUE,
 ) : BookElement {
     override val type: Identifier = ResearchIds.MULTIBLOCK
 }
@@ -76,13 +80,13 @@ data class AssembledMultiblockBookElement(
     val scale: Float = 0.9F,
     val rotationX: Float = 25F,
     val rotationY: Float = -30F,
-    val layer: Int = Int.MAX_VALUE
+    val layer: Int = Int.MAX_VALUE,
 ) : BookElement {
     override val type: Identifier = ResearchIds.ASSEMBLED_MULTIBLOCK
 }
 
 data class CraftingBookElement(
-    val recipe: Identifier
+    val recipe: Identifier,
 ) : BookElement {
-    override val type: Identifier = ResearchIds.CRAFTING
+    override val type: Identifier = ResearchIds.RECIPE
 }

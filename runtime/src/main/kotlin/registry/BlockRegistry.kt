@@ -1,7 +1,8 @@
 package com.algorithmlx.ecr.registry
 
-import com.algorithmlx.ecr.common.block.ColdDistiller
 import com.algorithmlx.ecr.common.block.AssembledMultiblockPartBlock
+import com.algorithmlx.ecr.common.block.ClusterBlock
+import com.algorithmlx.ecr.common.block.ColdDistiller
 import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.EnrichmentChamberController
 import com.algorithmlx.ecr.common.block.EnrichmentChamberExtractor
@@ -31,10 +32,10 @@ interface BlockRegistry {
     val magicPlating: Block
     val demonicPlating: Block
     val fortifiedStone: Block
-    val flameCluster: Block
-    val waterCluster: Block
-    val earthCluster: Block
-    val airCluster: Block
+    val flameCluster: ClusterBlock
+    val waterCluster: ClusterBlock
+    val earthCluster: ClusterBlock
+    val airCluster: ClusterBlock
     val fortifiedGlass: Block
     val enrichmentChamberHolder: Block
     val enrichmentChamberController: EnrichmentChamberController

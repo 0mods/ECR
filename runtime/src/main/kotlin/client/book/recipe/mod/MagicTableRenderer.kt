@@ -2,12 +2,47 @@ package com.algorithmlx.ecr.client.book.recipe.mod
 
 import com.algorithmlx.ecr.api.client.research.BookRecipeRenderBuilder
 import com.algorithmlx.ecr.api.client.research.BookRecipeRenderer
+import com.algorithmlx.ecr.api.client.research.BookRecipeSlotType
 import com.algorithmlx.ecr.common.recipe.MagicTableRecipe
+import net.minecraft.world.item.crafting.display.SlotDisplay
+import kotlin.jvm.optionals.getOrElse
 
 object MagicTableRenderer : BookRecipeRenderer<MagicTableRecipe> {
     override fun build(
         recipe: MagicTableRecipe,
         builder: BookRecipeRenderBuilder,
     ) {
+        val display = recipe.display().filterIsInstance<MagicTableRecipe.Display>().firstOrNull() ?: return
+
+        val centerX = this.width(recipe) / 2
+        val centerY = this.height(recipe) / 2
+
+        builder.slot(display.catalyst.getOrElse { SlotDisplay.Empty.INSTANCE }, BookRecipeSlotType.INPUT, centerX, centerY)
+
+        val inputs =
+            display.input.getOrElse {
+                buildList {
+                    repeat(4) {
+                        add(SlotDisplay.Empty.INSTANCE)
+                    }
+                }
+            }
+
+        (0..1).forEach { x ->
+            (0..1).forEach { y ->
+                val index = x + y
+                val currentDisplay = inputs[index]
+
+                builder.slot(currentDisplay, BookRecipeSlotType.INPUT, centerX - x * -SLOT_SIZE, centerY - y * -SLOT_SIZE)
+            }
+        }
+
+        builder.slot(display.result(), BookRecipeSlotType.RESULT, centerX + SLOT_SIZE * 2, centerY)
     }
+
+    private const val SLOT_SIZE = 32
+    private const val ITEM_SIZE = SLOT_SIZE / 2
+
+    private const val ELEMENT_GAP = 8
+    private const val TEXT_GAP = ELEMENT_GAP / 2
 }

@@ -158,6 +158,12 @@ book.escr:
     basics: Basics
   entry:
     welcome:
-      title: "Welcome to Essential Craft: Reimagined"
+      title: Hello, world!
       description: Where I am?
-      content: Welcome to ECR Mod!
+      content:
+        1: The world is an unknown entity. Scientists have been pondering its origins for more than a decade.
+        2: What is really going on inside this “entity”?
+        3: That is exactly what you will have to figure out. 
+          You will have to understand how this world works, what is wrong with it, master the technologies of that civilization, 
+          and figure out exactly what happened to that civilization. 
+          And why certain things and technologies have infiltrated-and/or are still infiltrating-our dimension to this day.

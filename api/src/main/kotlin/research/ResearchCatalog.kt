@@ -11,6 +11,7 @@ import com.algorithmlx.ecr.api.research.content.ResearchTaskDefinition
 import com.algorithmlx.ecr.api.research.content.ResearchTaskLevel
 import com.algorithmlx.ecr.api.research.content.ResolvedBookEntry
 import com.algorithmlx.ecr.api.research.content.TextBookElement
+import com.algorithmlx.ecr.api.utils.rl
 import net.minecraft.resources.Identifier
 import java.util.Collections
 import java.util.concurrent.CopyOnWriteArrayList
@@ -60,7 +61,7 @@ object ResearchCatalog {
 
     @JvmStatic
     fun disable(research: String) {
-        disable(Identifier.parse(research))
+        disable(research.rl)
     }
 
     @JvmStatic
@@ -71,14 +72,14 @@ object ResearchCatalog {
 
     @JvmStatic
     fun enable(research: String) {
-        enable(Identifier.parse(research))
+        enable(research.rl)
     }
 
     @JvmStatic
     fun isDisabled(research: Identifier): Boolean = research in current.disabledEntries
 
     @JvmStatic
-    fun isDisabled(research: String): Boolean = isDisabled(Identifier.parse(research))
+    fun isDisabled(research: String): Boolean = isDisabled(research.rl)
 
     @JvmStatic
     @Synchronized

@@ -12,6 +12,7 @@ import com.algorithmlx.ecr.api.research.content.MultiblockBookElement
 import com.algorithmlx.ecr.api.research.content.TextBookElement
 import com.algorithmlx.ecr.client.book.BookLinkedTextLayout
 import com.algorithmlx.ecr.client.book.controller.MultiblockBookPreviewController
+import com.algorithmlx.ecr.client.book.recipe.mod.MagicTableRenderer
 import com.algorithmlx.ecr.client.book.recipe.mod.MithrilineFurnaceRenderer
 import com.algorithmlx.ecr.client.book.recipe.mod.StructureRecipeRenderer
 import com.algorithmlx.ecr.client.book.recipe.vanilla.CookingRecipeRenderer
@@ -34,7 +35,7 @@ object BookDefaultRenderers {
         BookElementRenderers.register(ResearchIds.BLOCK, ::renderBlock)
         BookElementRenderers.register(ResearchIds.MULTIBLOCK, ::renderMultiblock)
         BookElementRenderers.register(ResearchIds.ASSEMBLED_MULTIBLOCK, ::renderAssembledMultiblock)
-        BookElementRenderers.register(ResearchIds.CRAFTING, BookRecipeElementRenderer::render)
+        BookElementRenderers.register(ResearchIds.RECIPE, BookRecipeElementRenderer::render)
         BookElementRenderers.register(ResearchIds.TASK_LIST, BookTaskRenderer::render)
 
         BookRecipeRenderers.register(RecipeType.CRAFTING, CraftingTableRecipeRenderer)
@@ -43,8 +44,10 @@ object BookDefaultRenderers {
         BookRecipeRenderers.register(RecipeType.SMOKING, CookingRecipeRenderer.Smoking)
         BookRecipeRenderers.register(RecipeType.CAMPFIRE_COOKING, CookingRecipeRenderer.CampfireCooking)
         BookRecipeRenderers.register(RecipeType.STONECUTTING, StonecutterRecipeRenderer)
+
         BookRecipeRenderers.register(RecipeTypeRegistry.instance.mithrilineFurnace, MithrilineFurnaceRenderer)
         BookRecipeRenderers.register(RecipeTypeRegistry.instance.structure, StructureRecipeRenderer)
+        BookRecipeRenderers.register(RecipeTypeRegistry.instance.magicTable, MagicTableRenderer)
     }
 
     private fun renderText(

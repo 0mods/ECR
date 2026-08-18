@@ -2,17 +2,22 @@ package com.algorithmlx.ecr.neoforge.init.registry
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.research.ResearchTaskSerializer
 import com.algorithmlx.ecr.api.research.content.BookElementSerializer
 import com.algorithmlx.ecr.api.research.serializer.ResearchSerializers
-import com.algorithmlx.ecr.api.research.ResearchTaskSerializer
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
 
-class NeoForgeResearchSerializerRegistry(bus: IEventBus) {
+class NeoForgeResearchSerializerRegistry(
+    bus: IEventBus,
+) {
     private val elementSerializers = DeferredRegister.create(ECRegistries.BOOK_ELEMENT_SERIALIZER, ModId)
     private val taskSerializers = DeferredRegister.create(ECRegistries.RESEARCH_TASK_SERIALIZER, ModId)
 
     init {
+        elementSerializers.register(bus)
+        taskSerializers.register(bus)
+
         registerElement(ResearchSerializers.SPACE_ELEMENT)
         registerElement(ResearchSerializers.TEXT_ELEMENT)
         registerElement(ResearchSerializers.ITEM_ELEMENT)
@@ -20,12 +25,13 @@ class NeoForgeResearchSerializerRegistry(bus: IEventBus) {
         registerElement(ResearchSerializers.MULTIBLOCK_ELEMENT)
         registerElement(ResearchSerializers.ASSEMBLED_MULTIBLOCK_ELEMENT)
         registerElement(ResearchSerializers.CRAFTING_ELEMENT)
+
         registerTask(ResearchSerializers.ITEM_TASK)
         registerTask(ResearchSerializers.EXPERIENCE_TASK)
         registerTask(ResearchSerializers.CRAFTING_TASK)
         registerTask(ResearchSerializers.OPEN_TASK)
-        elementSerializers.register(bus)
-        taskSerializers.register(bus)
+        registerTask(ResearchSerializers.TRAVEL_TO_DIMENSION)
+        registerTask(ResearchSerializers.TRAVEL_TO_STRUCTURE)
     }
 
     private fun registerElement(serializer: BookElementSerializer<*>) {

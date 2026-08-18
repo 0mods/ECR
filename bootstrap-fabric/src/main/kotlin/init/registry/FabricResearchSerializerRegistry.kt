@@ -1,9 +1,9 @@
 package com.algorithmlx.ecr.fabric.init.registry
 
 import com.algorithmlx.ecr.api.registries.ECRegistries
+import com.algorithmlx.ecr.api.research.ResearchTaskSerializer
 import com.algorithmlx.ecr.api.research.content.BookElementSerializer
 import com.algorithmlx.ecr.api.research.serializer.ResearchSerializers
-import com.algorithmlx.ecr.api.research.ResearchTaskSerializer
 import net.minecraft.core.Registry
 
 object FabricResearchSerializerRegistry {
@@ -15,10 +15,13 @@ object FabricResearchSerializerRegistry {
         registerElement(ResearchSerializers.MULTIBLOCK_ELEMENT)
         registerElement(ResearchSerializers.ASSEMBLED_MULTIBLOCK_ELEMENT)
         registerElement(ResearchSerializers.CRAFTING_ELEMENT)
+
         registerTask(ResearchSerializers.ITEM_TASK)
         registerTask(ResearchSerializers.EXPERIENCE_TASK)
         registerTask(ResearchSerializers.CRAFTING_TASK)
         registerTask(ResearchSerializers.OPEN_TASK)
+        registerTask(ResearchSerializers.TRAVEL_TO_DIMENSION)
+        registerTask(ResearchSerializers.TRAVEL_TO_STRUCTURE)
     }
 
     private fun registerElement(serializer: BookElementSerializer<*>) {
