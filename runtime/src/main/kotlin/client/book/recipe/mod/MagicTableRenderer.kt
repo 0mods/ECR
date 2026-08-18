@@ -28,12 +28,17 @@ object MagicTableRenderer : BookRecipeRenderer<MagicTableRecipe> {
                 }
             }
 
-        (0..1).forEach { x ->
-            (0..1).forEach { y ->
-                val index = x + y
+        (0..1).forEach { y ->
+            (0..1).forEach { x ->
+                val index = y * 2 + x
                 val currentDisplay = inputs[index]
 
-                builder.slot(currentDisplay, BookRecipeSlotType.INPUT, centerX - x * -SLOT_SIZE, centerY - y * -SLOT_SIZE)
+                builder.slot(
+                    currentDisplay,
+                    BookRecipeSlotType.INPUT,
+                    centerX + (x * 2 - 1) * SLOT_SIZE,
+                    centerY + (y * 2 - 1) * SLOT_SIZE,
+                )
             }
         }
 

@@ -290,7 +290,7 @@ class ResearchBookScreen(
 
     private fun frameDelta(): Float {
         val now = System.nanoTime()
-        val delta = if (lastFrameNanos < 0) 0f else ((now - lastFrameNanos) / 1_000_000_000f).coerceIn(0f, 0.1f)
+        val delta = if (lastFrameNanos < 0) 0f else ((now - lastFrameNanos) / 1000000000f).coerceIn(0f, 0.1f)
         lastFrameNanos = now
         return delta
     }
@@ -423,7 +423,7 @@ class ResearchBookScreen(
         entry: BookEntry,
     ) {
         val blinkSeconds = ResearchBookConfigValues.availableBlinkSeconds()
-        val cycle = ((System.nanoTime() / 1_000_000_000.0) % blinkSeconds) / blinkSeconds
+        val cycle = ((System.nanoTime() / 1000000000.0) % blinkSeconds) / blinkSeconds
         val alpha = (36 + (sin(cycle * Math.PI * 2.0 - Math.PI / 2.0) * 0.5 + 0.5) * 112).roundToInt()
         val color = (alpha.coerceIn(0, 255) shl 24) or 0xDCEBFF
         graphics.outline(-2, -2, nodeWidth(entry) + 4, nodeHeight(entry) + 4, color)
