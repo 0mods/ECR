@@ -29,7 +29,6 @@ import com.algorithmlx.ecr.client.book.BookSpread
 import com.algorithmlx.ecr.client.book.ResearchBookConfigValues
 import com.algorithmlx.ecr.client.book.controller.BookBookmarkController
 import com.algorithmlx.ecr.client.book.controller.MultiblockBookPreviewController
-import com.algorithmlx.ecr.client.book.renderer.BookDefaultRenderers
 import com.algorithmlx.ecr.client.book.renderer.BookRecipeElementRenderer
 import com.algorithmlx.ecr.client.book.renderer.BookThreadRenderer
 import com.mojang.blaze3d.platform.InputConstants
@@ -92,10 +91,6 @@ class ResearchBookScreen(
 
     private var lastFrameNanos = -1L
     private var frameDt = 0f
-
-    init {
-//        BookDefaultRenderers.init()
-    }
 
     override fun init() {
         super.init()
@@ -172,8 +167,8 @@ class ResearchBookScreen(
 
         if (event.button() == 0 && bookmarks.click(mouseX, mouseY)) return true
         if (selectedEntry != null) {
-            if (MultiblockBookPreviewController.mouseClicked(mouseX, mouseY, event.button(), isShiftDown())) return true
-            return handleBookClick(mouseX, mouseY, event.button())
+            return MultiblockBookPreviewController.mouseClicked(mouseX, mouseY, event.button(), isShiftDown()) ||
+                handleBookClick(mouseX, mouseY, event.button())
         }
         if (event.button() == 0 && bookmarks.clickGlobalSlider(mouseX, mouseY, width, height)) return true
         if (event.button() != 0) return super.mouseClicked(event, doubleClick)
@@ -338,7 +333,7 @@ class ResearchBookScreen(
                 if (dependency != null && dependency.category == node.category) renderThread(graphics, dependency, node)
             }
         }
-        nodes.forEach { renderNode(graphics, it, mouseX, mouseY) }
+        nodes.forEach { renderNode(graphics, it) }
         graphics.disableScissor()
         nodes.firstOrNull { isInsideNode(it, mouseX, mouseY) }?.let { node ->
             if (isAvailable(node.entry)) graphics.requestCursor(CursorTypes.POINTING_HAND)
@@ -398,8 +393,6 @@ class ResearchBookScreen(
     private fun renderNode(
         graphics: GuiGraphicsExtractor,
         node: ResolvedBookEntry,
-        mouseX: Int,
-        mouseY: Int,
     ) {
         val available = isAvailable(node.entry)
 
@@ -607,10 +600,17 @@ class ResearchBookScreen(
         BookResearchLinkController.beginFrame()
         MultiblockBookPreviewController.beginFrame()
         spreads[spreadIndex].elements.forEachIndexed { placementIndex, placement ->
-            val absX = transform.x + (placement.x * transform.scale).toInt()
-            val absY = transform.y + (placement.y * transform.scale).toInt()
-            val absW = (placement.width * transform.scale).toInt()
-            val absH = (placement.height * transform.scale).toInt()
+            val scale = transform.scale
+
+            val absX = transform.x + (placement.x * scale).roundToInt()
+            val absY = transform.y + (placement.y * scale).roundToInt()
+
+            val absRight = transform.x + ((placement.x + placement.width) * scale).roundToInt()
+            val absLeft = transform.y + ((placement.y + placement.height) * scale).roundToInt()
+
+            val absW = (absRight - absX).coerceAtLeast(1)
+            val absH = (absLeft - absY).coerceAtLeast(1)
+
             val pageScissor = pageScissor(transform, placement.x)
 
             BookElementRenderers.render(
@@ -685,11 +685,20 @@ class ResearchBookScreen(
         elementX: Int,
     ): ScreenRectangle {
         val pageX = if (elementX < BOOK_WIDTH / 2) FIRST_PAGE_X else SECOND_PAGE_X
+
+        val scale = transform.scale
+
+        val left = transform.x + (pageX * scale).roundToInt()
+        val top = transform.y + (PAGE_TOP * scale).roundToInt()
+
+        val right = transform.x + ((pageX + PAGE_WIDTH) * scale).roundToInt()
+        val bottom = transform.y + ((PAGE_TOP + PAGE_HEIGHT) * scale).roundToInt()
+
         return ScreenRectangle(
-            transform.x + (pageX * transform.scale).roundToInt(),
-            transform.y + (PAGE_TOP * transform.scale).roundToInt(),
-            (PAGE_WIDTH * transform.scale).roundToInt(),
-            (PAGE_HEIGHT * transform.scale).roundToInt(),
+            left,
+            top,
+            (right - left).coerceAtLeast(1),
+            (bottom - top).coerceAtLeast(1),
         )
     }
 
