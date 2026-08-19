@@ -14,26 +14,39 @@ import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
 import net.minecraft.world.level.Level
 
-class ResearchBookItem(properties: Properties): Item(properties), HasSubItem {
-    override fun use(level: Level, player: Player, hand: InteractionHand): InteractionResult {
+class ResearchBookItem(
+    properties: Properties,
+) : Item(properties),
+    HasSubItem {
+    override fun use(
+        level: Level,
+        player: Player,
+        hand: InteractionHand,
+    ): InteractionResult {
         val stack = player.getItemInHand(hand)
         val basic = BookTypeRegistry.instance.basic
         val basicKey = ECRegistries.BOOK_TYPES.getResourceKey(basic).get()
-        var bookTypeKey = stack.getOrDefault(
-            DataComponentRegistry.instance.bookType,
-            basicKey
-        )
+        var bookTypeKey =
+            stack.getOrDefault(
+                DataComponentRegistry.instance.bookType,
+                basicKey,
+            )
 
         val bookTypeOptional = ECRegistries.BOOK_TYPES.get(bookTypeKey)
-        val bookType = if (bookTypeOptional.isPresent) bookTypeOptional.get().value() else {
-            bookTypeKey = basicKey
-            stack.set(DataComponentRegistry.instance.bookType, basicKey)
-            basic
-        }
+        val bookType =
+            if (bookTypeOptional.isPresent) {
+                bookTypeOptional.get().value()
+            } else {
+                bookTypeKey = basicKey
+                stack.set(DataComponentRegistry.instance.bookType, basicKey)
+                basic
+            }
 
-        if (level.isClientSide) ResearchBookHooks.open(bookType)
-        else if (player is ServerPlayer)
+        if (level.isClientSide) {
+            ResearchBookHooks.open(bookType)
+        } else if (player is ServerPlayer) {
             ResearchProgress.setBookLevel(player, bookTypeKey.identifier())
+        }
 
         return InteractionResult.SUCCESS
     }

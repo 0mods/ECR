@@ -51,8 +51,8 @@ item.escr:
 block.escr:
   mithriline_plating: Мифрилиновое покрытие
   mithriline_furnace: Мифрилиновая печь
-  matrix_destructor: Matrix Destructor
-  envoyer: Envoyer
+  matrix_destructor: Разрушитель матрицы
+  magic_table: Магический стол
   mithriline_crystal: Мифрилиновый кристалл
   void_stone: Пустотный камень
   pale_block: Ослабленный блок
@@ -64,7 +64,7 @@ block.escr:
   earth_cluster: Землянной кластер
   air_cluster: Воздушный кластер
   solar_prism: Солнечная призма
-  cold_distiller: Cold Distiller
+  cold_distiller: Дистиллятор холода
   enrichment_chamber_controller: Контроллер камеры поглащения
   enrichment_chamber_extractor: Экстрактор камеры поглащения
   enrichment_chamber_receiver: Приемник камеры поглащения
@@ -74,6 +74,7 @@ block.escr:
   magical_teleporter: Магический телепорт
   ray_tower: Реле-башня
   ray_tower_base: Основание реле-башни
+  creative_mru_source: Творческий источник MRU
 
 tooltip.escr:
   sword_multiplier: Бонус получения MRU
@@ -91,8 +92,9 @@ tooltip.escr:
       .: Кристалл привязки был привязан к позиции
       revoked: Кристал привязки отвязан
       pos: Привязан к позиции
-      not_mru: Кристал привязки настроен к позиции, где отсутствуют MRU устройства
+      not_mru: Кристал привязки настроен к позиции, где отсутствует устройство MRU
       outside_radius: Привязанный блок находится вне радиуса передачи кристалла
+      mru_connectable_not_exporter: Камню привязки присвоена позиция где имеется устройство MRU, но которое не передает MRU
     revoke: Камень привязки отвязан
     dimension:
       .: Измерение

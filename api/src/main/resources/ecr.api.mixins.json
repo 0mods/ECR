@@ -3,15 +3,17 @@
   "minVersion": "0.8",
   "package": "com.algorithmlx.ecr.api.mixin",
   "client": [
-    "FeatureRenderDispatcherMixin",
-    "GameRendererAccessor",
-    "GuiGraphicsExtractorAccessor",
-    "RenderPipelinesAccessor",
-    "RenderTypeAccessor",
-    "SubmitNodeCollectionMixin",
-    "SubmitNodeStorageMixin"
+    "client.FeatureRenderDispatcherMixin",
+    "client.GameRendererAccessor",
+    "client.GuiGraphicsExtractorAccessor",
+    "client.RenderPipelinesAccessor",
+    "client.RenderTypeAccessor",
+    "client.SubmitNodeCollectionMixin",
+    "client.SubmitNodeStorageMixin"
   ],
-  "mixins": [],
+  "mixins": [
+    "ItemStackMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

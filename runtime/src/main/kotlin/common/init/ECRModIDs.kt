@@ -24,6 +24,7 @@ object ECRModIDs {
     const val ASSEMBLED_MULTIBLOCK_PART = "assembled_multiblock_part"
     const val RAY_TOWER = "ray_tower"
     const val SUN_ABSORBER = "sun_absorber"
+    const val CREATIVE_MRU_SOURCE = "creative_mru_source"
 
     // Blocks
     const val MITHRILINE_PLATING = "mithriline_plating"
@@ -128,5 +129,6 @@ object ECRModIDs {
     const val MRU_CORRUPTION = "${MRU}_corruption"
 
     fun guiLocation(id: String) = textureLocation("gui/$id")
+
     fun textureLocation(id: String) = "textures/$id.png".ecRL
 }

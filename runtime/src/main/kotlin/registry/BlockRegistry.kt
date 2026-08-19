@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.registry
 import com.algorithmlx.ecr.common.block.AssembledMultiblockPartBlock
 import com.algorithmlx.ecr.common.block.ClusterBlock
 import com.algorithmlx.ecr.common.block.ColdDistiller
+import com.algorithmlx.ecr.common.block.CreativeMRUSource
 import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.EnrichmentChamberController
 import com.algorithmlx.ecr.common.block.EnrichmentChamberExtractor
@@ -43,6 +44,7 @@ interface BlockRegistry {
     val enrichmentChamberReceiver: EnrichmentChamberReceiver
     val rayTowerBase: RayTowerBase
     val rayTower: RayTower
+    val creativeMRUSource: CreativeMRUSource
 
     companion object {
         @JvmStatic

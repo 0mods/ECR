@@ -3,8 +3,8 @@ package com.algorithmlx.ecr.fabric.client
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewGuiBridge
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewPictureRenderer
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewRenderState
-import com.algorithmlx.ecr.api.mixin.GameRendererAccessor
-import com.algorithmlx.ecr.api.mixin.GuiGraphicsExtractorAccessor
+import com.algorithmlx.ecr.api.mixin.client.GameRendererAccessor
+import com.algorithmlx.ecr.api.mixin.client.GuiGraphicsExtractorAccessor
 import com.algorithmlx.ecr.fabric.mixin.GuiRendererAccessor
 import net.minecraft.client.Minecraft
 

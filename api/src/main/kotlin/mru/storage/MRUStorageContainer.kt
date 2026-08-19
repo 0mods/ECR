@@ -1,14 +1,19 @@
 package com.algorithmlx.ecr.api.mru.storage
 
 import com.algorithmlx.ecr.api.mru.MRUType
+import com.algorithmlx.ecr.api.mru.balance.MRUBalanceContainer
+import com.algorithmlx.ecr.api.mru.balance.MutableMRUBalance
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
+import kotlin.jvm.optionals.getOrNull
 
 data class ExtremeMRUStorageContainer(
     override val mruCapacity: Int,
     override val mruType: MRUType,
-    val onChange: (Int) -> Unit = {}
+    val onChange: (Int) -> Unit = {},
 ): IOMRUStorage {
+    override val balance: MutableMRUBalance = MRUBalanceContainer(0.0, 0.0, 0.0, 0.0)
+
     private var mutableMRU = 0
 
     override val mru: Int
@@ -50,10 +55,12 @@ data class ExtremeMRUStorageContainer(
 
     override fun save(output: ValueOutput) {
         output.putInt("mru", this.mutableMRU)
+        balance.save(output.child("balance"))
     }
 
     override fun load(input: ValueInput) {
         this.mutableMRU = input.getIntOr("mru", 0).coerceAtLeast(0)
+        input.child("balance").getOrNull()?.let { this.balance.load(it) }
     }
 }
 
@@ -62,6 +69,8 @@ data class MRUStorageContainer(
     override val mruType: MRUType,
     val onChange: (Int) -> Unit = {}
 ): IOMRUStorage {
+    override val balance: MutableMRUBalance = MRUBalanceContainer(0.0, 0.0, 0.0, 0.0)
+
     private var mutableMRU = 0
 
     override val mru: Int
@@ -104,9 +113,11 @@ data class MRUStorageContainer(
 
     override fun save(output: ValueOutput) {
         output.putInt("mru", this.mutableMRU)
+        balance.save(output.child("balance"))
     }
 
     override fun load(input: ValueInput) {
         this.mutableMRU = input.getIntOr("mru", 0).coerceIn(0, this.mruCapacity)
+        input.child("balance").getOrNull()?.let { this.balance.load(it) }
     }
 }

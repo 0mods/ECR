@@ -71,7 +71,9 @@ interface MRUDevice {
         /**
          * Represents an entity that cannot be connected, but stores MRU.
          */
-        UNCONNECTABLE;
+        UNCONNECTABLE,
+
+        ;
 
         /**
          * Determines if this device is capable of exporting MRU.
@@ -112,7 +114,7 @@ interface MRUDevice {
     data class LocatorData(
         val locatorStorage: Container,
         val locatorSlot: Int,
-        val position: BlockPos? = (locatorStorage as? BlockEntity)?.blockPos?.immutable()
+        val position: BlockPos? = (locatorStorage as? BlockEntity)?.blockPos?.immutable(),
     )
 }
 
@@ -136,11 +138,13 @@ fun MRUDevice.processReceive(level: Level) {
     val world = item.getWorld(stack)
 
     val logicalLevel = world?.let { server.getLevel(it) } ?: level
-    val outsideRadius = locatorData.position?.let { receiverPos ->
-        logicalLevel !== level || !item.isWithinBoundRadius(receiverPos, pos)
-    } ?: false
-    if (item.setOutsideBoundRadius(stack, outsideRadius))
+    val outsideRadius =
+        locatorData.position?.let { receiverPos ->
+            logicalLevel !== level || !item.isWithinBoundRadius(receiverPos, pos)
+        } ?: false
+    if (item.setOutsideBoundRadius(stack, outsideRadius)) {
         locatorData.locatorStorage.setChanged()
+    }
     if (outsideRadius) return
 
     val exporter = logicalLevel.resolveMRUDevice(pos) ?: return

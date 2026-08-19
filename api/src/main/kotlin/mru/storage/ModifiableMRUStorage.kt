@@ -1,6 +1,11 @@
 package com.algorithmlx.ecr.api.mru.storage
 
-interface ModifiableMRUStorage: MRUStorage {
+import com.algorithmlx.ecr.api.mru.balance.MRUBalance
+import com.algorithmlx.ecr.api.mru.balance.MutableMRUBalance
+
+interface ModifiableMRUStorage : MRUStorage {
+    val balance: MutableMRUBalance
+
     fun set(amount: Int)
 
     fun extract(amount: Int): Int
@@ -12,7 +17,10 @@ interface ModifiableMRUStorage: MRUStorage {
     fun canReceive(receive: Int): Boolean = mru + receive <= mruCapacity
 
     /** Transfers as much as possible up to [limit] and returns the inserted amount. */
-    fun transferTo(receiver: ModifiableMRUStorage, limit: Int): Int {
+    fun transferTo(
+        receiver: ModifiableMRUStorage,
+        limit: Int,
+    ): Int {
         if (receiver === this || limit <= 0 || !isSameTypes(receiver)) return 0
 
         val freeSpace = (receiver.mruCapacity - receiver.mru).coerceAtLeast(0)

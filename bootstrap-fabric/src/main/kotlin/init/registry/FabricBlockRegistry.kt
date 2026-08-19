@@ -4,6 +4,7 @@ import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.block.AssembledMultiblockPartBlock
 import com.algorithmlx.ecr.common.block.ClusterBlock
 import com.algorithmlx.ecr.common.block.ColdDistiller
+import com.algorithmlx.ecr.common.block.CreativeMRUSource
 import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.EnrichmentChamberController
 import com.algorithmlx.ecr.common.block.EnrichmentChamberExtractor
@@ -84,6 +85,7 @@ object FabricBlockRegistry : BlockRegistry {
         )
     override val rayTowerBase: RayTowerBase = register(ECRModIDs.RAY_TOWER_BASE, ::RayTowerBase)
     override val rayTower: RayTower = register(ECRModIDs.RAY_TOWER, ::RayTower)
+    override val creativeMRUSource: CreativeMRUSource = register(ECRModIDs.CREATIVE_MRU_SOURCE, ::CreativeMRUSource)
 
     private fun registerBasic(
         id: String,

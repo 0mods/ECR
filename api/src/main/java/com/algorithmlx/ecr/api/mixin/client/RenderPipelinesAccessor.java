@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.api.mixin;
+package com.algorithmlx.ecr.api.mixin.client;
 
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.renderer.RenderPipelines;

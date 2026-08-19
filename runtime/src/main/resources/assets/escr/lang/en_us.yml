@@ -77,6 +77,7 @@ block.escr:
   magical_teleporter: Magical Teleporter
   ray_tower: Ray Tower
   ray_tower_base: Ray Tower Base
+  creative_mru_source: Creative MRU Source
 
 tooltip.escr:
   sword_multiplier: MRU Gain Bonus

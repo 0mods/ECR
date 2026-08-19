@@ -82,6 +82,7 @@ class NeoForgeBlockRegistry(
         )
     private val rayTowerBaseBlock = registerBlock(ECRModIDs.RAY_TOWER_BASE, ::RayTowerBase)
     private val rayTowerBlock = registerBlock(ECRModIDs.RAY_TOWER, ::RayTower)
+    private val creativeMRUSourceBlock = registerBlock(ECRModIDs.CREATIVE_MRU_SOURCE, ::CreativeMRUSource)
 
     override val assembledMultiblockPart: AssembledMultiblockPartBlock by lazy { assembledMultiblockPartBlock.get() }
     override val mithrilineFurnace: MithrilineFurnace by lazy { mithrilineFurnaceBlock.get() }
@@ -109,6 +110,7 @@ class NeoForgeBlockRegistry(
     override val enrichmentChamberReceiver: EnrichmentChamberReceiver by lazy { enrichmentChamberReceiverBlock.get() }
     override val rayTowerBase: RayTowerBase by lazy { rayTowerBaseBlock.get() }
     override val rayTower: RayTower by lazy { rayTowerBlock.get() }
+    override val creativeMRUSource: CreativeMRUSource by lazy { creativeMRUSourceBlock.get() }
 
     private fun registerBasic(
         id: String,

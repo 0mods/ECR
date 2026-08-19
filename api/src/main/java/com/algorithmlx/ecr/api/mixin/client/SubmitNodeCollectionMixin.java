@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.api.mixin;
+package com.algorithmlx.ecr.api.mixin.client;
 
 import com.algorithmlx.ecr.api.geo.client.BedrockGeoGpuSubmit;
 import com.algorithmlx.ecr.api.geo.client.BedrockGeoGpuSubmitCollector;
