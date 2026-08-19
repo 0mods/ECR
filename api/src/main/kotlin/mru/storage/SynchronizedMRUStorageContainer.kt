@@ -1,13 +1,15 @@
 package com.algorithmlx.ecr.api.mru.storage
 
 import com.algorithmlx.ecr.api.mru.MRUType
+import com.algorithmlx.ecr.api.mru.balance.MRUBalanceContainer
+import com.algorithmlx.ecr.api.mru.balance.MutableMRUBalance
 import net.minecraft.world.level.storage.ValueInput
 import net.minecraft.world.level.storage.ValueOutput
 
 class SynchronizedMRUStorageContainer(
     private val fallbackType: MRUType,
-    private val source: () -> IOMRUStorage?
-): IOMRUStorage {
+    private val source: () -> IOMRUStorage?,
+) : IOMRUStorage {
     private val currentSource: IOMRUStorage?
         get() = source()?.takeUnless { it === this }
 
@@ -19,6 +21,7 @@ class SynchronizedMRUStorageContainer(
 
     override val mruType: MRUType
         get() = currentSource?.mruType ?: fallbackType
+    override val balance: MutableMRUBalance = MRUBalanceContainer(0.0, 0.0, 0.0, 0.0)
 
     override fun set(amount: Int) {
         currentSource?.set(amount)
