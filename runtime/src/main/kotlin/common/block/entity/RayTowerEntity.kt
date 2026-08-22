@@ -13,7 +13,10 @@ import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.molang.runtime.BlockEntityQuery
 import com.algorithmlx.ecr.api.molang.runtime.MolangContext
 import com.algorithmlx.ecr.api.mru.MRUDevice
+import com.algorithmlx.ecr.api.mru.balance.MRUBalanceContainer
+import com.algorithmlx.ecr.api.mru.loadMRUData
 import com.algorithmlx.ecr.api.mru.processReceive
+import com.algorithmlx.ecr.api.mru.saveMRUData
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.common.api.BoundGemHelper
@@ -82,14 +85,14 @@ class RayTowerEntity(
 
     override fun saveAdditional(output: ValueOutput) {
         ContainerHelper.saveAllItems(output, this.items)
-        this.mruStorage.save(output)
+        this.saveMRUData(output)
         AssembledMultiblockDataIO.write(output, assembledMultiblockData)
         super.saveAdditional(output)
     }
 
     override fun loadAdditional(input: ValueInput) {
         ContainerHelper.loadAllItems(input, this.items)
-        this.mruStorage.load(input)
+        this.loadMRUData(input)
         assembledMultiblockData = AssembledMultiblockDataIO.read(input)
         super.loadAdditional(input)
     }
@@ -110,6 +113,7 @@ class RayTowerEntity(
     override val mruStorage: IOMRUStorage = MRUStorageContainer(5000, MRUTypeRegistry.instance.radiationUnit) {
         this.setChanged()
     }
+    override val balance = MRUBalanceContainer(onChange = { setChanged() })
 
     override val deviceType: MRUDevice.DeviceType
         get() = if (isAssembledMultiblock) MRUDevice.DeviceType.IO else MRUDevice.DeviceType.UNCONNECTABLE

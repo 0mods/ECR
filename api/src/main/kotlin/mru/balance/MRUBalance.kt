@@ -21,9 +21,23 @@ interface MutableMRUBalance : MRUBalance {
 
     fun setLowerBalance(newBalance: Double)
 
+    fun setBalance(
+        upperBalance: Double,
+        lowerBalance: Double,
+    )
+
+    fun setBalance(balance: MRUBalance) {
+        setBalance(balance.upperBalance, balance.lowerBalance)
+    }
+
     fun updateUpperBalance(changeOn: Double): Double
 
     fun updateLowerBalance(changeOn: Double): Double
+
+    fun includeSource(
+        source: MRUBalance,
+        gameTime: Long,
+    )
 
     fun toImmutable(): MRUBalance
 

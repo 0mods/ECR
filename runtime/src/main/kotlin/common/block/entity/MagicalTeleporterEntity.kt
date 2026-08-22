@@ -4,7 +4,10 @@ import com.algorithmlx.ecr.api.block.entity.SynchronizedContainerBlockEntity
 import com.algorithmlx.ecr.api.chunk.ChunkLoadingManager
 import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.mru.MRUDevice
+import com.algorithmlx.ecr.api.mru.balance.MRUBalanceContainer
+import com.algorithmlx.ecr.api.mru.loadMRUData
 import com.algorithmlx.ecr.api.mru.processReceive
+import com.algorithmlx.ecr.api.mru.saveMRUData
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.api.particle.BedrockParticles
@@ -85,7 +88,7 @@ class MagicalTeleporterEntity(
         output.putInt("progress", this.progressTime)
         output.putBoolean("structure_valid", this.structureIsValid)
 
-        mruStorage.save(output)
+        saveMRUData(output)
         super.saveAdditional(output)
     }
 
@@ -95,13 +98,14 @@ class MagicalTeleporterEntity(
         this.progressTime = input.getIntOr("progress", 0)
         this.structureIsValid = input.getBooleanOr("structure_valid", false)
 
-        mruStorage.load(input)
+        loadMRUData(input)
         super.loadAdditional(input)
     }
 
     override fun getContainerSize(): Int = this.items.size
 
     override val mruStorage: IOMRUStorage = MRUStorageContainer(50000, MRUTypeRegistry.instance.radiationUnit) { this.setChanged() }
+    override val balance = MRUBalanceContainer(onChange = { setChanged() })
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.CONNECTABLE_RECEIVER
     override val locator: MRUDevice.LocatorData = MRUDevice.LocatorData(this, 0)
 

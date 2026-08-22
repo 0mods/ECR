@@ -1,12 +1,19 @@
+
+@file:JvmName("MRUDeviceHelper")
+
 package com.algorithmlx.ecr.api.mru
 
 import com.algorithmlx.ecr.api.assembled.AssembledMultiblocks
 import com.algorithmlx.ecr.api.item.BoundGem
+import com.algorithmlx.ecr.api.mru.balance.MutableMRUBalance
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import net.minecraft.core.BlockPos
 import net.minecraft.world.Container
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.block.entity.BlockEntity
+import net.minecraft.world.level.storage.ValueInput
+import net.minecraft.world.level.storage.ValueOutput
+import kotlin.jvm.optionals.getOrNull
 
 /**
  * Represents an entity that can store, receive, or transfer MRU (Magical Radiation Units).
@@ -25,6 +32,8 @@ interface MRUDevice {
      * @return an instance of [IOMRUStorage] representing the stored MRU.
      */
     val mruStorage: IOMRUStorage
+
+    val balance: MutableMRUBalance
 
     /**
      * Provides locator data used for slot-based MRU access.
@@ -125,6 +134,16 @@ fun Level.resolveMRUDevice(pos: BlockPos): MRUDevice? {
     return AssembledMultiblocks.controllerBlockEntity(this, pos) as? MRUDevice
 }
 
+fun MRUDevice.saveMRUData(output: ValueOutput) {
+    mruStorage.save(output)
+    balance.save(output.child(BALANCE_TAG))
+}
+
+fun MRUDevice.loadMRUData(input: ValueInput) {
+    mruStorage.load(input)
+    input.child(BALANCE_TAG).getOrNull()?.let(balance::load)
+}
+
 /** Starts receive procedure for [MRUDevice], if it has a configured [MRUDevice.locator]. */
 fun MRUDevice.processReceive(level: Level) {
     if (level.isClientSide) return
@@ -154,5 +173,17 @@ fun MRUDevice.processReceive(level: Level) {
     val currentContainer = this.mruStorage
     val generator = exporter.mruStorage
 
+    if (
+        exporter === this ||
+        generator === currentContainer ||
+        exporter.balance === this.balance ||
+        !generator.isSameTypes(currentContainer)
+    ) {
+        return
+    }
+
+    this.balance.includeSource(exporter.balance, level.gameTime)
     generator.transferTo(currentContainer, item.transferStrength)
 }
+
+private const val BALANCE_TAG = "balance"

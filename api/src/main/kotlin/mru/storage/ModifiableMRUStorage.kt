@@ -1,11 +1,6 @@
 package com.algorithmlx.ecr.api.mru.storage
 
-import com.algorithmlx.ecr.api.mru.balance.MRUBalance
-import com.algorithmlx.ecr.api.mru.balance.MutableMRUBalance
-
 interface ModifiableMRUStorage : MRUStorage {
-    val balance: MutableMRUBalance
-
     fun set(amount: Int)
 
     fun extract(amount: Int): Int

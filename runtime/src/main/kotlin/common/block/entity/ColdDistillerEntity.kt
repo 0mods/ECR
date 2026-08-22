@@ -1,6 +1,9 @@
 package com.algorithmlx.ecr.common.block.entity
 
 import com.algorithmlx.ecr.api.mru.MRUDevice
+import com.algorithmlx.ecr.api.mru.balance.MRUBalanceContainer
+import com.algorithmlx.ecr.api.mru.loadMRUData
+import com.algorithmlx.ecr.api.mru.saveMRUData
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.api.block.entity.SynchronizedBlockEntity
@@ -25,18 +28,19 @@ class ColdDistillerEntity(worldPosition: BlockPos, blockState: BlockState): Sync
     override fun saveAdditional(output: ValueOutput) {
         output.putFloat("mru_fraction", this.mruGenerationRemainder)
         output.putInt("destroy_time", this.destroyTime)
-        mruStorage.save(output)
+        saveMRUData(output)
         super.saveAdditional(output)
     }
 
     override fun loadAdditional(input: ValueInput) {
         this.mruGenerationRemainder = input.getFloatOr("mru_fraction", 0F)
         this.destroyTime = input.getIntOr("destroy_time", 0)
-        mruStorage.load(input)
+        loadMRUData(input)
         super.loadAdditional(input)
     }
 
     override val mruStorage: IOMRUStorage = MRUStorageContainer(100000, MRUTypeRegistry.instance.radiationUnit) { setChanged() }
+    override val balance = MRUBalanceContainer(onChange = { setChanged() })
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.TRANSLATOR
 
     companion object {

@@ -3,6 +3,9 @@ package com.algorithmlx.ecr.common.block.entity.enrichment
 import com.algorithmlx.ecr.api.block.entity.SynchronizedBlockEntity
 import com.algorithmlx.ecr.api.multiblock.MultiblockPlacement
 import com.algorithmlx.ecr.api.mru.MRUDevice
+import com.algorithmlx.ecr.api.mru.balance.MRUBalanceContainer
+import com.algorithmlx.ecr.api.mru.loadMRUData
+import com.algorithmlx.ecr.api.mru.saveMRUData
 import com.algorithmlx.ecr.api.mru.storage.ExtremeMRUStorageContainer
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import com.algorithmlx.ecr.common.block.EnrichmentChamberController
@@ -40,7 +43,7 @@ class EnrichmentChamberControllerEntity(worldPosition: BlockPos, blockState: Blo
 
         val capacity = input.getIntOr(MRU_CAPACITY_TAG, 0).coerceAtLeast(0)
         mutableMRUStorage = mutableMRUStorage.copy(mruCapacity = capacity)
-        this.mutableMRUStorage.load(input)
+        this.loadMRUData(input)
 
         if (input.getBooleanOr(HAS_PLACEMENT_TAG, false)) {
             val direction = Direction.entries.getOrNull(input.getIntOr(PLACEMENT_DIRECTION_TAG, -1))
@@ -61,7 +64,7 @@ class EnrichmentChamberControllerEntity(worldPosition: BlockPos, blockState: Blo
 
     override fun saveAdditional(output: ValueOutput) {
         output.putInt(MRU_CAPACITY_TAG, mutableMRUStorage.mruCapacity)
-        this.mutableMRUStorage.save(output)
+        this.saveMRUData(output)
 
         val placement = placement
         output.putBoolean(HAS_PLACEMENT_TAG, placement != null)
@@ -77,6 +80,7 @@ class EnrichmentChamberControllerEntity(worldPosition: BlockPos, blockState: Blo
     }
 
     override val mruStorage: IOMRUStorage get() = mutableMRUStorage
+    override val balance = MRUBalanceContainer(onChange = { setChanged() })
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.UNCONNECTABLE
 
     val innerBounds: AABB?

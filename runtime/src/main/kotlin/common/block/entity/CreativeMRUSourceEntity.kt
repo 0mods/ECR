@@ -3,6 +3,9 @@ package com.algorithmlx.ecr.common.block.entity
 import com.algorithmlx.ecr.api.block.entity.SynchronizedBlockEntity
 import com.algorithmlx.ecr.api.mru.MRUDevice
 import com.algorithmlx.ecr.api.mru.MRUType
+import com.algorithmlx.ecr.api.mru.balance.MRUBalanceContainer
+import com.algorithmlx.ecr.api.mru.loadMRUData
+import com.algorithmlx.ecr.api.mru.saveMRUData
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.MRUTypeRegistry
@@ -22,6 +25,7 @@ class CreativeMRUSourceEntity(
     ),
     MRUDevice {
     override val mruStorage: IOMRUStorage = ImmutableMRUStorage()
+    override val balance = MRUBalanceContainer(onChange = { setChanged() })
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.TRANSLATOR
 
     private class ImmutableMRUStorage : IOMRUStorage {

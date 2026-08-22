@@ -2,6 +2,8 @@ package com.algorithmlx.ecr.common.block.entity.enrichment
 
 import com.algorithmlx.ecr.api.block.entity.SynchronizedBlockEntity
 import com.algorithmlx.ecr.api.mru.MRUDevice
+import com.algorithmlx.ecr.api.mru.balance.MRUBalanceContainer
+import com.algorithmlx.ecr.api.mru.balance.MutableMRUBalance
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import com.algorithmlx.ecr.api.mru.storage.SynchronizedMRUStorageContainer
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
@@ -19,14 +21,18 @@ class EnrichmentChamberExtractorEntity(
     blockState
 ), MRUDevice, EnrichmentChamber {
     private var controllerPosition: BlockPos? = null
+    private val disconnectedBalance = MRUBalanceContainer()
+    private val controllerEntity: EnrichmentChamberControllerEntity?
+        get() = controllerPosition
+            ?.let { level?.getBlockEntity(it) as? EnrichmentChamberControllerEntity }
 
     override val mruStorage: IOMRUStorage field = SynchronizedMRUStorageContainer(
         MRUTypeRegistry.instance.radiationUnit
     ) {
-        controllerPosition
-            ?.let { level?.getBlockEntity(it) as? EnrichmentChamberControllerEntity }
-            ?.mruStorage
+        controllerEntity?.mruStorage
     }
+    override val balance: MutableMRUBalance
+        get() = controllerEntity?.balance ?: disconnectedBalance
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.TRANSLATOR
 
     override fun loadAdditional(input: ValueInput) {

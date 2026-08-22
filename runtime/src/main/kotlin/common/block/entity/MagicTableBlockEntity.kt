@@ -2,7 +2,10 @@ package com.algorithmlx.ecr.common.block.entity
 
 import com.algorithmlx.ecr.api.block.entity.SynchronizedContainerBlockEntity
 import com.algorithmlx.ecr.api.mru.MRUDevice
+import com.algorithmlx.ecr.api.mru.balance.MRUBalanceContainer
+import com.algorithmlx.ecr.api.mru.loadMRUData
 import com.algorithmlx.ecr.api.mru.processReceive
+import com.algorithmlx.ecr.api.mru.saveMRUData
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
 import com.algorithmlx.ecr.api.recipe.CachedRecipe
@@ -90,7 +93,7 @@ class MagicTableBlockEntity(
         ContainerHelper.saveAllItems(output, this.items)
         output.putInt("progress", this.progress)
         output.putInt("max_progress", this.maxProgress)
-        this.mruStorage.save(output)
+        this.saveMRUData(output)
         super.saveAdditional(output)
     }
 
@@ -98,7 +101,7 @@ class MagicTableBlockEntity(
         ContainerHelper.loadAllItems(input, this.items)
         this.progress = input.getIntOr("progress", 0)
         this.maxProgress = input.getIntOr("max_progress", 0)
-        this.mruStorage.load(input)
+        this.loadMRUData(input)
         super.loadAdditional(input)
     }
 
@@ -110,6 +113,7 @@ class MagicTableBlockEntity(
     ): Boolean = if (slot == 5) false else super.canPlaceItem(slot, itemStack)
 
     override val mruStorage: IOMRUStorage = MRUStorageContainer(5000, MRUTypeRegistry.instance.radiationUnit) { setChanged() }
+    override val balance = MRUBalanceContainer(onChange = { setChanged() })
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.RECEIVER
 
     override val locator: MRUDevice.LocatorData = MRUDevice.LocatorData(this, 6)

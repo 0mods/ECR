@@ -1,6 +1,9 @@
 package com.algorithmlx.ecr.common.block.entity
 
 import com.algorithmlx.ecr.api.mru.MRUDevice
+import com.algorithmlx.ecr.api.mru.balance.MRUBalanceContainer
+import com.algorithmlx.ecr.api.mru.loadMRUData
+import com.algorithmlx.ecr.api.mru.saveMRUData
 import com.algorithmlx.ecr.api.recipe.CachedRecipe
 import com.algorithmlx.ecr.api.utils.StackHelper
 import com.algorithmlx.ecr.api.mru.storage.MRUStorageContainer
@@ -88,7 +91,7 @@ class MithrilineFurnaceEntity(
         output.putInt("progress", this.craftProgress)
         output.putInt("max_progress", this.maxCraftProgress)
         output.putDouble("espe_fraction", this.espeGenerationRemainder)
-        mruStorage.save(output)
+        saveMRUData(output)
         super.saveAdditional(output)
     }
 
@@ -99,7 +102,7 @@ class MithrilineFurnaceEntity(
         craftProgress = input.getIntOr("progress", 0)
         maxCraftProgress = input.getIntOr("max_progress", 0)
         espeGenerationRemainder = input.getDoubleOr("espe_fraction", 0.0)
-        mruStorage.load(input)
+        loadMRUData(input)
         super.loadAdditional(input)
     }
 
@@ -119,6 +122,7 @@ class MithrilineFurnaceEntity(
     override fun getContainerSize(): Int = this.items.size
 
     override val mruStorage: MRUStorageContainer = MRUStorageContainer(10000, MRUTypeRegistry.instance.espe)
+    override val balance = MRUBalanceContainer(onChange = { setChanged() })
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.UNCONNECTABLE
 
     override fun getSlotsForFace(direction: Direction): IntArray = intArrayOf(0, 1)
