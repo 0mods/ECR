@@ -52,6 +52,10 @@ class NeoForgeBlockCodecRegistry(
         blockTypes.register(ECRModIDs.COLD_DISTILLER) { _ ->
             BlockBehaviour.simpleCodec(::ColdDistiller)
         }
+    private val heatGeneratorCodec =
+        blockTypes.register(ECRModIDs.HEAT_GENERATOR) { _ ->
+            BlockBehaviour.simpleCodec(::HeatGenerator)
+        }
     private val enrichmentChamberControllerCodec =
         blockTypes.register(ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER) { _ ->
             BlockBehaviour.simpleCodec(::EnrichmentChamberController)
@@ -80,6 +84,7 @@ class NeoForgeBlockCodecRegistry(
     override val magicTable: MapCodec<MagicTable> by lazy { magicTableCodec.get() }
     override val matrixDestructor: MapCodec<MatrixDestructor> by lazy { matrixDestructorCodec.get() }
     override val coldDistiller: MapCodec<ColdDistiller> by lazy { coldDistillerCodec.get() }
+    override val heatGenerator: MapCodec<HeatGenerator> by lazy { heatGeneratorCodec.get() }
     override val enrichmentChamberController: MapCodec<EnrichmentChamberController> by lazy { enrichmentChamberControllerCodec.get() }
     override val enrichmentChamberExtractor: MapCodec<EnrichmentChamberExtractor> by lazy { enrichmentChamberExtractorCodec.get() }
     override val enrichmentChamberReceiver: MapCodec<EnrichmentChamberReceiver> by lazy { enrichmentChamberReceiverCodec.get() }

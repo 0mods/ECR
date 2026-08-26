@@ -9,6 +9,7 @@ import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.EnrichmentChamberController
 import com.algorithmlx.ecr.common.block.EnrichmentChamberExtractor
 import com.algorithmlx.ecr.common.block.EnrichmentChamberReceiver
+import com.algorithmlx.ecr.common.block.HeatGenerator
 import com.algorithmlx.ecr.common.block.MagicTable
 import com.algorithmlx.ecr.common.block.MagicalTeleporter
 import com.algorithmlx.ecr.common.block.MatrixDestructor
@@ -50,6 +51,7 @@ object FabricBlockRegistry : BlockRegistry {
     override val matrixDestructor: MatrixDestructor = register(ECRModIDs.MATRIX_DESTRUCTOR, ::MatrixDestructor)
     override val solarPrism: SolarPrism = register(ECRModIDs.SOLAR_PRISM, ::SolarPrism)
     override val coldDistiller: ColdDistiller = register(ECRModIDs.COLD_DISTILLER, ::ColdDistiller)
+    override val heatGenerator: HeatGenerator = register(ECRModIDs.HEAT_GENERATOR, ::HeatGenerator)
     override val voidStone: Block = registerBasic(ECRModIDs.VOID_STONE)
     override val mithrilinePlating: Block = registerBasic(ECRModIDs.MITHRILINE_PLATING)
     override val pale: Block = registerBasic(ECRModIDs.PALE_BLOCK)

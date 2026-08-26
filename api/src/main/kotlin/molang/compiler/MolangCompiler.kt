@@ -1,6 +1,12 @@
 package com.algorithmlx.ecr.api.molang.compiler
 
-import org.joml.Vector3f
+import com.algorithmlx.ecr.api.LOGGER
+import com.algorithmlx.ecr.api.molang.lexer.Lexer
+import com.algorithmlx.ecr.api.molang.lexer.Token
+import com.algorithmlx.ecr.api.molang.parser.*
+import com.algorithmlx.ecr.api.molang.runtime.MolangContext
+import com.algorithmlx.ecr.api.molang.runtime.Query
+import com.algorithmlx.ecr.api.molang.runtime.Variables
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -12,18 +18,12 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonDecoder
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonPrimitive
+import org.joml.Vector3f
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Label
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes.*
 import org.objectweb.asm.Type
-import com.algorithmlx.ecr.api.LOGGER
-import com.algorithmlx.ecr.api.molang.lexer.Lexer
-import com.algorithmlx.ecr.api.molang.lexer.Token
-import com.algorithmlx.ecr.api.molang.parser.*
-import com.algorithmlx.ecr.api.molang.runtime.MolangContext
-import com.algorithmlx.ecr.api.molang.runtime.Query
-import com.algorithmlx.ecr.api.molang.runtime.Variables
 import java.beans.Introspector
 import java.beans.PropertyDescriptor
 import java.lang.reflect.Modifier
@@ -36,17 +36,25 @@ fun FloatExpr.eval(context: MolangContext) = getFloat(context.query, context.var
 
 @Serializable(FloatExprSerializer::class)
 fun interface FloatExpr {
-    fun getFloat(query: Query, variables: Variables): Float
+    fun getFloat(
+        query: Query,
+        variables: Variables,
+    ): Float
 
     companion object {
         fun literal(value: Float): FloatExpr = FloatExpr { _, _ -> value }
+
         val ZERO = FloatExpr { _, _ -> 0f }
         val ONE = FloatExpr { _, _ -> 1f }
     }
 }
 
 @Serializable(FloatVec3ExprSerializer::class)
-class FloatVec3Expr(val x: FloatExpr, val y: FloatExpr, val z: FloatExpr) {
+class FloatVec3Expr(
+    val x: FloatExpr,
+    val y: FloatExpr,
+    val z: FloatExpr,
+) {
     fun eval(context: MolangContext) = Vector3f(x.eval(context), y.eval(context), z.eval(context))
 
     companion object {
@@ -59,45 +67,66 @@ class FloatVec3Expr(val x: FloatExpr, val y: FloatExpr, val z: FloatExpr) {
 
 object FloatVec3ExprSerializer : KSerializer<FloatVec3Expr> {
     override val descriptor: SerialDescriptor = JsonElement.serializer().descriptor
-    override fun deserialize(decoder: Decoder): FloatVec3Expr = parse((decoder as JsonDecoder).decodeJsonElement())
-    override fun serialize(encoder: Encoder, value: FloatVec3Expr) = throw UnsupportedOperationException()
 
-    private fun parse(json: JsonElement): FloatVec3Expr = when (json) {
-        is JsonArray -> {
-            val first = (json[0] as JsonPrimitive).parseMolangExpression()
-            val second = (json.getOrNull(1) as JsonPrimitive?)?.parseMolangExpression() ?: first
-            val third = (json.getOrNull(2) as JsonPrimitive?)?.parseMolangExpression() ?: second
-            FloatVec3Expr(first, second, third)
+    override fun deserialize(decoder: Decoder): FloatVec3Expr = parse((decoder as JsonDecoder).decodeJsonElement())
+
+    override fun serialize(
+        encoder: Encoder,
+        value: FloatVec3Expr,
+    ) = throw UnsupportedOperationException()
+
+    private fun parse(json: JsonElement): FloatVec3Expr =
+        when (json) {
+            is JsonArray -> {
+                val first = (json[0] as JsonPrimitive).parseMolangExpression()
+                val second = (json.getOrNull(1) as JsonPrimitive?)?.parseMolangExpression() ?: first
+                val third = (json.getOrNull(2) as JsonPrimitive?)?.parseMolangExpression() ?: second
+                FloatVec3Expr(first, second, third)
+            }
+
+            is JsonPrimitive -> {
+                when (json.content) {
+                    "x" -> FloatVec3Expr.UNIT_X
+                    "y" -> FloatVec3Expr.UNIT_Y
+                    "z" -> FloatVec3Expr.UNIT_Z
+                    else -> json.parseMolangExpression().let { FloatVec3Expr(it, it, it) }
+                }
+            }
+
+            else -> {
+                throw SerializationException("Expected array or primitive, got $json")
+            }
         }
-        is JsonPrimitive -> when (json.content) {
-            "x" -> FloatVec3Expr.UNIT_X
-            "y" -> FloatVec3Expr.UNIT_Y
-            "z" -> FloatVec3Expr.UNIT_Z
-            else -> json.parseMolangExpression().let { FloatVec3Expr(it, it, it) }
-        }
-        else -> throw SerializationException("Expected array or primitive, got $json")
-    }
 }
 
 fun JsonPrimitive.parseMolangExpression() = MolangCompiler.compileFloat(content)
 
-object FloatExprSerializer: KSerializer<FloatExpr> {
+object FloatExprSerializer : KSerializer<FloatExpr> {
     override val descriptor: SerialDescriptor = JsonElement.serializer().descriptor
 
     override fun deserialize(decoder: Decoder): FloatExpr = parse((decoder as JsonDecoder).decodeJsonElement())
-    override fun serialize(encoder: Encoder, value: FloatExpr) =
-        throw UnsupportedOperationException("Molang serialization not supported yet!")
+
+    override fun serialize(
+        encoder: Encoder,
+        value: FloatExpr,
+    ) = throw UnsupportedOperationException("Molang serialization not supported yet!")
 
     private fun parse(json: JsonElement): FloatExpr = (json as JsonPrimitive).parseMolangExpression()
 }
 
 fun interface BoolExpr {
-    fun getBoolean(query: Query, variables: Variables): Boolean
+    fun getBoolean(
+        query: Query,
+        variables: Variables,
+    ): Boolean
 }
 
 object MolangCompiler {
     private class BytecodeClassLoader : ClassLoader(MolangCompiler::class.java.classLoader) {
-        fun defineClass(name: String, bytecode: ByteArray): Class<*> {
+        fun defineClass(
+            name: String,
+            bytecode: ByteArray,
+        ): Class<*> {
             val loaded = findLoadedClass(name)
             if (loaded != null) return loaded
 
@@ -107,7 +136,6 @@ object MolangCompiler {
                 println("Error loading class $name: ${e.message}")
                 throw e
             }
-
         }
     }
 
@@ -118,39 +146,45 @@ object MolangCompiler {
     private val floatFunctions = Object2ObjectOpenHashMap<String, FloatExpr>()
     private val boolFunctions = Object2ObjectOpenHashMap<String, BoolExpr>()
 
-    fun compileBoolean(expression: String) = boolFunctions.getOrPut(expression) {
-        compile(Parser(Lexer(expression).tokenize()).parseCompleteBooleanExpr())
-    }
+    fun compileBoolean(expression: String) =
+        boolFunctions.getOrPut(expression) {
+            compile(Parser(Lexer(expression).tokenize()).parseCompleteBooleanExpr())
+        }
 
-    fun compileFloat(expression: String): FloatExpr = floatFunctions.getOrPut(expression) {
-        val statements = expression
-            .split(';')
-            .map(String::trim)
-            .filter(String::isNotEmpty)
-            .map { it.removePrefix("return ").trim() }
-        when (statements.size) {
-            0 -> FloatExpr.ZERO
-            1 -> compile(Parser(Lexer(statements.single()).tokenize()).parseCompleteFloatExpr())
-            else -> {
-                val compiled: List<FloatExpr> = statements.map {
-                    compile(Parser(Lexer(it).tokenize()).parseCompleteFloatExpr())
+    fun compileFloat(expression: String): FloatExpr =
+        floatFunctions.getOrPut(expression) {
+            val statements =
+                expression
+                    .split(';')
+                    .map(String::trim)
+                    .filter(String::isNotEmpty)
+                    .map { it.removePrefix("return ").trim() }
+            when (statements.size) {
+                0 -> {
+                    FloatExpr.ZERO
                 }
-                FloatExpr { query, variables ->
-                    var result = 0f
-                    compiled.forEach { result = it.getFloat(query, variables) }
-                    result
+
+                1 -> {
+                    compile(Parser(Lexer(statements.single()).tokenize()).parseCompleteFloatExpr())
+                }
+
+                else -> {
+                    val compiled: List<FloatExpr> =
+                        statements.map {
+                            compile(Parser(Lexer(it).tokenize()).parseCompleteFloatExpr())
+                        }
+                    FloatExpr { query, variables ->
+                        var result = 0f
+                        compiled.forEach { result = it.getFloat(query, variables) }
+                        result
+                    }
                 }
             }
         }
-    }
 
-    internal fun compile(ast: AstBoolean): BoolExpr {
-        return ast as? BoolLiteral ?: codegenBoolean(ast)
-    }
+    internal fun compile(ast: AstBoolean): BoolExpr = ast as? BoolLiteral ?: codegenBoolean(ast)
 
-    internal fun compile(ast: AstFloat): FloatExpr {
-        return ast as? NumberLiteral ?: codegenFloat(ast)
-    }
+    internal fun compile(ast: AstFloat): FloatExpr = ast as? NumberLiteral ?: codegenFloat(ast)
 
     private fun codegenBoolean(ast: AstBoolean): BoolExpr {
         val className = "GeneratedBooleanExpr${generatedIndex.andIncrement}"
@@ -161,16 +195,17 @@ object MolangCompiler {
             className,
             null,
             "java/lang/Object",
-            arrayOf("com/algorithmlx/ecr/api/molang/compiler/BoolExpr")
+            arrayOf("com/algorithmlx/ecr/api/molang/compiler/BoolExpr"),
         )
         generateCtor(cw)
-        val mv = cw.visitMethod(
-            ACC_PUBLIC,
-            "getBoolean",
-            "(${QUERY.descriptor}${VARIABLES.descriptor})Z",
-            null,
-            null
-        )
+        val mv =
+            cw.visitMethod(
+                ACC_PUBLIC,
+                "getBoolean",
+                "(${QUERY.descriptor}${VARIABLES.descriptor})Z",
+                null,
+                null,
+            )
         mv.visitCode()
         generateBooleanExpression(mv, ast)
         mv.visitInsn(IRETURN)
@@ -194,16 +229,17 @@ object MolangCompiler {
             className,
             null,
             "java/lang/Object",
-            arrayOf("com/algorithmlx/ecr/api/molang/compiler/FloatExpr")
+            arrayOf("com/algorithmlx/ecr/api/molang/compiler/FloatExpr"),
         )
         generateCtor(cw)
-        val mv = cw.visitMethod(
-            ACC_PUBLIC,
-            "getFloat",
-            "(${QUERY.descriptor}${VARIABLES.descriptor})F",
-            null,
-            null
-        )
+        val mv =
+            cw.visitMethod(
+                ACC_PUBLIC,
+                "getFloat",
+                "(${QUERY.descriptor}${VARIABLES.descriptor})F",
+                null,
+                null,
+            )
         mv.visitCode()
         generateFloatExpression(mv, ast)
         mv.visitInsn(FRETURN)
@@ -218,14 +254,23 @@ object MolangCompiler {
         return instance as FloatExpr
     }
 
-    private fun generateFloatExpression(mv: MethodVisitor, ast: AstFloat) {
+    private fun generateFloatExpression(
+        mv: MethodVisitor,
+        ast: AstFloat,
+    ) {
         when (ast) {
-            is NumberLiteral -> mv.visitLdcInsn(ast.value)
-            is VariableAccess -> generateVariableAccess(ast, mv, false)
+            is NumberLiteral -> {
+                mv.visitLdcInsn(ast.value)
+            }
+
+            is VariableAccess -> {
+                generateVariableAccess(ast, mv, false)
+            }
+
             is Assignment -> {
                 generateFloatExpression(mv, ast.expr)
                 mv.visitInsn(DUP)
-                mv.visitVarInsn(ALOAD, 2) // Ð—Ð°Ð³Ñ€ÑƒÐ¶Ð°ÐµÐ¼ variables.svg
+                mv.visitVarInsn(ALOAD, 2)
                 mv.visitInsn(SWAP)
                 mv.visitLdcInsn(ast.variable.path.joinToString("."))
                 mv.visitInsn(SWAP)
@@ -234,20 +279,22 @@ object MolangCompiler {
                     VARIABLES.internalName,
                     "set",
                     "(Ljava/lang/String;F)V",
-                    true
+                    true,
                 )
             }
+
             is BinaryOp -> {
                 generateFloatExpression(mv, ast.left)
                 generateFloatExpression(mv, ast.right)
-                val opcode = when (ast.op) {
-                    Token.Type.ADD -> FADD
-                    Token.Type.SUB -> FSUB
-                    Token.Type.MUL -> FMUL
-                    Token.Type.DIV -> FDIV
-                    Token.Type.MOD -> FREM
-                    else -> error("Unsupported binary operation: ${ast.op}")
-                }
+                val opcode =
+                    when (ast.op) {
+                        Token.Type.ADD -> FADD
+                        Token.Type.SUB -> FSUB
+                        Token.Type.MUL -> FMUL
+                        Token.Type.DIV -> FDIV
+                        Token.Type.MOD -> FREM
+                        else -> error("Unsupported binary operation: ${ast.op}")
+                    }
                 mv.visitInsn(opcode)
             }
 
@@ -271,8 +318,11 @@ object MolangCompiler {
                 }
 
                 val opcode =
-                    if (descriptor.className.startsWith("java/") || descriptor.isStatic) INVOKESTATIC
-                    else INVOKEVIRTUAL
+                    if (descriptor.className.startsWith("java/") || descriptor.isStatic) {
+                        INVOKESTATIC
+                    } else {
+                        INVOKEVIRTUAL
+                    }
 
                 mv.visitMethodInsn(
                     opcode,
@@ -280,9 +330,9 @@ object MolangCompiler {
                     descriptor.methodName,
                     Type.getMethodDescriptor(
                         Type.getType(descriptor.returnType),
-                        *(0..<descriptor.argCount).map { Type.getType(Float::class.java) }.toTypedArray()
+                        *(0..<descriptor.argCount).map { Type.getType(Float::class.java) }.toTypedArray(),
                     ),
-                    false
+                    false,
                 )
             }
         }
@@ -309,17 +359,18 @@ object MolangCompiler {
                 if (property == null) {
                     LOGGER.warn(
                         "Molang: query property '{}' not found in {}, defaulting to 0",
-                        propName, currentClass.simpleName
+                        propName,
+                        currentClass.simpleName,
                     )
                     mv.visitInsn(POP) // discard the current query object left on the stack
                     if (isBoolean) mv.visitInsn(ICONST_0) else mv.visitInsn(FCONST_0)
                     return
                 }
 
-                val getter = property.javaGetter
-                    ?: error("Property '$propName' has no getter in ${currentClass.simpleName}")
+                val getter =
+                    property.javaGetter
+                        ?: error("Property '$propName' has no getter in ${currentClass.simpleName}")
                 val declaringClass = getter.declaringClass
-
 
                 mv.visitMethodInsn(
                     when {
@@ -330,7 +381,7 @@ object MolangCompiler {
                     Type.getInternalName(getter.declaringClass),
                     getter.name,
                     Type.getMethodDescriptor(getter),
-                    declaringClass.isInterface
+                    declaringClass.isInterface,
                 )
 
                 currentClass = property.returnType.classifier as KClass<*>
@@ -351,7 +402,7 @@ object MolangCompiler {
                 VARIABLES.internalName,
                 "get",
                 "(Ljava/lang/String;)F",
-                true
+                true,
             )
 
             if (isBoolean) {
@@ -385,17 +436,29 @@ object MolangCompiler {
         mv.visitLabel(endLabel)
     }
 
-    fun findPropertyRecursive(name: String, clazz: Class<*>): PropertyDescriptor? {
+    fun findPropertyRecursive(
+        name: String,
+        clazz: Class<*>,
+    ): PropertyDescriptor? {
         for (pd in Introspector.getBeanInfo(clazz).propertyDescriptors) {
             if (pd.name == name) return pd
         }
         return null
     }
 
-    private fun generateBooleanExpression(mv: MethodVisitor, ast: AstBoolean) {
+    private fun generateBooleanExpression(
+        mv: MethodVisitor,
+        ast: AstBoolean,
+    ) {
         when (ast) {
-            is BoolLiteral -> mv.visitInsn(if (ast.value) ICONST_1 else ICONST_0)
-            is VariableAccess -> generateVariableAccess(ast, mv, true)
+            is BoolLiteral -> {
+                mv.visitInsn(if (ast.value) ICONST_1 else ICONST_0)
+            }
+
+            is VariableAccess -> {
+                generateVariableAccess(ast, mv, true)
+            }
+
             is CompareOp -> {
                 generateFloatExpression(mv, ast.left)
                 generateFloatExpression(mv, ast.right)
@@ -404,30 +467,38 @@ object MolangCompiler {
 
                 when (ast.op) {
                     Token.Type.EQ -> {
-                        mv.visitInsn(FCMPL); mv.visitJumpInsn(IFEQ, trueLabel)
+                        mv.visitInsn(FCMPL)
+                        mv.visitJumpInsn(IFEQ, trueLabel)
                     }
 
                     Token.Type.NEQ -> {
-                        mv.visitInsn(FCMPL); mv.visitJumpInsn(IFNE, trueLabel)
+                        mv.visitInsn(FCMPL)
+                        mv.visitJumpInsn(IFNE, trueLabel)
                     }
 
                     Token.Type.LT -> {
-                        mv.visitInsn(FCMPL); mv.visitJumpInsn(IFLT, trueLabel)
+                        mv.visitInsn(FCMPL)
+                        mv.visitJumpInsn(IFLT, trueLabel)
                     }
 
                     Token.Type.GT -> {
-                        mv.visitInsn(FCMPL); mv.visitJumpInsn(IFGT, trueLabel)
+                        mv.visitInsn(FCMPL)
+                        mv.visitJumpInsn(IFGT, trueLabel)
                     }
 
                     Token.Type.LTE -> {
-                        mv.visitInsn(FCMPL); mv.visitJumpInsn(IFLE, trueLabel)
+                        mv.visitInsn(FCMPL)
+                        mv.visitJumpInsn(IFLE, trueLabel)
                     }
 
                     Token.Type.GTE -> {
-                        mv.visitInsn(FCMPL); mv.visitJumpInsn(IFGE, trueLabel)
+                        mv.visitInsn(FCMPL)
+                        mv.visitJumpInsn(IFGE, trueLabel)
                     }
 
-                    else -> error("Unsupported comparison operator: ${ast.op}")
+                    else -> {
+                        error("Unsupported comparison operator: ${ast.op}")
+                    }
                 }
 
                 mv.visitInsn(ICONST_0)
@@ -465,7 +536,9 @@ object MolangCompiler {
                         mv.visitLabel(endLabel)
                     }
 
-                    else -> error("Unsupported logical operator: ${ast.op}")
+                    else -> {
+                        error("Unsupported logical operator: ${ast.op}")
+                    }
                 }
             }
 

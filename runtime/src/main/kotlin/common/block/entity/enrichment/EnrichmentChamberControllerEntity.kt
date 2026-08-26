@@ -1,13 +1,13 @@
 package com.algorithmlx.ecr.common.block.entity.enrichment
 
 import com.algorithmlx.ecr.api.block.entity.SynchronizedBlockEntity
-import com.algorithmlx.ecr.api.multiblock.MultiblockPlacement
 import com.algorithmlx.ecr.api.mru.MRUDevice
 import com.algorithmlx.ecr.api.mru.balance.MRUBalanceContainer
 import com.algorithmlx.ecr.api.mru.loadMRUData
 import com.algorithmlx.ecr.api.mru.saveMRUData
 import com.algorithmlx.ecr.api.mru.storage.ExtremeMRUStorageContainer
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage
+import com.algorithmlx.ecr.api.multiblock.MultiblockPlacement
 import com.algorithmlx.ecr.common.block.EnrichmentChamberController
 import com.algorithmlx.ecr.common.init.config.ECConfig
 import com.algorithmlx.ecr.common.menu.EnrichmentChamberControllerMenu
@@ -80,32 +80,31 @@ class EnrichmentChamberControllerEntity(worldPosition: BlockPos, blockState: Blo
     }
 
     override val mruStorage: IOMRUStorage get() = mutableMRUStorage
-    override val balance = MRUBalanceContainer(onChange = { setChanged() })
+    override val balance = MRUBalanceContainer { setChanged() }
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.UNCONNECTABLE
 
-    val innerBounds: AABB?
-        get() {
-            val placement = placement ?: return null
-            val pattern = multiblock.variants.getOrNull(placement.variantIndex) ?: return null
-            if (pattern.xSize <= 2 || pattern.ySize <= 2 || pattern.zSize <= 2) return null
+    val innerBounds: AABB? get() {
+        val placement = placement ?: return null
+        val pattern = multiblock.variants.getOrNull(placement.variantIndex) ?: return null
+        if (pattern.xSize <= 2 || pattern.ySize <= 2 || pattern.zSize <= 2) return null
 
-            val first = getWorldPosition(placement, 1, 1, 1)
-            val last = getWorldPosition(
-                placement,
-                pattern.xSize - 2,
-                pattern.ySize - 2,
-                pattern.zSize - 2
-            )
+        val first = getWorldPosition(placement, 1, 1, 1)
+        val last = getWorldPosition(
+            placement,
+            pattern.xSize - 2,
+            pattern.ySize - 2,
+            pattern.zSize - 2
+        )
 
-            return AABB(
-                minOf(first.x, last.x).toDouble(),
-                minOf(first.y, last.y).toDouble(),
-                minOf(first.z, last.z).toDouble(),
-                maxOf(first.x, last.x) + 1.0,
-                maxOf(first.y, last.y) + 1.0,
-                maxOf(first.z, last.z) + 1.0
-            )
-        }
+        return AABB(
+            minOf(first.x, last.x).toDouble(),
+            minOf(first.y, last.y).toDouble(),
+            minOf(first.z, last.z).toDouble(),
+            maxOf(first.x, last.x) + 1.0,
+            maxOf(first.y, last.y) + 1.0,
+            maxOf(first.z, last.z) + 1.0
+        )
+    }
 
     fun setPlacement(placement: MultiblockPlacement?) {
         if (this.placement == placement) {

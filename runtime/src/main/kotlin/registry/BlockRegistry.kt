@@ -8,6 +8,7 @@ import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.EnrichmentChamberController
 import com.algorithmlx.ecr.common.block.EnrichmentChamberExtractor
 import com.algorithmlx.ecr.common.block.EnrichmentChamberReceiver
+import com.algorithmlx.ecr.common.block.HeatGenerator
 import com.algorithmlx.ecr.common.block.MagicTable
 import com.algorithmlx.ecr.common.block.MagicalTeleporter
 import com.algorithmlx.ecr.common.block.MatrixDestructor
@@ -25,6 +26,7 @@ interface BlockRegistry {
     val magicalTeleporter: MagicalTeleporter
     val matrixDestructor: MatrixDestructor
     val coldDistiller: ColdDistiller
+    val heatGenerator: HeatGenerator
     val solarPrism: SolarPrism
     val voidStone: Block
     val mithrilinePlating: Block

@@ -22,7 +22,8 @@ data class ECConfig(
     val multiblocks: MultiblockDataConfig = MultiblockDataConfig(),
     @SerialName("cold_distiller") val coldDistillerConfig: ColdDistillerConfig = ColdDistillerConfig(),
     @SerialName("magical_teleporter") val magicalTeleporter: MagicalTeleporterConfig = MagicalTeleporterConfig(),
-    @SerialName("enrichment_chamber") val enrichmentChamber: EnrichmentChamberConfig = EnrichmentChamberConfig()
+    @SerialName("enrichment_chamber") val enrichmentChamber: EnrichmentChamberConfig = EnrichmentChamberConfig(),
+    @SerialName("heat_generator") val heatGenerator: HeatGeneratorConfig = HeatGeneratorConfig()
 ) {
     companion object {
         @JvmStatic
@@ -102,8 +103,7 @@ data class ColdDistillerConfig(
     val maxMruPerSecond: Int = 16,
     @SerialName("destroy_ice")
     val destroyIce: DestroyIceConfig = DestroyIceConfig()
-) {
-}
+)
 
 @JsonDefaults
 @Serializable
@@ -141,4 +141,11 @@ data class MagicalTeleporterConfig(
 data class EnrichmentChamberConfig(
     @SerialName("controller_capacity") val controllerCapacity: Int = 60000,
     @SerialName("holder_capacity") val holderCapacity: Int = 100000
+)
+
+@JsonDefaults
+@Serializable
+data class HeatGeneratorConfig(
+    val capacity: Int = 10000,
+    @SerialName("ultra_capacity") val ultraCapacity: Int = 100000,
 )

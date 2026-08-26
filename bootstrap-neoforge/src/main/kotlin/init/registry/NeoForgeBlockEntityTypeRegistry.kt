@@ -49,6 +49,10 @@ class NeoForgeBlockEntityTypeRegistry(
         blockEntityType.register(ECRModIDs.COLD_DISTILLER) { _ ->
             BlockEntityType(::ColdDistillerEntity, setOf(BlockRegistry.instance.coldDistiller))
         }
+    private val heatGeneratorEntity =
+        blockEntityType.register(ECRModIDs.HEAT_GENERATOR) { _ ->
+            BlockEntityType(::HeatGeneratorEntity, setOf(BlockRegistry.instance.heatGenerator))
+        }
     private val enrichmentChamberControllerEntity =
         blockEntityType.register(ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER) { _ ->
             BlockEntityType(::EnrichmentChamberControllerEntity, setOf(BlockRegistry.instance.enrichmentChamberController))
@@ -89,4 +93,5 @@ class NeoForgeBlockEntityTypeRegistry(
     override val creativeMRUSource: BlockEntityType<CreativeMRUSourceEntity> by lazy { creativeMRUSourceEntity.get() }
     override val matrixDestructor: BlockEntityType<MatrixDestructorEntity> by lazy { matrixDestructorEntity.get() }
     override val coldDistiller: BlockEntityType<ColdDistillerEntity> by lazy { coldDistillerEntity.get() }
+    override val heatGenerator: BlockEntityType<HeatGeneratorEntity> by lazy { heatGeneratorEntity.get() }
 }

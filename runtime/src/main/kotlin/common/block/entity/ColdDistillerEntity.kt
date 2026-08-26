@@ -40,7 +40,7 @@ class ColdDistillerEntity(worldPosition: BlockPos, blockState: BlockState): Sync
     }
 
     override val mruStorage: IOMRUStorage = MRUStorageContainer(100000, MRUTypeRegistry.instance.radiationUnit) { setChanged() }
-    override val balance = MRUBalanceContainer(onChange = { setChanged() })
+    override val balance = MRUBalanceContainer { setChanged() }
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.TRANSLATOR
 
     companion object {

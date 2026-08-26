@@ -16,6 +16,7 @@ object ECRModIDs {
     const val BOUND_GEM = "bound_gem"
     const val MAGIC_TABLE = "magic_table"
     const val COLD_DISTILLER = "cold_distiller"
+    const val HEAT_GENERATOR = "heat_generator"
     const val MAGICAL_TELEPORTER = "magical_teleporter"
     const val ENRICHMENT_CHAMBER = "enrichment_chamber"
     const val ENRICHMENT_CHAMBER_CONTROLLER = "${ENRICHMENT_CHAMBER}_controller"

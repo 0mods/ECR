@@ -122,7 +122,7 @@ class MithrilineFurnaceEntity(
     override fun getContainerSize(): Int = this.items.size
 
     override val mruStorage: MRUStorageContainer = MRUStorageContainer(10000, MRUTypeRegistry.instance.espe)
-    override val balance = MRUBalanceContainer(onChange = { setChanged() })
+    override val balance = MRUBalanceContainer { setChanged() }
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.UNCONNECTABLE
 
     override fun getSlotsForFace(direction: Direction): IntArray = intArrayOf(0, 1)

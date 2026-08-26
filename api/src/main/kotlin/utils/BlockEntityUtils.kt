@@ -10,7 +10,11 @@ import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityTicker
 import net.minecraft.world.level.block.state.BlockState
 
-inline fun <reified T> checkAndOpenMenu(player: Player, level: Level, blockPos: BlockPos): InteractionResult where T: BlockEntity, T: MenuProvider {
+inline fun <reified T> checkAndOpenMenu(
+    player: Player,
+    level: Level,
+    blockPos: BlockPos,
+): InteractionResult where T : BlockEntity, T : MenuProvider {
     if (!level.isClientSide) {
         val be = level.getBlockEntity(blockPos)
         if (be is T) {
@@ -18,16 +22,23 @@ inline fun <reified T> checkAndOpenMenu(player: Player, level: Level, blockPos: 
             player.openMenuScreen(be, level, be.blockPos)
         } else if (be != null) {
             throw IllegalStateException("Can not open any block entity that is not instanceof ${T::class.java}")
-        } else return InteractionResult.FAIL
+        } else {
+            return InteractionResult.FAIL
+        }
     }
 
     return InteractionResult.SUCCESS
 }
 
-inline fun <T: BlockEntity, reified V: BlockEntity> simpleTicker(
-    crossinline onTick: (level: Level, blockPos: BlockPos, blockState: BlockState, blockEntity: V) -> Unit
+inline fun <T : BlockEntity, reified V : BlockEntity> simpleTicker(
+    crossinline onTick: (level: Level, blockPos: BlockPos, blockState: BlockState, blockEntity: V) -> Unit,
 ) = BlockEntityTicker<T> { level, pos, state, entity -> onTick(level, pos, state, entity as V) }
 
 // INITIALIZED ON PLATFORM
 lateinit var openMenuScreenInternal: (player: Player, provider: MenuProvider, level: Level, pos: BlockPos) -> Unit
-fun Player.openMenuScreen(provider: MenuProvider, level: Level, pos: BlockPos) = openMenuScreenInternal(this, provider, level, pos)
+
+fun Player.openMenuScreen(
+    provider: MenuProvider,
+    level: Level,
+    pos: BlockPos,
+) = openMenuScreenInternal(this, provider, level, pos)

@@ -76,7 +76,7 @@ class MatrixDestructorEntity(
     override fun getContainerSize(): Int = this.items.size
 
     override val mruStorage: IOMRUStorage = MRUStorageContainer(10000, MRUTypeRegistry.instance.radiationUnit) { setChanged() }
-    override val balance = MRUBalanceContainer(onChange = { setChanged() })
+    override val balance = MRUBalanceContainer { setChanged() }
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.TRANSLATOR
 
     fun setStatusUpdated(status: MatrixDestructorStatus) {

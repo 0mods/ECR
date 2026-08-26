@@ -9,6 +9,7 @@ import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.EnrichmentChamberController
 import com.algorithmlx.ecr.common.block.EnrichmentChamberExtractor
 import com.algorithmlx.ecr.common.block.EnrichmentChamberReceiver
+import com.algorithmlx.ecr.common.block.HeatGenerator
 import com.algorithmlx.ecr.common.block.MagicTable
 import com.algorithmlx.ecr.common.block.MatrixDestructor
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
@@ -62,6 +63,11 @@ object FabricBlockCodecRegistry : BlockCodecRegistry {
         register(
             ECRModIDs.COLD_DISTILLER,
             BlockBehaviour.simpleCodec(::ColdDistiller),
+        )
+    override val heatGenerator: MapCodec<HeatGenerator> =
+        register(
+            ECRModIDs.HEAT_GENERATOR,
+            BlockBehaviour.simpleCodec(::HeatGenerator),
         )
     override val enrichmentChamberController: MapCodec<EnrichmentChamberController> =
         register(

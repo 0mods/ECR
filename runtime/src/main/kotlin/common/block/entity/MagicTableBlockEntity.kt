@@ -113,7 +113,7 @@ class MagicTableBlockEntity(
     ): Boolean = if (slot == 5) false else super.canPlaceItem(slot, itemStack)
 
     override val mruStorage: IOMRUStorage = MRUStorageContainer(5000, MRUTypeRegistry.instance.radiationUnit) { setChanged() }
-    override val balance = MRUBalanceContainer(onChange = { setChanged() })
+    override val balance = MRUBalanceContainer { setChanged() }
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.RECEIVER
 
     override val locator: MRUDevice.LocatorData = MRUDevice.LocatorData(this, 6)

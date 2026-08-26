@@ -68,6 +68,8 @@ block.escr:
   air_cluster: Air Cluster
   solar_prism: Solar Prism
   cold_distiller: Cold Distiller
+  heat_generator: Heat Generator
+  ultra_heat_generator: Ultra Heat Generator
   enrichment_chamber_controller: Enrichment Chamber Controller
   enrichment_chamber_extractor: Enrichment Chamber Extractor
   enrichment_chamber_receiver: Enrichment Chamber Receiver

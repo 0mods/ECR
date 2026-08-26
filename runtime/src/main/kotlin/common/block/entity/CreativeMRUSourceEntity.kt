@@ -25,7 +25,7 @@ class CreativeMRUSourceEntity(
     ),
     MRUDevice {
     override val mruStorage: IOMRUStorage = ImmutableMRUStorage()
-    override val balance = MRUBalanceContainer(onChange = { setChanged() })
+    override val balance = MRUBalanceContainer { setChanged() }
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.TRANSLATOR
 
     private class ImmutableMRUStorage : IOMRUStorage {
@@ -40,8 +40,15 @@ class CreativeMRUSourceEntity(
 
         override fun insert(amount: Int): Int = 0
 
-        override val mru: Int = Int.MAX_VALUE
-        override val mruCapacity: Int = Int.MAX_VALUE
+        override fun canExtract(max: Int): Boolean = true
+        override fun canReceive(receive: Int): Boolean = false
+
+        override val hasMRU: Boolean = true
+        override val isEmpty: Boolean = false
+        override val isFilled: Boolean = true
+
+        override val mru: Int = 0
+        override val mruCapacity: Int = 0
         override val mruType: MRUType = MRUTypeRegistry.instance.radiationUnit
     }
 }

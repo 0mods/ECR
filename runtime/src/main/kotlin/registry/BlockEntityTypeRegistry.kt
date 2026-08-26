@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.registry
 import com.algorithmlx.ecr.common.block.entity.AssembledMultiblockPartBlockEntity
 import com.algorithmlx.ecr.common.block.entity.ColdDistillerEntity
 import com.algorithmlx.ecr.common.block.entity.CreativeMRUSourceEntity
+import com.algorithmlx.ecr.common.block.entity.HeatGeneratorEntity
 import com.algorithmlx.ecr.common.block.entity.MagicTableBlockEntity
 import com.algorithmlx.ecr.common.block.entity.MagicalTeleporterEntity
 import com.algorithmlx.ecr.common.block.entity.MatrixDestructorEntity
@@ -25,6 +26,7 @@ interface BlockEntityTypeRegistry {
     val enrichmentChamberReceiver: BlockEntityType<EnrichmentChamberReceiverEntity>
     val rayTower: BlockEntityType<RayTowerEntity>
     val creativeMRUSource: BlockEntityType<CreativeMRUSourceEntity>
+    val heatGenerator: BlockEntityType<HeatGeneratorEntity>
 
     companion object {
         @JvmStatic

@@ -8,6 +8,7 @@ import com.algorithmlx.ecr.common.block.CrystalBlock
 import com.algorithmlx.ecr.common.block.EnrichmentChamberController
 import com.algorithmlx.ecr.common.block.EnrichmentChamberExtractor
 import com.algorithmlx.ecr.common.block.EnrichmentChamberReceiver
+import com.algorithmlx.ecr.common.block.HeatGenerator
 import com.algorithmlx.ecr.common.block.MagicTable
 import com.algorithmlx.ecr.common.block.MatrixDestructor
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
@@ -24,6 +25,7 @@ interface BlockCodecRegistry {
     val magicTable: MapCodec<MagicTable>
     val matrixDestructor: MapCodec<MatrixDestructor>
     val coldDistiller: MapCodec<ColdDistiller>
+    val heatGenerator: MapCodec<HeatGenerator>
     val enrichmentChamberController: MapCodec<EnrichmentChamberController>
     val enrichmentChamberExtractor: MapCodec<EnrichmentChamberExtractor>
     val enrichmentChamberReceiver: MapCodec<EnrichmentChamberReceiver>

@@ -47,6 +47,7 @@ class NeoForgeBlockRegistry(
     private val matrixDestructorBlock = registerBlock(ECRModIDs.MATRIX_DESTRUCTOR, ::MatrixDestructor)
     private val solarPrismBlock = registerBlock(ECRModIDs.SOLAR_PRISM, ::SolarPrism)
     private val coldDistillerBlock = registerBlock(ECRModIDs.COLD_DISTILLER, ::ColdDistiller)
+    private val heatGeneratorBlock = registerBlock(ECRModIDs.HEAT_GENERATOR, ::HeatGenerator)
     private val voidStoneBlock = registerBasic(ECRModIDs.VOID_STONE)
     private val mithrilinePlatingBlock = registerBasic(ECRModIDs.MITHRILINE_PLATING)
     private val paleBlock = registerBasic(ECRModIDs.PALE_BLOCK)
@@ -92,6 +93,7 @@ class NeoForgeBlockRegistry(
     override val matrixDestructor: MatrixDestructor by lazy { matrixDestructorBlock.get() }
     override val solarPrism: SolarPrism by lazy { solarPrismBlock.get() }
     override val coldDistiller: ColdDistiller by lazy { coldDistillerBlock.get() }
+    override val heatGenerator: HeatGenerator by lazy { heatGeneratorBlock.get() }
     override val voidStone: Block by lazy { voidStoneBlock.get() }
     override val mithrilinePlating: Block by lazy { mithrilinePlatingBlock.get() }
     override val pale: Block by lazy { paleBlock.get() }

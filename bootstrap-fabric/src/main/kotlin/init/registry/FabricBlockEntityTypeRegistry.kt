@@ -4,6 +4,7 @@ import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.block.entity.AssembledMultiblockPartBlockEntity
 import com.algorithmlx.ecr.common.block.entity.ColdDistillerEntity
 import com.algorithmlx.ecr.common.block.entity.CreativeMRUSourceEntity
+import com.algorithmlx.ecr.common.block.entity.HeatGeneratorEntity
 import com.algorithmlx.ecr.common.block.entity.MagicTableBlockEntity
 import com.algorithmlx.ecr.common.block.entity.MagicalTeleporterEntity
 import com.algorithmlx.ecr.common.block.entity.MatrixDestructorEntity
@@ -78,6 +79,11 @@ object FabricBlockEntityTypeRegistry : BlockEntityTypeRegistry {
         register(
             ECRModIDs.COLD_DISTILLER,
             BlockEntityType(::ColdDistillerEntity, setOf(BlockRegistry.instance.coldDistiller)),
+        )
+    override val heatGenerator: BlockEntityType<HeatGeneratorEntity> =
+        register(
+            ECRModIDs.HEAT_GENERATOR,
+            BlockEntityType(::HeatGeneratorEntity, setOf(BlockRegistry.instance.heatGenerator)),
         )
 
     private fun <B : BlockEntity> register(

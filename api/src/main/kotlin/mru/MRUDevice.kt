@@ -1,4 +1,3 @@
-
 @file:JvmName("MRUDeviceHelper")
 
 package com.algorithmlx.ecr.api.mru

@@ -105,7 +105,7 @@ class MagicalTeleporterEntity(
     override fun getContainerSize(): Int = this.items.size
 
     override val mruStorage: IOMRUStorage = MRUStorageContainer(50000, MRUTypeRegistry.instance.radiationUnit) { this.setChanged() }
-    override val balance = MRUBalanceContainer(onChange = { setChanged() })
+    override val balance = MRUBalanceContainer { setChanged() }
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.CONNECTABLE_RECEIVER
     override val locator: MRUDevice.LocatorData = MRUDevice.LocatorData(this, 0)
 

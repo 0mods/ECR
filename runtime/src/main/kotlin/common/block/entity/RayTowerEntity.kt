@@ -113,7 +113,7 @@ class RayTowerEntity(
     override val mruStorage: IOMRUStorage = MRUStorageContainer(5000, MRUTypeRegistry.instance.radiationUnit) {
         this.setChanged()
     }
-    override val balance = MRUBalanceContainer(onChange = { setChanged() })
+    override val balance = MRUBalanceContainer { setChanged() }
 
     override val deviceType: MRUDevice.DeviceType
         get() = if (isAssembledMultiblock) MRUDevice.DeviceType.IO else MRUDevice.DeviceType.UNCONNECTABLE
