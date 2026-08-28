@@ -17,7 +17,10 @@ class NeoForgeMobEffectRegistry(bus: IEventBus): MobEffectRegistry {
         mobEffects.register(bus)
     }
 
-    private val mruEffect = mobEffects.register(ECRModIDs.MRU_CORRUPTION) { _ -> MRUCorruption() }
+    override val mruCorruption: Holder<MobEffect> by register(ECRModIDs.MRU_CORRUPTION, ::MRUCorruption)
 
-    override val mruCorruption: Holder<MobEffect> by lazy { mruEffect.delegate }
+    private fun register(id: String, factory: () -> MobEffect): Lazy<Holder<MobEffect>> {
+        val holder = mobEffects.register(id) { _ -> factory() }
+        return lazy { holder.delegate }
+    }
 }

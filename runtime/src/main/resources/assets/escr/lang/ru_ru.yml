@@ -41,6 +41,7 @@ item.escr:
   void_plating: Пустотная пластина
   mithriline_ingot: Мифрилиновый слиток
   magical_ingot: Магический слиток
+  magical_slag: Магический шлак
   mithriline_dust: Мифрилиновая пыль
   heating_rod: Тепловой стержень
   mithriline_crystal_gem: Мифрилиновый кристалл
@@ -116,6 +117,13 @@ matrix.escr:
   neutral: Нейтральная
 
 screen.escr:
+  heat_generator:
+    mode:
+      normal: Тепловой генератор
+      ultra: Ультра-тепловой генератор
+    temperature: "Температура: %s"
+    generation: "Генерация: %s MRU/т"
+    fuel: "Топливо: %s с"
   research_book:
     .: Книга исследований
     complete_task: Завершить задание
@@ -129,6 +137,11 @@ screen.escr:
       more: и еще %s...
     research:
       .: "Исследование: %s"
+    category:
+      progress: "Исследовано: %s%%"
+    multiblock:
+      place: Показать структуру в мире
+      placed: "Центр отображения структуры: %s, %s, %s"
     recipe:
       duration:
         .: "Длительность: %s"
@@ -148,7 +161,15 @@ toast.escr:
   research_completed: Исследование завершено
 
 message.escr:
+  heat_generator:
+    temperature_unit: "Единица температуры: %s (%s)"
   research_required: "Требуемое(ые) исследования: %s"
+
+temperature_unit.escr:
+  celsius: Цельсий
+  fahrenheit: Фаренгейт
+  kelvin: Кельвин
+  rankine: Ранкин
 
 book.escr:
   title:

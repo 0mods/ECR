@@ -1,8 +1,10 @@
 package com.algorithmlx.ecr.neoforge.init.registry
 
 import com.algorithmlx.ecr.api.ModId
+import com.algorithmlx.ecr.api.registries.ECRegistryKeys
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.research.BookType
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.registry.BookTypeRegistry
 import net.minecraft.resources.ResourceKey
@@ -16,24 +18,11 @@ class NeoForgeBookTypeRegistry(bus: IEventBus): BookTypeRegistry {
         bookTypes.register(bus)
     }
 
-    private val basicType = bookTypes.register(ECRModIDs.BASIC) { _ -> simple(0) }
-    private val mruType = bookTypes.register(ECRModIDs.MRU) { _ -> simple(1, setOf(basicType.key)) }
-    private val engineerType = bookTypes.register(ECRModIDs.ENGINEER) { _ ->
-        simple(2, setOf(basicType.key, mruType.key))
-    }
-    private val hoannaType = bookTypes.register(ECRModIDs.HOANNA) { _ ->
-        simple(3, setOf(basicType.key, mruType.key, engineerType.key))
-    }
-    private val shadeType = bookTypes.register(ECRModIDs.SHADE) { _ ->
-        simple(4, setOf(basicType.key, mruType.key, engineerType.key, hoannaType.key))
-    }
+    override val basic: BookType by register(ECRModIDs.BASIC, 0)
+    override val mru: BookType by register(ECRModIDs.MRU, 1, ECRModIDs.BASIC)
+    override val engineer: BookType by register(ECRModIDs.ENGINEER, 2, ECRModIDs.BASIC, ECRModIDs.MRU)
+    override val hoanna: BookType by register(ECRModIDs.HOANNA, 3, ECRModIDs.BASIC, ECRModIDs.MRU, ECRModIDs.ENGINEER)
+    override val shade: BookType by register(ECRModIDs.SHADE, 4, ECRModIDs.BASIC, ECRModIDs.MRU, ECRModIDs.ENGINEER, ECRModIDs.HOANNA)
 
-    override val basic: BookType by lazy { basicType.get() }
-    override val mru: BookType by lazy { mruType.get() }
-    override val engineer: BookType by lazy { engineerType.get() }
-    override val hoanna: BookType by lazy { hoannaType.get() }
-    override val shade: BookType by lazy { shadeType.get() }
-
-    private fun simple(levelOrder: Int, inheritedTypes: Set<ResourceKey<BookType>> = setOf()) =
-        BookType(levelOrder, inheritedTypes)
+    private fun register(id: String, levelOrder: Int, vararg inheritedTypes: String) = bookTypes.register(id) { _ -> BookType(levelOrder, inheritedTypes.mapTo(linkedSetOf()) { inherited -> ResourceKey.create(ECRegistryKeys.BOOK_TYPE_KEY, inherited.ecRL) }) }
 }

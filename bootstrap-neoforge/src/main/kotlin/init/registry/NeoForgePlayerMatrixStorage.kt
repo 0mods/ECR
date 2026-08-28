@@ -13,7 +13,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries
 class NeoForgePlayerMatrixStorage(bus: IEventBus): PlayerMatrixStorage {
     private val attachments = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, ModId)
 
-    private val playerMatrix = attachments.register(ECRModIDs.PLAYER_MATRIX) { _ ->
+    private val playerMatrix: AttachmentType<PlayerMatrixComponent> by register(ECRModIDs.PLAYER_MATRIX) {
         AttachmentType.builder(PlayerMatrixComponent::createEmpty)
             .serialize(PlayerMatrixComponent.MAP_CODEC)
             .copyOnDeath()
@@ -29,4 +29,6 @@ class NeoForgePlayerMatrixStorage(bus: IEventBus): PlayerMatrixStorage {
     override fun set(player: Player, component: PlayerMatrixComponent) {
         player.setData(playerMatrix, component)
     }
+
+    private fun register(id: String, factory: () -> AttachmentType<PlayerMatrixComponent>) = attachments.register(id) { _ -> factory() }
 }

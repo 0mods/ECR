@@ -21,9 +21,7 @@ import net.minecraft.world.phys.AABB
 import net.minecraft.world.phys.Vec3
 import org.joml.Vector3f
 import java.util.Random
-import kotlin.math.PI
 import kotlin.math.floor
-import kotlin.math.sin
 
 class EnrichmentChamberControllerRenderState: BlockEntityRenderState() {
     var innerBounds: AABB? = null
@@ -240,7 +238,9 @@ class EnrichmentChamberControllerRenderer(
         val age = state.animationTicks - cycle * period - flashStart
         if (age !in 0.0..actualDuration) return
 
-        val lifetime = sin(PI * age / actualDuration).coerceAtLeast(0.0)
+        val progress = age / actualDuration
+        val growth = EnrichmentLightning.growth(progress)
+        val lifetime = EnrichmentLightning.opacity(progress)
         val maxBoltCount = when {
             state.overflowing -> OVERFLOW_BOLT_COUNT
             state.fullyCharged -> FULL_BOLT_COUNT
@@ -275,21 +275,21 @@ class EnrichmentChamberControllerRenderer(
                     if (state.overflowing) OVERFLOW_LIGHTNING_CORE_COLOR else NORMAL_LIGHTNING_CORE_COLOR,
                     intensity
                 )
-                val points = createLightningPoints(
-                    boltRandom,
+                val bolt = EnrichmentLightning.create(seed, halfX, halfY, halfZ, state.overflowing)
+                renderLightning(
+                    pose,
+                    consumer,
+                    bolt,
+                    cameraLocal,
+                    thickness,
+                    outerColor,
+                    coreColor,
+                    growth,
+                    state.animationTicks,
                     halfX,
                     halfY,
                     halfZ,
                     state.overflowing
-                )
-                renderLightning(
-                    pose,
-                    consumer,
-                    points,
-                    cameraLocal,
-                    thickness,
-                    outerColor,
-                    coreColor
                 )
             }
         }
@@ -306,89 +306,35 @@ class EnrichmentChamberControllerRenderer(
         }
     }
 
-    private fun createLightningPoints(
-        random: Random,
+    private fun renderLightning(
+        pose: PoseStack.Pose,
+        consumer: VertexConsumer,
+        bolt: EnrichmentLightningBolt,
+        cameraLocal: Vector3f,
+        thickness: Float,
+        outerColor: Int,
+        coreColor: Int,
+        growth: Float,
+        animationTicks: Double,
         halfX: Float,
         halfY: Float,
         halfZ: Float,
         overflowing: Boolean
-    ): List<Vector3f> {
-        fun randomCoordinate(halfExtent: Float, scale: Float = 1F): Float =
-            (random.nextFloat() * 2F - 1F) * halfExtent * scale
-
-        val start = Vector3f(
-            randomCoordinate(halfX, LIGHTNING_SPAWN_SCALE),
-            randomCoordinate(halfY, LIGHTNING_SPAWN_SCALE),
-            randomCoordinate(halfZ, LIGHTNING_SPAWN_SCALE)
-        )
-        val direction = Vector3f(
-            randomCoordinate(1F),
-            randomCoordinate(1F),
-            randomCoordinate(1F)
-        )
-        if (direction.lengthSquared() < 0.000001F) {
-            direction.set(0F, 1F, 0F)
-        }
-        val maximumLength = (minOf(halfX, halfY, halfZ) * 2F * LOCAL_LIGHTNING_SCALE)
-            .coerceIn(MIN_LIGHTNING_LENGTH, MAX_LIGHTNING_LENGTH)
-        val length = (
-            maximumLength * (
-                MIN_LENGTH_SCALE + random.nextFloat() * (MAX_LENGTH_SCALE - MIN_LENGTH_SCALE)
-            )
-        ).coerceAtLeast(MIN_LIGHTNING_LENGTH)
-        val end = direction.normalize(length).add(start)
-        end.x = end.x.coerceIn(-halfX * LIGHTNING_BOUNDS_SCALE, halfX * LIGHTNING_BOUNDS_SCALE)
-        end.y = end.y.coerceIn(-halfY * LIGHTNING_BOUNDS_SCALE, halfY * LIGHTNING_BOUNDS_SCALE)
-        end.z = end.z.coerceIn(-halfZ * LIGHTNING_BOUNDS_SCALE, halfZ * LIGHTNING_BOUNDS_SCALE)
-
-        val actualLength = start.distance(end)
-        val segmentCount = (actualLength / LIGHTNING_SEGMENT_LENGTH).toInt().coerceIn(3, 10)
-        val jitterScale = if (overflowing) OVERFLOW_JITTER_SCALE else NORMAL_JITTER_SCALE
-        val jitter = (actualLength * jitterScale).coerceIn(MIN_LIGHTNING_JITTER, MAX_LIGHTNING_JITTER)
-
-        return List(segmentCount + 1) { index ->
-            val progress = index.toFloat() / segmentCount
-            val envelope = sin(PI * progress).toFloat()
-            Vector3f(
-                (start.x + (end.x - start.x) * progress + randomCoordinate(jitter) * envelope)
-                    .coerceIn(-halfX * LIGHTNING_BOUNDS_SCALE, halfX * LIGHTNING_BOUNDS_SCALE),
-                (start.y + (end.y - start.y) * progress + randomCoordinate(jitter) * envelope)
-                    .coerceIn(-halfY * LIGHTNING_BOUNDS_SCALE, halfY * LIGHTNING_BOUNDS_SCALE),
-                (start.z + (end.z - start.z) * progress + randomCoordinate(jitter) * envelope)
-                    .coerceIn(-halfZ * LIGHTNING_BOUNDS_SCALE, halfZ * LIGHTNING_BOUNDS_SCALE)
-            )
+    ) {
+        bolt.paths.forEach { path ->
+            val points = EnrichmentLightning.samplePath(path, growth, animationTicks, halfX, halfY, halfZ, overflowing)
+            if (points.size < 2) return@forEach
+            val pathOuterColor = if (path.birth > 0F) scaleAlpha(outerColor, BRANCH_ALPHA) else outerColor
+            val pathCoreColor = if (path.birth > 0F) scaleAlpha(coreColor, BRANCH_ALPHA) else coreColor
+            val pathThickness = thickness * path.thicknessScale
+            points.zipWithNext().forEach { (start, end) -> renderLightningLine(pose, consumer, start, end, cameraLocal, pathThickness, pathOuterColor, pathCoreColor) }
         }
     }
 
-    private fun renderLightning(
-        pose: PoseStack.Pose,
-        consumer: VertexConsumer,
-        points: List<Vector3f>,
-        cameraLocal: Vector3f,
-        thickness: Float,
-        outerColor: Int,
-        coreColor: Int
-    ) {
-        points.zipWithNext().forEach { (start, end) ->
-            renderLightningSegment(
-                pose,
-                consumer,
-                start,
-                end,
-                cameraLocal,
-                thickness * 2.4F,
-                outerColor
-            )
-            renderLightningSegment(
-                pose,
-                consumer,
-                start,
-                end,
-                cameraLocal,
-                thickness,
-                coreColor
-            )
-        }
+    private fun renderLightningLine(pose: PoseStack.Pose, consumer: VertexConsumer, start: Vector3f, end: Vector3f, cameraLocal: Vector3f, thickness: Float, outerColor: Int, coreColor: Int) {
+        if (start.distanceSquared(end) < 0.000001F) return
+        renderLightningSegment(pose, consumer, start, end, cameraLocal, thickness * 2.4F, outerColor)
+        renderLightningSegment(pose, consumer, start, end, cameraLocal, thickness, coreColor)
     }
 
     private fun renderLightningSegment(
@@ -455,12 +401,12 @@ class EnrichmentChamberControllerRenderer(
         private const val MIDDLE_LAYER_ALPHA = 0.48
         private const val INNER_LAYER_SCALE = 0.4
         private const val INNER_LAYER_ALPHA = 0.3
-        private const val NORMAL_LIGHTNING_PERIOD = 160.0
-        private const val NORMAL_LIGHTNING_DURATION = 8.0
-        private const val FULL_LIGHTNING_PERIOD = 110.0
-        private const val FULL_LIGHTNING_DURATION = 9.0
-        private const val OVERFLOW_LIGHTNING_PERIOD = 75.0
-        private const val OVERFLOW_LIGHTNING_DURATION = 11.0
+        private const val NORMAL_LIGHTNING_PERIOD = 140.0
+        private const val NORMAL_LIGHTNING_DURATION = 24.0
+        private const val FULL_LIGHTNING_PERIOD = 95.0
+        private const val FULL_LIGHTNING_DURATION = 28.0
+        private const val OVERFLOW_LIGHTNING_PERIOD = 65.0
+        private const val OVERFLOW_LIGHTNING_DURATION = 34.0
         private const val NORMAL_BOLT_COUNT = 1
         private const val FULL_BOLT_COUNT = 2
         private const val OVERFLOW_BOLT_COUNT = 3
@@ -472,18 +418,7 @@ class EnrichmentChamberControllerRenderer(
         private const val MAX_LIGHTNING_INTENSITY = 1.0
         private const val MIN_THICKNESS_SCALE = 0.55F
         private const val MAX_THICKNESS_SCALE = 1.15F
-        private const val LIGHTNING_SPAWN_SCALE = 0.78F
-        private const val LIGHTNING_BOUNDS_SCALE = 0.92F
-        private const val LOCAL_LIGHTNING_SCALE = 0.2F
-        private const val MIN_LIGHTNING_LENGTH = 0.25F
-        private const val MAX_LIGHTNING_LENGTH = 1.35F
-        private const val MIN_LENGTH_SCALE = 0.3F
-        private const val MAX_LENGTH_SCALE = 1.0F
-        private const val LIGHTNING_SEGMENT_LENGTH = 0.22F
-        private const val NORMAL_JITTER_SCALE = 0.09F
-        private const val OVERFLOW_JITTER_SCALE = 0.15F
-        private const val MIN_LIGHTNING_JITTER = 0.025F
-        private const val MAX_LIGHTNING_JITTER = 0.22F
+        private const val BRANCH_ALPHA = 0.82
         private const val LIGHTNING_SEED_STEP = -7046029254386353131L
 
         private const val NORMAL_LOW_COLOR = 0x6050127A

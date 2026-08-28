@@ -7,6 +7,7 @@ import com.algorithmlx.ecr.common.recipe.StructureRecipe
 import com.algorithmlx.ecr.common.recipe.MithrilineFurnaceRecipe
 import com.algorithmlx.ecr.registry.RecipeTypeRegistry
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.world.item.crafting.Recipe
 import net.minecraft.world.item.crafting.RecipeType
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
@@ -18,17 +19,9 @@ class NeoForgeRecipeTypeRegistry(bus: IEventBus): RecipeTypeRegistry {
         recipeTypes.register(bus)
     }
 
-    private val mithrilineFurnaceType = recipeTypes.register(ECRModIDs.MITHRILINE_FURNACE) { rk ->
-        RecipeType.simple<MithrilineFurnaceRecipe>(rk)
-    }
-    private val structureRecipe = recipeTypes.register(ECRModIDs.STRUCTURE) { rk ->
-        RecipeType.simple<StructureRecipe>(rk)
-    }
-    private val magicTableRecipe = recipeTypes.register(ECRModIDs.MAGIC_TABLE) { rk ->
-        RecipeType.simple<MagicTableRecipe>(rk)
-    }
+    override val mithrilineFurnace: RecipeType<MithrilineFurnaceRecipe> by register(ECRModIDs.MITHRILINE_FURNACE)
+    override val structure: RecipeType<StructureRecipe> by register(ECRModIDs.STRUCTURE)
+    override val magicTable: RecipeType<MagicTableRecipe> by register(ECRModIDs.MAGIC_TABLE)
 
-    override val mithrilineFurnace: RecipeType<MithrilineFurnaceRecipe> by lazy { mithrilineFurnaceType.get() }
-    override val structure: RecipeType<StructureRecipe> by lazy { structureRecipe.get() }
-    override val magicTable: RecipeType<MagicTableRecipe> by lazy { magicTableRecipe.get() }
+    private fun <T: Recipe<*>> register(id: String) = recipeTypes.register(id) { registeredId -> RecipeType.simple<T>(registeredId) }
 }

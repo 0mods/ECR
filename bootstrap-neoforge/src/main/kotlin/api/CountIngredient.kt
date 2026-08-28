@@ -24,7 +24,7 @@ class CountIngredient(private val base: Ingredient, val count: Int): ICustomIngr
 
     override fun isSimple(): Boolean = true
 
-    override fun getType(): IngredientType<*> = IngredientRegistry.COUNT_TYPE.get()
+    override fun getType(): IngredientType<*> = IngredientRegistry.COUNT_TYPE
 
     override fun display(): SlotDisplay = SlotDisplay.Composite(
         this.items().map { SlotDisplay.ItemStackSlotDisplay(ItemStackTemplate(it, count)) as SlotDisplay }.toList()

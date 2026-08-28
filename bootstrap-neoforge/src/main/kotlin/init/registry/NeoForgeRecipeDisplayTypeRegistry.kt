@@ -20,22 +20,9 @@ class NeoForgeRecipeDisplayTypeRegistry(
         registry.register(bus)
     }
 
-    private val mithrilineFurnaceDisplay =
-        registry.register(ECRModIDs.MITHRILINE_FURNACE) { _ ->
-            RecipeDisplay.Type(MithrilineFurnaceRecipe.Display.MAP_CODEC, MithrilineFurnaceRecipe.Display.STREAM_CODEC)
-        }
+    override val mithrilineFurnace: RecipeDisplay.Type<MithrilineFurnaceRecipe.Display> by register(ECRModIDs.MITHRILINE_FURNACE) { RecipeDisplay.Type(MithrilineFurnaceRecipe.Display.MAP_CODEC, MithrilineFurnaceRecipe.Display.STREAM_CODEC) }
+    override val structure: RecipeDisplay.Type<StructureRecipe.Display> by register(ECRModIDs.STRUCTURE) { RecipeDisplay.Type(StructureRecipe.Display.MAP_CODEC, StructureRecipe.Display.STREAM_CODEC) }
+    override val magicTable: RecipeDisplay.Type<MagicTableRecipe.Display> by register(ECRModIDs.MAGIC_TABLE) { RecipeDisplay.Type(MagicTableRecipe.Display.MAP_CODEC, MagicTableRecipe.Display.STREAM_CODEC) }
 
-    private val structureDisplayDisplay =
-        registry.register(ECRModIDs.STRUCTURE) { _ ->
-            RecipeDisplay.Type(StructureRecipe.Display.MAP_CODEC, StructureRecipe.Display.STREAM_CODEC)
-        }
-
-    private val magicTableDisplay =
-        registry.register(ECRModIDs.MAGIC_TABLE) { _ ->
-            RecipeDisplay.Type(MagicTableRecipe.Display.MAP_CODEC, MagicTableRecipe.Display.STREAM_CODEC)
-        }
-
-    override val mithrilineFurnace: RecipeDisplay.Type<MithrilineFurnaceRecipe.Display> by lazy { mithrilineFurnaceDisplay.get() }
-    override val structure: RecipeDisplay.Type<StructureRecipe.Display> by lazy { structureDisplayDisplay.get() }
-    override val magicTable: RecipeDisplay.Type<MagicTableRecipe.Display> by lazy { magicTableDisplay.get() }
+    private fun <T: RecipeDisplay> register(id: String, factory: () -> RecipeDisplay.Type<T>) = registry.register(id) { _ -> factory() }
 }

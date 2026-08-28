@@ -9,6 +9,7 @@ import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
 import com.algorithmlx.ecr.registry.BlockRegistry
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.world.level.block.entity.BlockEntity
 import net.minecraft.world.level.block.entity.BlockEntityType
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
@@ -22,76 +23,18 @@ class NeoForgeBlockEntityTypeRegistry(
         blockEntityType.register(bus)
     }
 
-    private val assembledMultiblockPartEntity =
-        blockEntityType.register(ECRModIDs.ASSEMBLED_MULTIBLOCK_PART) { _ ->
-            BlockEntityType(
-                ::AssembledMultiblockPartBlockEntity,
-                setOf(BlockRegistry.instance.assembledMultiblockPart),
-            )
-        }
-    private val mithrilineFurnaceEntity =
-        blockEntityType.register(ECRModIDs.MITHRILINE_FURNACE) { _ ->
-            BlockEntityType(::MithrilineFurnaceEntity, setOf(BlockRegistry.instance.mithrilineFurnace))
-        }
-    private val magicTableEntity =
-        blockEntityType.register(ECRModIDs.MAGIC_TABLE) { _ ->
-            BlockEntityType(::MagicTableBlockEntity, setOf(BlockRegistry.instance.magicTable))
-        }
-    private val magicalTeleporterEntity =
-        blockEntityType.register(ECRModIDs.MAGICAL_TELEPORTER) { _ ->
-            BlockEntityType(::MagicalTeleporterEntity, setOf(BlockRegistry.instance.magicalTeleporter))
-        }
-    private val matrixDestructorEntity =
-        blockEntityType.register(ECRModIDs.MATRIX_DESTRUCTOR) { _ ->
-            BlockEntityType(::MatrixDestructorEntity, setOf(BlockRegistry.instance.matrixDestructor))
-        }
-    private val coldDistillerEntity =
-        blockEntityType.register(ECRModIDs.COLD_DISTILLER) { _ ->
-            BlockEntityType(::ColdDistillerEntity, setOf(BlockRegistry.instance.coldDistiller))
-        }
-    private val heatGeneratorEntity =
-        blockEntityType.register(ECRModIDs.HEAT_GENERATOR) { _ ->
-            BlockEntityType(::HeatGeneratorEntity, setOf(BlockRegistry.instance.heatGenerator))
-        }
-    private val enrichmentChamberControllerEntity =
-        blockEntityType.register(ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER) { _ ->
-            BlockEntityType(::EnrichmentChamberControllerEntity, setOf(BlockRegistry.instance.enrichmentChamberController))
-        }
-    private val enrichmentChamberExtractorEntity =
-        blockEntityType.register(ECRModIDs.ENRICHMENT_CHAMBER_EXTRACTOR) { _ ->
-            BlockEntityType(::EnrichmentChamberExtractorEntity, setOf(BlockRegistry.instance.enrichmentChamberExtractor))
-        }
-    private val enrichmentChamberReceiverEntity =
-        blockEntityType.register(ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER) { _ ->
-            BlockEntityType(::EnrichmentChamberReceiverEntity, setOf(BlockRegistry.instance.enrichmentChamberReceiver))
-        }
-    private val rayTowerEntity =
-        blockEntityType.register(ECRModIDs.RAY_TOWER) { _ ->
-            BlockEntityType(::RayTowerEntity, setOf(BlockRegistry.instance.rayTower))
-        }
-    private val creativeMRUSourceEntity =
-        blockEntityType.register(ECRModIDs.CREATIVE_MRU_SOURCE) { _ ->
-            BlockEntityType(::CreativeMRUSourceEntity, setOf(BlockRegistry.instance.creativeMRUSource))
-        }
+    override val assembledMultiblockPart: BlockEntityType<AssembledMultiblockPartBlockEntity> by register(ECRModIDs.ASSEMBLED_MULTIBLOCK_PART) { BlockEntityType(::AssembledMultiblockPartBlockEntity, setOf(BlockRegistry.instance.assembledMultiblockPart)) }
+    override val mithrilineFurnace: BlockEntityType<MithrilineFurnaceEntity> by register(ECRModIDs.MITHRILINE_FURNACE) { BlockEntityType(::MithrilineFurnaceEntity, setOf(BlockRegistry.instance.mithrilineFurnace)) }
+    override val magicTable: BlockEntityType<MagicTableBlockEntity> by register(ECRModIDs.MAGIC_TABLE) { BlockEntityType(::MagicTableBlockEntity, setOf(BlockRegistry.instance.magicTable)) }
+    override val magicalTeleporter: BlockEntityType<MagicalTeleporterEntity> by register(ECRModIDs.MAGICAL_TELEPORTER) { BlockEntityType(::MagicalTeleporterEntity, setOf(BlockRegistry.instance.magicalTeleporter)) }
+    override val matrixDestructor: BlockEntityType<MatrixDestructorEntity> by register(ECRModIDs.MATRIX_DESTRUCTOR) { BlockEntityType(::MatrixDestructorEntity, setOf(BlockRegistry.instance.matrixDestructor)) }
+    override val coldDistiller: BlockEntityType<ColdDistillerEntity> by register(ECRModIDs.COLD_DISTILLER) { BlockEntityType(::ColdDistillerEntity, setOf(BlockRegistry.instance.coldDistiller)) }
+    override val heatGenerator: BlockEntityType<HeatGeneratorEntity> by register(ECRModIDs.HEAT_GENERATOR) { BlockEntityType(::HeatGeneratorEntity, setOf(BlockRegistry.instance.heatGenerator)) }
+    override val enrichmentChamberController: BlockEntityType<EnrichmentChamberControllerEntity> by register(ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER) { BlockEntityType(::EnrichmentChamberControllerEntity, setOf(BlockRegistry.instance.enrichmentChamberController)) }
+    override val enrichmentChamberExtractor: BlockEntityType<EnrichmentChamberExtractorEntity> by register(ECRModIDs.ENRICHMENT_CHAMBER_EXTRACTOR) { BlockEntityType(::EnrichmentChamberExtractorEntity, setOf(BlockRegistry.instance.enrichmentChamberExtractor)) }
+    override val enrichmentChamberReceiver: BlockEntityType<EnrichmentChamberReceiverEntity> by register(ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER) { BlockEntityType(::EnrichmentChamberReceiverEntity, setOf(BlockRegistry.instance.enrichmentChamberReceiver)) }
+    override val rayTower: BlockEntityType<RayTowerEntity> by register(ECRModIDs.RAY_TOWER) { BlockEntityType(::RayTowerEntity, setOf(BlockRegistry.instance.rayTower)) }
+    override val creativeMRUSource: BlockEntityType<CreativeMRUSourceEntity> by register(ECRModIDs.CREATIVE_MRU_SOURCE) { BlockEntityType(::CreativeMRUSourceEntity, setOf(BlockRegistry.instance.creativeMRUSource)) }
 
-    override val assembledMultiblockPart: BlockEntityType<AssembledMultiblockPartBlockEntity> by lazy {
-        assembledMultiblockPartEntity.get()
-    }
-    override val mithrilineFurnace: BlockEntityType<MithrilineFurnaceEntity> by lazy { mithrilineFurnaceEntity.get() }
-    override val magicTable: BlockEntityType<MagicTableBlockEntity> by lazy { magicTableEntity.get() }
-    override val magicalTeleporter: BlockEntityType<MagicalTeleporterEntity> by lazy { magicalTeleporterEntity.get() }
-    override val enrichmentChamberController: BlockEntityType<EnrichmentChamberControllerEntity> by lazy {
-        enrichmentChamberControllerEntity.get()
-    }
-    override val enrichmentChamberExtractor: BlockEntityType<EnrichmentChamberExtractorEntity> by lazy {
-        enrichmentChamberExtractorEntity.get()
-    }
-    override val enrichmentChamberReceiver: BlockEntityType<EnrichmentChamberReceiverEntity> by lazy {
-        enrichmentChamberReceiverEntity.get()
-    }
-    override val rayTower: BlockEntityType<RayTowerEntity> by lazy { rayTowerEntity.get() }
-    override val creativeMRUSource: BlockEntityType<CreativeMRUSourceEntity> by lazy { creativeMRUSourceEntity.get() }
-    override val matrixDestructor: BlockEntityType<MatrixDestructorEntity> by lazy { matrixDestructorEntity.get() }
-    override val coldDistiller: BlockEntityType<ColdDistillerEntity> by lazy { coldDistillerEntity.get() }
-    override val heatGenerator: BlockEntityType<HeatGeneratorEntity> by lazy { heatGeneratorEntity.get() }
+    private fun <T: BlockEntity> register(id: String, factory: () -> BlockEntityType<T>) = blockEntityType.register(id) { _ -> factory() }
 }

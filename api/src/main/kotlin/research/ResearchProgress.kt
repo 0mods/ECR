@@ -4,8 +4,11 @@ import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.algorithmlx.ecr.api.research.content.BookCategory
+import com.algorithmlx.ecr.api.research.content.BookElement
+import com.algorithmlx.ecr.api.research.content.BookElementSpec
 import com.algorithmlx.ecr.api.research.content.BookEntry
 import com.algorithmlx.ecr.api.research.content.CraftingBookElement
+import com.algorithmlx.ecr.api.research.content.GroupBookElement
 import com.algorithmlx.ecr.api.research.content.ResearchRequirement
 import com.algorithmlx.ecr.api.research.serializer.researchJson
 import com.mojang.serialization.Codec
@@ -374,7 +377,8 @@ object ResearchProgress {
         ResearchCatalog.snapshot().entries.values.asSequence()
             .flatMap { entry -> entry.pages.asSequence() }
             .flatMap { page -> page.elements.asSequence() }
-            .mapNotNull { it.content as? CraftingBookElement }
+            .flatMap(BookElementSpec::walkElements)
+            .mapNotNull { it as? CraftingBookElement }
             .map(CraftingBookElement::recipe)
             .distinct()
             .mapNotNull { id ->
@@ -415,6 +419,13 @@ object ResearchProgress {
         if (!visited.add(current)) return false
         val level = ECRegistries.BOOK_TYPES.getOptional(current).orElse(null) ?: return false
         return level.inheritedTypes.any { inherited -> inheritsBookLevel(inherited.identifier(), required, visited) }
+    }
+}
+
+private fun BookElementSpec.walkElements(): Sequence<BookElement> = sequence {
+    yield(content)
+    if (content is GroupBookElement) {
+        content.elements.forEach { child -> yieldAll(child.walkElements()) }
     }
 }
 

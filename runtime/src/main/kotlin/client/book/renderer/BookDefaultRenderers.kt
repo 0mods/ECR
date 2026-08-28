@@ -7,6 +7,8 @@ import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.AssembledMultiblockBookElement
 import com.algorithmlx.ecr.api.research.content.BlockBookElement
+import com.algorithmlx.ecr.api.research.content.BookMultiblockElement
+import com.algorithmlx.ecr.api.research.content.GroupBookElement
 import com.algorithmlx.ecr.api.research.content.ItemBookElement
 import com.algorithmlx.ecr.api.research.content.MultiblockBookElement
 import com.algorithmlx.ecr.api.research.content.TextBookElement
@@ -22,6 +24,8 @@ import com.algorithmlx.ecr.registry.RecipeTypeRegistry
 import net.minecraft.client.Minecraft
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.Item
+import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.crafting.RecipeType
 
 object BookDefaultRenderers {
@@ -33,7 +37,9 @@ object BookDefaultRenderers {
         BookElementRenderers.register(ResearchIds.TEXT, ::renderText)
         BookElementRenderers.register(ResearchIds.ITEM, ::renderItem)
         BookElementRenderers.register(ResearchIds.BLOCK, ::renderBlock)
+        BookElementRenderers.register(ResearchIds.GROUP, BookGroupRenderer::render)
         BookElementRenderers.register(ResearchIds.MULTIBLOCK, ::renderMultiblock)
+        BookElementRenderers.register(ResearchIds.BOOK_MULTIBLOCK, ::renderBookMultiblock)
         BookElementRenderers.register(ResearchIds.ASSEMBLED_MULTIBLOCK, ::renderAssembledMultiblock)
         BookElementRenderers.register(ResearchIds.RECIPE, BookRecipeElementRenderer::render)
         BookElementRenderers.register(ResearchIds.TASK_LIST, BookTaskRenderer::render)
@@ -65,6 +71,7 @@ object BookDefaultRenderers {
         val stack = ItemStack(item, element.count)
         context.graphics.item(stack, context.x, context.y)
         if (element.count > 1) context.graphics.itemDecorations(Minecraft.getInstance().font, stack, context.x, context.y)
+        if (element.tooltip) renderItemTooltip(context, stack)
     }
 
     private fun renderBlock(
@@ -83,11 +90,44 @@ object BookDefaultRenderers {
         MultiblockBookPreviewController.render(context, element, multiblock)
     }
 
+    private fun renderBookMultiblock(
+        context: BookElementRenderContext,
+        element: BookMultiblockElement,
+    ) {
+        MultiblockBookPreviewController.render(
+            context,
+            MultiblockBookElement(
+                ResearchIds.BOOK_MULTIBLOCK,
+                element.scale,
+                element.rotationX,
+                element.rotationY,
+                element.layer,
+            ),
+            element.multiblock,
+        )
+    }
+
     private fun renderAssembledMultiblock(
         context: BookElementRenderContext,
         element: AssembledMultiblockBookElement,
     ) {
         val multiblock = MultiblockDefinitions.assembled(element.multiblock) ?: return
         MultiblockBookPreviewController.render(context, element, multiblock)
+    }
+
+    private fun renderItemTooltip(
+        context: BookElementRenderContext,
+        stack: ItemStack,
+    ) {
+        val hoverWidth = minOf(16, context.width).coerceAtLeast(0)
+        val hoverHeight = minOf(16, context.height).coerceAtLeast(0)
+        if (context.mouseX !in context.x..<context.x + hoverWidth || context.mouseY !in context.y..<context.y + hoverHeight) return
+        val minecraft = context.mc
+        val level = minecraft.level ?: return
+        val flag = if (minecraft.options.advancedItemTooltips) TooltipFlag.ADVANCED else TooltipFlag.NORMAL
+        val lines = stack.getTooltipLines(Item.TooltipContext.of(level), minecraft.player, flag)
+        val mouseX = context.screenX + ((context.mouseX - context.x) * context.scale).toInt()
+        val mouseY = context.screenY + ((context.mouseY - context.y) * context.scale).toInt()
+        context.graphics.setTooltipForNextFrame(minecraft.font, lines, stack.tooltipImage, mouseX, mouseY)
     }
 }

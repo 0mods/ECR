@@ -93,12 +93,14 @@ object ECRModIDs {
     const val VOID_PLATING = "void_plating"
     const val MITHRILINE_INGOT = "mithriline_ingot"
     const val MAGICAL_INGOT = "magical_ingot"
+    const val MAGICAL_SLAG = "magical_slag"
     const val MITHRILINE_DUST = "mithriline_dust"
     const val HEATING_ROD = "heating_rod"
     const val MITHRILINE_CRYSTAL_GEM = "mithriline_crystal_gem"
     const val MRU_RESONATING_CRYSTAL = "mru_resonating_crystal"
     const val FADING_CRYSTAL = "fading_crystal"
     const val EYE_OF_ABSORPTION = "eye_of_absorption"
+    const val HEAT_CORE = "heat_core"
 
     // MRU Types
     const val UBMRU = "ubmru"

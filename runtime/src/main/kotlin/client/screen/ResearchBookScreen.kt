@@ -16,6 +16,7 @@ import com.algorithmlx.ecr.api.research.ResearchProgress
 import com.algorithmlx.ecr.api.research.ResearchTaskProgress
 import com.algorithmlx.ecr.api.research.content.BookCategory
 import com.algorithmlx.ecr.api.research.content.BookEntry
+import com.algorithmlx.ecr.api.research.content.BookEntryLink
 import com.algorithmlx.ecr.api.research.content.BookIcon
 import com.algorithmlx.ecr.api.research.content.BookResearchLink
 import com.algorithmlx.ecr.api.research.content.BookText
@@ -167,7 +168,7 @@ class ResearchBookScreen(
 
         if (event.button() == 0 && bookmarks.click(mouseX, mouseY)) return true
         if (selectedEntry != null) {
-            return MultiblockBookPreviewController.mouseClicked(mouseX, mouseY, event.button(), isShiftDown()) ||
+            return MultiblockBookPreviewController.mouseClicked(mouseX, mouseY, event.button(), isShiftDown(), ::onClose) ||
                 handleBookClick(mouseX, mouseY, event.button())
         }
         if (event.button() == 0 && bookmarks.clickGlobalSlider(mouseX, mouseY, width, height)) return true
@@ -363,8 +364,12 @@ class ResearchBookScreen(
 
             if (mouseX in x until x + TAB_WIDTH && mouseY in 0..CATEGORY_HEIGHT) {
                 if (available) graphics.requestCursor(CursorTypes.POINTING_HAND)
-                graphics.setTooltipForNextFrame(
-                    category.title.component(category.titleShadow),
+                graphics.setComponentTooltipForNextFrame(
+                    Minecraft.getInstance().font,
+                    listOf(
+                        category.title.component(category.titleShadow),
+                        categoryProgress(category),
+                    ),
                     mouseX,
                     mouseY.coerceAtLeast(CATEGORY_HEIGHT + 4),
                 )
@@ -785,8 +790,7 @@ class ResearchBookScreen(
     private fun openLink(link: BookResearchLink): Boolean {
         val entry = ResearchCatalog.snapshot().entries[link.research] ?: return false
         if (!isVisible(entry) || !isAvailable(entry)) return false
-        openEntry(entry, link.spread)
-        return true
+        return openEntry(entry, link.spread)
     }
 
     private fun renderCompleteButton(
@@ -953,16 +957,31 @@ class ResearchBookScreen(
             .orEmpty()
             .filter { isVisible(it.entry) }
 
-    private fun isAvailable(entry: BookEntry): Boolean {
+    private fun isAvailable(entry: BookEntry): Boolean = isAvailable(entry, LinkedHashSet())
+
+    private fun isAvailable(
+        entry: BookEntry,
+        visited: MutableSet<Identifier>,
+    ): Boolean {
+        if (!visited.add(entry.id)) return false
+        val snapshot = ResearchCatalog.snapshot()
         val category =
-            ResearchCatalog
-                .snapshot()
+            snapshot
                 .layout[entry.id]
                 ?.category
-                ?.let(ResearchCatalog.snapshot().categories::get)
+                ?.let(snapshot.categories::get)
                 ?: return false
-        return isCategoryAvailable(category) && entry.dependencies.all(ClientResearchState::has) &&
-            entry.requirements.all { ClientResearchState.requirementMet(entry.id, it) }
+        if (!isCategoryAvailable(category) || !entry.dependencies.all(ClientResearchState::has) ||
+            !entry.requirements.all { ClientResearchState.requirementMet(entry.id, it) }
+        ) {
+            return false
+        }
+        return when (val link = entry.link) {
+            is BookEntryLink.Category -> snapshot.categories[link.category]?.let(::isCategoryAvailable) == true
+            is BookEntryLink.Research -> snapshot.entries[link.research]?.let { isAvailable(it, visited) } == true
+            is BookEntryLink.Page -> snapshot.entries[link.research]?.let { isAvailable(it, visited) } == true
+            null -> true
+        }
     }
 
     private fun isCategoryAvailable(category: BookCategory): Boolean =
@@ -983,7 +1002,23 @@ class ResearchBookScreen(
     private fun openEntry(
         entry: BookEntry,
         page: Int = 0,
-    ) {
+        visited: MutableSet<Identifier> = LinkedHashSet(),
+    ): Boolean {
+        if (!visited.add(entry.id)) return false
+        when (val link = entry.link) {
+            is BookEntryLink.Category -> return openCategory(link.category)
+            is BookEntryLink.Research -> {
+                val target = ResearchCatalog.snapshot().entries[link.research] ?: return false
+                if (!isVisible(target) || !isAvailable(target)) return false
+                return openEntry(target, 0, visited)
+            }
+            is BookEntryLink.Page -> {
+                val target = ResearchCatalog.snapshot().entries[link.research] ?: return false
+                if (!isVisible(target) || !isAvailable(target)) return false
+                return openEntry(target, link.spread, visited)
+            }
+            null -> Unit
+        }
         ResearchCatalog.snapshot().layout[entry.id]?.let { selectedCategory = it.category }
         selectedEntry = entry
         spreads = BookPageLayout.paginate(entry)
@@ -991,6 +1026,21 @@ class ResearchBookScreen(
         contentRevision = ClientResearchState.revision()
         bookmarks.close()
         saveViewState()
+        return true
+    }
+
+    private fun openCategory(categoryId: Identifier): Boolean {
+        val category = ResearchCatalog.snapshot().categories[categoryId] ?: return false
+        if (!isCategoryAvailable(category)) return false
+        selectedCategory = categoryId
+        selectedEntry = null
+        spreads = listOf(BookSpread(emptyList()))
+        spreadIndex = 0
+        centerCategory()
+        constrainPan()
+        bookmarks.close()
+        saveViewState()
+        return true
     }
 
     private fun closeEntry() {
@@ -1012,6 +1062,20 @@ class ResearchBookScreen(
             .snapshot()
             .categories.values
             .sortedWith(compareBy<BookCategory> { it.order }.thenBy { it.id.toString() })
+
+    private fun categoryProgress(category: BookCategory): Component {
+        val entries =
+            ResearchCatalog
+                .snapshot()
+                .entriesIn(category.id)
+                .map(ResolvedBookEntry::entry)
+                .filter { it.link == null }
+        val researched = entries.count { ClientResearchState.has(it.id) }
+        val percent = if (entries.isEmpty()) 0 else (researched * 100.0 / entries.size).roundToInt()
+        return Component
+            .translatable("screen.$ModId.research_book.category.progress", percent)
+            .withStyle(ChatFormatting.GRAY)
+    }
 
     private fun hasCategoryOverflow(): Boolean = categories().size * TAB_WIDTH > width
 

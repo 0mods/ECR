@@ -40,14 +40,14 @@ data class ECConfig(
 data class MultiblockDataConfig(
     @JsonComment([
         "IDs registered as custom JSON-only multiblocks in data/<namespace>/multiblocks/.",
-        "An ID without a namespace uses the escr namespace. Every listed ID must have a JSON file.",
+        "An ID without a namespace uses the $ModId namespace. Every listed ID must have a JSON file.",
         "Changing this list requires a game/server restart because Minecraft registries are frozen after startup."
     ])
     @SerialName("custom_ids")
     val customIds: List<String> = emptyList(),
     @JsonComment([
         "IDs registered as custom JSON-only assembled multiblocks in data/<namespace>/assembled_multiblocks/.",
-        "An ID without a namespace uses the escr namespace. Every listed ID must have a JSON file.",
+        "An ID without a namespace uses the $ModId namespace. Every listed ID must have a JSON file.",
         "Changing this list requires a game/server restart because Minecraft registries are frozen after startup."
     ])
     @SerialName("custom_assembled_ids")
@@ -145,7 +145,113 @@ data class EnrichmentChamberConfig(
 
 @JsonDefaults
 @Serializable
-data class HeatGeneratorConfig(
-    val capacity: Int = 10000,
-    @SerialName("ultra_capacity") val ultraCapacity: Int = 100000,
-)
+data class HeatGeneratorConfig(val capacity: Int = 10000, @SerialName("ultra_capacity") val ultraCapacity: Int = 100000, @SerialName("default_generation") val defaultGeneration: Int = 1, @SerialName("heat_block_generation") val heatBlockGeneration: Map<String, Int> = mapOf("minecraft:netherrack" to 4, "minecraft:fire" to 8, "minecraft:magma_block" to 12, "minecraft:lava" to 16), val ultra: UltraHeatGeneratorConfig = UltraHeatGeneratorConfig()) {
+    init {
+        require(capacity > 0) { "Heat Generator capacity must be positive" }
+        require(ultraCapacity > 0) { "Ultra Heat Generator capacity must be positive" }
+        require(defaultGeneration >= 0) { "Heat Generator default generation cannot be negative" }
+        require(heatBlockGeneration.values.all { it >= 0 }) { "Heat block generation cannot be negative" }
+    }
+}
+
+@JsonDefaults
+@Serializable
+data class UltraHeatGeneratorConfig(@SerialName("burn_speed") val burnSpeed: Double = 1.25, @SerialName("heating_speed") val heatingSpeed: Double = 0.75, @SerialName("heating_slowdown_temperature_celsius") val heatingSlowdownTemperatureCelsius: Double = 200.0, @SerialName("maximum_temperature_celsius") val maximumTemperatureCelsius: Double = 10000.0, @SerialName("cooling_speed") val coolingSpeed: Double = 0.25, @SerialName("generation_temperature_celsius") val generationTemperatureCelsius: Double = 100.0, @SerialName("world_effects") val worldEffects: UltraHeatWorldEffectsConfig = UltraHeatWorldEffectsConfig()) {
+    init {
+        require(burnSpeed.isFinite() && burnSpeed > 0.0) { "Ultra Heat Generator burn speed must be finite and positive" }
+        require(heatingSpeed.isFinite() && heatingSpeed > 0.0) { "Ultra Heat Generator heating speed must be finite and positive" }
+        require(heatingSlowdownTemperatureCelsius.isFinite() && heatingSlowdownTemperatureCelsius > 0.0) { "Ultra Heat Generator heating slowdown temperature must be finite and positive" }
+        require(maximumTemperatureCelsius.isFinite() && maximumTemperatureCelsius > heatingSlowdownTemperatureCelsius) { "Ultra Heat Generator maximum temperature must be finite and greater than its heating slowdown temperature" }
+        require(coolingSpeed.isFinite() && coolingSpeed > 0.0) { "Ultra Heat Generator cooling speed must be finite and positive" }
+        require(generationTemperatureCelsius.isFinite() && generationTemperatureCelsius >= 0.0 && generationTemperatureCelsius <= maximumTemperatureCelsius) { "Ultra Heat Generator generation temperature must be finite and between zero and its maximum temperature" }
+    }
+}
+
+@JsonDefaults
+@Serializable
+data class HeatBlockTransitionConfig(val target: String, @SerialName("temperature_celsius") val temperatureCelsius: Double = 100.0, @SerialName("cooling_celsius") val coolingCelsius: Double = 0.0) {
+    init {
+        require(Identifier.tryParse(target) != null) { "Invalid Heat Generator transition target '$target'" }
+        require(temperatureCelsius.isFinite() && temperatureCelsius >= 0.0) { "Heat Generator transition temperature must be finite and non-negative" }
+        require(coolingCelsius.isFinite() && coolingCelsius >= 0.0) { "Heat Generator transition cooling must be finite and non-negative" }
+    }
+}
+
+@JsonDefaults
+@Serializable
+data class HeatPlayerIgnitionConfig(@SerialName("temperature_celsius") val temperatureCelsius: Double, val area: Int) {
+    init {
+        require(temperatureCelsius.isFinite() && temperatureCelsius >= 0.0) { "Heat Generator player ignition temperature must be finite and non-negative" }
+        require(area > 0) { "Heat Generator player ignition area must be positive" }
+    }
+}
+
+@JsonDefaults
+@Serializable
+data class HeatSurfaceFireConfig(
+    @SerialName("temperature_celsius") val temperatureCelsius: Double = 1800.0,
+    val area: Int = 8,
+    @SerialName("vertical_radius") val verticalRadius: Int = 4,
+    @SerialName("interval_ticks") val intervalTicks: Int = 20
+) {
+    init {
+        require(temperatureCelsius.isFinite() && temperatureCelsius >= 0.0) { "Heat Generator surface fire temperature must be finite and non-negative" }
+        require(area > 0) { "Heat Generator surface fire area must be positive" }
+        require(verticalRadius >= 0) { "Heat Generator surface fire vertical radius cannot be negative" }
+        require(intervalTicks > 0) { "Heat Generator surface fire interval must be positive" }
+    }
+}
+
+@JsonDefaults
+@Serializable
+data class UltraHeatWorldEffectsConfig(
+    val enabled: Boolean = true,
+    @SerialName("temperature_celsius") val temperatureCelsius: Double = 700.0,
+    @SerialName("interval_ticks") val intervalTicks: Int = 100,
+    val radius: Int = 2,
+    @SerialName("transition_vertical_radius") val transitionVerticalRadius: Int = 1,
+    @SerialName("instant_temperature_celsius") val instantTemperatureCelsius: Double = 1800.0,
+    @SerialName("default_transition") val defaultTransition: String = "minecraft:magma_block",
+    @JsonComment([
+        "Replacement for flammable blocks not listed in block_transitions.",
+        "Use minecraft:air to make them burn away. Explicit block_transitions take priority."
+    ])
+    @SerialName("flammable_transition") val flammableTransition: String = "minecraft:air",
+    @SerialName("block_transitions") val blockTransitions: Map<String, HeatBlockTransitionConfig> = defaultHeatBlockTransitions(),
+    @SerialName("surface_fire") val surfaceFire: HeatSurfaceFireConfig = HeatSurfaceFireConfig(),
+    @SerialName("player_ignition") val playerIgnition: List<HeatPlayerIgnitionConfig> = defaultHeatPlayerIgnition(),
+    @SerialName("player_fire_seconds") val playerFireSeconds: Double = 5.0,
+    @SerialName("player_vertical_range") val playerVerticalRange: Double = 3.0,
+    @SerialName("player_ignite_interval_ticks") val playerIgniteIntervalTicks: Int = 20
+) {
+    init {
+        require(temperatureCelsius.isFinite() && temperatureCelsius >= 0.0) { "Ultra Heat Generator world effect temperature must be finite and non-negative" }
+        require(intervalTicks > 0) { "Ultra Heat Generator world effect interval must be positive" }
+        require(radius >= 0) { "Ultra Heat Generator world effect radius cannot be negative" }
+        require(transitionVerticalRadius >= 0) { "Ultra Heat Generator transition vertical radius cannot be negative" }
+        require(instantTemperatureCelsius.isFinite() && instantTemperatureCelsius >= 0.0) { "Ultra Heat Generator instant temperature must be finite and non-negative" }
+        require(Identifier.tryParse(defaultTransition) != null) { "Invalid Heat Generator default transition '$defaultTransition'" }
+        require(Identifier.tryParse(flammableTransition) != null) { "Invalid Heat Generator flammable transition '$flammableTransition'" }
+        require(blockTransitions.keys.all { Identifier.tryParse(it) != null }) { "Invalid Heat Generator transition source" }
+        require(playerIgnition.isNotEmpty()) { "Heat Generator player ignition list cannot be empty" }
+        require(playerFireSeconds.isFinite() && playerFireSeconds > 0.0) { "Heat Generator player fire seconds must be finite and positive" }
+        require(playerVerticalRange.isFinite() && playerVerticalRange > 0.0) { "Heat Generator player vertical range must be finite and positive" }
+        require(playerIgniteIntervalTicks > 0) { "Heat Generator player ignition interval must be positive" }
+    }
+
+    fun playerIgnitionArea(temperatureCelsius: Double): Int? {
+        if (!temperatureCelsius.isFinite()) return null
+        val highestTemperature = this.playerIgnition.maxOf { it.temperatureCelsius }
+        return this.playerIgnition.filter { temperatureCelsius >= it.temperatureCelsius && (it.temperatureCelsius < highestTemperature || temperatureCelsius > it.temperatureCelsius) }.maxByOrNull { it.temperatureCelsius }?.area
+    }
+
+    fun blockTransitionFor(sourceId: String): HeatBlockTransitionConfig? {
+        val normalizedSourceId = Identifier.tryParse(sourceId)?.toString() ?: return null
+        return this.blockTransitions[normalizedSourceId]
+            ?: this.blockTransitions.entries.firstOrNull { Identifier.tryParse(it.key)?.toString() == normalizedSourceId }?.value
+    }
+}
+
+private fun defaultHeatBlockTransitions(): Map<String, HeatBlockTransitionConfig> = linkedMapOf("minecraft:blue_ice" to HeatBlockTransitionConfig("minecraft:packed_ice"), "minecraft:packed_ice" to HeatBlockTransitionConfig("minecraft:ice"), "minecraft:ice" to HeatBlockTransitionConfig("minecraft:water"), "minecraft:water" to HeatBlockTransitionConfig("minecraft:obsidian", coolingCelsius = 100.0), "minecraft:obsidian" to HeatBlockTransitionConfig("minecraft:lava", 700.0), "minecraft:magma_block" to HeatBlockTransitionConfig("minecraft:lava", 700.0))
+
+private fun defaultHeatPlayerIgnition(): List<HeatPlayerIgnitionConfig> = listOf(HeatPlayerIgnitionConfig(800.0, 3), HeatPlayerIgnitionConfig(1300.0, 5), HeatPlayerIgnitionConfig(1800.0, 8))

@@ -6,6 +6,7 @@ import com.algorithmlx.ecr.api.research.content.BookElementSpec
 import com.algorithmlx.ecr.api.research.content.BookEntry
 import com.algorithmlx.ecr.api.research.content.BookTextVariant
 import com.algorithmlx.ecr.api.research.content.CraftingBookElement
+import com.algorithmlx.ecr.api.research.content.GroupBookElement
 import com.algorithmlx.ecr.api.research.content.SpaceBookElement
 import com.algorithmlx.ecr.api.research.content.TaskListBookElement
 import com.algorithmlx.ecr.api.research.content.TextBookElement
@@ -139,6 +140,7 @@ object BookPageLayout {
     ): Int? =
         when (val element = spec.content) {
             is CraftingBookElement -> BookRecipeElementRenderer.preferredHeight(element, width, entry.id)
+            is GroupBookElement -> BookGroupLayout.layout(element, width, entry.id).height
             else -> null
         }
 

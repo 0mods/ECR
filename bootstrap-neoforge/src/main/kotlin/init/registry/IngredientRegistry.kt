@@ -15,6 +15,7 @@ object IngredientRegistry {
         registry.register(bus)
     }
 
-    @JvmField
-    val COUNT_TYPE = registry.register(ECRModIDs.COUNT) { _ -> IngredientType(CountIngredient.CODEC, CountIngredient.STREAM_CODEC) }
+    val COUNT_TYPE: IngredientType<CountIngredient> by register(ECRModIDs.COUNT) { IngredientType(CountIngredient.CODEC, CountIngredient.STREAM_CODEC) }
+
+    private fun register(id: String, factory: () -> IngredientType<CountIngredient>) = registry.register(id) { _ -> factory() }
 }

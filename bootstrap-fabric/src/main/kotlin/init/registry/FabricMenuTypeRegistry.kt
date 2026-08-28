@@ -5,6 +5,7 @@ import com.algorithmlx.ecr.api.menu.MenuTypeData
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.menu.EnrichmentChamberControllerMenu
 import com.algorithmlx.ecr.common.menu.EnrichmentChamberReceiverMenu
+import com.algorithmlx.ecr.common.menu.HeatGeneratorMenu
 import com.algorithmlx.ecr.common.menu.MagicTableMenu
 import com.algorithmlx.ecr.common.menu.MagicalTeleporterMenu
 import com.algorithmlx.ecr.common.menu.MatrixDestructorMenu
@@ -22,6 +23,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.inventory.MenuType
 
 object FabricMenuTypeRegistry: MenuTypeRegistry {
+    override val heatGenerator: MenuType<HeatGeneratorMenu> = register(ECRModIDs.HEAT_GENERATOR, ::HeatGeneratorMenu)
     override val mithrilineFurnace: MenuType<MithrilineFurnaceMenu> = register(
         ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnaceMenu
     )

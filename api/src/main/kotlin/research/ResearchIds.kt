@@ -5,13 +5,19 @@ import com.algorithmlx.ecr.api.utils.ecRL
 object ResearchIds {
     @JvmField val SPACE = "space".ecRL
 
+    @JvmField val VERTICAL_SPACE = "vertical_space".ecRL
+
     @JvmField val TEXT = "text".ecRL
 
     @JvmField val ITEM = "item".ecRL
 
     @JvmField val BLOCK = "block".ecRL
 
+    @JvmField val GROUP = "group".ecRL
+
     @JvmField val MULTIBLOCK = "multiblock".ecRL
+
+    @JvmField val BOOK_MULTIBLOCK = "book_multiblock".ecRL
 
     @JvmField val ASSEMBLED_MULTIBLOCK = "assembled_multiblock".ecRL
 

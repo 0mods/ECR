@@ -45,12 +45,14 @@ interface ItemRegistry {
     val voidPlating: Item
     val mithrilineIngot: Item
     val magicalIngot: Item
+    val magicalSlag: Item
     val mithrilineDust: Item
     val heatingRod: Item
     val mithrilineCrystalGem: Item
     val mruResonatingCrystal: Item
     val fadingCrystal: Item
     val eyeOfAbsorption: Item
+    val heatCore: Item
 
     companion object {
         @JvmStatic

@@ -44,6 +44,7 @@ item.escr:
   void_plating: Void Plating
   mithriline_ingot: Mithriline Ingot
   magical_ingot: Magical Ingot
+  magical_slag: Magical Slag
   mithriline_dust: Mithriline Dust
   heating_rod: Heat Rod
   mithriline_crystal_gem: Mithriline Crystal
@@ -123,6 +124,13 @@ matrix.escr:
   neutral: Neutral
 
 screen.escr:
+  heat_generator:
+    mode:
+      normal: Normal Heat Generator
+      ultra: Ultra Heat Generator
+    temperature: "Temperature: %s"
+    generation: "Generation: %s MRU/t"
+    fuel: "Fuel: %s s"
   research_book:
     .: Research Book
     complete_research: Complete research
@@ -135,6 +143,11 @@ screen.escr:
       more: and %s more...
     research:
       .: "Research: %s"
+    category:
+      progress: "Researched: %s%%"
+    multiblock:
+      place: Project structure in the world
+      placed: "Structure projection centered at %s, %s, %s"
     recipe:
       duration:
         .: "Duration: %s"
@@ -154,7 +167,15 @@ toast.escr.research_book:
   research_completed: Research completed
 
 message.escr:
+  heat_generator:
+    temperature_unit: "Temperature unit: %s (%s)"
   research_required: "Required research: %s"
+
+temperature_unit.escr:
+  celsius: Celsius
+  fahrenheit: Fahrenheit
+  kelvin: Kelvin
+  rankine: Rankine
 
 book.escr:
   title:

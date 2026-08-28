@@ -1,6 +1,7 @@
 package com.algorithmlx.ecr.fabric.init
 
 import com.algorithmlx.ecr.api.geo.GeoAnimationNetwork
+import com.algorithmlx.ecr.api.client.render.MultiblockWorldPreview
 import com.algorithmlx.ecr.api.geo.GeoBlockAnimationPayload
 import com.algorithmlx.ecr.api.geo.GeoBlockAnimationStopPayload
 import com.algorithmlx.ecr.api.geo.GeoEntityAnimationPayload
@@ -30,6 +31,7 @@ import com.algorithmlx.ecr.client.renderer.MatrixDestructorRenderer
 import com.algorithmlx.ecr.client.renderer.MithrilineFurnaceRenderer
 import com.algorithmlx.ecr.client.screen.EnrichmentChamberControllerScreen
 import com.algorithmlx.ecr.client.screen.EnrichmentChamberReceiverScreen
+import com.algorithmlx.ecr.client.screen.HeatGeneratorScreen
 import com.algorithmlx.ecr.client.screen.MagicTableMenuScreen
 import com.algorithmlx.ecr.client.screen.MagicalTeleporterScreen
 import com.algorithmlx.ecr.client.screen.MatrixDestructorScreen
@@ -72,7 +74,10 @@ object FabricClientInit {
         registerBedrockParticles()
         registerReceivers()
         registerTooltipEvent()
-        ClientPlayConnectionEvents.DISCONNECT.register { _, _ -> SoulStoneTooltipNetwork.clear() }
+        ClientPlayConnectionEvents.DISCONNECT.register { _, _ ->
+            SoulStoneTooltipNetwork.clear()
+            MultiblockWorldPreview.clear()
+        }
 
         MultiblockPreviewGuiBridgeInit.init()
         ResearchBookClient.init()
@@ -95,6 +100,7 @@ object FabricClientInit {
         ModelLayerRegistry.registerModelLayer(MithrilineFurnaceRenderer.MF_LAYER, MithrilineFurnaceRenderer::createBodyLayer)
 
         MenuScreens.register(MenuTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceScreen)
+        MenuScreens.register(MenuTypeRegistry.instance.heatGenerator, ::HeatGeneratorScreen)
         MenuScreens.register(MenuTypeRegistry.instance.magicTable, ::MagicTableMenuScreen)
         MenuScreens.register(MenuTypeRegistry.instance.matrixDestructor, ::MatrixDestructorScreen)
         MenuScreens.register(MenuTypeRegistry.instance.enrichmentChamberController, ::EnrichmentChamberControllerScreen)
@@ -115,6 +121,7 @@ object FabricClientInit {
         ResourceLoader.get(PackType.CLIENT_RESOURCES).registerReloadListener("bedrock_geo".ecRL, BedrockGeoAssets)
         ClientTickEvents.END_LEVEL_TICK.register { level ->
             ClientParticleSystems.get(level)?.update()
+            MultiblockWorldPreview.tick(level)
         }
         LevelRenderEvents.COLLECT_SUBMITS.register { context ->
             val minecraft = Minecraft.getInstance()
@@ -129,6 +136,11 @@ object FabricClientInit {
                 minecraft.options.cameraType.isFirstPerson,
             )
             BoundGemLinkRenderer.submit(
+                poseStack,
+                context.submitNodeCollector(),
+                context.levelState(),
+            )
+            MultiblockWorldPreview.submit(
                 poseStack,
                 context.submitNodeCollector(),
                 context.levelState(),

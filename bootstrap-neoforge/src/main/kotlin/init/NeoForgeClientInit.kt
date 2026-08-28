@@ -3,6 +3,7 @@ package com.algorithmlx.ecr.neoforge.init
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewGuiBridge
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewPictureRenderer
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewRenderState
+import com.algorithmlx.ecr.api.client.render.MultiblockWorldPreview
 import com.algorithmlx.ecr.api.geo.GeoAnimationNetwork
 import com.algorithmlx.ecr.api.geo.GeoBlockAnimationPayload
 import com.algorithmlx.ecr.api.geo.GeoBlockAnimationStopPayload
@@ -27,6 +28,7 @@ import com.algorithmlx.ecr.client.renderer.MatrixDestructorRenderer
 import com.algorithmlx.ecr.client.renderer.MithrilineFurnaceRenderer
 import com.algorithmlx.ecr.client.screen.EnrichmentChamberControllerScreen
 import com.algorithmlx.ecr.client.screen.EnrichmentChamberReceiverScreen
+import com.algorithmlx.ecr.client.screen.HeatGeneratorScreen
 import com.algorithmlx.ecr.client.screen.MagicTableMenuScreen
 import com.algorithmlx.ecr.client.screen.MagicalTeleporterScreen
 import com.algorithmlx.ecr.client.screen.MatrixDestructorScreen
@@ -88,11 +90,15 @@ object NeoForgeClientInit {
     }
 
     private fun onClientTick(event: ClientTickEvent.Post) {
-        Minecraft.getInstance().level?.let { ClientParticleSystems.get(it)?.update() }
+        Minecraft.getInstance().level?.let {
+            ClientParticleSystems.get(it)?.update()
+            MultiblockWorldPreview.tick(it)
+        }
     }
 
     private fun onClientLogout(event: ClientPlayerNetworkEvent.LoggingOut) {
         SoulStoneTooltipNetwork.clear()
+        MultiblockWorldPreview.clear()
     }
 
     private fun onSubmitCustomGeometry(event: SubmitCustomGeometryEvent) {
@@ -107,6 +113,11 @@ object NeoForgeClientInit {
             minecraft.options.cameraType.isFirstPerson,
         )
         BoundGemLinkRenderer.submit(
+            event.poseStack,
+            event.submitNodeCollector,
+            event.levelRenderState,
+        )
+        MultiblockWorldPreview.submit(
             event.poseStack,
             event.submitNodeCollector,
             event.levelRenderState,
@@ -154,6 +165,7 @@ object NeoForgeClientInit {
 
     private fun onMenuScreen(event: RegisterMenuScreensEvent) {
         event.register(MenuTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceScreen)
+        event.register(MenuTypeRegistry.instance.heatGenerator, ::HeatGeneratorScreen)
         event.register(MenuTypeRegistry.instance.magicTable, ::MagicTableMenuScreen)
         event.register(MenuTypeRegistry.instance.matrixDestructor, ::MatrixDestructorScreen)
         event.register(MenuTypeRegistry.instance.enrichmentChamberController, ::EnrichmentChamberControllerScreen)

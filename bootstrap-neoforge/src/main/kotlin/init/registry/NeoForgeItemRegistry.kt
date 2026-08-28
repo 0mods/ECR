@@ -30,121 +30,60 @@ class NeoForgeItemRegistry(bus: IEventBus): ItemRegistry {
         items.register(bus)
     }
 
-    private val hammerItem = registerItem(ECRModIDs.HAMMER, ::Hammer)
-    private val soulStoneItem = registerItem(ECRModIDs.SOUL_STONE, ::SoulStone)
-    private val researchBookItem = registerItem(
-        ECRModIDs.RESEARCH_BOOK, ::ResearchBookItem
-    ) {
-        Item.Properties().delayedComponent(
-            DataComponentRegistry.instance.bookType
-        ) {
-            it.lookupOrThrow(ECRegistryKeys.BOOK_TYPE_KEY)
-                .getOrThrow(ResourceKey.create(ECRegistryKeys.BOOK_TYPE_KEY, ECRModIDs.BASIC.ecRL))
-                .key()
-        }
+    override val hammer: Hammer by register(ECRModIDs.HAMMER, ::Hammer)
+    override val soulStone: SoulStone by register(ECRModIDs.SOUL_STONE, ::SoulStone)
+    override val researchBook: ResearchBookItem by register(ECRModIDs.RESEARCH_BOOK, ::ResearchBookItem) {
+        Item.Properties().delayedComponent(DataComponentRegistry.instance.bookType) { it.lookupOrThrow(ECRegistryKeys.BOOK_TYPE_KEY).getOrThrow(ResourceKey.create(ECRegistryKeys.BOOK_TYPE_KEY, ECRModIDs.BASIC.ecRL)).key() }
     }
-    private val boundGemItem = registerItem(ECRModIDs.BOUND_GEM, ::BoundGemItem)
+    override val boundGem: BoundGemItem by register(ECRModIDs.BOUND_GEM, ::BoundGemItem)
 
-    private val weakAxeItem = registerItem(ECRModIDs.WEAKNESS_ELEMENTAL_AXE, ::WeakAxe)
-    private val weakHoeItem = registerItem(ECRModIDs.WEAKNESS_ELEMENTAL_HOE, ::WeakHoe)
-    private val weakPickaxeItem = registerItem(ECRModIDs.WEAKNESS_ELEMENTAL_PICKAXE, ::WeakPickaxe)
-    private val weakShovelItem = registerItem(ECRModIDs.WEAKNESS_ELEMENTAL_SHOVEL, ::WeakShovel)
-    private val weakSwordItem = registerItem(ECRModIDs.WEAKNESS_ELEMENTAL_SWORD, ::WeakSword)
+    override val weaknessElementalAxe: WeakAxe by register(ECRModIDs.WEAKNESS_ELEMENTAL_AXE, ::WeakAxe)
+    override val weaknessElementalHoe: WeakHoe by register(ECRModIDs.WEAKNESS_ELEMENTAL_HOE, ::WeakHoe)
+    override val weaknessElementalPickaxe: WeakPickaxe by register(ECRModIDs.WEAKNESS_ELEMENTAL_PICKAXE, ::WeakPickaxe)
+    override val weaknessElementalShovel: WeakShovel by register(ECRModIDs.WEAKNESS_ELEMENTAL_SHOVEL, ::WeakShovel)
+    override val weaknessElementalSword: WeakSword by register(ECRModIDs.WEAKNESS_ELEMENTAL_SWORD, ::WeakSword)
 
-    val elementalGemItem = basicItem(ECRModIDs.ELEMENTAL_GEM)
-    val flameGemItem = basicItem(ECRModIDs.FLAME_GEM)
-    val waterGemItem = basicItem(ECRModIDs.WATER_GEM)
-    val earthGemItem = basicItem(ECRModIDs.EARTH_GEM)
-    val airGemItem = basicItem(ECRModIDs.AIR_GEM)
+    override val elementalGem: Item by register(ECRModIDs.ELEMENTAL_GEM)
+    override val flameGem: Item by register(ECRModIDs.FLAME_GEM)
+    override val waterGem: Item by register(ECRModIDs.WATER_GEM)
+    override val earthGem: Item by register(ECRModIDs.EARTH_GEM)
+    override val airGem: Item by register(ECRModIDs.AIR_GEM)
 
-    val elementalCoreItem = basicItem(ECRModIDs.ELEMENTAL_CORE)
-    val combinedMagicAlloysItem = basicItem(ECRModIDs.COMBINED_MAGIC_ALLOYS)
-    val demonicCoreItem = basicItem(ECRModIDs.DEMONIC_CORE)
-    val diamondPlateItem = basicItem(ECRModIDs.DIAMOND_PLATE)
-    val emeraldPlateItem = basicItem(ECRModIDs.EMERALD_PLATE)
-    val enderScaleAlloyItem = basicItem(ECRModIDs.ENDER_SCALE_ALLOY)
-    val forcefieldCoreItem = basicItem(ECRModIDs.FORCEFIELD_CORE)
-    val forcefieldPlatingItem = basicItem(ECRModIDs.FORCIFIELD_PLATING)
-    val fortifiedFrameItem = basicItem(ECRModIDs.FORTIFIED_FRAME)
-    val fortifiedPlateItem = basicItem(ECRModIDs.FORTIFIED_PLATE)
-    val magicPlateItem = basicItem(ECRModIDs.MAGIC_PLATE)
-    val magicPurifiedBlazeAlloyItem = basicItem(ECRModIDs.MAGIC_PURIFIED_BLAZE_ALLOY)
-    val magicPurifiedEnderScaleAlloyItem = basicItem(ECRModIDs.MAGIC_PURIFIED_ENDER_SCALE_ALLOY)
-    val magicPurifiedGlassAlloyItem = basicItem(ECRModIDs.MAGIC_PURIFIED_GLASS_ALLOY)
-    val obsidianPlateItem = basicItem(ECRModIDs.OBSIDIAN_PLATE)
-    val paleCoreItem = basicItem(ECRModIDs.PALE_CORE)
-    val palePlateItem = basicItem(ECRModIDs.PALE_PLATE)
-    val particleCatcherItem = basicItem(ECRModIDs.PARTICLE_CATCHER)
-    val particleEmitterItem = basicItem(ECRModIDs.PARTICLE_EMITTER)
-    val sunImbuedGlassItem = basicItem(ECRModIDs.SUN_IMBUED_GLASS)
-    val voidPlatingItem = basicItem(ECRModIDs.VOID_PLATING)
-    val mithrilineIngotItem = basicItem(ECRModIDs.MITHRILINE_INGOT)
-    val magicalIngotItem = basicItem(ECRModIDs.MAGICAL_INGOT)
-    val mithrilineDustItem = basicItem(ECRModIDs.MITHRILINE_DUST)
-    val heatingRodItem = basicItem(ECRModIDs.HEATING_ROD)
-    val mithrilineCrystalGemItem = basicItem(ECRModIDs.MITHRILINE_CRYSTAL_GEM)
-    val mruResonatingCrystalItem = basicItem(ECRModIDs.MRU_RESONATING_CRYSTAL)
-    val fadingCrystalItem = basicItem(ECRModIDs.FADING_CRYSTAL)
-    val eyeOfAbsorptionItem = basicItem(ECRModIDs.EYE_OF_ABSORPTION)
+    override val elementalCore: Item by register(ECRModIDs.ELEMENTAL_CORE)
+    override val combinedMagicAlloys: Item by register(ECRModIDs.COMBINED_MAGIC_ALLOYS)
+    override val demonicCore: Item by register(ECRModIDs.DEMONIC_CORE)
+    override val diamondPlate: Item by register(ECRModIDs.DIAMOND_PLATE)
+    override val emeraldPlate: Item by register(ECRModIDs.EMERALD_PLATE)
+    override val enderScaleAlloy: Item by register(ECRModIDs.ENDER_SCALE_ALLOY)
+    override val forcefieldCore: Item by register(ECRModIDs.FORCEFIELD_CORE)
+    override val forcefieldPlating: Item by register(ECRModIDs.FORCIFIELD_PLATING)
+    override val fortifiedFrame: Item by register(ECRModIDs.FORTIFIED_FRAME)
+    override val fortifiedPlate: Item by register(ECRModIDs.FORTIFIED_PLATE)
+    override val magicPlate: Item by register(ECRModIDs.MAGIC_PLATE)
+    override val magicPurifiedBlazeAlloy: Item by register(ECRModIDs.MAGIC_PURIFIED_BLAZE_ALLOY)
+    override val magicPurifiedEnderScaleAlloy: Item by register(ECRModIDs.MAGIC_PURIFIED_ENDER_SCALE_ALLOY)
+    override val magicPurifiedGlassAlloy: Item by register(ECRModIDs.MAGIC_PURIFIED_GLASS_ALLOY)
+    override val obsidianPlate: Item by register(ECRModIDs.OBSIDIAN_PLATE)
+    override val paleCore: Item by register(ECRModIDs.PALE_CORE)
+    override val palePlate: Item by register(ECRModIDs.PALE_PLATE)
+    override val particleCatcher: Item by register(ECRModIDs.PARTICLE_CATCHER)
+    override val particleEmitter: Item by register(ECRModIDs.PARTICLE_EMITTER)
+    override val sunImbuedGlass: Item by register(ECRModIDs.SUN_IMBUED_GLASS)
+    override val voidPlating: Item by register(ECRModIDs.VOID_PLATING)
+    override val mithrilineIngot: Item by register(ECRModIDs.MITHRILINE_INGOT)
+    override val magicalIngot: Item by register(ECRModIDs.MAGICAL_INGOT)
+    override val magicalSlag: Item by register(ECRModIDs.MAGICAL_SLAG)
+    override val mithrilineDust: Item by register(ECRModIDs.MITHRILINE_DUST)
+    override val heatingRod: Item by register(ECRModIDs.HEATING_ROD)
+    override val mithrilineCrystalGem: Item by register(ECRModIDs.MITHRILINE_CRYSTAL_GEM)
+    override val mruResonatingCrystal: Item by register(ECRModIDs.MRU_RESONATING_CRYSTAL)
+    override val fadingCrystal: Item by register(ECRModIDs.FADING_CRYSTAL)
+    override val eyeOfAbsorption: Item by register(ECRModIDs.EYE_OF_ABSORPTION)
+    override val heatCore: Item by register(ECRModIDs.HEAT_CORE)
 
-    // implements
-    override val hammer: Hammer by lazy { hammerItem.get() }
-    override val soulStone: SoulStone by lazy { soulStoneItem.get() }
-    override val researchBook: ResearchBookItem by lazy { researchBookItem.get() }
-    override val boundGem: BoundGemItem by lazy { boundGemItem.get() }
+    private fun register(id: String, properties: () -> Item.Properties = Item::Properties) = register(id, ::Item, properties)
 
-    override val weaknessElementalAxe: WeakAxe by lazy { weakAxeItem.get() }
-    override val weaknessElementalHoe: WeakHoe by lazy { weakHoeItem.get() }
-    override val weaknessElementalPickaxe: WeakPickaxe by lazy { weakPickaxeItem.get() }
-    override val weaknessElementalShovel: WeakShovel by lazy { weakShovelItem.get() }
-    override val weaknessElementalSword: WeakSword by lazy { weakSwordItem.get() }
-
-    override val elementalGem: Item by lazy { elementalGemItem.get() }
-    override val flameGem: Item by lazy { flameGemItem.get() }
-    override val waterGem: Item by lazy { waterGemItem.get() }
-    override val earthGem: Item by lazy { earthGemItem.get() }
-    override val airGem: Item by lazy { airGemItem.get() }
-
-    override val elementalCore: Item by lazy { elementalCoreItem.get() }
-    override val combinedMagicAlloys: Item by lazy { combinedMagicAlloysItem.get() }
-    override val demonicCore: Item by lazy { demonicCoreItem.get() }
-    override val diamondPlate: Item by lazy { diamondPlateItem.get() }
-    override val emeraldPlate: Item by lazy { emeraldPlateItem.get() }
-    override val enderScaleAlloy: Item by lazy { enderScaleAlloyItem.get() }
-    override val forcefieldCore: Item by lazy { forcefieldCoreItem.get() }
-    override val forcefieldPlating: Item by lazy { forcefieldPlatingItem.get() }
-    override val fortifiedFrame: Item by lazy { fortifiedFrameItem.get() }
-    override val fortifiedPlate: Item by lazy { fortifiedPlateItem.get() }
-    override val magicPlate: Item by lazy { magicPlateItem.get() }
-    override val magicPurifiedBlazeAlloy: Item by lazy { magicPurifiedBlazeAlloyItem.get() }
-    override val magicPurifiedEnderScaleAlloy: Item by lazy { magicPurifiedEnderScaleAlloyItem.get() }
-    override val magicPurifiedGlassAlloy: Item by lazy { magicPurifiedGlassAlloyItem.get() }
-    override val obsidianPlate: Item by lazy { obsidianPlateItem.get() }
-    override val paleCore: Item by lazy { paleCoreItem.get() }
-    override val palePlate: Item by lazy { palePlateItem.get() }
-    override val particleCatcher: Item by lazy { particleCatcherItem.get() }
-    override val particleEmitter: Item by lazy { particleEmitterItem.get() }
-    override val sunImbuedGlass: Item by lazy { sunImbuedGlassItem.get() }
-    override val voidPlating: Item by lazy { voidPlatingItem.get() }
-    override val mithrilineIngot: Item by lazy { mithrilineIngotItem.get() }
-    override val magicalIngot: Item by lazy { magicalIngotItem.get() }
-    override val mithrilineDust: Item by lazy { mithrilineDustItem.get() }
-    override val heatingRod: Item by lazy { heatingRodItem.get() }
-    override val mithrilineCrystalGem: Item by lazy { mithrilineCrystalGemItem.get() }
-    override val mruResonatingCrystal: Item by lazy { mruResonatingCrystalItem.get() }
-    override val fadingCrystal: Item by lazy { fadingCrystalItem.get() }
-    override val eyeOfAbsorption: Item by lazy { eyeOfAbsorptionItem.get() }
-
-    private fun basicItem(
-        id: String,
-        properties: () -> Item.Properties = Item::Properties
-    ) = registerItem(id, ::Item, properties)
-
-    private fun <I: Item> registerItem(
-        id: String,
-        item: (Item.Properties) -> I,
-        properties: () -> Item.Properties = Item::Properties
-    ): DeferredItem<I> {
+    private fun <I: Item> register(id: String, item: (Item.Properties) -> I, properties: () -> Item.Properties = Item::Properties): DeferredItem<I> {
         val itemKey = { it: Identifier -> ResourceKey.create(Registries.ITEM, it) }
         return items.register(id) { rk -> item(properties().setId(itemKey(rk))) }
     }

@@ -2,8 +2,12 @@ package com.algorithmlx.ecr.api.research
 
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.research.content.BookCategory
+import com.algorithmlx.ecr.api.research.content.BookElement
+import com.algorithmlx.ecr.api.research.content.BookElementSpec
 import com.algorithmlx.ecr.api.research.content.BookEntry
 import com.algorithmlx.ecr.api.research.content.BookEntryAlign
+import com.algorithmlx.ecr.api.research.content.BookEntryLink
+import com.algorithmlx.ecr.api.research.content.GroupBookElement
 import com.algorithmlx.ecr.api.research.content.BookPosition
 import com.algorithmlx.ecr.api.research.content.BookTextVariant
 import com.algorithmlx.ecr.api.research.content.ResearchRequirement
@@ -189,7 +193,8 @@ object ResearchCatalog {
                                 val target = requirement.researchId(entry.id)
                                 target in disabled || (target in knownEntries && target !in activeEntries)
                             } ||
-                            entry.category?.let { it in knownCategories && it !in activeCategories } == true
+                            entry.category?.let { it in knownCategories && it !in activeCategories } == true ||
+                            entry.link.targetsUnavailable(activeCategories.keys, activeEntries.keys, knownCategories, knownEntries)
                     }.mapTo(LinkedHashSet(), BookEntry::id)
             if (removedEntries.isNotEmpty()) {
                 activeEntries.keys.removeAll(removedEntries)
@@ -216,6 +221,25 @@ object ResearchCatalog {
     )
 }
 
+private fun BookEntryLink?.targetsUnavailable(
+    activeCategories: Set<Identifier>,
+    activeEntries: Set<Identifier>,
+    knownCategories: Set<Identifier>,
+    knownEntries: Set<Identifier>,
+): Boolean = when (this) {
+    is BookEntryLink.Category -> category in knownCategories && category !in activeCategories
+    is BookEntryLink.Research -> research in knownEntries && research !in activeEntries
+    is BookEntryLink.Page -> research in knownEntries && research !in activeEntries
+    null -> false
+}
+
+private fun BookElementSpec.walkElements(): Sequence<BookElement> = sequence {
+    yield(content)
+    if (content is GroupBookElement) {
+        content.elements.forEach { child -> yieldAll(child.walkElements()) }
+    }
+}
+
 private object ResearchLayout {
     fun resolve(
         categories: Map<Identifier, BookCategory>,
@@ -235,7 +259,9 @@ private object ResearchLayout {
             entry.dependencies.forEach { require(it in entries) { "Unknown dependency $it in ${entry.id}" } }
             entry.requirements.forEach { validateRequirement(entry.id, it, entries) }
             validateTextRequirements(entry, entries)
+            validateLink(entry, categories, entries)
         }
+        validateLinkCycles(entries)
         val result = LinkedHashMap<Identifier, ResolvedBookEntry>()
         val visiting = HashSet<Identifier>()
         entries.keys.forEach { resolveEntry(it, categories, entries, result, visiting) }
@@ -249,12 +275,53 @@ private object ResearchLayout {
         entry.pages
             .asSequence()
             .flatMap { it.elements.asSequence() }
-            .mapNotNull { it.content as? TextBookElement }
+            .flatMap(BookElementSpec::walkElements)
+            .mapNotNull { it as? TextBookElement }
             .flatMap { element ->
                 sequenceOf(element.requirement) + element.variants.asSequence().map(BookTextVariant::requirement)
             }.filterNotNull()
             .filter { it.researchId(entry.id) in entries }
             .forEach { validateRequirement(entry.id, it, entries) }
+    }
+
+    private fun validateLink(
+        entry: BookEntry,
+        categories: Map<Identifier, BookCategory>,
+        entries: Map<Identifier, BookEntry>,
+    ) {
+        val link = entry.link ?: return
+        require(entry.pages.isEmpty()) { "Research link ${entry.id} must not contain pages" }
+        when (link) {
+            is BookEntryLink.Category -> {
+                require(link.category in categories) { "Unknown linked category ${link.category} in ${entry.id}" }
+            }
+            is BookEntryLink.Research -> {
+                require(link.research in entries) { "Unknown linked research ${link.research} in ${entry.id}" }
+            }
+            is BookEntryLink.Page -> {
+                val target = entries[link.research]
+                    ?: error("Unknown linked research ${link.research} in ${entry.id}")
+                require(target.link == null) {
+                    "Page link ${entry.id} must point to research content, not another link (${target.id})"
+                }
+            }
+        }
+    }
+
+    private fun validateLinkCycles(entries: Map<Identifier, BookEntry>) {
+        entries.values.forEach { origin ->
+            val visited = LinkedHashSet<Identifier>()
+            var current = origin
+            while (true) {
+                check(visited.add(current.id)) { "Cyclic research link at ${current.id}" }
+                val target = when (val link = current.link) {
+                    is BookEntryLink.Research -> link.research
+                    is BookEntryLink.Page -> link.research
+                    else -> break
+                }
+                current = entries.getValue(target)
+            }
+        }
     }
 
     private fun validateRequirement(

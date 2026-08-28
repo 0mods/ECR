@@ -21,26 +21,21 @@ class NeoForgeDataComponentRegistry(bus: IEventBus): DataComponentRegistry {
         dataComponents.register(bus)
     }
 
-    private val soulStoneComponent = dataComponents.registerComponentType(ECRModIDs.SOUL_STONE) { builder ->
+    override val soulStone: DataComponentType<SoulStoneComponent> by register<SoulStoneComponent>(ECRModIDs.SOUL_STONE) { builder ->
         builder.persistent(SoulStoneComponent.CODEC).networkSynchronized(SoulStoneComponent.STREAM_CODEC)
     }
 
-    private val bookTypeComponent = dataComponents.registerComponentType(ECRModIDs.BOOK_TYPE) { builder ->
-        builder
-            .persistent(ResourceKey.codec(ECRegistryKeys.BOOK_TYPE_KEY))
-            .networkSynchronized(ResourceKey.streamCodec(ECRegistryKeys.BOOK_TYPE_KEY))
+    override val bookType: DataComponentType<ResourceKey<BookType>> by register<ResourceKey<BookType>>(ECRModIDs.BOOK_TYPE) { builder ->
+        builder.persistent(ResourceKey.codec(ECRegistryKeys.BOOK_TYPE_KEY)).networkSynchronized(ResourceKey.streamCodec(ECRegistryKeys.BOOK_TYPE_KEY))
     }
 
-    private val boundGemComponent = dataComponents.registerComponentType(ECRModIDs.BOUND_GEM) { builder ->
+    override val boundGem: DataComponentType<BoundGemComponent> by register<BoundGemComponent>(ECRModIDs.BOUND_GEM) { builder ->
         builder.persistent(BoundGemComponent.CODEC).networkSynchronized(BoundGemComponent.STREAM_CODEC)
     }
 
-    private val playerMatrixComponent = dataComponents.registerComponentType(ECRModIDs.PLAYER_MATRIX) { builder ->
+    override val playerMatrix: DataComponentType<PlayerMatrixComponent> by register<PlayerMatrixComponent>(ECRModIDs.PLAYER_MATRIX) { builder ->
         builder.persistent(PlayerMatrixComponent.CODEC).networkSynchronized(PlayerMatrixComponent.STREAM_CODEC)
     }
 
-    override val soulStone: DataComponentType<SoulStoneComponent> by lazy { soulStoneComponent.get() }
-    override val bookType: DataComponentType<ResourceKey<BookType>> by lazy { bookTypeComponent.get() }
-    override val boundGem: DataComponentType<BoundGemComponent> by lazy { boundGemComponent.get() }
-    override val playerMatrix: DataComponentType<PlayerMatrixComponent> by lazy { playerMatrixComponent.get() }
+    private fun <T: Any> register(id: String, configure: (DataComponentType.Builder<T>) -> DataComponentType.Builder<T>) = dataComponents.registerComponentType<T>(id) { builder -> configure(builder) }
 }

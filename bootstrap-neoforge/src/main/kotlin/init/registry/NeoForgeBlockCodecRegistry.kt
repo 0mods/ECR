@@ -7,6 +7,7 @@ import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.registry.BlockCodecRegistry
 import com.mojang.serialization.MapCodec
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.neoforged.bus.api.IEventBus
 import net.neoforged.neoforge.registries.DeferredRegister
@@ -20,74 +21,20 @@ class NeoForgeBlockCodecRegistry(
         blockTypes.register(bus)
     }
 
-    private val assembledMultiblockPartCodec =
-        blockTypes.register(ECRModIDs.ASSEMBLED_MULTIBLOCK_PART) { _ ->
-            BlockBehaviour.simpleCodec(::AssembledMultiblockPartBlock)
-        }
-    private val solarPrismCodec =
-        blockTypes.register(ECRModIDs.SOLAR_PRISM) { _ ->
-            BlockBehaviour.simpleCodec(::SolarPrism)
-        }
-    private val clusterBlockCodec =
-        blockTypes.register(ECRModIDs.CLUSTER) { _ ->
-            BlockBehaviour.simpleCodec(::ClusterBlock)
-        }
-    private val crystalBlockCodec =
-        blockTypes.register(ECRModIDs.CRYSTAL) { _ ->
-            BlockBehaviour.simpleCodec(::CrystalBlock)
-        }
-    private val mithrilineFurnaceCodec =
-        blockTypes.register(ECRModIDs.MITHRILINE_FURNACE) { _ ->
-            BlockBehaviour.simpleCodec(::MithrilineFurnace)
-        }
-    private val magicTableCodec =
-        blockTypes.register(ECRModIDs.MAGIC_TABLE) { _ ->
-            BlockBehaviour.simpleCodec(::MagicTable)
-        }
-    private val matrixDestructorCodec =
-        blockTypes.register(ECRModIDs.MATRIX_DESTRUCTOR) { _ ->
-            BlockBehaviour.simpleCodec(::MatrixDestructor)
-        }
-    private val coldDistillerCodec =
-        blockTypes.register(ECRModIDs.COLD_DISTILLER) { _ ->
-            BlockBehaviour.simpleCodec(::ColdDistiller)
-        }
-    private val heatGeneratorCodec =
-        blockTypes.register(ECRModIDs.HEAT_GENERATOR) { _ ->
-            BlockBehaviour.simpleCodec(::HeatGenerator)
-        }
-    private val enrichmentChamberControllerCodec =
-        blockTypes.register(ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER) { _ ->
-            BlockBehaviour.simpleCodec(::EnrichmentChamberController)
-        }
-    private val enrichmentChamberExtractorCodec =
-        blockTypes.register(ECRModIDs.ENRICHMENT_CHAMBER_EXTRACTOR) { _ ->
-            BlockBehaviour.simpleCodec(::EnrichmentChamberExtractor)
-        }
-    private val enrichmentChamberReceiverCodec =
-        blockTypes.register(ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER) { _ ->
-            BlockBehaviour.simpleCodec(::EnrichmentChamberReceiver)
-        }
-    private val rayTowerCodec = blockTypes.register(ECRModIDs.RAY_TOWER) { _ -> BlockBehaviour.simpleCodec(::RayTower) }
-    private val creativeMRUSourceCodec =
-        blockTypes.register(ECRModIDs.CREATIVE_MRU_SOURCE) { _ ->
-            BlockBehaviour.simpleCodec(::CreativeMRUSource)
-        }
+    override val assembledMultiblockPart: MapCodec<AssembledMultiblockPartBlock> by register(ECRModIDs.ASSEMBLED_MULTIBLOCK_PART) { BlockBehaviour.simpleCodec(::AssembledMultiblockPartBlock) }
+    override val solarPrism: MapCodec<SolarPrism> by register(ECRModIDs.SOLAR_PRISM) { BlockBehaviour.simpleCodec(::SolarPrism) }
+    override val clusterBlock: MapCodec<ClusterBlock> by register(ECRModIDs.CLUSTER) { BlockBehaviour.simpleCodec(::ClusterBlock) }
+    override val crystalBlock: MapCodec<CrystalBlock> by register(ECRModIDs.CRYSTAL) { BlockBehaviour.simpleCodec(::CrystalBlock) }
+    override val mithrilineFurnace: MapCodec<MithrilineFurnace> by register(ECRModIDs.MITHRILINE_FURNACE) { BlockBehaviour.simpleCodec(::MithrilineFurnace) }
+    override val magicTable: MapCodec<MagicTable> by register(ECRModIDs.MAGIC_TABLE) { BlockBehaviour.simpleCodec(::MagicTable) }
+    override val matrixDestructor: MapCodec<MatrixDestructor> by register(ECRModIDs.MATRIX_DESTRUCTOR) { BlockBehaviour.simpleCodec(::MatrixDestructor) }
+    override val coldDistiller: MapCodec<ColdDistiller> by register(ECRModIDs.COLD_DISTILLER) { BlockBehaviour.simpleCodec(::ColdDistiller) }
+    override val heatGenerator: MapCodec<HeatGenerator> by register(ECRModIDs.HEAT_GENERATOR) { BlockBehaviour.simpleCodec(::HeatGenerator) }
+    override val enrichmentChamberController: MapCodec<EnrichmentChamberController> by register(ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER) { BlockBehaviour.simpleCodec(::EnrichmentChamberController) }
+    override val enrichmentChamberExtractor: MapCodec<EnrichmentChamberExtractor> by register(ECRModIDs.ENRICHMENT_CHAMBER_EXTRACTOR) { BlockBehaviour.simpleCodec(::EnrichmentChamberExtractor) }
+    override val enrichmentChamberReceiver: MapCodec<EnrichmentChamberReceiver> by register(ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER) { BlockBehaviour.simpleCodec(::EnrichmentChamberReceiver) }
+    override val rayTower: MapCodec<RayTower> by register(ECRModIDs.RAY_TOWER) { BlockBehaviour.simpleCodec(::RayTower) }
+    override val creativeMRUSource: MapCodec<CreativeMRUSource> by register(ECRModIDs.CREATIVE_MRU_SOURCE) { BlockBehaviour.simpleCodec(::CreativeMRUSource) }
 
-    override val assembledMultiblockPart: MapCodec<AssembledMultiblockPartBlock> by lazy {
-        assembledMultiblockPartCodec.get()
-    }
-    override val solarPrism: MapCodec<SolarPrism> by lazy { solarPrismCodec.get() }
-    override val clusterBlock: MapCodec<ClusterBlock> by lazy { clusterBlockCodec.get() }
-    override val crystalBlock: MapCodec<CrystalBlock> by lazy { crystalBlockCodec.get() }
-    override val mithrilineFurnace: MapCodec<MithrilineFurnace> by lazy { mithrilineFurnaceCodec.get() }
-    override val magicTable: MapCodec<MagicTable> by lazy { magicTableCodec.get() }
-    override val matrixDestructor: MapCodec<MatrixDestructor> by lazy { matrixDestructorCodec.get() }
-    override val coldDistiller: MapCodec<ColdDistiller> by lazy { coldDistillerCodec.get() }
-    override val heatGenerator: MapCodec<HeatGenerator> by lazy { heatGeneratorCodec.get() }
-    override val enrichmentChamberController: MapCodec<EnrichmentChamberController> by lazy { enrichmentChamberControllerCodec.get() }
-    override val enrichmentChamberExtractor: MapCodec<EnrichmentChamberExtractor> by lazy { enrichmentChamberExtractorCodec.get() }
-    override val enrichmentChamberReceiver: MapCodec<EnrichmentChamberReceiver> by lazy { enrichmentChamberReceiverCodec.get() }
-    override val rayTower: MapCodec<RayTower> by lazy { rayTowerCodec.get() }
-    override val creativeMRUSource: MapCodec<CreativeMRUSource> by lazy { creativeMRUSourceCodec.get() }
+    private fun <B: Block> register(id: String, codec: () -> MapCodec<B>) = blockTypes.register(id) { _ -> codec() }
 }

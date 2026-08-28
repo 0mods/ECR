@@ -1,10 +1,12 @@
 package com.algorithmlx.ecr.client.book.controller
 
+import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewGuiBridge
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewModel
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewRenderState
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewTransform
+import com.algorithmlx.ecr.api.client.render.MultiblockWorldPreview
 import com.algorithmlx.ecr.api.client.research.BookElementRenderContext
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import com.algorithmlx.ecr.api.research.content.AssembledMultiblockBookElement
@@ -15,7 +17,10 @@ import com.mojang.blaze3d.platform.cursor.CursorTypes
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.client.renderer.RenderPipelines
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.Identifier
+import net.minecraft.world.phys.BlockHitResult
+import net.minecraft.world.phys.HitResult
 import kotlin.math.exp
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -54,6 +59,7 @@ object MultiblockBookPreviewController {
         state.hasAssemblyToggle = false
         state.canAssemble = false
         state.assembled = false
+        state.worldMultiblock = multiblock
         renderInteractive(
             context,
             key,
@@ -72,6 +78,7 @@ object MultiblockBookPreviewController {
         val state = states.getOrPut(key) { PreviewState.from(element, multiblock) }
         state.hasAssemblyToggle = true
         state.canAssemble = multiblock.formedModel != null
+        state.worldMultiblock = null
         if (!state.canAssemble) state.assembled = false
         renderInteractive(
             context,
@@ -106,6 +113,7 @@ object MultiblockBookPreviewController {
             state.leftButton = Rect.EMPTY
             state.modeButton = Rect.EMPTY
             state.rightButton = Rect.EMPTY
+            state.worldButton = Rect.EMPTY
             state.assemblyButton = Rect.EMPTY
             return
         }
@@ -129,15 +137,17 @@ object MultiblockBookPreviewController {
             state.leftButton = Rect.EMPTY
             state.modeButton = Rect.EMPTY
             state.rightButton = Rect.EMPTY
+            state.worldButton = Rect.EMPTY
             state.assemblyButton = Rect.EMPTY
             return
         }
         state.previewBounds = previewBounds
 
-        val controls = controlLayout(context, state.hasAssemblyToggle)
+        val controls = controlLayout(context, state.worldMultiblock != null, state.hasAssemblyToggle)
         state.leftButton = controls.left.toScreen(context)
         state.modeButton = controls.mode.toScreen(context)
         state.rightButton = controls.right.toScreen(context)
+        state.worldButton = controls.world.toScreen(context)
         state.assemblyButton = controls.assembly.toScreen(context)
 
         MultiblockPreviewGuiBridge.add(
@@ -237,10 +247,11 @@ object MultiblockBookPreviewController {
         val leftHovered = controls.left.contains(context.mouseX, context.mouseY)
         val modeHovered = controls.mode.contains(context.mouseX, context.mouseY)
         val rightHovered = controls.right.contains(context.mouseX, context.mouseY)
+        val worldHovered = state.worldMultiblock != null && controls.world.contains(context.mouseX, context.mouseY)
         val assemblyHovered =
             state.hasAssemblyToggle && state.canAssemble &&
                 controls.assembly.contains(context.mouseX, context.mouseY)
-        val buttonsHovered = leftHovered || modeHovered || rightHovered || assemblyHovered
+        val buttonsHovered = leftHovered || modeHovered || rightHovered || worldHovered || assemblyHovered
         val previewHovered =
             context.mouseX in context.x until context.x + context.width &&
                 context.mouseY in context.y until context.y + (context.height - CONTROL_RESERVED_HEIGHT).coerceAtLeast(1)
@@ -288,8 +299,24 @@ object MultiblockBookPreviewController {
             canGoRight,
         )
 
+        if (state.worldMultiblock != null) {
+            renderWorldPreviewButton(context, controls.world, worldHovered, canPlaceWorldPreview())
+        }
+
         if (state.hasAssemblyToggle) {
             renderAssemblyButton(context, controls.assembly, state, assemblyHovered)
+        }
+
+        if (worldHovered) {
+            val minecraft = context.mc
+            val mouseX = context.screenX + ((context.mouseX - context.x) * context.scale).roundToInt()
+            val mouseY = context.screenY + ((context.mouseY - context.y) * context.scale).roundToInt()
+            context.graphics.setTooltipForNextFrame(
+                minecraft.font,
+                Component.translatable("screen.$ModId.research_book.multiblock.place"),
+                mouseX,
+                mouseY,
+            )
         }
 
         if (state.layered && canUseLayers) {
@@ -334,6 +361,29 @@ object MultiblockBookPreviewController {
         )
     }
 
+    private fun renderWorldPreviewButton(
+        context: BookElementRenderContext,
+        bounds: Rect,
+        hovered: Boolean,
+        enabled: Boolean,
+    ) {
+        if (hovered) {
+            context.graphics.fill(
+                bounds.x - 1,
+                bounds.y - 1,
+                bounds.x + bounds.width + 1,
+                bounds.y + bounds.height + 1,
+                HOVERED_BUTTON_COLOR,
+            )
+        }
+        val color = if (enabled) 0xFFD5F6FF.toInt() else DISABLED_ARROW_TINT
+        val centerX = bounds.x + bounds.width / 2
+        val centerY = bounds.y + bounds.height / 2
+        context.graphics.fill(centerX, bounds.y + 1, centerX + 1, bounds.y + bounds.height - 1, color)
+        context.graphics.fill(bounds.x + 1, centerY, bounds.x + bounds.width - 1, centerY + 1, color)
+        context.graphics.outline(bounds.x + 2, bounds.y + 2, bounds.width - 4, bounds.height - 4, color)
+    }
+
     private fun renderArrowButton(
         context: BookElementRenderContext,
         bounds: Rect,
@@ -362,6 +412,7 @@ object MultiblockBookPreviewController {
         mouseY: Int,
         button: Int,
         shift: Boolean,
+        closeScreen: () -> Unit = {},
     ): Boolean {
         if (button != LEFT_MOUSE_BUTTON && button != RIGHT_MOUSE_BUTTON) return false
         val entry =
@@ -371,7 +422,8 @@ object MultiblockBookPreviewController {
                         state.leftButton.contains(mouseX, mouseY, BUTTON_HIT_PADDING) ||
                             state.modeButton.contains(mouseX, mouseY, BUTTON_HIT_PADDING) ||
                             state.rightButton.contains(mouseX, mouseY, BUTTON_HIT_PADDING) ||
-                            state.assemblyButton.contains(mouseX, mouseY, BUTTON_HIT_PADDING)
+                            (state.worldMultiblock != null && state.worldButton.contains(mouseX, mouseY, BUTTON_HIT_PADDING)) ||
+                            (state.hasAssemblyToggle && state.assemblyButton.contains(mouseX, mouseY, BUTTON_HIT_PADDING))
                     )
                 ) || state.previewBounds.contains(mouseX, mouseY)
             } ?: return false
@@ -390,7 +442,13 @@ object MultiblockBookPreviewController {
                 if (!state.assembled && state.layered) state.layer = (state.layer + 1).coerceAtMost(state.maxLayer)
             }
 
-            button == LEFT_MOUSE_BUTTON && state.assemblyButton.contains(mouseX, mouseY, BUTTON_HIT_PADDING) -> {
+            button == LEFT_MOUSE_BUTTON && state.worldMultiblock != null &&
+                state.worldButton.contains(mouseX, mouseY, BUTTON_HIT_PADDING) -> {
+                if (state.worldMultiblock?.let(::placeWorldPreview) == true) closeScreen()
+            }
+
+            button == LEFT_MOUSE_BUTTON && state.hasAssemblyToggle &&
+                state.assemblyButton.contains(mouseX, mouseY, BUTTON_HIT_PADDING) -> {
                 if (state.canAssemble) state.assembled = !state.assembled
             }
 
@@ -401,6 +459,39 @@ object MultiblockBookPreviewController {
             }
         }
         return true
+    }
+
+    private fun placeWorldPreview(multiblock: Multiblock): Boolean {
+        val minecraft = Minecraft.getInstance()
+        val level = minecraft.level ?: return false
+        val player = minecraft.player ?: return false
+        val hit = minecraft.hitResult as? BlockHitResult ?: return false
+        if (hit.type != HitResult.Type.BLOCK) return false
+        val pattern = multiblock.variants.firstOrNull() ?: return false
+        val centerMatcher = pattern[pattern.center.x, pattern.center.y, pattern.center.z]
+        val center =
+            if (centerMatcher.matches(level.getBlockState(hit.blockPos))) {
+                hit.blockPos
+            } else {
+                hit.blockPos.relative(hit.direction)
+            }
+        val direction = player.direction.takeIf { it.axis.isHorizontal } ?: net.minecraft.core.Direction.NORTH
+        if (!MultiblockWorldPreview.place(multiblock, center, direction)) return false
+        player.sendOverlayMessage(
+            Component.translatable(
+                "screen.$ModId.research_book.multiblock.placed",
+                center.x,
+                center.y,
+                center.z,
+            ),
+        )
+        return true
+    }
+
+    private fun canPlaceWorldPreview(): Boolean {
+        val minecraft = Minecraft.getInstance()
+        return minecraft.level != null && minecraft.player != null &&
+            (minecraft.hitResult as? BlockHitResult)?.type == HitResult.Type.BLOCK
     }
 
     fun mouseDragged(
@@ -454,18 +545,27 @@ object MultiblockBookPreviewController {
 
     private fun controlLayout(
         context: BookElementRenderContext,
+        worldPreview: Boolean,
         assemblyToggle: Boolean,
     ): Controls {
-        val buttonCount = if (assemblyToggle) 4 else 3
+        val buttonCount = 3 + (if (worldPreview) 1 else 0) + (if (assemblyToggle) 1 else 0)
         val totalWidth = BUTTON_SIZE * buttonCount + BUTTON_GAP * (buttonCount - 1)
         val startX = context.x + (context.width - totalWidth) / 2
         val y = context.y + context.height - BUTTON_SIZE - CONTROL_BOTTOM_MARGIN
+        var nextIndex = 3
+        val world =
+            if (worldPreview) {
+                Rect(startX + (BUTTON_SIZE + BUTTON_GAP) * nextIndex++, y, BUTTON_SIZE, BUTTON_SIZE)
+            } else {
+                Rect.EMPTY
+            }
         return Controls(
             Rect(startX, y, BUTTON_SIZE, BUTTON_SIZE),
             Rect(startX + BUTTON_SIZE + BUTTON_GAP, y, BUTTON_SIZE, BUTTON_SIZE),
             Rect(startX + (BUTTON_SIZE + BUTTON_GAP) * 2, y, BUTTON_SIZE, BUTTON_SIZE),
+            world,
             if (assemblyToggle) {
-                Rect(startX + (BUTTON_SIZE + BUTTON_GAP) * 3, y, BUTTON_SIZE, BUTTON_SIZE)
+                Rect(startX + (BUTTON_SIZE + BUTTON_GAP) * nextIndex, y, BUTTON_SIZE, BUTTON_SIZE)
             } else {
                 Rect.EMPTY
             },
@@ -502,6 +602,7 @@ object MultiblockBookPreviewController {
         val left: Rect,
         val mode: Rect,
         val right: Rect,
+        val world: Rect,
         val assembly: Rect,
     )
 
@@ -547,12 +648,14 @@ object MultiblockBookPreviewController {
         var leftButton = Rect(0, 0, 0, 0)
         var modeButton = Rect(0, 0, 0, 0)
         var rightButton = Rect(0, 0, 0, 0)
+        var worldButton = Rect(0, 0, 0, 0)
         var assemblyButton = Rect(0, 0, 0, 0)
         var dragMode = DragMode.ROTATE
         var maxLayer = 0
         var lastSeenFrame = -1L
         var hasAssemblyToggle = false
         var canAssemble = false
+        var worldMultiblock: Multiblock? = null
 
         fun transform(): MultiblockPreviewTransform =
             MultiblockPreviewTransform(

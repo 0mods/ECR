@@ -22,7 +22,8 @@ data class BookEntry(
     val automatic: Boolean = taskLevels.isEmpty(),
     val hiddenUntilAvailable: Boolean = false,
     val titleShadow: Boolean = false,
-    val align: Set<BookEntryAlign> = emptySet()
+    val align: Set<BookEntryAlign> = emptySet(),
+    val link: BookEntryLink? = null,
 ) {
     val taskDefinitions: List<ResearchTaskDefinition> = taskLevels.flatMap(ResearchTaskLevel::tasks)
     val tasks: List<ResearchTask> = taskDefinitions.map(ResearchTaskDefinition::task)
@@ -30,6 +31,26 @@ data class BookEntry(
     init {
         val ids = taskLevels.map(ResearchTaskLevel::id) + taskDefinitions.map(ResearchTaskDefinition::id)
         require(ids.distinct().size == ids.size) { "Task level and task IDs must be unique in $id" }
+        require(link == null || pages.isEmpty()) { "Research link $id must not contain pages" }
+    }
+}
+
+sealed interface BookEntryLink {
+    data class Category(
+        val category: Identifier,
+    ) : BookEntryLink
+
+    data class Research(
+        val research: Identifier,
+    ) : BookEntryLink
+
+    data class Page(
+        val research: Identifier,
+        val spread: Int,
+    ) : BookEntryLink {
+        init {
+            require(spread >= 0)
+        }
     }
 }
 

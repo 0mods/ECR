@@ -15,11 +15,9 @@ class NeoForgeMRUTypeRegistry(bus: IEventBus): MRUTypeRegistry {
         mruTypes.register(bus)
     }
 
-    private val espeType = mruTypes.register(ECRModIDs.ESPE) { _ -> MRUType() }
-    private val radiationUnitType = mruTypes.register(ECRModIDs.MRU) { _ -> MRUType() }
-    private val umbruType = mruTypes.register(ECRModIDs.UBMRU) { _ -> MRUType(radiationUnit, 10) }
+    override val espe: MRUType by register(ECRModIDs.ESPE) { MRUType() }
+    override val radiationUnit: MRUType by register(ECRModIDs.MRU) { MRUType() }
+    override val ubmru: MRUType by register(ECRModIDs.UBMRU) { MRUType(radiationUnit, 10) }
 
-    override val espe: MRUType by lazy { espeType.get() }
-    override val radiationUnit: MRUType by lazy { radiationUnitType.get() }
-    override val ubmru: MRUType by lazy { umbruType.get() }
+    private fun register(id: String, factory: () -> MRUType) = mruTypes.register(id) { _ -> factory() }
 }

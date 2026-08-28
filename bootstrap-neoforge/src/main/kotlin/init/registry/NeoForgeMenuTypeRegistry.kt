@@ -5,6 +5,7 @@ import com.algorithmlx.ecr.api.menu.MenuTypeData
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.menu.EnrichmentChamberControllerMenu
 import com.algorithmlx.ecr.common.menu.EnrichmentChamberReceiverMenu
+import com.algorithmlx.ecr.common.menu.HeatGeneratorMenu
 import com.algorithmlx.ecr.common.menu.MagicTableMenu
 import com.algorithmlx.ecr.common.menu.MagicalTeleporterMenu
 import com.algorithmlx.ecr.common.menu.MatrixDestructorMenu
@@ -29,34 +30,20 @@ class NeoForgeMenuTypeRegistry(bus: IEventBus): MenuTypeRegistry {
         menuType.register(bus)
     }
 
-    private val mithrilineFurnaceMenu = menuType.register(ECRModIDs.MITHRILINE_FURNACE) { _ -> create(::MithrilineFurnaceMenu) }
-    private val magicTableMenu = menuType.register(ECRModIDs.MAGIC_TABLE) { _ -> create(::MagicTableMenu) }
-    private val matrixDestructorMenu = menuType.register(ECRModIDs.MATRIX_DESTRUCTOR) { _ -> create(::MatrixDestructorMenu) }
-    private val enrichmentChamberControllerMenu = menuType.register(ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER) { _ -> create(::EnrichmentChamberControllerMenu) }
-    private val enrichmentChamberReceiverMenu = menuType.register(ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER) { _ -> create(::EnrichmentChamberReceiverMenu) }
-    private val rayTowerMenu = menuType.register(ECRModIDs.RAY_TOWER) { _ -> create(::RayTowerMenu) }
-    private val magicalTeleporterMenu = menuType.register(ECRModIDs.MAGICAL_TELEPORTER) { _ -> create(::MagicalTeleporterMenu) }
+    override val mithrilineFurnace: MenuType<MithrilineFurnaceMenu> by register(ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnaceMenu)
+    override val heatGenerator: MenuType<HeatGeneratorMenu> by register(ECRModIDs.HEAT_GENERATOR, ::HeatGeneratorMenu)
+    override val magicTable: MenuType<MagicTableMenu> by register(ECRModIDs.MAGIC_TABLE, ::MagicTableMenu)
+    override val matrixDestructor: MenuType<MatrixDestructorMenu> by register(ECRModIDs.MATRIX_DESTRUCTOR, ::MatrixDestructorMenu)
+    override val enrichmentChamberController: MenuType<EnrichmentChamberControllerMenu> by register(ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER, ::EnrichmentChamberControllerMenu)
+    override val enrichmentChamberReceiver: MenuType<EnrichmentChamberReceiverMenu> by register(ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER, ::EnrichmentChamberReceiverMenu)
+    override val rayTower: MenuType<RayTowerMenu> by register(ECRModIDs.RAY_TOWER, ::RayTowerMenu)
+    override val magicalTeleporter: MenuType<MagicalTeleporterMenu> by register(ECRModIDs.MAGICAL_TELEPORTER, ::MagicalTeleporterMenu)
 
-    override val mithrilineFurnace: MenuType<MithrilineFurnaceMenu> by lazy { mithrilineFurnaceMenu.get() }
-    override val magicTable: MenuType<MagicTableMenu> by lazy { magicTableMenu.get() }
-    override val matrixDestructor: MenuType<MatrixDestructorMenu> by lazy { matrixDestructorMenu.get() }
-    override val enrichmentChamberController: MenuType<EnrichmentChamberControllerMenu> by lazy { enrichmentChamberControllerMenu.get() }
-    override val enrichmentChamberReceiver: MenuType<EnrichmentChamberReceiverMenu> by lazy { enrichmentChamberReceiverMenu.get() }
-    override val rayTower: MenuType<RayTowerMenu> by lazy { rayTowerMenu.get() }
-    override val magicalTeleporter: MenuType<MagicalTeleporterMenu> by lazy { magicalTeleporterMenu.get() }
+    private fun <T: AbstractContainerMenu> register(id: String, factory: (Int, Inventory, MenuTypeData) -> T) = menuType.register(id) { _ -> createMenu(MenuTypeData.codec, factory) }
 
-    private fun <T: AbstractContainerMenu> create(
-        factory: (Int, Inventory, MenuTypeData) -> T
-    ) = createMenu(MenuTypeData.codec, factory)
+    private fun <T: AbstractContainerMenu> register(id: String, factory: (Int, Inventory) -> T) = menuType.register(id) { _ -> MenuType(factory, FeatureFlags.VANILLA_SET) }
 
-    private fun <T: AbstractContainerMenu> create(
-        factory: (Int, Inventory) -> T
-    ) = MenuType(factory, FeatureFlags.VANILLA_SET)
-
-    private fun <T: AbstractContainerMenu, D : Any> createMenu(
-        codec: StreamCodec<RegistryFriendlyByteBuf, D>,
-        factory: (Int, Inventory, D) -> T
-    ): MenuType<T> = IMenuTypeExtension.create { id, inv, buf ->
+    private fun <T: AbstractContainerMenu, D: Any> createMenu(codec: StreamCodec<RegistryFriendlyByteBuf, D>, factory: (Int, Inventory, D) -> T): MenuType<T> = IMenuTypeExtension.create { id, inv, buf ->
         val data = codec.decode(buf)
         factory(id, inv, data)
     }

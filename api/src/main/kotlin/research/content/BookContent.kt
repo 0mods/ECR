@@ -1,7 +1,13 @@
 package com.algorithmlx.ecr.api.research.content
 
+import com.algorithmlx.ecr.api.multiblock.Multiblock
+import com.algorithmlx.ecr.api.multiblock.MultiblockDataReloadListener
 import com.algorithmlx.ecr.api.research.ResearchIds
+import com.google.gson.JsonParser
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
 import net.minecraft.resources.Identifier
 
 interface BookElement {
@@ -20,6 +26,10 @@ interface BookElementSerializer<T : BookElement> {
 
 data object SpaceBookElement : BookElement {
     override val type: Identifier = ResearchIds.SPACE
+}
+
+data object VerticalSpaceBookElement : BookElement {
+    override val type: Identifier = ResearchIds.VERTICAL_SPACE
 }
 
 data class TaskListBookElement(
@@ -50,6 +60,7 @@ typealias BookTextRequirement = ResearchRequirement
 data class ItemBookElement(
     val item: Identifier,
     var count: Int = 1,
+    val tooltip: Boolean = false,
 ) : BookElement {
     override val type: Identifier = ResearchIds.ITEM
 
@@ -64,6 +75,12 @@ data class BlockBookElement(
     override val type: Identifier = ResearchIds.BLOCK
 }
 
+data class GroupBookElement(
+    val elements: List<BookElementSpec>,
+) : BookElement {
+    override val type: Identifier = ResearchIds.GROUP
+}
+
 data class MultiblockBookElement(
     val multiblock: Identifier,
     val scale: Float = 0.9F,
@@ -72,6 +89,30 @@ data class MultiblockBookElement(
     val layer: Int = Int.MAX_VALUE,
 ) : BookElement {
     override val type: Identifier = ResearchIds.MULTIBLOCK
+}
+
+data class BookMultiblockElement(
+    val pattern: List<List<String>>,
+    val key: JsonObject,
+    val scale: Float = 0.9F,
+    val rotationX: Float = 25F,
+    val rotationY: Float = -30F,
+    val layer: Int = Int.MAX_VALUE,
+) : BookElement {
+    override val type: Identifier = ResearchIds.BOOK_MULTIBLOCK
+
+    val multiblock: Multiblock =
+        MultiblockDataReloadListener().decodeMultiblock(
+            JsonParser.parseString(
+                buildJsonObject {
+                    put(
+                        "pattern",
+                        JsonArray(pattern.map { rows -> JsonArray(rows.map(::JsonPrimitive)) }),
+                    )
+                    put("keys", key)
+                }.toString(),
+            ).asJsonObject,
+        )
 }
 
 data class AssembledMultiblockBookElement(

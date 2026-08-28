@@ -42,6 +42,20 @@ class MultiblockPreviewRenderer(
     }
 
     fun submit(
+        blocks: List<Pair<BlockPos, BlockState>>,
+        poseStack: PoseStack,
+        submitter: SubmitNodeCollector,
+        outlineColor: Int = -1,
+    ) {
+        submitBlocks(
+            blocks.flatMap { (position, state) -> previewParts(position, state) },
+            poseStack,
+            submitter,
+            outlineColor,
+        )
+    }
+
+    fun submit(
         definition: AssembledMultiblockDefinition,
         assembled: Boolean,
         poseStack: PoseStack,
@@ -109,10 +123,6 @@ class MultiblockPreviewRenderer(
             bounds.y + bounds.height / 2f + transform.offsetY,
             0f
         )
-        // GUI coordinates grow downwards, so Y has to be inverted. A single-axis flip
-        // reverses triangle winding and breaks back-face culling. Pair the Y flip with X,
-        // not Z: this keeps a positive determinant without reversing the preview depth,
-        // so the default camera sees the outside of the block models rather than their back.
         poseStack.scale(-fittedScale, -fittedScale, fittedScale)
         poseStack.translate(-projected.centerX, -projected.centerY, -projected.centerZ)
         rotateAroundPivot(pivot, poseStack, transform)
@@ -203,10 +213,11 @@ class MultiblockPreviewRenderer(
     private fun submitBlocks(
         blocks: List<PreviewBlock>,
         poseStack: PoseStack,
-        submitter: SubmitNodeCollector
+        submitter: SubmitNodeCollector,
+        outlineColor: Int = -1,
     ) {
         blocks.forEach { block ->
-            submitBlock(block, poseStack, submitter)
+            submitBlock(block, poseStack, submitter, outlineColor)
         }
     }
 
@@ -329,7 +340,8 @@ class MultiblockPreviewRenderer(
     private fun submitBlock(
         block: PreviewBlock,
         poseStack: PoseStack,
-        submitter: SubmitNodeCollector
+        submitter: SubmitNodeCollector,
+        outlineColor: Int,
     ) {
         val state = block.state
         if (state.isAir) return
@@ -341,7 +353,7 @@ class MultiblockPreviewRenderer(
 
         poseStack.pushPose()
         poseStack.translate(block.pos.x.toFloat(), block.pos.y.toFloat(), block.pos.z.toFloat())
-        modelState.submit(poseStack, submitter, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, -1)
+        modelState.submit(poseStack, submitter, LightCoordsUtil.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, outlineColor)
         poseStack.popPose()
     }
 

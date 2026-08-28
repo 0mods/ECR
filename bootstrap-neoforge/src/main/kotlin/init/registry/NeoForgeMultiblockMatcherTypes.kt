@@ -15,13 +15,9 @@ class NeoForgeMultiblockMatcherTypes(bus: IEventBus): MultiblockMatcherTypes {
         registry.register(bus)
     }
 
-    private val tagMatcher = registry.register(ECRModIDs.TAG) { _ -> MultiblockMatcherType(TagMultiblockMatcher.CODEC) }
-    private val blockMatcher = registry.register(ECRModIDs.BLOCK) { _ -> MultiblockMatcherType(BlockMultiblockMatcher.CODEC) }
-    private val listMatcher = registry.register(ECRModIDs.LIST) { _ ->
-        MultiblockMatcherType(ListMultiblockMatcher.CODEC)
-    }
+    override val tag: MultiblockMatcherType<TagMultiblockMatcher> by register(ECRModIDs.TAG) { MultiblockMatcherType(TagMultiblockMatcher.CODEC) }
+    override val block: MultiblockMatcherType<BlockMultiblockMatcher> by register(ECRModIDs.BLOCK) { MultiblockMatcherType(BlockMultiblockMatcher.CODEC) }
+    override val list: MultiblockMatcherType<ListMultiblockMatcher> by register(ECRModIDs.LIST) { MultiblockMatcherType(ListMultiblockMatcher.CODEC) }
 
-    override val tag: MultiblockMatcherType<TagMultiblockMatcher> by lazy { tagMatcher.get() }
-    override val block: MultiblockMatcherType<BlockMultiblockMatcher> by lazy { blockMatcher.get() }
-    override val list: MultiblockMatcherType<ListMultiblockMatcher> by lazy { listMatcher.get() }
+    private fun <T: MultiblockMatcher> register(id: String, factory: () -> MultiblockMatcherType<T>) = registry.register(id) { _ -> factory() }
 }

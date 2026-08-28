@@ -1,10 +1,13 @@
 package com.algorithmlx.ecr.neoforge.init.registry
 
 import com.algorithmlx.ecr.api.ModId
+import com.algorithmlx.ecr.api.utils.ecRL
 import com.algorithmlx.ecr.registry.BlockRegistry
 import com.algorithmlx.ecr.registry.CreativeTabRegistry
 import com.algorithmlx.ecr.registry.ItemRegistry
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.core.registries.Registries
+import net.minecraft.resources.ResourceKey
 import net.minecraft.world.item.CreativeModeTab
 import net.minecraft.world.item.ItemStack
 import net.neoforged.bus.api.IEventBus
@@ -17,19 +20,18 @@ class NeoForgeCreativeTabRegistry(bus: IEventBus): CreativeTabRegistry {
         creativeTabs.register(bus)
     }
 
-    private val itemsTab = creativeTabs.register("tab_items") { _ ->
+    override val items: CreativeModeTab by register("tab_items") {
         CreativeModeTab.builder()
             .icon { ItemStack(ItemRegistry.instance.elementalGem) }
             .build()
     }
 
-    private val blocksTab = creativeTabs.register("tab_blocks") { _ ->
+    override val blocks: CreativeModeTab by register("tab_blocks") {
         CreativeModeTab.builder()
             .icon { ItemStack(BlockRegistry.instance.mithrilineFurnace) }
-            .withTabsBefore(itemsTab.key)
+            .withTabsBefore(ResourceKey.create(Registries.CREATIVE_MODE_TAB, "tab_items".ecRL))
             .build()
     }
 
-    override val items: CreativeModeTab by lazy { itemsTab.get() }
-    override val blocks: CreativeModeTab by lazy { blocksTab.get() }
+    private fun register(id: String, factory: () -> CreativeModeTab) = creativeTabs.register(id) { _ -> factory() }
 }

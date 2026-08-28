@@ -6,10 +6,12 @@ import com.algorithmlx.ecr.api.research.content.BookElementAlign
 import com.algorithmlx.ecr.api.research.content.BookElementSpec
 import com.algorithmlx.ecr.api.research.content.BookEntry
 import com.algorithmlx.ecr.api.research.content.BookEntryAlign
+import com.algorithmlx.ecr.api.research.content.BookEntryLink
 import com.algorithmlx.ecr.api.research.content.BookFrame
 import com.algorithmlx.ecr.api.research.content.BookIcon
 import com.algorithmlx.ecr.api.research.content.BookPage
 import com.algorithmlx.ecr.api.research.content.BookPosition
+import com.algorithmlx.ecr.api.research.content.BookResearchLink
 import com.algorithmlx.ecr.api.research.content.BookShader
 import com.algorithmlx.ecr.api.research.content.ResearchAction
 import com.algorithmlx.ecr.api.research.content.ResearchLock
@@ -56,14 +58,15 @@ object ResearchJson {
             position = dto.position?.let { BookPosition(it.x, it.y) },
             dependencies = dto.dependencies.map { parseReference(it, id) },
             requirements = dto.requirements.map { parseRequirement(it, id) },
-            pages = dto.pages.map { page -> BookPage(page.elements.map(::decodeElement)) },
+            pages = dto.pages.map { page -> BookPage(page.elements.map(::decodeElementSpec)) },
             taskLevels = taskLevels,
             taskIcons = dto.taskIcons.mapValues { it.value.toModel() },
             locks = dto.locks.map { it.toModel() },
             automatic = dto.automatic ?: taskLevels.isEmpty(),
             hiddenUntilAvailable = dto.hiddenUntilAvailable,
             titleShadow = dto.shadow,
-            align = dto.align.mapTo(LinkedHashSet()) { BookEntryAlign.valueOf(it.uppercase()) }
+            align = dto.align.mapTo(LinkedHashSet()) { BookEntryAlign.valueOf(it.uppercase()) },
+            link = dto.link?.let { decodeEntryLink(it, id) },
         )
     }
 
@@ -91,7 +94,7 @@ object ResearchJson {
             position = entry.position?.let { PositionDto(it.x, it.y) },
             dependencies = entry.dependencies.map(Identifier::toString),
             requirements = entry.requirements.map { it.toReference(entry.id) },
-            pages = entry.pages.map { page -> PageDto(page.elements.map(::encodeElement)) },
+            pages = entry.pages.map { page -> PageDto(page.elements.map(::encodeElementSpec)) },
             taskLevels = entry.taskLevels.map { level ->
                 TaskLevelDto(
                     level.id,
@@ -109,7 +112,8 @@ object ResearchJson {
             automatic = entry.automatic,
             hiddenUntilAvailable = entry.hiddenUntilAvailable,
             shadow = entry.titleShadow,
-            align = entry.align.mapTo(LinkedHashSet()) { it.name.lowercase() }
+            align = entry.align.mapTo(LinkedHashSet()) { it.name.lowercase() },
+            link = entry.link?.let(::encodeEntryLink),
         )
     ).jsonObject
 
@@ -167,7 +171,7 @@ object ResearchJson {
         }
     }
 
-    private fun decodeElement(json: JsonObject): BookElementSpec = BookElementSpec(
+    internal fun decodeElementSpec(json: JsonObject): BookElementSpec = BookElementSpec(
         ResearchSerializers.decodeElement(json.typeIdentifier(), json),
         json["width"]?.jsonPrimitive?.intOrNull,
         json["height"]?.jsonPrimitive?.intOrNull,
@@ -176,7 +180,7 @@ object ResearchJson {
             ?: BookElementAlign.LEFT
     )
 
-    private fun encodeElement(spec: BookElementSpec): JsonObject = ResearchSerializers.encodeElement(spec.content)
+    internal fun encodeElementSpec(spec: BookElementSpec): JsonObject = ResearchSerializers.encodeElement(spec.content)
         .with("type", JsonPrimitive(spec.content.type.toString()))
         .let { value -> spec.width?.let { value.with("width", JsonPrimitive(it)) } ?: value }
         .let { value -> spec.height?.let { value.with("height", JsonPrimitive(it)) } ?: value }
@@ -192,6 +196,71 @@ object ResearchJson {
 
     private fun parseReference(value: String, owner: Identifier): Identifier =
         Identifier.parse(if (':' in value) value else "${owner.namespace}:$value")
+
+    private fun decodeEntryLink(value: JsonElement, owner: Identifier): BookEntryLink {
+        if (value is JsonPrimitive && value.isString) return decodeEntryLink(value.content, owner)
+
+        val link = value.jsonObject
+        val explicitType = link["type"]?.jsonPrimitive?.content?.lowercase()
+        val inferredType = explicitType ?: when {
+            "category" in link -> "category"
+            "page" in link || "spread" in link -> "page"
+            else -> "research"
+        }
+        val target =
+            link["target"]?.jsonPrimitive?.content
+                ?: link[if (inferredType == "category") "category" else "research"]?.jsonPrimitive?.content
+                ?: error("Research link requires target")
+        val id = parseReference(target, owner)
+        return when (inferredType) {
+            "category" -> BookEntryLink.Category(id)
+            "research" -> BookEntryLink.Research(id)
+            "page" -> {
+                val spread =
+                    link["spread"]?.jsonPrimitive?.intOrNull
+                        ?: link["page"]?.jsonPrimitive?.intOrNull?.minus(1)
+                        ?: 0
+                BookEntryLink.Page(id, spread)
+            }
+            else -> error("Unknown research link type '$inferredType'")
+        }
+    }
+
+    private fun decodeEntryLink(value: String, owner: Identifier): BookEntryLink {
+        val source = value.trim()
+        require(source.isNotEmpty()) { "Research link must not be blank" }
+        if (source.startsWith("category://")) {
+            return BookEntryLink.Category(parseReference(source.removePrefix("category://"), owner))
+        }
+        val parsed =
+            BookResearchLink.parse(source.replaceFirst("page://", "research://"), owner)
+                ?: error("Invalid research link '$value'")
+        val pointsToPage = '?' in source || '#' in source || source.startsWith("page://")
+        return if (pointsToPage) {
+            BookEntryLink.Page(parsed.research, parsed.spread)
+        } else {
+            BookEntryLink.Research(parsed.research)
+        }
+    }
+
+    private fun encodeEntryLink(link: BookEntryLink): JsonElement =
+        buildJsonObject {
+            when (link) {
+                is BookEntryLink.Category -> {
+                    put("type", "category")
+                    put("target", link.category.toString())
+                }
+                is BookEntryLink.Research -> {
+                    put("type", "research")
+                    put("target", link.research.toString())
+                }
+                is BookEntryLink.Page -> {
+                    put("type", "page")
+                    put("target", link.research.toString())
+                    put("page", link.spread + 1)
+                }
+            }
+        }
 
     private fun ResearchRequirement.toReference(owner: Identifier): String = when {
         research == null || research == owner -> task ?: owner.toString()
@@ -281,7 +350,8 @@ private data class EntryDto(
     val locks: List<LockDto> = emptyList(),
     val automatic: Boolean? = null,
     @SerialName("hidden_until_available") val hiddenUntilAvailable: Boolean = false,
-    val shadow: Boolean = false
+    val shadow: Boolean = false,
+    val link: JsonElement? = null,
 )
 
 @Serializable

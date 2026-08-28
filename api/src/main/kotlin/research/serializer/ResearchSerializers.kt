@@ -22,13 +22,19 @@ val researchJson =
 object ResearchSerializers {
     @JvmField val SPACE_ELEMENT: BookElementSerializer<SpaceBookElement> = SpaceElementSerializer
 
+    @JvmField val VERTICAL_SPACE_ELEMENT: BookElementSerializer<VerticalSpaceBookElement> = VerticalSpaceElementSerializer
+
     @JvmField val TEXT_ELEMENT: BookElementSerializer<TextBookElement> = TextElementSerializer
 
     @JvmField val ITEM_ELEMENT: BookElementSerializer<ItemBookElement> = ItemElementSerializer
 
     @JvmField val BLOCK_ELEMENT: BookElementSerializer<BlockBookElement> = BlockElementSerializer
 
+    @JvmField val GROUP_ELEMENT: BookElementSerializer<GroupBookElement> = GroupElementSerializer
+
     @JvmField val MULTIBLOCK_ELEMENT: BookElementSerializer<MultiblockBookElement> = MultiblockElementSerializer
+
+    @JvmField val BOOK_MULTIBLOCK_ELEMENT: BookElementSerializer<BookMultiblockElement> = BookMultiblockElementSerializer
 
     @JvmField val ASSEMBLED_MULTIBLOCK_ELEMENT: BookElementSerializer<AssembledMultiblockBookElement> =
         AssembledMultiblockElementSerializer
@@ -105,6 +111,7 @@ private data class TextRequirementDto(
 private data class ItemElementDto(
     val item: String,
     val count: Int = 1,
+    val tooltip: Boolean = false,
 )
 
 @Serializable
@@ -113,8 +120,24 @@ private data class BlockElementDto(
 )
 
 @Serializable
+private data class GroupElementDto(
+    val elements: List<JsonObject> = emptyList(),
+)
+
+@Serializable
 private data class MultiblockElementDto(
     val multiblock: String,
+    val scale: Float = 0.9f,
+    @SerialName("rotation_x") val rotationX: Float = 25f,
+    @SerialName("rotation_y") val rotationY: Float = -30f,
+    val layer: Int = Int.MAX_VALUE,
+)
+
+@Serializable
+private data class BookMultiblockElementDto(
+    val pattern: List<List<String>>,
+    val key: JsonObject? = null,
+    val keys: JsonObject? = null,
     val scale: Float = 0.9f,
     @SerialName("rotation_x") val rotationX: Float = 25f,
     @SerialName("rotation_y") val rotationY: Float = -30f,
@@ -181,6 +204,16 @@ private object SpaceElementSerializer : BookElementSerializer<SpaceBookElement> 
     override fun encode(value: SpaceBookElement) = JsonObject(emptyMap())
 }
 
+private object VerticalSpaceElementSerializer : BookElementSerializer<VerticalSpaceBookElement> {
+    override val type = ResearchIds.VERTICAL_SPACE
+    override val defaultWidth = 8
+    override val defaultHeight = 0
+
+    override fun decode(json: JsonObject) = VerticalSpaceBookElement
+
+    override fun encode(value: VerticalSpaceBookElement) = JsonObject(emptyMap())
+}
+
 private object TextElementSerializer : BookElementSerializer<TextBookElement> {
     override val type = ResearchIds.TEXT
     override val defaultWidth = 208
@@ -244,6 +277,23 @@ private object BlockElementSerializer : BookElementSerializer<BlockBookElement> 
             ).jsonObject
 }
 
+private object GroupElementSerializer : BookElementSerializer<GroupBookElement> {
+    override val type = ResearchIds.GROUP
+    override val defaultWidth = 225
+    override val defaultHeight = 0
+
+    override fun decode(json: JsonObject): GroupBookElement =
+        researchJson.decodeFromJsonElement<GroupElementDto>(json).let { dto ->
+            GroupBookElement(dto.elements.map(ResearchJson::decodeElementSpec))
+        }
+
+    override fun encode(value: GroupBookElement): JsonObject =
+        researchJson
+            .encodeToJsonElement(
+                GroupElementDto(value.elements.map(ResearchJson::encodeElementSpec)),
+            ).jsonObject
+}
+
 private object MultiblockElementSerializer : BookElementSerializer<MultiblockBookElement> {
     override val type = ResearchIds.MULTIBLOCK
     override val defaultWidth = 150
@@ -264,6 +314,37 @@ private object MultiblockElementSerializer : BookElementSerializer<MultiblockBoo
         researchJson
             .encodeToJsonElement(
                 MultiblockElementDto(value.multiblock.toString(), value.scale, value.rotationX, value.rotationY, value.layer),
+            ).jsonObject
+}
+
+private object BookMultiblockElementSerializer : BookElementSerializer<BookMultiblockElement> {
+    override val type = ResearchIds.BOOK_MULTIBLOCK
+    override val defaultWidth = 150
+    override val defaultHeight = 150
+
+    override fun decode(json: JsonObject): BookMultiblockElement =
+        researchJson.decodeFromJsonElement<BookMultiblockElementDto>(json).let {
+            BookMultiblockElement(
+                it.pattern,
+                it.key ?: it.keys ?: error("book_multiblock requires key"),
+                it.scale,
+                it.rotationX,
+                it.rotationY,
+                it.layer,
+            )
+        }
+
+    override fun encode(value: BookMultiblockElement): JsonObject =
+        researchJson
+            .encodeToJsonElement(
+                BookMultiblockElementDto(
+                    value.pattern,
+                    value.key,
+                    scale = value.scale,
+                    rotationX = value.rotationX,
+                    rotationY = value.rotationY,
+                    layer = value.layer,
+                ),
             ).jsonObject
 }
 
@@ -434,9 +515,9 @@ internal fun BookText.toJsonElement(): JsonElement =
         put(if (translated) "translate" else "text", value)
     }
 
-private fun ItemElementDto.toElement() = ItemBookElement(item.rl, count)
+private fun ItemElementDto.toElement() = ItemBookElement(item.rl, count, tooltip)
 
-private fun ItemBookElement.toDto() = ItemElementDto(item.toString(), count)
+private fun ItemBookElement.toDto() = ItemElementDto(item.toString(), count, tooltip)
 
 private fun TextRequirementDto.toModel(): BookTextRequirement {
     requirement?.let { return ResearchJson.parseRequirement(it, null) }

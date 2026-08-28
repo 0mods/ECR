@@ -19,10 +19,13 @@ class NeoForgeResearchSerializerRegistry(
         taskSerializers.register(bus)
 
         registerElement(ResearchSerializers.SPACE_ELEMENT)
+        registerElement(ResearchSerializers.VERTICAL_SPACE_ELEMENT)
         registerElement(ResearchSerializers.TEXT_ELEMENT)
         registerElement(ResearchSerializers.ITEM_ELEMENT)
         registerElement(ResearchSerializers.BLOCK_ELEMENT)
+        registerElement(ResearchSerializers.GROUP_ELEMENT)
         registerElement(ResearchSerializers.MULTIBLOCK_ELEMENT)
+        registerElement(ResearchSerializers.BOOK_MULTIBLOCK_ELEMENT)
         registerElement(ResearchSerializers.ASSEMBLED_MULTIBLOCK_ELEMENT)
         registerElement(ResearchSerializers.CRAFTING_ELEMENT)
 

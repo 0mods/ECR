@@ -4,6 +4,7 @@ import com.algorithmlx.ecr.common.menu.*
 import net.minecraft.world.inventory.MenuType
 
 interface MenuTypeRegistry {
+    val heatGenerator: MenuType<HeatGeneratorMenu>
     val mithrilineFurnace: MenuType<MithrilineFurnaceMenu>
     val magicTable: MenuType<MagicTableMenu>
     val matrixDestructor: MenuType<MatrixDestructorMenu>

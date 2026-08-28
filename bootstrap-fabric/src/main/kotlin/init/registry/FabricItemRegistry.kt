@@ -61,12 +61,14 @@ object FabricItemRegistry: ItemRegistry {
     override val voidPlating: Item = basicItem(ECRModIDs.VOID_PLATING)
     override val mithrilineIngot: Item = basicItem(ECRModIDs.MITHRILINE_INGOT)
     override val magicalIngot: Item = basicItem(ECRModIDs.MAGICAL_INGOT)
+    override val magicalSlag: Item = basicItem(ECRModIDs.MAGICAL_SLAG)
     override val mithrilineDust: Item = basicItem(ECRModIDs.MITHRILINE_DUST)
     override val heatingRod: Item = basicItem(ECRModIDs.HEATING_ROD)
     override val mithrilineCrystalGem: Item = basicItem(ECRModIDs.MITHRILINE_CRYSTAL_GEM)
     override val mruResonatingCrystal: Item = basicItem(ECRModIDs.MRU_RESONATING_CRYSTAL)
     override val fadingCrystal: Item = basicItem(ECRModIDs.FADING_CRYSTAL)
     override val eyeOfAbsorption: Item = basicItem(ECRModIDs.EYE_OF_ABSORPTION)
+    override val heatCore: Item = basicItem(ECRModIDs.HEAT_CORE)
 
     private fun basicItem(id: String, properties: Item.Properties = Item.Properties()) = register(id, ::Item, properties)
 
