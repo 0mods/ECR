@@ -44,11 +44,12 @@ import com.algorithmlx.ecr.fabric.init.registry.FabricMenuTypeRegistry
 import com.algorithmlx.ecr.fabric.init.registry.FabricMobEffectRegistry
 import com.algorithmlx.ecr.fabric.init.registry.FabricMultiblockMatcherTypes
 import com.algorithmlx.ecr.fabric.init.registry.FabricMultiblockRegistry
-import com.algorithmlx.ecr.fabric.init.registry.FabricPlayerMatrixStorage
+import com.algorithmlx.ecr.fabric.init.registry.FabricAttachmentRegistry
 import com.algorithmlx.ecr.fabric.init.registry.FabricRecipeDisplayTypeRegistry
 import com.algorithmlx.ecr.fabric.init.registry.FabricRecipeSerializerRegistry
 import com.algorithmlx.ecr.fabric.init.registry.FabricRecipeTypeRegistry
 import com.algorithmlx.ecr.fabric.init.registry.FabricResearchSerializerRegistry
+import com.algorithmlx.ecr.fabric.init.registry.attachments.FabricPlayerMatrixStorage
 import com.algorithmlx.ecr.fabric.utils.FabricPlatformUtils
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
 import com.algorithmlx.ecr.network.BoundGemTooltipRequestPayload
@@ -115,7 +116,7 @@ object FabricInit {
     private fun initRegistries() {
         PlatformUtils.instance = FabricPlatformUtils
         ChunkLoadingPlatform.instance = FabricChunkLoadingPlatform
-        PlayerMatrixStorage.instance = FabricPlayerMatrixStorage
+        FabricAttachmentRegistry.init()
         DataComponentRegistry.instance = FabricDataComponentRegistry
         BlockCodecRegistry.instance = FabricBlockCodecRegistry
         BookTypeRegistry.instance = FabricBookTypeRegistry
@@ -358,6 +359,8 @@ object FabricInit {
         GeoAnimationNetwork.sendBlockStopToPlayer = ServerPlayNetworking::send
         GeoAnimationNetwork.sendEntityStopToPlayer = ServerPlayNetworking::send
         GeoAnimationNetwork.sendItemStopToPlayer = ServerPlayNetworking::send
+
+        PlayerMatrixStorage.instance = FabricPlayerMatrixStorage
 
         countByIngredient = { ((it as FabricIngredient).customIngredient as? CountIngredient)?.count ?: 1 }
 

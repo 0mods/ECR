@@ -2,13 +2,7 @@ package com.algorithmlx.ecr.neoforge.init
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.api.chunk.ChunkLoadingPlatform
-import com.algorithmlx.ecr.api.geo.GeoAnimationNetwork
-import com.algorithmlx.ecr.api.geo.GeoBlockAnimationPayload
-import com.algorithmlx.ecr.api.geo.GeoBlockAnimationStopPayload
-import com.algorithmlx.ecr.api.geo.GeoEntityAnimationPayload
-import com.algorithmlx.ecr.api.geo.GeoEntityAnimationStopPayload
-import com.algorithmlx.ecr.api.geo.GeoItemAnimationPayload
-import com.algorithmlx.ecr.api.geo.GeoItemAnimationStopPayload
+import com.algorithmlx.ecr.api.geo.*
 import com.algorithmlx.ecr.api.init.MultiblockMatcherTypes
 import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.item.HasSubItem
@@ -18,9 +12,7 @@ import com.algorithmlx.ecr.api.multiblock.MultiblockDataReloadListener
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import com.algorithmlx.ecr.api.research.*
 import com.algorithmlx.ecr.api.research.content.ResearchAction
-import com.algorithmlx.ecr.api.utils.countByIngredient
-import com.algorithmlx.ecr.api.utils.ecRL
-import com.algorithmlx.ecr.api.utils.openMenuScreenInternal
+import com.algorithmlx.ecr.api.utils.*
 import com.algorithmlx.ecr.common.components.PlayerMatrixStorage
 import com.algorithmlx.ecr.common.init.ECRCommands
 import com.algorithmlx.ecr.common.init.ECRModIDs
@@ -33,31 +25,10 @@ import com.algorithmlx.ecr.common.item.NamedBlockItem
 import com.algorithmlx.ecr.common.research.ResearchConfigDisabler
 import com.algorithmlx.ecr.neoforge.api.CountIngredient
 import com.algorithmlx.ecr.neoforge.chunk.NeoForgeChunkLoadingPlatform
-import com.algorithmlx.ecr.neoforge.init.registry.IngredientRegistry
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeBlockCodecRegistry
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeBlockEntityTypeRegistry
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeBlockRegistry
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeBookTypeRegistry
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeCreativeTabRegistry
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeDataComponentRegistry
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeItemRegistry
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeMRUTypeRegistry
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeMenuTypeRegistry
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeMobEffectRegistry
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeMultiblockMatcherTypes
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeMultiblockRegistry
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgePlayerMatrixStorage
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeRecipeDisplayTypeRegistry
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeRecipeSerializerRegistry
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeRecipeTypeRegistry
-import com.algorithmlx.ecr.neoforge.init.registry.NeoForgeResearchSerializerRegistry
+import com.algorithmlx.ecr.neoforge.init.registry.*
+import com.algorithmlx.ecr.neoforge.init.registry.attachments.NeoForgePlayerMatrixStorage
 import com.algorithmlx.ecr.neoforge.utils.NeoForgePlatformUtils
-import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
-import com.algorithmlx.ecr.network.BoundGemTooltipRequestPayload
-import com.algorithmlx.ecr.network.BoundGemTooltipResponsePayload
-import com.algorithmlx.ecr.network.SoulStoneTooltipNetwork
-import com.algorithmlx.ecr.network.SoulStoneTooltipRequestPayload
-import com.algorithmlx.ecr.network.SoulStoneTooltipResponsePayload
+import com.algorithmlx.ecr.network.*
 import com.algorithmlx.ecr.registry.*
 import com.algorithmlx.ecr.utils.PlatformUtils
 import net.minecraft.core.BlockPos
@@ -126,7 +97,6 @@ object NeoForgeInit {
     private fun initRegistries(bus: IEventBus) {
         PlatformUtils.instance = NeoForgePlatformUtils
         ChunkLoadingPlatform.instance = NeoForgeChunkLoadingPlatform(bus)
-        PlayerMatrixStorage.instance = NeoForgePlayerMatrixStorage(bus)
         RecipeSerializerRegistry.instance = NeoForgeRecipeSerializerRegistry(bus)
         RecipeTypeRegistry.instance = NeoForgeRecipeTypeRegistry(bus)
         BlockCodecRegistry.instance = NeoForgeBlockCodecRegistry(bus)
@@ -144,6 +114,7 @@ object NeoForgeInit {
         MultiblockRegistry.instance = NeoForgeMultiblockRegistry(bus)
         RecipeDisplayTypeRegistry.instance = NeoForgeRecipeDisplayTypeRegistry(bus)
         IngredientRegistry.init(bus)
+        NeoForgeAttachmentRegistry.init(bus)
     }
 
     private fun onNewRegistry(event: NewRegistryEvent) {
@@ -375,6 +346,8 @@ object NeoForgeInit {
         GeoAnimationNetwork.sendBlockStopToPlayer = PacketDistributor::sendToPlayer
         GeoAnimationNetwork.sendEntityStopToPlayer = PacketDistributor::sendToPlayer
         GeoAnimationNetwork.sendItemStopToPlayer = PacketDistributor::sendToPlayer
+
+        PlayerMatrixStorage.instance = NeoForgePlayerMatrixStorage
 
         countByIngredient = { (it.customIngredient as? CountIngredient)?.count ?: 1 }
 

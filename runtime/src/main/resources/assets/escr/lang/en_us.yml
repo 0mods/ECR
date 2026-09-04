@@ -191,3 +191,39 @@ book.escr:
           You will have to understand how this world works, what is wrong with it, master the technologies of that civilization, 
           and figure out exactly what happened to that civilization. 
           And why certain things and technologies have infiltrated-and/or are still infiltrating-our dimension to this day.
+
+command.escr:
+  research:
+    reset:
+      failure: Research reset without player available only inside game. Not console.
+      success:
+        .: Reset research progress for %s successful.
+        sized: Reset research progress for %s player(s) successful.
+    unlock:
+      all:
+        failure: Research unlock without player available only inside game. Not console.
+        success:
+          .: Unlocked all research for %s.
+          sized: Unlocked all research for %s player(s).
+      failure: Research progress update without player available only inside game. Not console.
+      success:
+        .: Updated research progress for %s.
+        sized: Updated research progress for %s player(s).
+  ubmru:
+    query:
+      failure: Get UBMRU count without player available only inside game. Not console.
+      # first %s - player name, second %s - count of mru, last %s - matrix name. For translators, lol
+      success: %s has %s %s.
+    add:
+      failure: UBMRU addition without player available only inside game. Not console.
+      success:
+        .: %s %s was added to %s.
+        # first %s - player name, second %s - count of mru, last %s - matrix name. For translators, lol
+        sized: %s %s was added for %s player(s).
+    set:
+      failure: UBMRU set without player available only inside game. Not console.
+      success:
+        .: %s %s sets for %s.
+        # first %s - player name, second %s - count of mru, last %s - matrix name. For translators, lol
+        sized: %s %s was sets for %s player(s).
+

@@ -8,8 +8,8 @@ import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType
 import net.minecraft.world.entity.player.Player
 
-object FabricPlayerMatrixStorage: PlayerMatrixStorage {
-    private val attachment: AttachmentType<PlayerMatrixComponent> = AttachmentRegistry.create(
+object FabricAttachmentRegistry {
+    val playerMatrix: AttachmentType<PlayerMatrixComponent> = AttachmentRegistry.create(
         ECRModIDs.PLAYER_MATRIX.ecRL
     ) { builder ->
         builder
@@ -18,10 +18,5 @@ object FabricPlayerMatrixStorage: PlayerMatrixStorage {
             .copyOnDeath()
     }
 
-    override fun getOrCreate(player: Player): PlayerMatrixComponent =
-        player.getAttachedOrCreate(attachment)
-
-    override fun set(player: Player, component: PlayerMatrixComponent) {
-        player.setAttached(attachment, component)
-    }
+    fun init() {}
 }
