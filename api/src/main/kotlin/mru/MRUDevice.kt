@@ -156,13 +156,11 @@ fun MRUDevice.processReceive(level: Level) {
     val world = item.getWorld(stack)
 
     val logicalLevel = world?.let { server.getLevel(it) } ?: level
-    val outsideRadius =
-        locatorData.position?.let { receiverPos ->
-            logicalLevel !== level || !item.isWithinBoundRadius(receiverPos, pos)
-        } ?: false
-    if (item.setOutsideBoundRadius(stack, outsideRadius)) {
+    val outsideRadius = locatorData.position?.let { receiverPos ->
+        logicalLevel !== level || !item.isWithinBoundRadius(receiverPos, pos)
+    } ?: false
+    if (item.setOutsideBoundRadius(stack, outsideRadius))
         locatorData.locatorStorage.setChanged()
-    }
     if (outsideRadius) return
 
     val exporter = logicalLevel.resolveMRUDevice(pos) ?: return
@@ -173,13 +171,10 @@ fun MRUDevice.processReceive(level: Level) {
     val generator = exporter.mruStorage
 
     if (
-        exporter === this ||
-        generator === currentContainer ||
-        exporter.balance === this.balance ||
-        !generator.isSameTypes(currentContainer)
-    ) {
-        return
-    }
+        exporter === this || generator === currentContainer
+        || exporter.balance === this.balance
+        || !generator.isSameTypes(currentContainer)
+    ) return
 
     this.balance.includeSource(exporter.balance, level.gameTime)
     generator.transferTo(currentContainer, item.transferStrength)

@@ -26,7 +26,6 @@ object ECRCommands {
                     executes {
                         val player = this.context.source.player
                         if (player == null) {
-
                             source.sendFailure(Component.translatableWithFallback(
                                 "research.reset.failure".prefix,
                                 "Research reset without player available only inside game. Not console."

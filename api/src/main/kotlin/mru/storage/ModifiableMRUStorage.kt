@@ -11,7 +11,6 @@ interface ModifiableMRUStorage : MRUStorage {
 
     fun canReceive(receive: Int): Boolean = mru + receive <= mruCapacity
 
-    /** Transfers as much as possible up to [limit] and returns the inserted amount. */
     fun transferTo(
         receiver: ModifiableMRUStorage,
         limit: Int,

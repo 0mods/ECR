@@ -276,7 +276,7 @@ class MithrilineFurnaceEntity(
         @JvmStatic
         private fun MithrilineFurnaceEntity.canExtract(mru: Int, max: Int): Boolean {
             val storage = this.mruStorage
-            return storage.mru - max >= 0 && mru >= (max + this.craftProgress)
+            return storage.canExtract(mru) && mru >= (max + this.craftProgress)
         }
 
         @JvmStatic

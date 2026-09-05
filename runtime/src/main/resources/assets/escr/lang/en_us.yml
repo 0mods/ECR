@@ -197,33 +197,33 @@ command.escr:
     reset:
       failure: Research reset without player available only inside game. Not console.
       success:
-        .: Reset research progress for %s successful.
-        sized: Reset research progress for %s player(s) successful.
+        .: "Reset research progress for %s successful."
+        sized: "Reset research progress for %s player(s) successful."
     unlock:
       all:
         failure: Research unlock without player available only inside game. Not console.
         success:
-          .: Unlocked all research for %s.
-          sized: Unlocked all research for %s player(s).
+          .: "Unlocked all research for %s."
+          sized: "Unlocked all research for %s player(s)."
       failure: Research progress update without player available only inside game. Not console.
       success:
-        .: Updated research progress for %s.
-        sized: Updated research progress for %s player(s).
+        .: "Updated research progress for %s."
+        sized: "Updated research progress for %s player(s)."
   ubmru:
     query:
       failure: Get UBMRU count without player available only inside game. Not console.
       # first %s - player name, second %s - count of mru, last %s - matrix name. For translators, lol
-      success: %s has %s %s.
+      success: "%s has %s %s."
     add:
       failure: UBMRU addition without player available only inside game. Not console.
       success:
-        .: %s %s was added to %s.
+        .: "%s %s was added to %s."
         # first %s - player name, second %s - count of mru, last %s - matrix name. For translators, lol
-        sized: %s %s was added for %s player(s).
+        sized: "%s %s was added for %s player(s)."
     set:
       failure: UBMRU set without player available only inside game. Not console.
       success:
-        .: %s %s sets for %s.
+        .: "%s %s sets for %s."
         # first %s - player name, second %s - count of mru, last %s - matrix name. For translators, lol
-        sized: %s %s was sets for %s player(s).
+        sized: "%s %s was sets for %s player(s)."
 
