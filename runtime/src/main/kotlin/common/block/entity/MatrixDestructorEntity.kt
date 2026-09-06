@@ -14,6 +14,7 @@ import com.algorithmlx.ecr.registry.MRUTypeRegistry
 import com.algorithmlx.ecr.common.menu.MatrixDestructorMenu
 import com.algorithmlx.ecr.common.components.playerMatrix
 import com.algorithmlx.ecr.common.components.updatePlayerMatrix
+import com.algorithmlx.ecr.common.init.config.ECConfig
 import com.mojang.serialization.Codec
 import com.mojang.serialization.codecs.RecordCodecBuilder
 import net.minecraft.core.BlockPos
@@ -76,7 +77,7 @@ class MatrixDestructorEntity(
     override fun getContainerSize(): Int = this.items.size
 
     override val mruStorage: IOMRUStorage = MRUStorageContainer(10000, MRUTypeRegistry.instance.radiationUnit) { setChanged() }
-    override val balance = MRUBalanceContainer { setChanged() }
+    override val balance = MRUBalanceContainer(initialUpperBalance = config.balanceProduced, initialLowerBalance = config.balanceProduced) { setChanged() }
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.TRANSLATOR
 
     fun setStatusUpdated(status: MatrixDestructorStatus) {
@@ -99,9 +100,12 @@ class MatrixDestructorEntity(
     }
 
     companion object {
+        private val config get() = ECConfig.current.matrixDestructor
+
         @JvmStatic
         fun onTick(level: Level, be: MatrixDestructorEntity) {
             if (level.isClientSide) return
+            be.balance.setBalance(config.balanceProduced, config.balanceProduced)
 
             val serverLevel = level as ServerLevel
             val stack = be.getItem(0)

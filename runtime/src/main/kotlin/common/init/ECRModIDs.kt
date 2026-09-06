@@ -9,6 +9,7 @@ object ECRModIDs {
 
     // Universal
     const val SOLAR_PRISM = "solar_prism"
+    const val RADIATING_CHAMBER = "radiating_chamber"
     const val MITHRILINE_FURNACE = "mithriline_furnace"
     const val MITHRILINE_CRYSTAL = "mithriline_crystal"
     const val MATRIX_DESTRUCTOR = "matrix_destructor"

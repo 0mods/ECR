@@ -4,6 +4,7 @@ import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.recipe.MagicTableRecipe
 import com.algorithmlx.ecr.common.recipe.MithrilineFurnaceRecipe
+import com.algorithmlx.ecr.common.recipe.RadiatingChamberRecipe
 import com.algorithmlx.ecr.common.recipe.StructureRecipe
 import com.algorithmlx.ecr.registry.RecipeDisplayTypeRegistry
 import net.minecraft.core.registries.BuiltInRegistries
@@ -21,6 +22,7 @@ class NeoForgeRecipeDisplayTypeRegistry(
     }
 
     override val mithrilineFurnace: RecipeDisplay.Type<MithrilineFurnaceRecipe.Display> by register(ECRModIDs.MITHRILINE_FURNACE) { RecipeDisplay.Type(MithrilineFurnaceRecipe.Display.MAP_CODEC, MithrilineFurnaceRecipe.Display.STREAM_CODEC) }
+    override val radiatingChamber: RecipeDisplay.Type<RadiatingChamberRecipe.Display> by register(ECRModIDs.RADIATING_CHAMBER) { RecipeDisplay.Type(RadiatingChamberRecipe.Display.MAP_CODEC, RadiatingChamberRecipe.Display.STREAM_CODEC) }
     override val structure: RecipeDisplay.Type<StructureRecipe.Display> by register(ECRModIDs.STRUCTURE) { RecipeDisplay.Type(StructureRecipe.Display.MAP_CODEC, StructureRecipe.Display.STREAM_CODEC) }
     override val magicTable: RecipeDisplay.Type<MagicTableRecipe.Display> by register(ECRModIDs.MAGIC_TABLE) { RecipeDisplay.Type(MagicTableRecipe.Display.MAP_CODEC, MagicTableRecipe.Display.STREAM_CODEC) }
 

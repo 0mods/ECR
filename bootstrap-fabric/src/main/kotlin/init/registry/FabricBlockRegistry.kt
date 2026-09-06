@@ -14,6 +14,7 @@ import com.algorithmlx.ecr.common.block.MagicTable
 import com.algorithmlx.ecr.common.block.MagicalTeleporter
 import com.algorithmlx.ecr.common.block.MatrixDestructor
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
+import com.algorithmlx.ecr.common.block.RadiatingChamber
 import com.algorithmlx.ecr.common.block.RayTower
 import com.algorithmlx.ecr.common.block.RayTowerBase
 import com.algorithmlx.ecr.common.block.SolarPrism
@@ -45,6 +46,7 @@ object FabricBlockRegistry : BlockRegistry {
             shouldRegisterItem = false,
         )
     override val mithrilineFurnace: MithrilineFurnace = register(ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnace)
+    override val radiatingChamber: RadiatingChamber = register(ECRModIDs.RADIATING_CHAMBER, ::RadiatingChamber, BlockBehaviour.Properties.of().strength(1.0F, 1.0F).requiresCorrectToolForDrops().noOcclusion())
     override val mithrilineCrystal: CrystalBlock = register(ECRModIDs.MITHRILINE_CRYSTAL, ::CrystalBlock)
     override val magicTable: MagicTable = register(ECRModIDs.MAGIC_TABLE, ::MagicTable)
     override val magicalTeleporter: MagicalTeleporter = register(ECRModIDs.MAGICAL_TELEPORTER, ::MagicalTeleporter)

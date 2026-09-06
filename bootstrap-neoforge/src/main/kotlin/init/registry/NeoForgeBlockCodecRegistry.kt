@@ -26,6 +26,7 @@ class NeoForgeBlockCodecRegistry(
     override val clusterBlock: MapCodec<ClusterBlock> by register(ECRModIDs.CLUSTER) { BlockBehaviour.simpleCodec(::ClusterBlock) }
     override val crystalBlock: MapCodec<CrystalBlock> by register(ECRModIDs.CRYSTAL) { BlockBehaviour.simpleCodec(::CrystalBlock) }
     override val mithrilineFurnace: MapCodec<MithrilineFurnace> by register(ECRModIDs.MITHRILINE_FURNACE) { BlockBehaviour.simpleCodec(::MithrilineFurnace) }
+    override val radiatingChamber: MapCodec<RadiatingChamber> by register(ECRModIDs.RADIATING_CHAMBER) { BlockBehaviour.simpleCodec(::RadiatingChamber) }
     override val magicTable: MapCodec<MagicTable> by register(ECRModIDs.MAGIC_TABLE) { BlockBehaviour.simpleCodec(::MagicTable) }
     override val matrixDestructor: MapCodec<MatrixDestructor> by register(ECRModIDs.MATRIX_DESTRUCTOR) { BlockBehaviour.simpleCodec(::MatrixDestructor) }
     override val coldDistiller: MapCodec<ColdDistiller> by register(ECRModIDs.COLD_DISTILLER) { BlockBehaviour.simpleCodec(::ColdDistiller) }

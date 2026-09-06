@@ -50,6 +50,7 @@ class HeatGeneratorEntity(worldPosition: BlockPos, blockState: BlockState): Sync
     private var worldEffectTicks = 0
     private var fireEffectTicks = 0
     private var slagPending = false
+    private var balanceInitialized = false
 
     var temperatureCelsius: Double = 0.0
         private set
@@ -103,6 +104,7 @@ class HeatGeneratorEntity(worldPosition: BlockPos, blockState: BlockState): Sync
         output.putInt(WORLD_EFFECT_TICKS_TAG, this.worldEffectTicks)
         output.putInt(FIRE_EFFECT_TICKS_TAG, this.fireEffectTicks)
         output.putBoolean(SLAG_PENDING_TAG, this.slagPending)
+        output.putBoolean(BALANCE_INITIALIZED_TAG, this.balanceInitialized)
         ContainerHelper.saveAllItems(output, this.items)
         this.saveMRUData(output)
         super.saveAdditional(output)
@@ -118,6 +120,7 @@ class HeatGeneratorEntity(worldPosition: BlockPos, blockState: BlockState): Sync
         this.worldEffectTicks = input.getIntOr(WORLD_EFFECT_TICKS_TAG, 0).coerceAtLeast(0)
         this.fireEffectTicks = input.getIntOr(FIRE_EFFECT_TICKS_TAG, 0).coerceAtLeast(0)
         this.slagPending = input.getBooleanOr(SLAG_PENDING_TAG, false)
+        this.balanceInitialized = input.getBooleanOr(BALANCE_INITIALIZED_TAG, false)
         ContainerHelper.loadAllItems(input, this.items)
         this.loadMRUData(input)
         super.loadAdditional(input)
@@ -209,6 +212,16 @@ class HeatGeneratorEntity(worldPosition: BlockPos, blockState: BlockState): Sync
     private fun generate(amount: Int) {
         if (amount <= 0 || this.mruStorage.isFilled) return
         this.mruStorage.insert(amount)
+    }
+
+    private fun initializeBalance(level: Level) {
+        if (this.balanceInitialized) return
+
+        val configuredBalance = if (this.isUpgraded) -1.0 else ECConfig.current.heatGenerator.defaultBalance
+        val generatedBalance = if (configuredBalance == -1.0) level.random.nextFloat().toDouble() * 2.0 else configuredBalance
+        this.balance.setBalance(generatedBalance, generatedBalance)
+        this.balanceInitialized = true
+        this.setChanged()
     }
 
     private fun tickWorldEffects(level: Level) {
@@ -381,6 +394,7 @@ class HeatGeneratorEntity(worldPosition: BlockPos, blockState: BlockState): Sync
         private const val WORLD_EFFECT_TICKS_TAG = "world_effect_ticks"
         private const val FIRE_EFFECT_TICKS_TAG = "fire_effect_ticks"
         private const val SLAG_PENDING_TAG = "slag_pending"
+        private const val BALANCE_INITIALIZED_TAG = "balance_initialized"
 
         private val CATALYST_POSITIONS = structurePosition {
             pos(-2, 0, 0)
@@ -392,6 +406,7 @@ class HeatGeneratorEntity(worldPosition: BlockPos, blockState: BlockState): Sync
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, be: HeatGeneratorEntity) {
             if (level.isClientSide) return
+            be.initializeBalance(level)
             be.synchronizeUpgradeBlockState(level)
             be.resizeMRUStorage()
             if (be.isUpgraded) be.temperatureCelsius = be.temperatureCelsius.coerceAtMost(ECConfig.current.heatGenerator.ultra.maximumTemperatureCelsius)

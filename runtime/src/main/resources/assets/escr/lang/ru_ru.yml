@@ -50,6 +50,7 @@ item.escr:
   eye_of_absorption: Глаз поглащения
 
 block.escr:
+  radiating_chamber: Радиационная камера
   mithriline_plating: Мифрилиновое покрытие
   mithriline_furnace: Мифрилиновая печь
   matrix_destructor: Разрушитель матрицы
@@ -80,6 +81,10 @@ block.escr:
   creative_mru_source: Творческий источник MRU
 
 tooltip.escr:
+  radiating_chamber:
+    balance: "Баланс: %s"
+    any_balance: Любой баланс
+    mru_per_tick: "%s MRU/т"
   sword_multiplier: Бонус получения MRU
   rmc: ПКМ
   book:
@@ -117,6 +122,9 @@ matrix.escr:
   neutral: Нейтральная
 
 screen.escr:
+  radiating_chamber:
+    upper_balance: "Верхний: %s"
+    lower_balance: "Нижний: %s"
   heat_generator:
     mode:
       normal: Тепловой генератор

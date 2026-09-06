@@ -9,6 +9,7 @@ import com.algorithmlx.ecr.common.block.entity.MagicTableBlockEntity
 import com.algorithmlx.ecr.common.block.entity.MagicalTeleporterEntity
 import com.algorithmlx.ecr.common.block.entity.MatrixDestructorEntity
 import com.algorithmlx.ecr.common.block.entity.MithrilineFurnaceEntity
+import com.algorithmlx.ecr.common.block.entity.RadiatingChamberEntity
 import com.algorithmlx.ecr.common.block.entity.RayTowerEntity
 import com.algorithmlx.ecr.common.block.entity.enrichment.EnrichmentChamberControllerEntity
 import com.algorithmlx.ecr.common.block.entity.enrichment.EnrichmentChamberExtractorEntity
@@ -34,6 +35,11 @@ object FabricBlockEntityTypeRegistry : BlockEntityTypeRegistry {
         register(
             ECRModIDs.MITHRILINE_FURNACE,
             BlockEntityType(::MithrilineFurnaceEntity, setOf(BlockRegistry.instance.mithrilineFurnace)),
+        )
+    override val radiatingChamber: BlockEntityType<RadiatingChamberEntity> =
+        register(
+            ECRModIDs.RADIATING_CHAMBER,
+            BlockEntityType(::RadiatingChamberEntity, setOf(BlockRegistry.instance.radiatingChamber)),
         )
     override val magicTable: BlockEntityType<MagicTableBlockEntity> =
         register(

@@ -217,11 +217,9 @@ class MithrilineFurnaceEntity(
             if (generateAmount <= 0) return
 
             val inserted = this.mruStorage.insert(generateAmount)
-            if (inserted <= 0 || inserted < generateAmount) {
-                this.espeGenerationRemainder = 0.0
-            } else {
-                this.espeGenerationRemainder -= inserted.toDouble()
-            }
+
+            if (inserted <= 0 || inserted < generateAmount) this.espeGenerationRemainder = 0.0
+            else this.espeGenerationRemainder -= inserted.toDouble()
 
             this.setChanged()
         }
@@ -259,7 +257,7 @@ class MithrilineFurnaceEntity(
                 }
             }
         }
- 
+
         private fun MithrilineFurnaceEntity.processTick(mru: Int) {
             val storage = this.mruStorage
             val extractionStep = (1..1000).reversed().firstOrNull { this.canExtract(mru, it) } ?: 0

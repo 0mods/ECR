@@ -16,6 +16,7 @@ import com.algorithmlx.ecr.client.book.BookLinkedTextLayout
 import com.algorithmlx.ecr.client.book.controller.MultiblockBookPreviewController
 import com.algorithmlx.ecr.client.book.recipe.mod.MagicTableRenderer
 import com.algorithmlx.ecr.client.book.recipe.mod.MithrilineFurnaceRenderer
+import com.algorithmlx.ecr.client.book.recipe.mod.RadiatingChamberRenderer
 import com.algorithmlx.ecr.client.book.recipe.mod.StructureRecipeRenderer
 import com.algorithmlx.ecr.client.book.recipe.vanilla.CookingRecipeRenderer
 import com.algorithmlx.ecr.client.book.recipe.vanilla.CraftingTableRecipeRenderer
@@ -29,11 +30,7 @@ import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.item.crafting.RecipeType
 
 object BookDefaultRenderers {
-    private var initialized = false
-
     fun init() {
-        if (initialized) return
-        initialized = true
         BookElementRenderers.register(ResearchIds.TEXT, ::renderText)
         BookElementRenderers.register(ResearchIds.ITEM, ::renderItem)
         BookElementRenderers.register(ResearchIds.BLOCK, ::renderBlock)
@@ -54,6 +51,7 @@ object BookDefaultRenderers {
         BookRecipeRenderers.register(RecipeTypeRegistry.instance.mithrilineFurnace, MithrilineFurnaceRenderer)
         BookRecipeRenderers.register(RecipeTypeRegistry.instance.structure, StructureRecipeRenderer)
         BookRecipeRenderers.register(RecipeTypeRegistry.instance.magicTable, MagicTableRenderer)
+        BookRecipeRenderers.register(RecipeTypeRegistry.instance.radiatingChamber, RadiatingChamberRenderer)
     }
 
     private fun renderText(

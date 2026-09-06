@@ -5,6 +5,7 @@ import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.recipe.MagicTableRecipe
 import com.algorithmlx.ecr.common.recipe.StructureRecipe
 import com.algorithmlx.ecr.common.recipe.MithrilineFurnaceRecipe
+import com.algorithmlx.ecr.common.recipe.RadiatingChamberRecipe
 import com.algorithmlx.ecr.registry.RecipeTypeRegistry
 import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.world.item.crafting.Recipe
@@ -20,6 +21,7 @@ class NeoForgeRecipeTypeRegistry(bus: IEventBus): RecipeTypeRegistry {
     }
 
     override val mithrilineFurnace: RecipeType<MithrilineFurnaceRecipe> by register(ECRModIDs.MITHRILINE_FURNACE)
+    override val radiatingChamber: RecipeType<RadiatingChamberRecipe> by register(ECRModIDs.RADIATING_CHAMBER)
     override val structure: RecipeType<StructureRecipe> by register(ECRModIDs.STRUCTURE)
     override val magicTable: RecipeType<MagicTableRecipe> by register(ECRModIDs.MAGIC_TABLE)
 

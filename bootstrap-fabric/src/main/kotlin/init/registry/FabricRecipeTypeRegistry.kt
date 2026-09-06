@@ -5,6 +5,7 @@ import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.recipe.MagicTableRecipe
 import com.algorithmlx.ecr.common.recipe.StructureRecipe
 import com.algorithmlx.ecr.common.recipe.MithrilineFurnaceRecipe
+import com.algorithmlx.ecr.common.recipe.RadiatingChamberRecipe
 import com.algorithmlx.ecr.registry.RecipeTypeRegistry
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
@@ -13,6 +14,7 @@ import net.minecraft.world.item.crafting.RecipeType
 
 object FabricRecipeTypeRegistry : RecipeTypeRegistry {
     override val mithrilineFurnace: RecipeType<MithrilineFurnaceRecipe> = registerSimple(ECRModIDs.MITHRILINE_FURNACE)
+    override val radiatingChamber: RecipeType<RadiatingChamberRecipe> = registerSimple(ECRModIDs.RADIATING_CHAMBER)
     override val structure: RecipeType<StructureRecipe> = registerSimple(ECRModIDs.STRUCTURE)
     override val magicTable: RecipeType<MagicTableRecipe> = registerSimple(ECRModIDs.MAGIC_TABLE)
 

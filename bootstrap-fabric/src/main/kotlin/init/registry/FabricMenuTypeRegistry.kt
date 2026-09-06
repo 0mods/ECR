@@ -10,6 +10,7 @@ import com.algorithmlx.ecr.common.menu.MagicTableMenu
 import com.algorithmlx.ecr.common.menu.MagicalTeleporterMenu
 import com.algorithmlx.ecr.common.menu.MatrixDestructorMenu
 import com.algorithmlx.ecr.common.menu.MithrilineFurnaceMenu
+import com.algorithmlx.ecr.common.menu.RadiatingChamberMenu
 import com.algorithmlx.ecr.common.menu.RayTowerMenu
 import com.algorithmlx.ecr.registry.MenuTypeRegistry
 import net.fabricmc.fabric.api.menu.v1.ExtendedMenuType
@@ -26,6 +27,9 @@ object FabricMenuTypeRegistry: MenuTypeRegistry {
     override val heatGenerator: MenuType<HeatGeneratorMenu> = register(ECRModIDs.HEAT_GENERATOR, ::HeatGeneratorMenu)
     override val mithrilineFurnace: MenuType<MithrilineFurnaceMenu> = register(
         ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnaceMenu
+    )
+    override val radiatingChamber: MenuType<RadiatingChamberMenu> = register(
+        ECRModIDs.RADIATING_CHAMBER, ::RadiatingChamberMenu
     )
     override val magicTable: MenuType<MagicTableMenu> = register(ECRModIDs.MAGIC_TABLE, ::MagicTableMenu)
     override val matrixDestructor: MenuType<MatrixDestructorMenu> = register(

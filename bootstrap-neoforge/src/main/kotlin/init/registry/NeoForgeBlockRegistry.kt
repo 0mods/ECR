@@ -30,6 +30,7 @@ class NeoForgeBlockRegistry(
 
     override val assembledMultiblockPart: AssembledMultiblockPartBlock by register(ECRModIDs.ASSEMBLED_MULTIBLOCK_PART, ::AssembledMultiblockPartBlock, BlockBehaviour.Properties.of().strength(3.0F).noOcclusion().noLootTable().pushReaction(PushReaction.BLOCK), shouldRegisterItem = false)
     override val mithrilineFurnace: MithrilineFurnace by register(ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnace)
+    override val radiatingChamber: RadiatingChamber by register(ECRModIDs.RADIATING_CHAMBER, ::RadiatingChamber, BlockBehaviour.Properties.of().strength(1.0F, 1.0F).requiresCorrectToolForDrops().noOcclusion())
     override val mithrilineCrystal: CrystalBlock by register(ECRModIDs.MITHRILINE_CRYSTAL, ::CrystalBlock)
     override val magicTable: MagicTable by register(ECRModIDs.MAGIC_TABLE, ::MagicTable)
     override val magicalTeleporter: MagicalTeleporter by register(ECRModIDs.MAGICAL_TELEPORTER, ::MagicalTeleporter)

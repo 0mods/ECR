@@ -21,6 +21,7 @@ data class ECConfig(
     @SerialName("research_book") val researchBook: ResearchBookConfig = ResearchBookConfig(),
     val multiblocks: MultiblockDataConfig = MultiblockDataConfig(),
     @SerialName("cold_distiller") val coldDistillerConfig: ColdDistillerConfig = ColdDistillerConfig(),
+    @SerialName("matrix_destructor") val matrixDestructor: MatrixDestructorConfig = MatrixDestructorConfig(),
     @SerialName("magical_teleporter") val magicalTeleporter: MagicalTeleporterConfig = MagicalTeleporterConfig(),
     @SerialName("enrichment_chamber") val enrichmentChamber: EnrichmentChamberConfig = EnrichmentChamberConfig(),
     @SerialName("heat_generator") val heatGenerator: HeatGeneratorConfig = HeatGeneratorConfig()
@@ -102,8 +103,21 @@ data class ColdDistillerConfig(
     @SerialName("max_mru")
     val maxMruPerSecond: Int = 16,
     @SerialName("destroy_ice")
-    val destroyIce: DestroyIceConfig = DestroyIceConfig()
-)
+    val destroyIce: DestroyIceConfig = DestroyIceConfig(),
+    @SerialName("balance_produced") val balanceProduced: Double = 0.0
+) {
+    init {
+        require(balanceProduced.isFinite() && balanceProduced in 0.0..2.0) { "Cold Distiller balance must be between zero and two" }
+    }
+}
+
+@JsonDefaults
+@Serializable
+data class MatrixDestructorConfig(@SerialName("balance_produced") val balanceProduced: Double = 1.0) {
+    init {
+        require(balanceProduced.isFinite() && balanceProduced in 0.0..2.0) { "Matrix Destructor balance must be between zero and two" }
+    }
+}
 
 @JsonDefaults
 @Serializable
@@ -145,12 +159,13 @@ data class EnrichmentChamberConfig(
 
 @JsonDefaults
 @Serializable
-data class HeatGeneratorConfig(val capacity: Int = 10000, @SerialName("ultra_capacity") val ultraCapacity: Int = 100000, @SerialName("default_generation") val defaultGeneration: Int = 1, @SerialName("heat_block_generation") val heatBlockGeneration: Map<String, Int> = mapOf("minecraft:netherrack" to 4, "minecraft:fire" to 8, "minecraft:magma_block" to 12, "minecraft:lava" to 16), val ultra: UltraHeatGeneratorConfig = UltraHeatGeneratorConfig()) {
+data class HeatGeneratorConfig(val capacity: Int = 10000, @SerialName("ultra_capacity") val ultraCapacity: Int = 100000, @SerialName("default_generation") val defaultGeneration: Int = 1, @SerialName("heat_block_generation") val heatBlockGeneration: Map<String, Int> = mapOf("minecraft:netherrack" to 4, "minecraft:fire" to 8, "minecraft:magma_block" to 12, "minecraft:lava" to 16), val ultra: UltraHeatGeneratorConfig = UltraHeatGeneratorConfig(), @SerialName("default_balance") val defaultBalance: Double = -1.0) {
     init {
         require(capacity > 0) { "Heat Generator capacity must be positive" }
         require(ultraCapacity > 0) { "Ultra Heat Generator capacity must be positive" }
         require(defaultGeneration >= 0) { "Heat Generator default generation cannot be negative" }
         require(heatBlockGeneration.values.all { it >= 0 }) { "Heat block generation cannot be negative" }
+        require(defaultBalance.isFinite() && (defaultBalance == -1.0 || defaultBalance in 0.0..2.0)) { "Heat Generator balance must be between zero and two, or minus one for a random balance" }
     }
 }
 

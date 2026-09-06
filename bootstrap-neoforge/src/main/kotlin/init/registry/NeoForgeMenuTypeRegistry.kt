@@ -10,6 +10,7 @@ import com.algorithmlx.ecr.common.menu.MagicTableMenu
 import com.algorithmlx.ecr.common.menu.MagicalTeleporterMenu
 import com.algorithmlx.ecr.common.menu.MatrixDestructorMenu
 import com.algorithmlx.ecr.common.menu.MithrilineFurnaceMenu
+import com.algorithmlx.ecr.common.menu.RadiatingChamberMenu
 import com.algorithmlx.ecr.common.menu.RayTowerMenu
 import com.algorithmlx.ecr.registry.MenuTypeRegistry
 import net.minecraft.core.registries.BuiltInRegistries
@@ -31,6 +32,7 @@ class NeoForgeMenuTypeRegistry(bus: IEventBus): MenuTypeRegistry {
     }
 
     override val mithrilineFurnace: MenuType<MithrilineFurnaceMenu> by register(ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnaceMenu)
+    override val radiatingChamber: MenuType<RadiatingChamberMenu> by register(ECRModIDs.RADIATING_CHAMBER, ::RadiatingChamberMenu)
     override val heatGenerator: MenuType<HeatGeneratorMenu> by register(ECRModIDs.HEAT_GENERATOR, ::HeatGeneratorMenu)
     override val magicTable: MenuType<MagicTableMenu> by register(ECRModIDs.MAGIC_TABLE, ::MagicTableMenu)
     override val matrixDestructor: MenuType<MatrixDestructorMenu> by register(ECRModIDs.MATRIX_DESTRUCTOR, ::MatrixDestructorMenu)

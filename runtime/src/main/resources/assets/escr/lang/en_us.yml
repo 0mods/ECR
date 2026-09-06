@@ -53,6 +53,7 @@ item.escr:
   eye_of_absorption: Eye Of Absorption
 
 block.escr:
+  radiating_chamber: Radiating Chamber
   mithriline_plating: Mithriline Plating
   mithriline_furnace: Mithriline Furnace
   matrix_destructor: Matrix Destructor
@@ -83,6 +84,10 @@ block.escr:
   creative_mru_source: Creative MRU Source
 
 tooltip.escr:
+  radiating_chamber:
+    balance: "Balance: %s"
+    any_balance: Any balance
+    mru_per_tick: "%s MRU/t"
   sword_multiplier: MRU Gain Bonus
   rmc: RMC
   book:
@@ -124,6 +129,9 @@ matrix.escr:
   neutral: Neutral
 
 screen.escr:
+  radiating_chamber:
+    upper_balance: "Upper: %s"
+    lower_balance: "Lower: %s"
   heat_generator:
     mode:
       normal: Normal Heat Generator

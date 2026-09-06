@@ -36,6 +36,7 @@ import com.algorithmlx.ecr.client.screen.MagicTableMenuScreen
 import com.algorithmlx.ecr.client.screen.MagicalTeleporterScreen
 import com.algorithmlx.ecr.client.screen.MatrixDestructorScreen
 import com.algorithmlx.ecr.client.screen.MithrilineFurnaceScreen
+import com.algorithmlx.ecr.client.screen.RadiatingChamberScreen
 import com.algorithmlx.ecr.client.screen.RayTowerScreen
 import com.algorithmlx.ecr.common.init.events.ECEvents
 import com.algorithmlx.ecr.fabric.client.FabricConnectedTextures
@@ -100,6 +101,7 @@ object FabricClientInit {
         ModelLayerRegistry.registerModelLayer(MithrilineFurnaceRenderer.MF_LAYER, MithrilineFurnaceRenderer::createBodyLayer)
 
         MenuScreens.register(MenuTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceScreen)
+        MenuScreens.register(MenuTypeRegistry.instance.radiatingChamber, ::RadiatingChamberScreen)
         MenuScreens.register(MenuTypeRegistry.instance.heatGenerator, ::HeatGeneratorScreen)
         MenuScreens.register(MenuTypeRegistry.instance.magicTable, ::MagicTableMenuScreen)
         MenuScreens.register(MenuTypeRegistry.instance.matrixDestructor, ::MatrixDestructorScreen)

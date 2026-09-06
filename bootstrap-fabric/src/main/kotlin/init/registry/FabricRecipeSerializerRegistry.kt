@@ -5,6 +5,7 @@ import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.recipe.MagicTableRecipe
 import com.algorithmlx.ecr.common.recipe.StructureRecipe
 import com.algorithmlx.ecr.common.recipe.MithrilineFurnaceRecipe
+import com.algorithmlx.ecr.common.recipe.RadiatingChamberRecipe
 import com.algorithmlx.ecr.registry.RecipeSerializerRegistry
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
@@ -13,6 +14,9 @@ import net.minecraft.world.item.crafting.RecipeSerializer
 object FabricRecipeSerializerRegistry : RecipeSerializerRegistry {
     override val mithrilineFurnace: RecipeSerializer<MithrilineFurnaceRecipe> = register(
         ECRModIDs.MITHRILINE_FURNACE, RecipeSerializer(MithrilineFurnaceRecipe.CODEC, MithrilineFurnaceRecipe.STREAM_CODEC)
+    )
+    override val radiatingChamber: RecipeSerializer<RadiatingChamberRecipe> = register(
+        ECRModIDs.RADIATING_CHAMBER, RecipeSerializer(RadiatingChamberRecipe.CODEC, RadiatingChamberRecipe.STREAM_CODEC)
     )
     override val structure: RecipeSerializer<StructureRecipe> = register(
         ECRModIDs.STRUCTURE, RecipeSerializer(StructureRecipe.CODEC, StructureRecipe.STREAM_CODEC)

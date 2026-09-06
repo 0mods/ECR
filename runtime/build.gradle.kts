@@ -34,6 +34,10 @@ dependencies {
     compileOnly("org.spongepowered:mixin:0.8.7")
 }
 
+tasks.test {
+    useJUnit()
+}
+
 tasks.yaml2json {
     flatJsonMarker = $$"#$json_flat"
 }

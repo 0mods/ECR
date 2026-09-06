@@ -33,6 +33,7 @@ import com.algorithmlx.ecr.client.screen.MagicTableMenuScreen
 import com.algorithmlx.ecr.client.screen.MagicalTeleporterScreen
 import com.algorithmlx.ecr.client.screen.MatrixDestructorScreen
 import com.algorithmlx.ecr.client.screen.MithrilineFurnaceScreen
+import com.algorithmlx.ecr.client.screen.RadiatingChamberScreen
 import com.algorithmlx.ecr.client.screen.RayTowerScreen
 import com.algorithmlx.ecr.neoforge.client.NeoForgeConnectedTextures
 import com.algorithmlx.ecr.neoforge.client.NeoForgeIrisCompatibility
@@ -165,6 +166,7 @@ object NeoForgeClientInit {
 
     private fun onMenuScreen(event: RegisterMenuScreensEvent) {
         event.register(MenuTypeRegistry.instance.mithrilineFurnace, ::MithrilineFurnaceScreen)
+        event.register(MenuTypeRegistry.instance.radiatingChamber, ::RadiatingChamberScreen)
         event.register(MenuTypeRegistry.instance.heatGenerator, ::HeatGeneratorScreen)
         event.register(MenuTypeRegistry.instance.magicTable, ::MagicTableMenuScreen)
         event.register(MenuTypeRegistry.instance.matrixDestructor, ::MatrixDestructorScreen)

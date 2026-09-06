@@ -40,15 +40,16 @@ class ColdDistillerEntity(worldPosition: BlockPos, blockState: BlockState): Sync
     }
 
     override val mruStorage: IOMRUStorage = MRUStorageContainer(100000, MRUTypeRegistry.instance.radiationUnit) { setChanged() }
-    override val balance = MRUBalanceContainer { setChanged() }
+    override val balance = MRUBalanceContainer(initialUpperBalance = config.balanceProduced, initialLowerBalance = config.balanceProduced) { setChanged() }
     override val deviceType: MRUDevice.DeviceType = MRUDevice.DeviceType.TRANSLATOR
 
     companion object {
-        private val config = ECConfig.current.coldDistillerConfig
+        private val config get() = ECConfig.current.coldDistillerConfig
 
         @JvmStatic
         fun onTick(level: Level, pos: BlockPos, entity: ColdDistillerEntity) {
             if (level.isClientSide) return
+            entity.balance.setBalance(config.balanceProduced, config.balanceProduced)
             entity.generateMRU(level, pos)
 
             if (!config.destroyIce.enabled || entity.mruStorage.isFilled) return

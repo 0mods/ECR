@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
+    "escr:radiating_chamber",
     "escr:mithriline_furnace",
     "escr:mithriline_plating",
     "escr:mithriline_crystal",

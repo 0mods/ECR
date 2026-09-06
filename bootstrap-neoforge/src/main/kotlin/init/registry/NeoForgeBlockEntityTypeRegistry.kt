@@ -25,6 +25,7 @@ class NeoForgeBlockEntityTypeRegistry(
 
     override val assembledMultiblockPart: BlockEntityType<AssembledMultiblockPartBlockEntity> by register(ECRModIDs.ASSEMBLED_MULTIBLOCK_PART) { BlockEntityType(::AssembledMultiblockPartBlockEntity, setOf(BlockRegistry.instance.assembledMultiblockPart)) }
     override val mithrilineFurnace: BlockEntityType<MithrilineFurnaceEntity> by register(ECRModIDs.MITHRILINE_FURNACE) { BlockEntityType(::MithrilineFurnaceEntity, setOf(BlockRegistry.instance.mithrilineFurnace)) }
+    override val radiatingChamber: BlockEntityType<RadiatingChamberEntity> by register(ECRModIDs.RADIATING_CHAMBER) { BlockEntityType(::RadiatingChamberEntity, setOf(BlockRegistry.instance.radiatingChamber)) }
     override val magicTable: BlockEntityType<MagicTableBlockEntity> by register(ECRModIDs.MAGIC_TABLE) { BlockEntityType(::MagicTableBlockEntity, setOf(BlockRegistry.instance.magicTable)) }
     override val magicalTeleporter: BlockEntityType<MagicalTeleporterEntity> by register(ECRModIDs.MAGICAL_TELEPORTER) { BlockEntityType(::MagicalTeleporterEntity, setOf(BlockRegistry.instance.magicalTeleporter)) }
     override val matrixDestructor: BlockEntityType<MatrixDestructorEntity> by register(ECRModIDs.MATRIX_DESTRUCTOR) { BlockEntityType(::MatrixDestructorEntity, setOf(BlockRegistry.instance.matrixDestructor)) }

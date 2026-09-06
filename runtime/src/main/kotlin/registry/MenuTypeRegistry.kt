@@ -6,6 +6,7 @@ import net.minecraft.world.inventory.MenuType
 interface MenuTypeRegistry {
     val heatGenerator: MenuType<HeatGeneratorMenu>
     val mithrilineFurnace: MenuType<MithrilineFurnaceMenu>
+    val radiatingChamber: MenuType<RadiatingChamberMenu>
     val magicTable: MenuType<MagicTableMenu>
     val matrixDestructor: MenuType<MatrixDestructorMenu>
     val enrichmentChamberController: MenuType<EnrichmentChamberControllerMenu>

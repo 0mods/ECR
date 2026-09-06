@@ -13,6 +13,7 @@ import com.algorithmlx.ecr.common.block.HeatGenerator
 import com.algorithmlx.ecr.common.block.MagicTable
 import com.algorithmlx.ecr.common.block.MatrixDestructor
 import com.algorithmlx.ecr.common.block.MithrilineFurnace
+import com.algorithmlx.ecr.common.block.RadiatingChamber
 import com.algorithmlx.ecr.common.block.RayTower
 import com.algorithmlx.ecr.common.block.SolarPrism
 import com.algorithmlx.ecr.common.init.ECRModIDs
@@ -48,6 +49,11 @@ object FabricBlockCodecRegistry : BlockCodecRegistry {
         register(
             ECRModIDs.MITHRILINE_FURNACE,
             BlockBehaviour.simpleCodec(::MithrilineFurnace),
+        )
+    override val radiatingChamber: MapCodec<RadiatingChamber> =
+        register(
+            ECRModIDs.RADIATING_CHAMBER,
+            BlockBehaviour.simpleCodec(::RadiatingChamber),
         )
     override val magicTable: MapCodec<MagicTable> =
         register(

@@ -18,6 +18,7 @@ class NeoForgeRecipeSerializerRegistry(bus: IEventBus): RecipeSerializerRegistry
     }
 
     override val mithrilineFurnace: RecipeSerializer<MithrilineFurnaceRecipe> by register(ECRModIDs.MITHRILINE_FURNACE) { RecipeSerializer(MithrilineFurnaceRecipe.CODEC, MithrilineFurnaceRecipe.STREAM_CODEC) }
+    override val radiatingChamber: RecipeSerializer<RadiatingChamberRecipe> by register(ECRModIDs.RADIATING_CHAMBER) { RecipeSerializer(RadiatingChamberRecipe.CODEC, RadiatingChamberRecipe.STREAM_CODEC) }
     override val structure: RecipeSerializer<StructureRecipe> by register(ECRModIDs.STRUCTURE) { RecipeSerializer(StructureRecipe.CODEC, StructureRecipe.STREAM_CODEC) }
     override val magicTable: RecipeSerializer<MagicTableRecipe> by register(ECRModIDs.MAGIC_TABLE) { RecipeSerializer(MagicTableRecipe.CODEC, MagicTableRecipe.STREAM_CODEC) }
 
