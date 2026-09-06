@@ -51,6 +51,7 @@ item.escr:
   mru_resonating_crystal: MRU Resonating Crystal
   fading_crystal: Fading Crystal
   eye_of_absorption: Eye Of Absorption
+  heat_core: Heat Core
 
 block.escr:
   radiating_chamber: Radiating Chamber
@@ -82,6 +83,8 @@ block.escr:
   ray_tower: Ray Tower
   ray_tower_base: Ray Tower Base
   creative_mru_source: Creative MRU Source
+  deepslate_mithriline_ore: Deepslate Mithriline Ore
+  mithriline_ore: Mithriline Ore
 
 tooltip.escr:
   radiating_chamber:

@@ -48,6 +48,7 @@ item.escr:
   mru_resonating_crystal: Резонирующий MRU кристалл
   fading_crystal: Увядающий кристалл
   eye_of_absorption: Глаз поглащения
+  heat_core: Тепловое ядро
 
 block.escr:
   radiating_chamber: Радиационная камера
@@ -79,6 +80,8 @@ block.escr:
   ray_tower: Реле-башня
   ray_tower_base: Основание реле-башни
   creative_mru_source: Творческий источник MRU
+  deepslate_mithriline_ore: Мифрилоносный глубинный сланец
+  mithriline_ore: Мифрилиновая руда
 
 tooltip.escr:
   radiating_chamber:

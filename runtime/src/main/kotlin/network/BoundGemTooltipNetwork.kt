@@ -36,7 +36,7 @@ data class BoundGemTooltipRequestPayload(
                         BlockPos.of(buffer.readLong()),
                         ResourceKey.create(Registries.DIMENSION, buffer.readIdentifier()),
                     )
-                },
+                }
             )
     }
 }
@@ -66,7 +66,7 @@ data class BoundGemTooltipResponsePayload(
                         ResourceKey.create(Registries.DIMENSION, buffer.readIdentifier()),
                         BoundGemTargetStatus.byOrdinal(buffer.readVarInt()),
                     )
-                },
+                }
             )
     }
 }
@@ -75,8 +75,7 @@ enum class BoundGemTargetStatus {
     UNKNOWN,
     MRU_EXPORTER,
     MRU_CONNECTABLE_NOT_EXPORTER,
-    NOT_MRU,
-    ;
+    NOT_MRU;
 
     companion object {
         fun byOrdinal(ordinal: Int): BoundGemTargetStatus = entries.getOrElse(ordinal) { UNKNOWN }
@@ -93,7 +92,7 @@ object BoundGemTooltipNetwork {
     @JvmField
     var currentDimension: () -> ResourceKey<Level>? = { null }
 
-    private const val CACHE_TTL_MS = 1_000L
+    private const val CACHE_TTL_MS = 1000L
     private const val REQUEST_THROTTLE_MS = 250L
     private const val MAX_CACHE_SIZE = 128
 

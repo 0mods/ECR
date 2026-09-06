@@ -59,6 +59,8 @@ import com.algorithmlx.ecr.network.SoulStoneTooltipRequestPayload
 import com.algorithmlx.ecr.network.SoulStoneTooltipResponsePayload
 import com.algorithmlx.ecr.registry.*
 import com.algorithmlx.ecr.utils.PlatformUtils
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications
+import net.fabricmc.fabric.api.biome.v1.BiomeSelectors
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents
@@ -77,6 +79,7 @@ import net.fabricmc.fabric.api.recipe.v1.ingredient.FabricIngredient
 import net.fabricmc.fabric.api.resource.v1.ResourceLoader
 import net.minecraft.core.Registry
 import net.minecraft.core.registries.BuiltInRegistries
+import net.minecraft.core.registries.Registries
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceKey
 import net.minecraft.server.level.ServerPlayer
@@ -88,6 +91,7 @@ import net.minecraft.world.entity.player.Player
 import net.minecraft.world.inventory.AbstractContainerMenu
 import net.minecraft.world.item.BlockItem
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.level.levelgen.GenerationStep
 import java.io.File
 
 object FabricInit {
@@ -107,6 +111,7 @@ object FabricInit {
         registerEntityEvents()
 
         initRegistries()
+        registerWorldgen()
 
         CommandRegistrationCallback.EVENT.register { dispatcher, _, _ -> ECRCommands.register(dispatcher) }
 
@@ -145,6 +150,14 @@ object FabricInit {
         register(ECRegistryKeys.BOOK_ELEMENT_SERIALIZER_KEY, ECRegistries.BOOK_ELEMENT_SERIALIZER)
         register(ECRegistryKeys.RESEARCH_TASK_SERIALIZER_KEY, ECRegistries.RESEARCH_TASK_SERIALIZER)
         register(ECRegistryKeys.MULTIBLOCK_MATCHER_TYPE_KEY, ECRegistries.MULTIBLOCK_MATCHER_TYPE)
+    }
+
+    private fun registerWorldgen() {
+        BiomeModifications.addFeature(
+            BiomeSelectors.foundInOverworld(),
+            GenerationStep.Decoration.UNDERGROUND_ORES,
+            ResourceKey.create(Registries.PLACED_FEATURE, ECRModIDs.MITHRILINE_ORE.ecRL),
+        )
     }
 
     private fun registerPayloads() {

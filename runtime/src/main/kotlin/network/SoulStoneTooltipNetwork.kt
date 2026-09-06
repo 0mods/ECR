@@ -62,7 +62,7 @@ object SoulStoneTooltipNetwork {
     @JvmField
     var sendResponseToPlayer: (ServerPlayer, SoulStoneTooltipResponsePayload) -> Unit = { _, _ -> }
 
-    private const val CACHE_TTL_MS = 1_000L
+    private const val CACHE_TTL_MS = 1000L
     private const val REQUEST_THROTTLE_MS = 250L
     private const val MAX_CACHE_SIZE = 128
 

@@ -2,14 +2,17 @@ package com.algorithmlx.ecr.neoforge.init.registry
 
 import com.algorithmlx.ecr.api.ModId
 import com.algorithmlx.ecr.common.block.*
+import com.algorithmlx.ecr.common.init.ECRBlockProperties
 import com.algorithmlx.ecr.common.init.ECRModIDs
 import com.algorithmlx.ecr.common.item.NamedBlockItem
 import com.algorithmlx.ecr.registry.BlockRegistry
 import net.minecraft.core.registries.Registries
 import net.minecraft.resources.Identifier
 import net.minecraft.resources.ResourceKey
+import net.minecraft.util.valueproviders.UniformInt
 import net.minecraft.world.item.Item
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.DropExperienceBlock
 import net.minecraft.world.level.block.TransparentBlock
 import net.minecraft.world.level.block.state.BlockBehaviour
 import net.minecraft.world.level.material.PushReaction
@@ -28,39 +31,134 @@ class NeoForgeBlockRegistry(
         blockItems.register(bus)
     }
 
-    override val assembledMultiblockPart: AssembledMultiblockPartBlock by register(ECRModIDs.ASSEMBLED_MULTIBLOCK_PART, ::AssembledMultiblockPartBlock, BlockBehaviour.Properties.of().strength(3.0F).noOcclusion().noLootTable().pushReaction(PushReaction.BLOCK), shouldRegisterItem = false)
-    override val mithrilineFurnace: MithrilineFurnace by register(ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnace)
-    override val radiatingChamber: RadiatingChamber by register(ECRModIDs.RADIATING_CHAMBER, ::RadiatingChamber, BlockBehaviour.Properties.of().strength(1.0F, 1.0F).requiresCorrectToolForDrops().noOcclusion())
-    override val mithrilineCrystal: CrystalBlock by register(ECRModIDs.MITHRILINE_CRYSTAL, ::CrystalBlock)
-    override val magicTable: MagicTable by register(ECRModIDs.MAGIC_TABLE, ::MagicTable)
-    override val magicalTeleporter: MagicalTeleporter by register(ECRModIDs.MAGICAL_TELEPORTER, ::MagicalTeleporter)
-    override val matrixDestructor: MatrixDestructor by register(ECRModIDs.MATRIX_DESTRUCTOR, ::MatrixDestructor)
-    override val solarPrism: SolarPrism by register(ECRModIDs.SOLAR_PRISM, ::SolarPrism)
-    override val coldDistiller: ColdDistiller by register(ECRModIDs.COLD_DISTILLER, ::ColdDistiller)
-    override val heatGenerator: HeatGenerator by register(ECRModIDs.HEAT_GENERATOR, ::HeatGenerator)
-    override val voidStone: Block by register(ECRModIDs.VOID_STONE)
+    override val assembledMultiblockPart: AssembledMultiblockPartBlock by register(
+        ECRModIDs.ASSEMBLED_MULTIBLOCK_PART,
+        ::AssembledMultiblockPartBlock,
+        BlockBehaviour.Properties.of()
+            .strength(3.0F)
+            .noOcclusion()
+            .noLootTable()
+            .pushReaction(PushReaction.BLOCK),
+        shouldRegisterItem = false
+    )
+    override val mithrilineFurnace: MithrilineFurnace by register(
+        ECRModIDs.MITHRILINE_FURNACE, ::MithrilineFurnace,
+        ECRBlockProperties.MECHANISM
+    )
+    override val radiatingChamber: RadiatingChamber by register(
+        ECRModIDs.RADIATING_CHAMBER, ::RadiatingChamber,
+        ECRBlockProperties.MECHANISM
+    )
+    override val mithrilineCrystal: CrystalBlock by register(
+        ECRModIDs.MITHRILINE_CRYSTAL, ::CrystalBlock
+    )
+    override val magicTable: MagicTable by register(
+        ECRModIDs.MAGIC_TABLE, ::MagicTable,
+        ECRBlockProperties.MECHANISM
+    )
+    override val magicalTeleporter: MagicalTeleporter by register(
+        ECRModIDs.MAGICAL_TELEPORTER, ::MagicalTeleporter,
+        ECRBlockProperties.MECHANISM
+    )
+    override val matrixDestructor: MatrixDestructor by register(
+        ECRModIDs.MATRIX_DESTRUCTOR, ::MatrixDestructor,
+        ECRBlockProperties.MECHANISM
+    )
+    override val solarPrism: SolarPrism by register(
+        ECRModIDs.SOLAR_PRISM, ::SolarPrism
+    )
+    override val coldDistiller: ColdDistiller by register(
+        ECRModIDs.COLD_DISTILLER, ::ColdDistiller,
+        ECRBlockProperties.MECHANISM
+    )
+    override val heatGenerator: HeatGenerator by register(
+        ECRModIDs.HEAT_GENERATOR, ::HeatGenerator,
+        ECRBlockProperties.MECHANISM
+    )
+    override val voidStone: Block by register(
+        ECRModIDs.VOID_STONE,
+        ECRBlockProperties.witherProtected(ECRBlockProperties.FORTIFIED_STONE)
+    )
     override val mithrilinePlating: Block by register(ECRModIDs.MITHRILINE_PLATING)
     override val pale: Block by register(ECRModIDs.PALE_BLOCK)
     override val palePlating: Block by register(ECRModIDs.PALE_PLATING)
     override val magicPlating: Block by register(ECRModIDs.MAGIC_PLATING)
     override val demonicPlating: Block by register(ECRModIDs.DEMONIC_PLATING)
-    override val fortifiedStone: Block by register(ECRModIDs.FORTIFIED_STONE)
-    override val flameCluster: ClusterBlock by register(ECRModIDs.FLAME_CLUSTER, ::ClusterBlock, shouldRegisterItem = false)
-    override val waterCluster: ClusterBlock by register(ECRModIDs.WATER_CLUSTER, ::ClusterBlock, shouldRegisterItem = false)
-    override val earthCluster: ClusterBlock by register(ECRModIDs.EARTH_CLUSTER, ::ClusterBlock, shouldRegisterItem = false)
-    override val airCluster: ClusterBlock by register(ECRModIDs.AIR_CLUSTER, ::ClusterBlock, shouldRegisterItem = false)
-    override val fortifiedGlass: Block by register(ECRModIDs.FORTIFIED_GLASS, ::TransparentBlock, BlockBehaviour.Properties.of().noOcclusion())
-    override val enrichmentChamberHolder: Block by register(ECRModIDs.ENRICHMENT_CHAMBER_HOLDER)
-    override val enrichmentChamberController: EnrichmentChamberController by register(ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER, ::EnrichmentChamberController)
-    override val enrichmentChamberExtractor: EnrichmentChamberExtractor by register(ECRModIDs.ENRICHMENT_CHAMBER_EXTRACTOR, ::EnrichmentChamberExtractor)
-    override val enrichmentChamberReceiver: EnrichmentChamberReceiver by register(ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER, ::EnrichmentChamberReceiver)
-    override val rayTowerBase: RayTowerBase by register(ECRModIDs.RAY_TOWER_BASE, ::RayTowerBase)
-    override val rayTower: RayTower by register(ECRModIDs.RAY_TOWER, ::RayTower)
-    override val creativeMRUSource: CreativeMRUSource by register(ECRModIDs.CREATIVE_MRU_SOURCE, ::CreativeMRUSource)
+    override val fortifiedStone: Block by register(
+        ECRModIDs.FORTIFIED_STONE,
+        ECRBlockProperties.witherProtected(ECRBlockProperties.FORTIFIED_STONE)
+    )
+    override val flameCluster: ClusterBlock by register(
+        ECRModIDs.FLAME_CLUSTER, ::ClusterBlock,
+        ECRBlockProperties.clusters(BlockBehaviour.Properties.of()),
+        shouldRegisterItem = false
+    )
+    override val waterCluster: ClusterBlock by register(
+        ECRModIDs.WATER_CLUSTER, ::ClusterBlock,
+        ECRBlockProperties.clusters(BlockBehaviour.Properties.of()),
+        shouldRegisterItem = false
+    )
+    override val earthCluster: ClusterBlock by register(
+        ECRModIDs.EARTH_CLUSTER, ::ClusterBlock,
+        ECRBlockProperties.clusters(BlockBehaviour.Properties.of()),
+        shouldRegisterItem = false
+    )
+    override val airCluster: ClusterBlock by register(
+        ECRModIDs.AIR_CLUSTER, ::ClusterBlock,
+        ECRBlockProperties.clusters(BlockBehaviour.Properties.of()),
+        shouldRegisterItem = false
+    )
+    override val fortifiedGlass: Block by register(
+        ECRModIDs.FORTIFIED_GLASS, ::TransparentBlock,
+        ECRBlockProperties.witherProtected(ECRBlockProperties.FORTIFIED_GLASS)
+    )
+    override val enrichmentChamberHolder: Block by register(
+        ECRModIDs.ENRICHMENT_CHAMBER_HOLDER,
+        ECRBlockProperties.MECHANISM
+    )
+    override val enrichmentChamberController: EnrichmentChamberController by register(
+        ECRModIDs.ENRICHMENT_CHAMBER_CONTROLLER, ::EnrichmentChamberController,
+        ECRBlockProperties.MECHANISM
+    )
+    override val enrichmentChamberExtractor: EnrichmentChamberExtractor by register(
+        ECRModIDs.ENRICHMENT_CHAMBER_EXTRACTOR, ::EnrichmentChamberExtractor,
+        ECRBlockProperties.MECHANISM
+    )
+    override val enrichmentChamberReceiver: EnrichmentChamberReceiver by register(
+        ECRModIDs.ENRICHMENT_CHAMBER_RECEIVER, ::EnrichmentChamberReceiver,
+        ECRBlockProperties.MECHANISM
+    )
+    override val rayTowerBase: RayTowerBase by register(
+        ECRModIDs.RAY_TOWER_BASE, ::RayTowerBase,
+        ECRBlockProperties.MECHANISM
+    )
+    override val rayTower: RayTower by register(
+        ECRModIDs.RAY_TOWER, ::RayTower,
+        ECRBlockProperties.MECHANISM
+    )
+    override val creativeMRUSource: CreativeMRUSource by register(
+        ECRModIDs.CREATIVE_MRU_SOURCE, ::CreativeMRUSource,
+        ECRBlockProperties.MECHANISM
+    )
+    override val mithrilineOre: DropExperienceBlock by register(ECRModIDs.MITHRILINE_ORE, {
+        DropExperienceBlock(UniformInt.of(0, 5), it)
+    }, ECRBlockProperties.MITHRILINE_ORE)
+    override val deepslateMithrilineOre: DropExperienceBlock by register(ECRModIDs.DEEPSLATE_MITHRILINE_ORE, {
+        DropExperienceBlock(UniformInt.of(0, 5), it)
+    }, ECRBlockProperties.MITHRILINE_ORE)
 
-    private fun register(id: String, properties: BlockBehaviour.Properties = BlockBehaviour.Properties.of(), shouldRegisterItem: Boolean = true) = register(id, ::Block, properties, shouldRegisterItem)
+    private fun register(
+        id: String,
+        properties: BlockBehaviour.Properties = ECRBlockProperties.DEFAULTS,
+        shouldRegisterItem: Boolean = true
+    ) = register(id, ::Block, properties, shouldRegisterItem)
 
-    private fun <B: Block> register(id: String, block: (BlockBehaviour.Properties) -> B, properties: BlockBehaviour.Properties = BlockBehaviour.Properties.of(), shouldRegisterItem: Boolean = true): DeferredBlock<B> {
+    private fun <B: Block> register(
+        id: String,
+        block: (BlockBehaviour.Properties) -> B,
+        properties: BlockBehaviour.Properties = BlockBehaviour.Properties.of(),
+        shouldRegisterItem: Boolean = true
+    ): DeferredBlock<B> {
         val blockKey = { it: Identifier -> ResourceKey.create(Registries.BLOCK, it) }
         val registered = blocks.register(id) { rk -> block(properties.setId(blockKey(rk))) }
 

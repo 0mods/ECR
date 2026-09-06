@@ -18,6 +18,7 @@ import com.algorithmlx.ecr.common.block.RayTower
 import com.algorithmlx.ecr.common.block.RayTowerBase
 import com.algorithmlx.ecr.common.block.SolarPrism
 import net.minecraft.world.level.block.Block
+import net.minecraft.world.level.block.DropExperienceBlock
 
 interface BlockRegistry {
     val assembledMultiblockPart: AssembledMultiblockPartBlock
@@ -49,6 +50,8 @@ interface BlockRegistry {
     val rayTowerBase: RayTowerBase
     val rayTower: RayTower
     val creativeMRUSource: CreativeMRUSource
+    val mithrilineOre: DropExperienceBlock
+    val deepslateMithrilineOre: DropExperienceBlock
 
     companion object {
         @JvmStatic

@@ -43,6 +43,8 @@ object ECRModIDs {
     const val ENRICHMENT_CHAMBER_HOLDER = "${ENRICHMENT_CHAMBER}_holder"
     const val FORTIFIED_GLASS = "fortified_glass"
     const val RAY_TOWER_BASE = "${RAY_TOWER}_base"
+    const val MITHRILINE_ORE = "mithriline_ore"
+    const val DEEPSLATE_MITHRILINE_ORE = "deepslate_$MITHRILINE_ORE"
 
     // Data Components / Attachments
     const val BOOK_TYPE = "book_type"
