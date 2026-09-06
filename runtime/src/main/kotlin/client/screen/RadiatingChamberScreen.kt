@@ -43,13 +43,13 @@ class RadiatingChamberScreen(
             deltaTicks = deltaTicks,
         )
 
-        drawBalance(graphics, "upper_balance", be.balance.upperBalance, 42)
-        drawBalance(graphics, "lower_balance", be.balance.lowerBalance, 54)
+        drawBalance(graphics, "upper_balance", be.balance.upperBalance, 30)
+        drawBalance(graphics, "lower_balance", be.balance.lowerBalance, 66)
     }
 
     private fun drawBalance(graphics: GuiGraphicsExtractor, key: String, balance: Double, y: Int) {
         val text = Component.translatable("screen.$ModId.radiating_chamber.$key", String.format(Locale.ROOT, "%.3f", balance))
-        graphics.text(this.font, text, this.leftPos + 74, this.topPos + y, TEXT_COLOR, false)
+        graphics.text(this.font, text, this.leftPos + 75, this.topPos + y, TEXT_COLOR, false)
     }
 
     override fun extractLabels(graphics: GuiGraphicsExtractor, mouseX: Int, mouseY: Int) {}
