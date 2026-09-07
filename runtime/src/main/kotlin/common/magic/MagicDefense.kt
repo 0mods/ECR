@@ -55,7 +55,7 @@ object MagicDefense {
             else function.apply(context, current)
         }
 
-        MagicShieldNetwork.show(level, target, source.directEntity ?: attacker, result.blocked)
+        MagicShieldNetwork.show(level, target, source, result.blocked)
 
         return result
     }

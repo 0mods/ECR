@@ -39,8 +39,10 @@ object MagicShieldRenderer {
     fun accept(payload: MagicShieldPayload) {
         val level = Minecraft.getInstance().level ?: return
         val hitPosition = Vector3f(payload.hitX, payload.hitY, payload.hitZ)
+        val maxAxis = maxOf(abs(hitPosition.x), abs(hitPosition.y), abs(hitPosition.z))
 
         if (hitPosition.lengthSquared() < MIN_DIRECTION_LENGTH) hitPosition.set(0.0F, 0.0F, -1.0F)
+        else hitPosition.div(maxAxis)
 
         waves += MagicShieldWave(
             payload.entityId, hitPosition, payload.blocked, level.gameTime.toDouble()
@@ -59,6 +61,8 @@ object MagicShieldRenderer {
         val partialTick = minecraft.deltaTracker.getGameTimeDeltaPartialTick(false)
         val currentTime = level.gameTime + partialTick.toDouble()
         val camera = levelRenderState.cameraRenderState.pos
+        val renderDistance = minecraft.options.effectiveRenderDistance * 16.0
+        val renderDistanceSquare = renderDistance * renderDistance
 
         val iterator = waves.iterator()
         while (iterator.hasNext()) {
@@ -76,6 +80,8 @@ object MagicShieldRenderer {
             val x = Mth.lerp(partialTick.toDouble(), entity.xo, entity.x)
             val y = Mth.lerp(partialTick.toDouble(), entity.yo, entity.y)
             val z = Mth.lerp(partialTick.toDouble(), entity.zo, entity.z)
+
+            if (camera.distanceToSqr(x, y + entity.bbHeight * 0.5F, z) > renderDistanceSquare) continue
 
             val radiusX = (entity.bbWidth * 0.5F + SHIELD_MARGIN).coerceAtLeast(MIN_RADIUS)
             val radiusY = (entity.bbHeight * 0.5F + SHIELD_MARGIN).coerceAtLeast(MIN_RADIUS)

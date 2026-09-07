@@ -7,6 +7,7 @@ import com.algorithmlx.ecr.api.particle.file.BedrockParticleFile
 import com.algorithmlx.ecr.api.particle.light.LevelLightProvider
 import com.algorithmlx.ecr.api.particle.light.LightProvider
 import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.state.level.LevelRenderState
 import net.minecraft.world.level.Level
@@ -108,6 +109,8 @@ class ParticleSystem(
         val cameraPosition = Vector3f(camera.pos.x.toFloat(), camera.pos.y.toFloat(), camera.pos.z.toFloat())
         val cameraRotation = Quaternionf(camera.orientation)
         val cameraFacing = Vector3f(0f, 0f, -1f).rotate(cameraRotation)
+        val renderDistance = Minecraft.getInstance().options.effectiveRenderDistance * 16F
+        val renderDistanceSquare = renderDistance * renderDistance
 
         poseStack.pushPose()
         poseStack.translate(-camera.pos.x, -camera.pos.y, -camera.pos.z)
@@ -118,6 +121,7 @@ class ParticleSystem(
                     var quads = particles.asSequence()
                         .mapNotNull { particle ->
                             val worldPosition = particle.interpolatedGlobalPosition(renderProgress)
+                            if (worldPosition.distanceSquared(cameraPosition) > renderDistanceSquare) return@mapNotNull null
                             if (!camera.cullFrustum.pointInFrustum(
                                     worldPosition.x.toDouble(),
                                     worldPosition.y.toDouble(),

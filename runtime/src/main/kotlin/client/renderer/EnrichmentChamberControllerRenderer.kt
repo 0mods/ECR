@@ -8,6 +8,7 @@ import com.algorithmlx.ecr.mixin.client.RenderTypeAccessor
 import com.mojang.blaze3d.pipeline.RenderPipeline
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.blaze3d.vertex.VertexConsumer
+import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.SubmitNodeCollector
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider
@@ -147,7 +148,13 @@ class EnrichmentChamberControllerRenderer(
 
     override fun shouldRenderOffScreen(): Boolean = true
 
-    override fun getViewDistance(): Int = VIEW_DISTANCE
+    override fun shouldRender(blockEntity: EnrichmentChamberControllerEntity, cameraPosition: Vec3): Boolean {
+        val bounds = blockEntity.innerBounds ?: return false
+        val distance = getViewDistance().toDouble()
+        return bounds.distanceToSqr(cameraPosition) <= distance * distance
+    }
+
+    override fun getViewDistance(): Int = Minecraft.getInstance().options.effectiveRenderDistance * 16
 
     private fun renderBox(
         pose: PoseStack.Pose,
@@ -396,7 +403,6 @@ class EnrichmentChamberControllerRenderer(
 
     companion object {
         private const val BOUNDS_INSET = 0.02
-        private const val VIEW_DISTANCE = 256
         private const val MIDDLE_LAYER_SCALE = 0.7
         private const val MIDDLE_LAYER_ALPHA = 0.48
         private const val INNER_LAYER_SCALE = 0.4
