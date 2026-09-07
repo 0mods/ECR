@@ -42,7 +42,7 @@ object BookRenderPipelines {
         fragment: Identifier,
         config: ResearchBookSpaceShaderConfig? = null
     ): RenderPipeline {
-        val builder = RenderPipeline.builder(RenderPipelinesAccessor.ecrGuiSnippet())
+        val builder = RenderPipeline.builder(RenderPipelinesAccessor.guiSnippet())
             .withLocation(location)
             .withVertexShader(vertex)
             .withFragmentShader(fragment)
@@ -50,7 +50,7 @@ object BookRenderPipelines {
             builder.withShaderDefine("ECR_STAR_DENSITY", config.starDensity)
             builder.withShaderDefine("ECR_STAR_SIZE", config.starSize)
         }
-        return RenderPipelinesAccessor.ecrRegister(builder.build())
+        return RenderPipelinesAccessor.register(builder.build())
     }
 
     private data class SpacePipelineKey(

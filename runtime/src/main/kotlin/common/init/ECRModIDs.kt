@@ -131,8 +131,12 @@ object ECRModIDs {
     // Ingredients
     const val COUNT = "count"
 
-    // Effects
+    // Effects, Enchantments and other Magic objects
     const val MRU_CORRUPTION = "${MRU}_corruption"
+
+    const val MAGIC_DEFENSE = "magic_defense"
+
+    const val MAGIC_BREAK = "magic_break"
 
     fun guiLocation(id: String) = textureLocation("gui/$id")
 

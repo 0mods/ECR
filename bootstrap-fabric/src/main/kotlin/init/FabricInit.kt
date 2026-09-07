@@ -23,7 +23,7 @@ import com.algorithmlx.ecr.api.utils.openMenuScreenInternal
 import com.algorithmlx.ecr.common.components.PlayerMatrixStorage
 import com.algorithmlx.ecr.common.init.ECRCommands
 import com.algorithmlx.ecr.common.init.ECRModIDs
-import com.algorithmlx.ecr.common.init.config.ConfigManager
+import com.algorithmlx.ecr.api.config.ConfigManager
 import com.algorithmlx.ecr.common.init.config.ECConfig
 import com.algorithmlx.ecr.common.init.events.ECEvents
 import com.algorithmlx.ecr.common.init.reload.ResearchReloadListener
@@ -54,6 +54,8 @@ import com.algorithmlx.ecr.fabric.utils.FabricPlatformUtils
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
 import com.algorithmlx.ecr.network.BoundGemTooltipRequestPayload
 import com.algorithmlx.ecr.network.BoundGemTooltipResponsePayload
+import com.algorithmlx.ecr.network.MagicShieldNetwork
+import com.algorithmlx.ecr.network.MagicShieldPayload
 import com.algorithmlx.ecr.network.SoulStoneTooltipNetwork
 import com.algorithmlx.ecr.network.SoulStoneTooltipRequestPayload
 import com.algorithmlx.ecr.network.SoulStoneTooltipResponsePayload
@@ -170,6 +172,7 @@ object FabricInit {
         PayloadTypeRegistry.clientboundPlay().register(BoundGemTooltipResponsePayload.TYPE, BoundGemTooltipResponsePayload.STREAM_CODEC)
         PayloadTypeRegistry.serverboundPlay().register(SoulStoneTooltipRequestPayload.TYPE, SoulStoneTooltipRequestPayload.STREAM_CODEC)
         PayloadTypeRegistry.clientboundPlay().register(SoulStoneTooltipResponsePayload.TYPE, SoulStoneTooltipResponsePayload.STREAM_CODEC)
+        PayloadTypeRegistry.clientboundPlay().register(MagicShieldPayload.TYPE, MagicShieldPayload.STREAM_CODEC)
         PayloadTypeRegistry.clientboundPlay().register(
             GeoBlockAnimationPayload.TYPE,
             GeoBlockAnimationPayload.STREAM_CODEC,
@@ -372,6 +375,7 @@ object FabricInit {
         GeoAnimationNetwork.sendBlockStopToPlayer = ServerPlayNetworking::send
         GeoAnimationNetwork.sendEntityStopToPlayer = ServerPlayNetworking::send
         GeoAnimationNetwork.sendItemStopToPlayer = ServerPlayNetworking::send
+        MagicShieldNetwork.sendToPlayer = ServerPlayNetworking::send
 
         PlayerMatrixStorage.instance = FabricPlayerMatrixStorage
 

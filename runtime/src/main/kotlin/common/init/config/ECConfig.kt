@@ -1,9 +1,12 @@
 package com.algorithmlx.ecr.common.init.config
 
 import com.algorithmlx.ecr.api.ModId
+import com.algorithmlx.ecr.api.config.JsonComment
+import com.algorithmlx.ecr.api.config.JsonDefaults
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.minecraft.resources.Identifier
+import net.minecraft.world.entity.EntityType
 import kotlin.random.Random
 
 @JsonComment([
@@ -24,8 +27,11 @@ data class ECConfig(
     @SerialName("matrix_destructor") val matrixDestructor: MatrixDestructorConfig = MatrixDestructorConfig(),
     @SerialName("magical_teleporter") val magicalTeleporter: MagicalTeleporterConfig = MagicalTeleporterConfig(),
     @SerialName("enrichment_chamber") val enrichmentChamber: EnrichmentChamberConfig = EnrichmentChamberConfig(),
-    @SerialName("heat_generator") val heatGenerator: HeatGeneratorConfig = HeatGeneratorConfig()
+    @SerialName("heat_generator") val heatGenerator: HeatGeneratorConfig = HeatGeneratorConfig(),
+    @SerialName("magic_defense") val magicDefense: List<MagicDefenseEntry> = listOf()
 ) {
+    fun magicDefense(type: EntityType<*>): MagicDefenseEntry? = magicDefense.firstOrNull { it.matches(type) }
+
     companion object {
         @JvmStatic
         lateinit var instance: ECConfig

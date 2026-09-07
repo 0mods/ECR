@@ -8,8 +8,9 @@
     "client.RenderTypeAccessor"
   ],
   "mixins": [
-    "ItemEntityMixin",
+    "EntityMixin",
     "InventoryAccessor",
+    "ItemEntityMixin",
     "LivingEntityMixin"
   ],
   "injectors": {

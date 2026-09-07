@@ -9,17 +9,17 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(RenderPipelines.class)
 public interface RenderPipelinesAccessor {
     @Accessor("GUI_SNIPPET")
-    static RenderPipeline.Snippet ecrGuiSnippet() {
+    static RenderPipeline.Snippet guiSnippet() {
         throw new AssertionError();
     }
 
     @Accessor("DEBUG_FILLED_SNIPPET")
-    static RenderPipeline.Snippet ecrDebugFilledSnippet() {
+    static RenderPipeline.Snippet debugFilledSnippet() {
         throw new AssertionError();
     }
 
     @Invoker("register")
-    static RenderPipeline ecrRegister(RenderPipeline pipeline) {
+    static RenderPipeline register(RenderPipeline pipeline) {
         throw new AssertionError();
     }
 }

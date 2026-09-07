@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.common.init.config
+package com.algorithmlx.ecr.api.config
 
 import kotlinx.serialization.*
 import kotlinx.serialization.descriptors.SerialDescriptor

@@ -24,6 +24,7 @@ import com.algorithmlx.ecr.client.book.ResearchBookClient
 import com.algorithmlx.ecr.client.renderer.AssembledMultiblockRenderer
 import com.algorithmlx.ecr.client.renderer.BoundGemLinkRenderer
 import com.algorithmlx.ecr.client.renderer.EnrichmentChamberControllerRenderer
+import com.algorithmlx.ecr.client.renderer.MagicShieldRenderer
 import com.algorithmlx.ecr.client.renderer.MatrixDestructorRenderer
 import com.algorithmlx.ecr.client.renderer.MithrilineFurnaceRenderer
 import com.algorithmlx.ecr.client.screen.EnrichmentChamberControllerScreen
@@ -39,6 +40,7 @@ import com.algorithmlx.ecr.neoforge.client.NeoForgeConnectedTextures
 import com.algorithmlx.ecr.neoforge.client.NeoForgeIrisCompatibility
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
 import com.algorithmlx.ecr.network.BoundGemTooltipResponsePayload
+import com.algorithmlx.ecr.network.MagicShieldPayload
 import com.algorithmlx.ecr.network.SoulStoneTooltipNetwork
 import com.algorithmlx.ecr.network.SoulStoneTooltipResponsePayload
 import com.algorithmlx.ecr.registry.BlockEntityTypeRegistry
@@ -100,6 +102,7 @@ object NeoForgeClientInit {
     private fun onClientLogout(event: ClientPlayerNetworkEvent.LoggingOut) {
         SoulStoneTooltipNetwork.clear()
         MultiblockWorldPreview.clear()
+        MagicShieldRenderer.clear()
     }
 
     private fun onSubmitCustomGeometry(event: SubmitCustomGeometryEvent) {
@@ -113,16 +116,9 @@ object NeoForgeClientInit {
             minecraft.player?.uuid,
             minecraft.options.cameraType.isFirstPerson,
         )
-        BoundGemLinkRenderer.submit(
-            event.poseStack,
-            event.submitNodeCollector,
-            event.levelRenderState,
-        )
-        MultiblockWorldPreview.submit(
-            event.poseStack,
-            event.submitNodeCollector,
-            event.levelRenderState,
-        )
+        BoundGemLinkRenderer.submit(event.poseStack, event.submitNodeCollector, event.levelRenderState)
+        MultiblockWorldPreview.submit(event.poseStack, event.submitNodeCollector, event.levelRenderState)
+        MagicShieldRenderer.submit(event.poseStack, event.submitNodeCollector, event.levelRenderState)
     }
 
     private fun onRegisterSpecialModelRenderer(event: RegisterSpecialModelRendererEvent) {
@@ -187,6 +183,7 @@ object NeoForgeClientInit {
         event.register(GeoBlockAnimationStopPayload.TYPE) { payload, _ -> ClientGeoAnimations.handle(payload) }
         event.register(GeoEntityAnimationStopPayload.TYPE) { payload, _ -> ClientGeoAnimations.handle(payload) }
         event.register(GeoItemAnimationStopPayload.TYPE) { payload, _ -> ClientGeoAnimations.handle(payload) }
+        event.register(MagicShieldPayload.TYPE) { payload, _ -> MagicShieldRenderer.accept(payload) }
     }
 
     private fun onRegisterPIPRenders(event: RegisterPictureInPictureRenderersEvent) {

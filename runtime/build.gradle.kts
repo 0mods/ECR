@@ -32,6 +32,7 @@ dependencies {
     compileOnly(libs.bundles.kotlinx.coroutines)
 
     compileOnly("org.spongepowered:mixin:0.8.7")
+    compileOnly("io.github.llamalad7:mixinextras-common:0.5.5")
 }
 
 tasks.test {

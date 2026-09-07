@@ -16,7 +16,7 @@ import com.algorithmlx.ecr.api.utils.*
 import com.algorithmlx.ecr.common.components.PlayerMatrixStorage
 import com.algorithmlx.ecr.common.init.ECRCommands
 import com.algorithmlx.ecr.common.init.ECRModIDs
-import com.algorithmlx.ecr.common.init.config.ConfigManager
+import com.algorithmlx.ecr.api.config.ConfigManager
 import com.algorithmlx.ecr.common.init.config.ECConfig
 import com.algorithmlx.ecr.common.init.events.ECEvents
 import com.algorithmlx.ecr.common.init.reload.ResearchReloadListener
@@ -167,6 +167,7 @@ object NeoForgeInit {
         registrar.playToClient(GeoItemAnimationStopPayload.TYPE, GeoItemAnimationStopPayload.STREAM_CODEC)
         registrar.playToClient(BoundGemTooltipResponsePayload.TYPE, BoundGemTooltipResponsePayload.STREAM_CODEC)
         registrar.playToClient(SoulStoneTooltipResponsePayload.TYPE, SoulStoneTooltipResponsePayload.STREAM_CODEC)
+        registrar.playToClient(MagicShieldPayload.TYPE, MagicShieldPayload.STREAM_CODEC)
 
         registrar.playToClient(ResearchSyncPayload.TYPE, ResearchSyncPayload.STREAM_CODEC)
         registrar.playToClient(ResearchProgressPayload.TYPE, ResearchProgressPayload.STREAM_CODEC)
@@ -346,6 +347,7 @@ object NeoForgeInit {
         GeoAnimationNetwork.sendBlockStopToPlayer = PacketDistributor::sendToPlayer
         GeoAnimationNetwork.sendEntityStopToPlayer = PacketDistributor::sendToPlayer
         GeoAnimationNetwork.sendItemStopToPlayer = PacketDistributor::sendToPlayer
+        MagicShieldNetwork.sendToPlayer = PacketDistributor::sendToPlayer
 
         PlayerMatrixStorage.instance = NeoForgePlayerMatrixStorage
 

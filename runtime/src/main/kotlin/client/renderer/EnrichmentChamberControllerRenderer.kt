@@ -431,15 +431,15 @@ class EnrichmentChamberControllerRenderer(
         private const val OVERFLOW_LIGHTNING_CORE_COLOR = 0x70D8F8FF
 
         private val ENERGY_RENDER_TYPE: RenderType by lazy {
-            val pipeline = RenderPipelinesAccessor.ecrRegister(
-                RenderPipeline.builder(RenderPipelinesAccessor.ecrDebugFilledSnippet())
+            val pipeline = RenderPipelinesAccessor.register(
+                RenderPipeline.builder(RenderPipelinesAccessor.debugFilledSnippet())
                     .withLocation("pipeline/enrichment_chamber_energy".ecRL)
                     .withVertexShader("core/enrichment_chamber_energy".ecRL)
                     .withFragmentShader("core/enrichment_chamber_energy".ecRL)
                     .build()
             )
 
-            RenderTypeAccessor.ecrCreate(
+            RenderTypeAccessor.create(
                 "${ModId}_enrichment_chamber_energy",
                 RenderSetup.builder(pipeline)
                     .sortOnUpload()

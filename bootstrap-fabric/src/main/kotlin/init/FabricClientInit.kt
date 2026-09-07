@@ -27,6 +27,7 @@ import com.algorithmlx.ecr.client.book.ResearchBookClient
 import com.algorithmlx.ecr.client.renderer.AssembledMultiblockRenderer
 import com.algorithmlx.ecr.client.renderer.BoundGemLinkRenderer
 import com.algorithmlx.ecr.client.renderer.EnrichmentChamberControllerRenderer
+import com.algorithmlx.ecr.client.renderer.MagicShieldRenderer
 import com.algorithmlx.ecr.client.renderer.MatrixDestructorRenderer
 import com.algorithmlx.ecr.client.renderer.MithrilineFurnaceRenderer
 import com.algorithmlx.ecr.client.screen.EnrichmentChamberControllerScreen
@@ -45,6 +46,7 @@ import com.algorithmlx.ecr.fabric.client.MultiblockPreviewGuiBridgeInit
 import com.algorithmlx.ecr.network.BoundGemTooltipNetwork
 import com.algorithmlx.ecr.network.BoundGemTooltipRequestPayload
 import com.algorithmlx.ecr.network.BoundGemTooltipResponsePayload
+import com.algorithmlx.ecr.network.MagicShieldPayload
 import com.algorithmlx.ecr.network.SoulStoneTooltipNetwork
 import com.algorithmlx.ecr.network.SoulStoneTooltipRequestPayload
 import com.algorithmlx.ecr.network.SoulStoneTooltipResponsePayload
@@ -78,6 +80,7 @@ object FabricClientInit {
         ClientPlayConnectionEvents.DISCONNECT.register { _, _ ->
             SoulStoneTooltipNetwork.clear()
             MultiblockWorldPreview.clear()
+            MagicShieldRenderer.clear()
         }
 
         MultiblockPreviewGuiBridgeInit.init()
@@ -137,16 +140,9 @@ object FabricClientInit {
                 minecraft.player?.uuid,
                 minecraft.options.cameraType.isFirstPerson,
             )
-            BoundGemLinkRenderer.submit(
-                poseStack,
-                context.submitNodeCollector(),
-                context.levelState(),
-            )
-            MultiblockWorldPreview.submit(
-                poseStack,
-                context.submitNodeCollector(),
-                context.levelState(),
-            )
+            BoundGemLinkRenderer.submit(poseStack, context.submitNodeCollector(), context.levelState())
+            MultiblockWorldPreview.submit(poseStack, context.submitNodeCollector(), context.levelState())
+            MagicShieldRenderer.submit(poseStack, context.submitNodeCollector(), context.levelState())
         }
     }
 
@@ -181,6 +177,11 @@ object FabricClientInit {
         }
         ClientPlayNetworking.registerGlobalReceiver(SoulStoneTooltipResponsePayload.TYPE) { payload, context ->
             context.client().execute { SoulStoneTooltipNetwork.acceptResponse(payload) }
+        }
+        ClientPlayNetworking.registerGlobalReceiver(MagicShieldPayload.TYPE) { payload, context ->
+            context.client().execute {
+                MagicShieldRenderer.accept(payload)
+            }
         }
 
         ResearchNetwork.completeResearch = { ClientPlayNetworking.send(CompleteResearchPayload(it)) }
