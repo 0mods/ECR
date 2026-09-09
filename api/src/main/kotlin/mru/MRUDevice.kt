@@ -2,7 +2,7 @@
 
 package com.algorithmlx.ecr.api.mru
 
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblocks
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblocks
 import com.algorithmlx.ecr.api.item.BoundGem
 import com.algorithmlx.ecr.api.mru.balance.MutableMRUBalance
 import com.algorithmlx.ecr.api.mru.storage.IOMRUStorage

@@ -12,7 +12,8 @@
     "client.SubmitNodeStorageMixin"
   ],
   "mixins": [
-    "ItemStackMixin"
+    "ItemStackMixin",
+    "RecipeManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

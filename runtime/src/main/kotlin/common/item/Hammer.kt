@@ -1,7 +1,7 @@
 package com.algorithmlx.ecr.common.item
 
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
-import com.algorithmlx.ecr.api.assembled.AssemblyResult
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockDefinition
+import com.algorithmlx.ecr.api.multiblock.assembled.AssemblyResult
 import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.algorithmlx.ecr.api.recipe.CachedRecipe
 import com.algorithmlx.ecr.common.assembled.AssembledMultiblockRuntime

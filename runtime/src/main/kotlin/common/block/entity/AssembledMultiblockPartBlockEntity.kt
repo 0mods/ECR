@@ -1,8 +1,8 @@
 package com.algorithmlx.ecr.common.block.entity
 
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockPartData
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDataIO
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockPartEntity
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockPartData
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockDataIO
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockPartEntity
 import com.algorithmlx.ecr.api.geo.GeoAnimatable
 import com.algorithmlx.ecr.api.geo.GeoAnimationState
 import com.algorithmlx.ecr.api.geo.GeoModel

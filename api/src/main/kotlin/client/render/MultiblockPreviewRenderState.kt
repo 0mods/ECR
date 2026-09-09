@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.api.client.render
 
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 import net.minecraft.client.gui.navigation.ScreenRectangle
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState

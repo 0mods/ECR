@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.api.multiblock
 
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.registries.ECRegistries
 import net.minecraft.resources.Identifier
 import java.util.Collections

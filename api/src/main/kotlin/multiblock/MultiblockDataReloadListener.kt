@@ -2,9 +2,9 @@ package com.algorithmlx.ecr.api.multiblock
 
 import com.algorithmlx.ecr.api.LOGGER
 import com.algorithmlx.ecr.api.ModId
-import com.algorithmlx.ecr.api.assembled.AssembledBlockMatcher
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockPart
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledBlockMatcher
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockDefinition
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockPart
 import com.algorithmlx.ecr.api.geo.GeoBlockRotation
 import com.algorithmlx.ecr.api.geo.GeoLightMode
 import com.algorithmlx.ecr.api.geo.GeoModel
@@ -25,7 +25,6 @@ import net.minecraft.server.packs.resources.ResourceManager
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener
 import net.minecraft.tags.TagKey
 import net.minecraft.util.profiling.ProfilerFiller
-import net.minecraft.world.level.block.Block
 import net.minecraft.world.level.block.Blocks
 import net.minecraft.world.phys.shapes.Shapes
 

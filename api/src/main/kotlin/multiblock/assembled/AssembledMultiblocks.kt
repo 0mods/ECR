@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.api.assembled
+package com.algorithmlx.ecr.api.multiblock.assembled
 
 import com.algorithmlx.ecr.api.LOGGER
 import com.algorithmlx.ecr.api.geo.AnimationType

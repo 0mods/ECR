@@ -1,7 +1,7 @@
 package com.algorithmlx.ecr.common.block
 
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockPartEntity
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblocks
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockPartEntity
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblocks
 import com.algorithmlx.ecr.api.block.FullBlockParticles
 import com.algorithmlx.ecr.common.block.entity.AssembledMultiblockPartBlockEntity
 import com.algorithmlx.ecr.registry.BlockCodecRegistry

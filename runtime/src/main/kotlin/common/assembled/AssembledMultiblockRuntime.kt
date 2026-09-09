@@ -1,10 +1,10 @@
 package com.algorithmlx.ecr.common.assembled
 
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockControllerBlock
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblocks
-import com.algorithmlx.ecr.api.assembled.AssemblyFailureReason
-import com.algorithmlx.ecr.api.assembled.AssemblyResult
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockDefinition
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockControllerBlock
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblocks
+import com.algorithmlx.ecr.api.multiblock.assembled.AssemblyFailureReason
+import com.algorithmlx.ecr.api.multiblock.assembled.AssemblyResult
 import com.algorithmlx.ecr.api.geo.AnimationType
 import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.algorithmlx.ecr.common.block.AssembledMultiblockPartBlock

@@ -4,8 +4,8 @@ import com.algorithmlx.ecr.api.geo.client.BedrockGeoRenderData
 import com.algorithmlx.ecr.api.geo.client.BedrockGeoRenderEngine
 import com.algorithmlx.ecr.api.geo.client.ClientGeoAnimations
 import com.algorithmlx.ecr.api.geo.GeoAnimatable
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockPartEntity
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockDefinition
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockPartEntity
 import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.mojang.blaze3d.vertex.PoseStack
 import com.mojang.math.Axis

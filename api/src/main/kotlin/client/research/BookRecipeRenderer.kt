@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.api.client.research
 
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.client.drawMRULine
 import com.algorithmlx.ecr.api.mru.storage.MRUStorage
 import com.algorithmlx.ecr.api.multiblock.Multiblock

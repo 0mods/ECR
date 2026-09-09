@@ -1,7 +1,7 @@
 package com.algorithmlx.ecr.client.book.controller
 
 import com.algorithmlx.ecr.api.ModId
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewGuiBridge
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewModel
 import com.algorithmlx.ecr.api.client.render.MultiblockPreviewRenderState

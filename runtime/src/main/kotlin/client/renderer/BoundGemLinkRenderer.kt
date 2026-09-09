@@ -1,7 +1,7 @@
 package com.algorithmlx.ecr.client.renderer
 
 import com.algorithmlx.ecr.api.item.BoundGem
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblocks
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblocks
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.SubmitNodeCollector

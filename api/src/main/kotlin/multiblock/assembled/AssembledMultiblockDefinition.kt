@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.api.assembled
+package com.algorithmlx.ecr.api.multiblock.assembled
 
 import com.algorithmlx.ecr.api.geo.GeoModel
 import com.algorithmlx.ecr.api.geo.GeoBlockRotation
@@ -6,6 +6,7 @@ import com.algorithmlx.ecr.api.geo.GeoLightMode
 import com.algorithmlx.ecr.api.geo.GeoRenderType
 import net.minecraft.core.BlockPos
 import net.minecraft.core.Direction
+import net.minecraft.core.registries.BuiltInRegistries
 import net.minecraft.resources.Identifier
 import net.minecraft.tags.TagKey
 import net.minecraft.world.level.Level
@@ -44,7 +45,7 @@ fun interface AssembledBlockMatcher {
 
                 override fun previewState(): BlockState? {
                     resolvedPreview?.let { return it }
-                    val resolved = net.minecraft.core.registries.BuiltInRegistries.BLOCK
+                    val resolved = BuiltInRegistries.BLOCK
                         .firstOrNull { block -> block.defaultBlockState().`is`(expected) }
                         ?.defaultBlockState()
                     if (resolved != null) resolvedPreview = resolved

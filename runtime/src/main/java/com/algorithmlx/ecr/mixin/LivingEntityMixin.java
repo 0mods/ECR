@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.mixin;
 
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblocks;
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblocks;
 import com.algorithmlx.ecr.common.magic.MagicDefense;
 import com.algorithmlx.ecr.common.magic.MagicDefenseThreadProtect;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;

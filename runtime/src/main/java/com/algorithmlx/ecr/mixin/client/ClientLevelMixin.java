@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.mixin.client;
 
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblocks;
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblocks;
 import com.algorithmlx.ecr.api.block.FullBlockParticles;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;

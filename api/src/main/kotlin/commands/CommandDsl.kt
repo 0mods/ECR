@@ -6,7 +6,6 @@ import com.mojang.brigadier.Command
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.RedirectModifier
 import com.mojang.brigadier.ResultConsumer
-import com.mojang.brigadier.SingleRedirectModifier
 import com.mojang.brigadier.arguments.ArgumentType
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder

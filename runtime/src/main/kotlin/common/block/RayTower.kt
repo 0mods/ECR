@@ -1,7 +1,7 @@
 package com.algorithmlx.ecr.common.block
 
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockControllerBlock
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblocks
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockControllerBlock
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblocks
 import com.algorithmlx.ecr.api.block.FullBlockParticles
 import com.algorithmlx.ecr.api.multiblock.MultiblockDefinitions
 import com.algorithmlx.ecr.api.utils.checkAndOpenMenu
@@ -155,6 +155,6 @@ class RayTower(properties: Properties): Block(properties), EntityBlock, Assemble
 
     companion object {
         @JvmField
-        val ASSEMBLED: BooleanProperty = BooleanProperty.create("assembled")
+        val ASSEMBLED: BooleanProperty = BooleanProperty.create("multiblock/assembled")
     }
 }

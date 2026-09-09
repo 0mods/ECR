@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.api.client.render
 
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.block.Multipart
 import com.algorithmlx.ecr.api.geo.client.BedrockGeoRenderData
 import com.algorithmlx.ecr.api.geo.client.BedrockGeoRenderEngine

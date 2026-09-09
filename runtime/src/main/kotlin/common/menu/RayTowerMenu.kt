@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.common.menu
 
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockPartEntity
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockPartEntity
 import com.algorithmlx.ecr.api.container.AbstractMenu
 import com.algorithmlx.ecr.api.container.slot.VanillaSpecialSlot
 import com.algorithmlx.ecr.api.item.BoundGem

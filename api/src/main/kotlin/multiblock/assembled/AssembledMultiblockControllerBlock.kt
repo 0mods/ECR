@@ -1,4 +1,4 @@
-package com.algorithmlx.ecr.api.assembled
+package com.algorithmlx.ecr.api.multiblock.assembled
 
 import net.minecraft.core.Direction
 import net.minecraft.world.level.block.state.BlockState

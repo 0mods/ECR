@@ -1,6 +1,6 @@
 package com.algorithmlx.ecr.registry
 
-import com.algorithmlx.ecr.api.assembled.AssembledMultiblockDefinition
+import com.algorithmlx.ecr.api.multiblock.assembled.AssembledMultiblockDefinition
 import com.algorithmlx.ecr.api.multiblock.Multiblock
 
 interface MultiblockRegistry {
